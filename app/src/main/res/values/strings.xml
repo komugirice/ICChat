@@ -1,4 +1,5 @@
 <resources>
+    <!-- ログイン画面 -->
     <string name="app_name">ICChat</string>
     <string name="title_activity_login">Sign in</string>
     <string name="prompt_email">ID</string>
@@ -10,4 +11,10 @@
     <string name="invalid_password">パスワードは6文字以上入力して下さい</string>
     <string name="login_failed">"Login failed"</string>
     <string name="text_create_user">アカウントを作成する</string>
+
+    <!-- TabLayout -->
+    <string name="tab_frient">友だち</string>
+    <string name="tab_room">トーク</string>
+    <string name="tab_interest">興味</string>
+    <string name="tab_debug">デバッグ</string>
 </resources>
