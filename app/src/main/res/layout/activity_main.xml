@@ -22,9 +22,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:gravity="left"
-            android:text="（仮）友だち"
             android:textColor="@android:color/white"
             android:textSize="15sp"
+            android:text="@string/tab_frient"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

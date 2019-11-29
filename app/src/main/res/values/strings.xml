@@ -17,4 +17,7 @@
     <string name="tab_room">トーク</string>
     <string name="tab_interest">興味</string>
     <string name="tab_debug">デバッグ</string>
+
+    <!-- デバッグFragment -->
+    <string name="buttonAddDebugUser">デバッグユーザ追加</string>
 </resources>

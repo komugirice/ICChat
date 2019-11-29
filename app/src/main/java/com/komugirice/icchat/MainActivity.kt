@@ -73,6 +73,7 @@ class MainActivity : AppCompatActivity() {
                 override fun onPageScrollStateChanged(state: Int) {}
                 override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
                 override fun onPageSelected(position: Int) {
+                    headerTextView.text = customAdapter.getPageTitle(position)
                 }
             })
         }
@@ -84,13 +85,12 @@ class MainActivity : AppCompatActivity() {
      */
     private fun initTabLayout() {
         tabLayout.setupWithViewPager(viewPager)
-//        tabLayout.getTabAt(0)?.setIcon(R.drawable.ic_person_white_48dp)
-//        tabLayout.getTabAt(1)?.setIcon(R.drawable.ic_chat_white_48dp)
-//        tabLayout.getTabAt(2)?.setIcon(R.drawable.ic_important_devices_white_48dp)
-//        tabLayout.getTabAt(3)?.setText(R.string.tab_debug)
         tabLayout.getTabAt(0)?.setCustomView(R.layout.design_fragment_icon_person)
+        tabLayout.getTabAt(0)?.setText("")
         tabLayout.getTabAt(1)?.setCustomView(R.layout.design_fragment_icon_chat)
+        tabLayout.getTabAt(1)?.setText("")
         tabLayout.getTabAt(2)?.setCustomView(R.layout.design_fragment_icon_interest)
+        tabLayout.getTabAt(2)?.setText("")
         tabLayout.getTabAt(3)?.setText(R.string.tab_debug)
     }
 
@@ -113,7 +113,8 @@ class MainActivity : AppCompatActivity() {
 
         override fun getItem(position: Int) = fragments[position].fragment
 
-        //override fun getPageTitle(position: Int) = context.getString( fragments[position].title )
+        // アイコンにするのでコメントアウト
+        override fun getPageTitle(position: Int) = context.getString( fragments[position].title )
 
     }
 
