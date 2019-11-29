@@ -6,11 +6,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import com.example.qiitaapplication.extension.toDate
 import com.google.firebase.firestore.FirebaseFirestore
 import com.komugirice.icchat.R
 import com.komugirice.icchat.data.firestore.User
 import kotlinx.android.synthetic.main.fragment_debug.*
+import java.util.*
 
 /**
  * A simple [Fragment] subclass.
@@ -32,6 +34,7 @@ class DebugFragment : Fragment() {
 
     private fun initialize() {
         initLayout()
+        initData()
     }
 
     private fun initLayout() {
@@ -46,8 +49,9 @@ class DebugFragment : Fragment() {
                     User().apply {
                         userId = "00000" + i.toString()
                         name = "ユーザ" + i.toString()
-                        birthDay = ("199" + i.toString() + "/" + (i + 1).toString()
-                                + "/" + (i+1).toString()).toDate()
+                        val birthSthring = ("199" + i.toString() + "/" + (i + 1).toString()
+                                + "/" + (i+1).toString())
+                        birthDay = birthSthring.toDate("yyyy/MM/dd")
                     }
                 )
             }
@@ -57,5 +61,26 @@ class DebugFragment : Fragment() {
                 .add(it)
             }
         }
+    }
+
+    private fun initData() {
+        var adapter: ArrayAdapter<CharSequence>
+        FirebaseFirestore.getInstance()
+            .collection("user")
+            .orderBy(User::userId.name)
+            .limit(10)
+            .get()
+            .addOnCompleteListener {
+
+                it.result?.toObjects(User::class.java)?.also { users ->
+                    val userIdArray = users.map { it.userId }.toMutableList().toTypedArray()
+                    context?.also{
+                        adapter = ArrayAdapter<CharSequence>(it, R.layout.row_spinner,
+                        userIdArray)
+                        SpinnerUsers.adapter = adapter
+                    }
+                }
+            }
+
     }
 }
