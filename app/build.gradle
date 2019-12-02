@@ -22,6 +22,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    dataBinding {
+        enabled = true
+    }
 }
 
 dependencies {
@@ -42,6 +45,9 @@ dependencies {
     implementation "com.google.firebase:firebase-firestore:$firebase_firestore_version"
     // FirebaseAuth
     implementation "com.google.firebase:firebase-auth:$firebase_auth_version"
+    // ViewModel
+    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycler_version"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycler_version"
 }
 
 apply plugin: 'com.google.gms.google-services'

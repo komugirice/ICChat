@@ -2,12 +2,14 @@ package com.komugirice.icchat.fragment
 
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.lifecycle.MutableLiveData
 import com.example.qiitaapplication.extension.getIdFromEmail
 import com.example.qiitaapplication.extension.toDate
 import com.google.firebase.auth.FirebaseAuth
@@ -57,12 +59,11 @@ class DebugFragment : Fragment() {
         // 友だち追加
         buttonAddDebugFriend.setOnClickListener {
             val friendId: String = SpinnerUsers.selectedItem.toString()
-
+            val userId = FireStoreUtil.getLoginUserId()
             FirebaseFirestore.getInstance()
-                .collection("friend")
+                .collection("friends/$userId/friends")
                 .add(Friend().apply{
-                    userId = FireStoreUtil.getLoginUserId()
-                    this.friendId = friendId
+                    this.userId = friendId
                 }).addOnSuccessListener {
                     Toast.makeText(
                         context,
@@ -145,24 +146,49 @@ class DebugFragment : Fragment() {
 
     private fun initSpinner() {
         var adapter: ArrayAdapter<CharSequence>
-        FirebaseFirestore.getInstance()
-            .collection("user")
-            .whereGreaterThan("userId", FireStoreUtil.getLoginUserId())
-            .whereLessThan("userId", FireStoreUtil.getLoginUserId())
-            .orderBy(User::userId.name)
-            .limit(10)
-            .get()
-            .addOnCompleteListener {
+        val userId = FireStoreUtil.getLoginUserId()
+        var notFriendList: MutableList<User> = mutableListOf()
+        val friendList = MutableLiveData<MutableList<String>>()
+        FireStoreUtil.getFriend(friendList)
 
-                it.result?.toObjects(User::class.java)?.also { users ->
-                    val userIdArray = users.map { it.userId }.toMutableList().toTypedArray()
-                    context?.also{
-                        adapter = ArrayAdapter<CharSequence>(it, R.layout.row_spinner,
-                        userIdArray)
-                        SpinnerUsers.adapter = adapter
+        friendList.observe(this, androidx.lifecycle.Observer {
+            var friendIdList: MutableList<String> = friendList.value ?: mutableListOf()
+
+            // user情報取得
+            FirebaseFirestore.getInstance()
+                .collection("user")
+                // TODO なぜかwhereがうまくいかない。
+                //.whereGreaterThan("userId", userId)
+                //.whereLessThan("userId", userId)
+                .orderBy(User::userId.name)
+                .limit(10)
+                .get()
+                .addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        it.result?.toObjects(User::class.java)?.also {
+                            // とりあえずuser全件をnotFriendListに格納
+                            notFriendList = it
+                        }
+                        // notFriendList: MutableList<User> → notFriendIdList: MutableList<String>
+                        var notFriendIdList: MutableList<String> = notFriendList.map { it.userId }.toMutableList()
+                        // notFriendIdListからfirendIdListを除外
+                        notFriendIdList.removeAll(friendIdList)
+                        // 自分のIDも除外
+                        notFriendIdList.remove(FireStoreUtil.getLoginUserId())
+
+                        // Spinner.adapterがarrayしか受け付けない
+                        val userIdArray = notFriendIdList.toTypedArray()
+                        context?.also {
+                            adapter = ArrayAdapter<CharSequence>(
+                                it, R.layout.row_spinner,
+                                userIdArray
+                            )
+                            SpinnerUsers.adapter = adapter
+                        }
                     }
                 }
-            }
+        })
 
     }
+
 }
