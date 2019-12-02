@@ -51,30 +51,7 @@ class DebugFragment : Fragment() {
     private fun initClick() {
         // デバッグユーザ追加
         buttonAddDebugUser.setOnClickListener {
-            var list: MutableList<User> = mutableListOf()
-            for (i in 0..9) {
-                list.add(
-                    User().apply {
-                        userId = "00000" + i.toString()
-                        name = "ユーザ" + i.toString()
-                        val birthString = ("199" + i.toString() + "/" + (i + 1).toString()
-                                + "/" + (i+1).toString())
-                        birthDay = birthString.toDate("yyyy/MM/dd")
-                    }
-                )
-            }
-            list.forEach{
-            FirebaseFirestore.getInstance()
-                .collection("user")
-                .add(it).addOnFailureListener {
-                    return@addOnFailureListener
-                }
-            }
-            Toast.makeText(
-                context,
-                "デバッグユーザ登録が完了しました。",
-                Toast.LENGTH_LONG
-            ).show()
+            registerUsers()
         }
 
         // 友だち追加
@@ -95,6 +72,75 @@ class DebugFragment : Fragment() {
                 }
 
         }
+    }
+
+    private fun registerUsers() {
+        FirebaseFirestore.getInstance()
+            .collection("user")
+            .get()
+            .addOnCompleteListener {
+                var currentUserPairs = mutableListOf<Pair<String, User>>()
+                var userIdDocumentIdMap = mutableMapOf<String, String>()
+                if (it.isSuccessful) {
+                    it.result?.documents?.forEach { documentSnapshot ->
+                        // documentSnapshot.idがデータ更新できる主キー
+                        userIdDocumentIdMap[documentSnapshot.get("userId").toString()] = documentSnapshot.id
+                    }
+                    it.result?.toObjects(User::class.java)?.also {
+                        it.map {
+                            // Userクラス自身のuserIdで紐付けている
+                            val documentId = userIdDocumentIdMap[it.userId]
+                            //documentIdが無い場合はmapに含めない・
+                            if (documentId == null)
+                                null
+                            else
+                                Pair(documentId, it)
+                        }.forEach {
+                            if (it != null)
+                                currentUserPairs.add(it)
+                        }
+                    }
+                }
+                registerUsers(currentUserPairs)
+            }
+    }
+
+    private fun registerUsers(currentUsers: List<Pair<String, User>>) {
+        var thisUserlist: MutableList<User> = mutableListOf()
+        //userIdが000000〜000009のユーザだけ更新したい。
+        for (i in 0..9) {
+            thisUserlist.add(
+                User().apply {
+                    userId = "00000" + i.toString()
+                    name = "ユーザ_" + "00000" + i.toString()
+                    val birthString = ("199" + i.toString() + "/" + (i + 1).toString() + "/" + (i+1).toString())
+                    birthDay = birthString.toDate("yyyy/MM/dd")
+                }
+            )
+        }
+        val currentUserIds = currentUsers.map { it.second.userId }
+        thisUserlist.forEach { user ->
+            if (currentUserIds.contains(user.userId)) {
+                // userIdが一致した先頭レコードのdocumentIdを設定する
+                val documentId = currentUsers.firstOrNull { it.second.userId ==  user.userId}?.first ?: UUID.randomUUID().toString()
+                // documentIdをキーにして更新
+                FirebaseFirestore.getInstance()
+                    .collection("user")
+                    .document(documentId)
+                    .set(user)
+            } else {
+                // documentIdを主キーとして登録
+                FirebaseFirestore.getInstance()
+                    .collection("user")
+                    .document(user.documentId)
+                    .set(user)
+            }
+        }
+        Toast.makeText(
+            context,
+            "デバッグユーザ登録が完了しました。",
+            Toast.LENGTH_LONG
+        ).show()
     }
 
     private fun initSpinner() {

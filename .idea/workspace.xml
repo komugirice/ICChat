@@ -10,7 +10,15 @@
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="242fd4c5-5dab-4fd2-ae57-1326d30bc308" name="Default Changelist" comment="" />
+    <list default="true" id="242fd4c5-5dab-4fd2-ae57-1326d30bc308" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.gradle/5.4.1/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.4.1/executionHistory/executionHistory.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/5.4.1/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.4.1/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/User.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/User.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/fragment/DebugFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/fragment/DebugFragment.kt" afterDir="false" />
+    </list>
     <ignored path="$PROJECT_DIR$/build/classes/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -21,7 +29,7 @@
   <component name="DefaultGradleProjectSettings">
     <option name="isMigrated" value="true" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="3.2_HVGA_slider_ADP1_API_29" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="e4b4ca95" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -38,29 +46,32 @@
     <splitter split-orientation="horizontal" split-proportion="0.83490074">
       <split-first>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file pinned="false" current-in-tab="false">
+          <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/fragment/DebugFragment.kt">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="1455">
-                  <caret line="115" column="35" selection-start-line="115" selection-start-column="35" selection-end-line="115" selection-end-column="35" />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/FriendAdapter.kt">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="129">
-                  <caret line="39" column="9" lean-forward="true" selection-start-line="39" selection-start-column="9" selection-end-line="39" selection-end-column="9" />
+                <state relative-caret-position="240">
+                  <caret line="126" column="47" lean-forward="true" selection-start-line="126" selection-start-column="47" selection-end-line="126" selection-end-column="47" />
                 </state>
               </provider>
             </entry>
           </file>
           <file pinned="false" current-in-tab="false">
-            <entry file="file://$USER_HOME$/Library/Android/sdk/sources/android-29/android/view/LayoutInflater.java">
+            <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/User.kt">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="7110">
-                  <caret line="533" column="23" selection-start-line="533" selection-start-column="23" selection-end-line="533" selection-end-column="23" />
+                <state relative-caret-position="165">
+                  <caret line="11" column="96" selection-start-line="11" selection-start-column="96" selection-end-line="11" selection-end-column="96" />
+                  <folding>
+                    <element signature="e#46#109#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/FriendAdapter.kt">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="518">
+                  <caret line="53" lean-forward="true" selection-start-line="53" selection-end-line="53" />
                 </state>
               </provider>
             </entry>
@@ -334,7 +345,6 @@
         <option value="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/Room.kt" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/Group.kt" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/Friend.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/User.kt" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/ui/login/LoginActivity.kt" />
         <option value="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/extension/string.kt" />
@@ -344,21 +354,22 @@
         <option value="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/LoginDataSource.kt" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/ui/login/LoggedInUserView.kt" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/util/FireStoreUtil.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/fragment/DebugFragment.kt" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/user_cell.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/UserAdapter.kt" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/fragment/FriendFragment.kt" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/fragment_friend.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/FriendAdapter.kt" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/friend_cell.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/User.kt" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/fragment/DebugFragment.kt" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="120" />
-    <option name="y" value="110" />
-    <option name="width" value="1080" />
-    <option name="height" value="620" />
+    <option name="x" value="1446" />
+    <option name="y" value="25" />
+    <option name="width" value="1556" />
+    <option name="height" value="851" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -367,47 +378,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
-      <pane id="AndroidView">
-        <subPane>
-          <expand>
-            <path>
-              <item name="ICChat" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-            </path>
-            <path>
-              <item name="ICChat" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
-            </path>
-            <path>
-              <item name="ICChat" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
-              <item name="icchat" type="cbb59c9e:AndroidPsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="ICChat" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
-              <item name="icchat" type="cbb59c9e:AndroidPsiDirectoryNode" />
-              <item name="data" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="ICChat" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
-              <item name="icchat" type="cbb59c9e:AndroidPsiDirectoryNode" />
-              <item name="extension" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="ICChat" type="1abcf292:AndroidViewProjectNode" />
-              <item name="Gradle Scripts" type="ae0cef3a:AndroidBuildScriptsGroupNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
       <pane id="Scope">
         <subPane subId="Scope 'Project Source Files'; set:Project Source Files; class com.jetbrains.cidr.lang.search.scopes.ProjectSourcesScopeProvider$SourceFilesScope">
           <expand>
@@ -600,6 +570,47 @@
           <select />
         </subPane>
       </pane>
+      <pane id="AndroidView">
+        <subPane>
+          <expand>
+            <path>
+              <item name="ICChat" type="1abcf292:AndroidViewProjectNode" />
+              <item name="app" type="feadf853:AndroidModuleNode" />
+            </path>
+            <path>
+              <item name="ICChat" type="1abcf292:AndroidViewProjectNode" />
+              <item name="app" type="feadf853:AndroidModuleNode" />
+              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
+            </path>
+            <path>
+              <item name="ICChat" type="1abcf292:AndroidViewProjectNode" />
+              <item name="app" type="feadf853:AndroidModuleNode" />
+              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
+              <item name="icchat" type="cbb59c9e:AndroidPsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="ICChat" type="1abcf292:AndroidViewProjectNode" />
+              <item name="app" type="feadf853:AndroidModuleNode" />
+              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
+              <item name="icchat" type="cbb59c9e:AndroidPsiDirectoryNode" />
+              <item name="data" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="ICChat" type="1abcf292:AndroidViewProjectNode" />
+              <item name="app" type="feadf853:AndroidModuleNode" />
+              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
+              <item name="icchat" type="cbb59c9e:AndroidPsiDirectoryNode" />
+              <item name="data" type="462c0819:PsiDirectoryNode" />
+              <item name="firestore" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="ICChat" type="1abcf292:AndroidViewProjectNode" />
+              <item name="Gradle Scripts" type="ae0cef3a:AndroidBuildScriptsGroupNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -611,6 +622,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -815,19 +827,19 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="120" y="110" width="1080" height="620" extended-state="0" />
+    <frame x="1446" y="25" width="1556" height="851" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Captures" order="0" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="1" />
-      <window_info active="true" content_ui="combo" id="Project" order="2" visible="true" weight="0.19749518" />
+      <window_info active="true" content_ui="combo" id="Project" order="2" visible="true" weight="0.1354029" />
       <window_info id="Structure" order="3" side_tool="true" />
       <window_info id="Favorites" order="4" side_tool="true" />
       <window_info id="Build Variants" order="5" side_tool="true" />
       <window_info id="Image Layers" order="6" />
       <window_info id="Resources Explorer" order="7" />
       <window_info id="Capture Tool" order="8" />
-      <window_info anchor="bottom" id="Build" order="0" sideWeight="0.4961489" visible="true" weight="0.12689394" />
+      <window_info anchor="bottom" id="Build" order="0" sideWeight="0.4961489" visible="true" weight="0.25559947" />
       <window_info anchor="bottom" id="Run" order="1" sideWeight="0.49935815" weight="0.32903227" />
       <window_info anchor="bottom" id="TODO" order="2" weight="0.32793522" />
       <window_info anchor="bottom" id="Statistic" order="3" weight="0.32793522" />
@@ -836,7 +848,7 @@
       <window_info anchor="bottom" id="Event Log" order="6" sideWeight="0.3145058" side_tool="true" weight="0.32793522" />
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.14580645" />
       <window_info anchor="bottom" id="Logcat" order="8" sideWeight="0.68549424" weight="0.38451442" />
-      <window_info anchor="bottom" id="Android Profiler" order="9" show_stripe_button="false" weight="0.32928476" />
+      <window_info anchor="bottom" id="Android Profiler" order="9" weight="0.32928476" />
       <window_info anchor="right" id="Preview" order="0" />
       <window_info anchor="right" id="Device File Explorer" order="1" side_tool="true" />
       <window_info anchor="right" id="Capture Analysis" order="2" />
@@ -949,13 +961,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="120">
           <caret line="8" column="26" selection-start-line="8" selection-start-column="26" selection-end-line="8" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/User.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="10" column="1" selection-start-line="10" selection-start-column="1" selection-end-line="10" selection-end-column="1" />
         </state>
       </provider>
     </entry>
@@ -1124,13 +1129,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/fragment/DebugFragment.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1455">
-          <caret line="115" column="35" selection-start-line="115" selection-start-column="35" selection-end-line="115" selection-end-column="35" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/Library/Android/sdk/sources/android-29/android/view/LayoutInflater.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="7110">
@@ -1253,8 +1251,25 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/FriendAdapter.kt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="129">
-          <caret line="39" column="9" lean-forward="true" selection-start-line="39" selection-start-column="9" selection-end-line="39" selection-end-column="9" />
+        <state relative-caret-position="518">
+          <caret line="53" lean-forward="true" selection-start-line="53" selection-end-line="53" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/User.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="11" column="96" selection-start-line="11" selection-start-column="96" selection-end-line="11" selection-end-column="96" />
+          <folding>
+            <element signature="e#46#109#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/fragment/DebugFragment.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="126" column="47" lean-forward="true" selection-start-line="126" selection-start-column="47" selection-end-line="126" selection-end-column="47" />
         </state>
       </provider>
     </entry>
