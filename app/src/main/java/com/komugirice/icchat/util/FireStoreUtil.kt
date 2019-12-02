@@ -31,7 +31,7 @@ class FireStoreUtil {
          *
          * @param List<FriendFragment.Friend>
          */
-        fun getFriend(friendList:MutableLiveData<MutableList<String>>) {
+        fun getFriends(friendList:MutableLiveData<MutableList<String>>) {
             val myUserId = FireStoreUtil.getLoginUserId()
             var retFriendList: MutableList<Friend> = mutableListOf()
             FirebaseFirestore.getInstance()

@@ -7,13 +7,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.MutableLiveData
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import com.google.firebase.firestore.FirebaseFirestore
-import com.komugirice.icchat.FriendsView
 import com.komugirice.icchat.R
-import com.komugirice.icchat.data.firestore.Friend
 import com.komugirice.icchat.data.firestore.User
+import com.komugirice.icchat.databinding.FragmentFriendBinding
 import com.komugirice.icchat.util.FireStoreUtil
+import com.komugirice.icchat.viewModel.FriendViewModel
 import kotlinx.android.synthetic.main.fragment_friend.*
 
 /**
@@ -21,12 +22,37 @@ import kotlinx.android.synthetic.main.fragment_friend.*
  */
 class FriendFragment : Fragment() {
 
+    private lateinit var binding: FragmentFriendBinding
+    private lateinit var viewModel: FriendViewModel
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_friend, container, false)
+        inflater.inflate(R.layout.fragment_friend, container, false)
+
+        // initBinding
+        binding = FragmentFriendBinding.inflate(inflater, container, false)
+        binding.lifecycleOwner = this
+
+        // initViewModel
+        viewModel = ViewModelProviders.of(this).get(FriendViewModel::class.java).apply {
+            // ログインユーザのfriends情報取得
+            FireStoreUtil.getFriends(friendList)
+            friendList.observe(this@FriendFragment, androidx.lifecycle.Observer {
+                // friends情報更新
+                updateFriends(friendList)
+                items.observe(this@FriendFragment, Observer {
+                    binding.apply {
+                        // items = it
+                        FriendsView.customAdapter.refresh(it)
+                        swipeRefreshLayout.isRefreshing = false
+                    }
+                })
+            })
+        }
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -36,7 +62,7 @@ class FriendFragment : Fragment() {
 
     private fun initialize() {
         initLayout()
-        initData()
+        viewModel.initData()
     }
 
     private fun initLayout() {
@@ -50,41 +76,10 @@ class FriendFragment : Fragment() {
 
     private fun initSwipeRefreshLayout() {
         swipeRefreshLayout.setOnRefreshListener {
-            initData()
+            viewModel.initData()
         }
     }
-    private fun initData() {
-        val myUserId = FireStoreUtil.getLoginUserId()
-        var userList: MutableList<User> = mutableListOf()
-        val friendList = MutableLiveData<MutableList<String>>()
-        FireStoreUtil.getFriend(friendList)
 
-        friendList.observe(this, androidx.lifecycle.Observer {
-
-                        // ユーザ情報取得
-            friendList.value?.also {
-                it.forEach {
-                    FirebaseFirestore.getInstance()
-                        .collection("user")
-                        .whereEqualTo("userId", it)
-                        .get()
-                        .addOnCompleteListener {
-                            // IOスレッドなので、レイアウト関係を扱えないので注意
-                            if (!it.isSuccessful)
-                                return@addOnCompleteListener
-                            // TODO 取得は複数件しか扱えないのか
-                            it.result?.toObjects(User::class.java)?.also { users ->
-                                userList.add(users[0])
-                            }
-                            // 後処理
-                            swipeRefreshLayout.isRefreshing = false
-                            FriendsView.customAdapter.refresh(userList)
-
-                        }
-                }
-            }
-        })
-    }
 
 
 }
