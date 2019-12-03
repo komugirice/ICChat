@@ -91,7 +91,7 @@ class DebugFragment : Fragment() {
                         it.map {
                             // Userクラス自身のuserIdで紐付けている
                             val documentId = userIdDocumentIdMap[it.userId]
-                            //documentIdが無い場合はmapに含めない・
+                            //documentIdが無い場合はmapに含めない
                             if (documentId == null)
                                 null
                             else
@@ -108,7 +108,7 @@ class DebugFragment : Fragment() {
 
     private fun registerUsers(currentUsers: List<Pair<String, User>>) {
         var thisUserlist: MutableList<User> = mutableListOf()
-        //userIdが000000〜000009のユーザだけ更新したい。
+        //userIdが000000〜000009のユーザだけ作成。
         for (i in 0..9) {
             thisUserlist.add(
                 User().apply {
@@ -130,7 +130,7 @@ class DebugFragment : Fragment() {
                     .document(documentId)
                     .set(user)
             } else {
-                // documentIdを主キーとして登録
+                // 新規登録（documentIdが主キー）
                 FirebaseFirestore.getInstance()
                     .collection("user")
                     .document(user.documentId)
@@ -149,7 +149,7 @@ class DebugFragment : Fragment() {
         val userId = FireStoreUtil.getLoginUserId()
         var notFriendList: MutableList<User> = mutableListOf()
         val friendList = MutableLiveData<MutableList<String>>()
-        FireStoreUtil.getFriend(friendList)
+        FireStoreUtil.getFriends(friendList)
 
         friendList.observe(this, androidx.lifecycle.Observer {
             var friendIdList: MutableList<String> = friendList.value ?: mutableListOf()
@@ -176,7 +176,7 @@ class DebugFragment : Fragment() {
                         // 自分のIDも除外
                         notFriendIdList.remove(FireStoreUtil.getLoginUserId())
 
-                        // Spinner.adapterがarrayしか受け付けない
+                        // Spinner.adapterがarrayしか受け付けないので変換
                         val userIdArray = notFriendIdList.toTypedArray()
                         context?.also {
                             adapter = ArrayAdapter<CharSequence>(

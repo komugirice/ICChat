@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.komugirice.icchat.R
 import com.komugirice.icchat.data.firestore.User
+import com.komugirice.icchat.databinding.FriendCellBinding
 
 class FriendsView  : RecyclerView {
 
@@ -55,31 +56,21 @@ class FriendsView  : RecyclerView {
         override fun getItemCount(): Int = items.size
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
-            ItemViewHolder(
-                LayoutInflater.from(context).inflate(
-                    R.layout.friend_cell,
-                    parent,
-                    false
-                )
-            )
+            FriendCellViewHolder(FriendCellBinding.inflate(LayoutInflater.from(context), parent, false))
 
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-            if (holder is ItemViewHolder)
+            if (holder is FriendCellViewHolder)
                 onBindViewHolder(holder, position)
         }
 
-        private fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
+        private fun onBindViewHolder(holder: FriendCellViewHolder, position: Int) {
             val data = items[position]
-            holder.nameTextView.text = data.name
-            holder.rootView.setOnClickListener {
+            holder.binding.user = data
+            holder.binding.root.setOnClickListener {
 
             }
         }
 
-        class ItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-            val rootView: ConstraintLayout = view.findViewById(R.id.rootView)
-            val nameTextView: TextView = view.findViewById(R.id.nameTextView)
-        }
-
     }
+    class FriendCellViewHolder(val binding: FriendCellBinding) : RecyclerView.ViewHolder(binding.root)
 }

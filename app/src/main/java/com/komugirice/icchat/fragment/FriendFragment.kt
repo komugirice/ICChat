@@ -38,20 +38,15 @@ class FriendFragment : Fragment() {
 
         // initViewModel
         viewModel = ViewModelProviders.of(this).get(FriendViewModel::class.java).apply {
-            // ログインユーザのfriends情報取得
-            FireStoreUtil.getFriends(friendList)
-            friendList.observe(this@FriendFragment, androidx.lifecycle.Observer {
-                // friends情報更新
-                updateFriends(friendList)
-                items.observe(this@FriendFragment, Observer {
-                    binding.apply {
-                        // items = it
-                        FriendsView.customAdapter.refresh(it)
-                        swipeRefreshLayout.isRefreshing = false
-                    }
-                })
+            // friends情報更新
+            items.observe(this@FriendFragment, Observer {
+                binding.apply {
+                    // items = it
+                    FriendsView.customAdapter.refresh(it)
+                    swipeRefreshLayout.isRefreshing = false
+                }
             })
-        }
+    }
         return binding.root
     }
 
@@ -62,7 +57,7 @@ class FriendFragment : Fragment() {
 
     private fun initialize() {
         initLayout()
-        viewModel.initData()
+        viewModel.initData(this@FriendFragment)
     }
 
     private fun initLayout() {
@@ -76,7 +71,7 @@ class FriendFragment : Fragment() {
 
     private fun initSwipeRefreshLayout() {
         swipeRefreshLayout.setOnRefreshListener {
-            viewModel.initData()
+            viewModel.initData(this@FriendFragment)
         }
     }
 
