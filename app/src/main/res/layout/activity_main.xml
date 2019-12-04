@@ -8,7 +8,7 @@
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/headerView"
+        android:id="@+id/header"
         android:layout_width="0dp"
         android:layout_height="?attr/actionBarSize"
         android:background="@android:color/holo_blue_dark"
@@ -61,7 +61,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/headerView"
+        app:layout_constraintTop_toBottomOf="@+id/header"
         app:tabTextColor="@android:color/white"
         app:tabIconTint="@android:color/white"
         app:tabBackground="@android:color/holo_blue_dark" />

@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.komugirice.icchat.ChatActivity
 import com.komugirice.icchat.R
 import com.komugirice.icchat.data.firestore.User
 import com.komugirice.icchat.databinding.FriendCellBinding
@@ -67,7 +68,7 @@ class FriendsView  : RecyclerView {
             val data = items[position]
             holder.binding.user = data
             holder.binding.root.setOnClickListener {
-
+                ChatActivity.start(context)
             }
         }
 
