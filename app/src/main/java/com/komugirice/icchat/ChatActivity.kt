@@ -7,17 +7,28 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import com.komugirice.icchat.data.firestore.Friend
 import com.komugirice.icchat.data.firestore.Room
 import com.komugirice.icchat.data.firestore.User
 import com.komugirice.icchat.data.firestore.manager.MessageManager
+import com.komugirice.icchat.databinding.ActivityChatBinding
+import com.komugirice.icchat.databinding.FragmentFriendBinding
+import com.komugirice.icchat.viewModel.ChatViewModel
+import com.komugirice.icchat.viewModel.FriendViewModel
 import kotlinx.android.synthetic.main.activity_chat.*
 import kotlinx.android.synthetic.main.chat_message_cell.*
 
 class ChatActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivityChatBinding
+    private lateinit var viewModel: ChatViewModel
+
     lateinit var room: Room
     lateinit var friend: Friend
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
@@ -37,9 +48,37 @@ class ChatActivity : AppCompatActivity() {
                 this.onBackPressed()
         }
         // TODO userID必要？
-
+        initBinding()
+        initViewModel()
         initLayout()
         initData()
+    }
+
+    /**
+     * MVVMのBinding
+     *
+     */
+    private fun initBinding() {
+        binding = DataBindingUtil.setContentView(this,
+            R.layout.activity_chat
+        )
+        binding.lifecycleOwner = this
+    }
+
+    /**
+     * MVVMのViewModel
+     *
+     */
+    private fun initViewModel() {
+        viewModel = ViewModelProviders.of(this).get(ChatViewModel::class.java).apply {
+            // QiitaApiが実行されて正常終了した
+            items.observe(this@ChatActivity, Observer {
+                binding.apply {
+                    ChatView.customAdapter.refresh(it)
+                    //swipeRefreshLayout.isRefreshing = false
+                }
+            })
+        }
     }
 
     /**
@@ -63,8 +102,13 @@ class ChatActivity : AppCompatActivity() {
         }
         // 送信ボタン
         sendImageView.setOnClickListener {
-            if(inputEditText.text.isNotEmpty())
+            if(inputEditText.text.isNotEmpty()) {
                 MessageManager.registerMessage(room.documentId, inputEditText.text.toString())
+                hideKeybord()
+                inputEditText.text.clear()
+            }
+
+
         }
     }
 
@@ -100,6 +144,7 @@ class ChatActivity : AppCompatActivity() {
      *
      */
     private fun initData() {
+        viewModel.initData(this@ChatActivity, room.documentId)
     }
 
     /**

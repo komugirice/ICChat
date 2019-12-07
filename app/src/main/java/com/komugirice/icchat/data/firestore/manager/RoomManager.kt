@@ -118,9 +118,10 @@ class RoomManager {
 
                     // roomsに紐づくfriends取得
                     tempRooms.forEach {
-                        if(retRoom.value != null) {
-                            return@addOnSuccessListener
-                        }
+
+//                        if(retRoom.value != null) {
+//                            return@addOnSuccessListener
+//                        }
 
                         val room = it
                         FirebaseFirestore.getInstance()
@@ -143,6 +144,7 @@ class RoomManager {
                                             && it.second[0].userId.equals(userId))
 
                                             retRoom.postValue(it)
+                                            // TODO　returnしたい
 
                                     }
                                 }
