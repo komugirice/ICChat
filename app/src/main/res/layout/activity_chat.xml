@@ -77,11 +77,22 @@
             android:gravity="left|center"
             android:hint="@string/inputMessageHint"
             android:textSize="15sp"
-            android:layout_marginRight="72dp"
             android:paddingLeft="16dp"
             android:background="@drawable/background_chat_input_edit_text"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/sendImageView"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/sendImageView"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="48dp"
+            android:src="@drawable/ic_send_blue_48dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/inputEditText"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 

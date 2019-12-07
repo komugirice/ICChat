@@ -58,21 +58,18 @@ class ChatView  : RecyclerView {
         override fun getItemCount(): Int = items.size
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
-            FriendCellViewHolder(ChatMessageCellBinding.inflate(LayoutInflater.from(context), parent, false))
+            ChatMessageCellViewHolder(ChatMessageCellBinding.inflate(LayoutInflater.from(context), parent, false))
 
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-            if (holder is FriendCellViewHolder)
+            if (holder is ChatMessageCellViewHolder)
                 onBindViewHolder(holder, position)
         }
 
-        private fun onBindViewHolder(holder: FriendCellViewHolder, position: Int) {
+        private fun onBindViewHolder(holder: ChatMessageCellViewHolder, position: Int) {
             val data = items[position]
             holder.binding.message = data
-            holder.binding.root.setOnClickListener {
-
-            }
         }
 
     }
-    class FriendCellViewHolder(val binding: ChatMessageCellBinding) : RecyclerView.ViewHolder(binding.root)
+    class ChatMessageCellViewHolder(val binding: ChatMessageCellBinding) : RecyclerView.ViewHolder(binding.root)
 }

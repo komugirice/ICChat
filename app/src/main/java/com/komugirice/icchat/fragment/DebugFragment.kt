@@ -57,11 +57,17 @@ class DebugFragment : Fragment() {
     private fun initClick() {
         // デバッグユーザ追加
         buttonAddDebugUser.setOnClickListener {
-            //UserManager.registerDebugUsers(context)
+            UserManager.registerDebugUsers()
             var rooms = MutableLiveData<MutableList<Pair<Room, List<Friend>>>>()
             RoomManager.getLoginUserRooms(rooms)
             rooms.observe(this, androidx.lifecycle.Observer {
-                Log.d("rooms", it.toString())
+                RoomManager.registerDebugRooms(rooms.value, UserManager.getDebugUserList())
+                Toast.makeText(
+                    context,
+                    "デバッグユーザ登録が完了しました。",
+                    Toast.LENGTH_LONG
+                ).show()
+
             })
         }
 
@@ -83,14 +89,15 @@ class DebugFragment : Fragment() {
         friendList.observe(this, androidx.lifecycle.Observer {
             var friendIdList: MutableList<String> = friendList.value ?: mutableListOf()
 
-            UserManager.getDebugNotFriendIdArray(context, friendIdList, notFriendIdArray)
+            UserManager.getDebugNotFriendIdArray(friendIdList, notFriendIdArray)
 
             notFriendIdArray.observe(this, androidx.lifecycle.Observer {
                 context?.also {
-//                    adapter = ArrayAdapter<CharSequence>(
-//                        it, R.layout.row_spinner, notFriendIdArray?.value)
-//
-//                    SpinnerUsers.adapter = adapter
+                    val value = notFriendIdArray.value ?: arrayOf()
+                    adapter = ArrayAdapter<CharSequence>(
+                        it, R.layout.row_spinner, value)
+
+                    SpinnerUsers.adapter = adapter
                 }
             })
 

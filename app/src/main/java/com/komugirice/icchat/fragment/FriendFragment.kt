@@ -10,6 +10,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.google.firebase.firestore.FirebaseFirestore
+import com.komugirice.icchat.ChatActivity
 import com.komugirice.icchat.R
 import com.komugirice.icchat.data.firestore.User
 import com.komugirice.icchat.databinding.FragmentFriendBinding
@@ -46,7 +47,11 @@ class FriendFragment : Fragment() {
                     swipeRefreshLayout.isRefreshing = false
                 }
             })
-    }
+        }
+        // TODO これで良いか三浦さんに質問
+        binding.FriendsView.customAdapter.roomForChatActivity.observe(this@FriendFragment, Observer {
+            ChatActivity.start(context, it.first, it.second[0])
+        })
         return binding.root
     }
 

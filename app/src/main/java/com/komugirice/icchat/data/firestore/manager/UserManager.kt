@@ -15,7 +15,32 @@ import java.util.*
 class UserManager {
     companion object {
 
-        fun registerDebugUsers(context: Context?) {
+        fun getDebugUserList(): MutableList<User> {
+            var debugUserlist: MutableList<User> = mutableListOf()
+            //userIdが000000〜000009のユーザだけ作成。
+            for (i in 0..9) {
+
+                val userIdStr = "00000" + i.toString()
+                // ログインユーザIDは除外
+                if (userIdStr.equals(FireStoreUtil.getLoginUserId()))
+                    continue
+
+                debugUserlist.add(
+                    User().apply {
+                        userId = userIdStr
+                        name = "ユーザ_" + "00000" + i.toString()
+                        val birthString =
+                            ("199" + i.toString() + "/" + (i + 1).toString() + "/" + (i + 1).toString())
+                        birthDay = birthString.toDate("yyyy/MM/dd")
+                    }
+                )
+            }
+
+            return debugUserlist
+        }
+
+        fun registerDebugUsers() {
+            // まず登録済のユーザリストを取得
             FirebaseFirestore.getInstance()
                 .collection("user")
                 .get()
@@ -43,26 +68,17 @@ class UserManager {
                             }
                         }
                     }
-                    registerDebugUsers(context, currentUserPairs)
+                    registerDebugUsers(currentUserPairs)
                 }
         }
 
-        private fun registerDebugUsers(context: Context?, currentUsers: List<Pair<String, User>>) {
-            var thisUserlist: MutableList<User> = mutableListOf()
-            //userIdが000000〜000009のユーザだけ作成。
-            for (i in 0..9) {
-                thisUserlist.add(
-                    User().apply {
-                        userId = "00000" + i.toString()
-                        name = "ユーザ_" + "00000" + i.toString()
-                        val birthString =
-                            ("199" + i.toString() + "/" + (i + 1).toString() + "/" + (i + 1).toString())
-                        birthDay = birthString.toDate("yyyy/MM/dd")
-                    }
-                )
-            }
+        private fun registerDebugUsers(currentUsers: List<Pair<String, User>>) {
+            // 登録対象のデバッグユーザを取得
+            var thisUserlist: MutableList<User> = getDebugUserList()
+
             val currentUserIds = currentUsers.map { it.second.userId }
             thisUserlist.forEach { user ->
+                // 重複チェック
                 if (currentUserIds.contains(user.userId)) {
                     // userIdが一致した先頭レコードのdocumentIdを設定する
                     val documentId =
@@ -81,15 +97,10 @@ class UserManager {
                         .set(user)
                 }
             }
-            Toast.makeText(
-                context,
-                "デバッグユーザ登録が完了しました。",
-                Toast.LENGTH_LONG
-            ).show()
+
         }
 
         fun getDebugNotFriendIdArray(
-            context: Context?,
             friendIdList: MutableList<String>,
             notFriendIdArray: MutableLiveData<Array<CharSequence>>
         ) {

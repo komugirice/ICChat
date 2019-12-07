@@ -7,11 +7,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.komugirice.icchat.ChatActivity
 import com.komugirice.icchat.R
+import com.komugirice.icchat.data.firestore.Friend
+import com.komugirice.icchat.data.firestore.Room
 import com.komugirice.icchat.data.firestore.User
+import com.komugirice.icchat.data.firestore.manager.RoomManager
 import com.komugirice.icchat.databinding.FriendCellBinding
 
 class FriendsView  : RecyclerView {
@@ -38,6 +42,9 @@ class FriendsView  : RecyclerView {
 
     class Adapter(val context: Context) : RecyclerView.Adapter<ViewHolder>() {
         private val items = mutableListOf<User>()
+        // ↓に値が入ったらChatActivityに遷移する仕組み
+        var roomForChatActivity = MutableLiveData<Pair<Room, List<Friend>>>()
+
 
         fun refresh(list: List<User>) {
             items.apply {
@@ -67,8 +74,11 @@ class FriendsView  : RecyclerView {
         private fun onBindViewHolder(holder: FriendCellViewHolder, position: Int) {
             val data = items[position]
             holder.binding.user = data
+
             holder.binding.root.setOnClickListener {
-                ChatActivity.start(context)
+                // roomForChatActivity設定でChatActivityに遷移させる。
+                RoomManager.getTargetUserRoom(data.userId, roomForChatActivity)
+
             }
         }
 

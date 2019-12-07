@@ -1,8 +1,9 @@
 package com.komugirice.icchat.data.firestore
 
+import java.io.Serializable
 import java.util.*
 
-class Group {
+class Group: Serializable {
     var roomId: String = ""
     var userId: String =""
     var createdAt: Date = Date()

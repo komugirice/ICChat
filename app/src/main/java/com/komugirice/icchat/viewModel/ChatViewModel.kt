@@ -13,12 +13,17 @@ import com.komugirice.icchat.util.FireStoreUtil
 class ChatViewModel: ViewModel() {
 
     val items = MutableLiveData<List<Message>>()
-    //val friendList = MutableLiveData<MutableList<String>>()
     val isException = MutableLiveData<Throwable>()
 
 
     fun initData() {
 
     }
+
+    // TODO 監視
+//    fun update(msgList: MutableLiveData<MutableList<List<Message>>>) {
+//
+//
+//    }
 
 }

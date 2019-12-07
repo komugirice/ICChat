@@ -11,21 +11,9 @@
     <option name="TOOL_WINDOW_REGEXP_FILTER" value="false" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="242fd4c5-5dab-4fd2-ae57-1326d30bc308" name="Default Changelist" comment="FriendFragmentのmvvm化">
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__org_jetbrains_kotlinx_kotlinx_serialization_runtime_0_11_0_jar.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__org_jetbrains_kotlinx_kotlinx_serialization_runtime_common_0_11_0_jar.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/ChatActivity.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/Message.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/manager/FriendManager.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/manager/RoomManager.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/manager/UserManager.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/view/ChatView.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/viewModel/ChatViewModel.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/background_chat_input_edit_text.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/background_chat_message.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/ic_keyboard_arrow_left_black_24dp.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_chat.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/chat_message_cell.xml" afterDir="false" />
+    <list default="true" id="242fd4c5-5dab-4fd2-ae57-1326d30bc308" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/manager/MessageManager.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/ic_send_blue_48dp.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/5.4.1/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.4.1/executionHistory/executionHistory.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/5.4.1/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.4.1/executionHistory/executionHistory.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/5.4.1/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.4.1/fileHashes/fileHashes.bin" afterDir="false" />
@@ -36,20 +24,24 @@
       <change beforePath="$PROJECT_DIR$/.gradle/5.4.1/javaCompile/javaCompile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.4.1/javaCompile/javaCompile.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/5.4.1/javaCompile/taskHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/5.4.1/javaCompile/taskHistory.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/assetWizardSettings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/assetWizardSettings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/app.iml" beforeDir="false" afterPath="$PROJECT_DIR$/app/app.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/ChatActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/ChatActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/Friend.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/Friend.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/Group.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/Group.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/Message.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/Message.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/Room.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/Room.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/User.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/User.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/manager/RoomManager.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/manager/RoomManager.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/manager/UserManager.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/manager/UserManager.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/fragment/DebugFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/fragment/DebugFragment.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/fragment/FriendFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/fragment/FriendFragment.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/view/ChatView.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/view/ChatView.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/view/FriendsView.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/view/FriendsView.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/colors.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/colors.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/viewModel/ChatViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/viewModel/ChatViewModel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/viewModel/FriendViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/viewModel/FriendViewModel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_chat.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_chat.xml" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/build/classes/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -75,89 +67,100 @@
     </system>
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.21086262">
+    <splitter split-orientation="horizontal" split-proportion="0.4853211">
       <split-first>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
           <file pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/fragment/DebugFragment.kt">
+            <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/viewModel/ChatViewModel.kt">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="228">
-                  <caret line="63" selection-start-line="63" selection-end-line="63" />
+                <state relative-caret-position="105">
+                  <caret line="14" column="48" selection-start-line="14" selection-start-column="48" selection-end-line="14" selection-end-column="48" />
                 </state>
               </provider>
             </entry>
           </file>
           <file pinned="false" current-in-tab="false">
-            <entry file="file://$USER_HOME$/Library/Android/sdk/sources/android-29/android/view/View.java">
+            <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/view/ChatView.kt">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="198">
-                  <caret line="21256" selection-start-line="21256" selection-end-line="21256" />
+                <state relative-caret-position="369">
+                  <caret line="63" column="22" selection-start-line="63" selection-start-column="16" selection-end-line="63" selection-end-column="22" />
+                  <folding>
+                    <element signature="e#36#578#0" expanded="true" />
+                  </folding>
                 </state>
               </provider>
             </entry>
           </file>
           <file pinned="false" current-in-tab="false">
-            <entry file="file://$USER_HOME$/Library/Android/sdk/sources/android-29/android/os/Handler.java">
+            <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/ChatActivity.kt">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="198">
-                  <caret line="103" selection-start-line="103" selection-end-line="103" />
+                <state relative-caret-position="255">
+                  <caret line="29" column="7" lean-forward="true" selection-start-line="29" selection-start-column="7" selection-end-line="29" selection-end-column="7" />
                 </state>
               </provider>
             </entry>
           </file>
           <file pinned="false" current-in-tab="false">
-            <entry file="file://$USER_HOME$/Library/Android/sdk/sources/android-29/android/os/Looper.java">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="445">
-                  <caret line="162" selection-start-line="162" selection-end-line="162" />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/Room.kt">
+            <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable/ic_send_blue_48dp.xml">
               <provider selected="true" editor-type-id="text-editor">
                 <state relative-caret-position="60">
-                  <caret line="4" column="6" selection-start-line="4" selection-start-column="6" selection-end-line="4" selection-end-column="6" />
+                  <caret line="4" lean-forward="true" selection-start-line="4" selection-end-line="4" />
                 </state>
               </provider>
             </entry>
           </file>
           <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/extension/date.kt">
+            <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/manager/UserManager.kt">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="75">
-                  <caret line="6" column="21" selection-start-line="6" selection-start-column="21" selection-end-line="6" selection-end-column="21" />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/extension/string.kt">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="188">
-                  <caret line="164" column="17" selection-start-line="164" selection-start-column="11" selection-end-line="164" selection-end-column="17" />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$USER_HOME$/Library/Android/sdk/sources/android-29/android/view/accessibility/AccessibilityManager.java">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="445">
-                  <caret line="212" selection-start-line="212" selection-end-line="212" />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$USER_HOME$/Library/Android/sdk/sources/android-29/android/widget/TextView.java">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="273">
-                  <caret line="10577" selection-start-line="10577" selection-end-line="10577" />
+                <state relative-caret-position="169">
+                  <caret line="102" column="37" selection-start-line="102" selection-start-column="37" selection-end-line="102" selection-end-column="37" />
                   <folding>
-                    <element signature="e#405914#405915#0" expanded="true" />
-                    <element signature="e#405956#405957#0" expanded="true" />
+                    <element signature="e#54#499#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/util/FireStoreUtil.kt">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="405">
+                  <caret line="33" column="12" selection-start-line="33" selection-start-column="12" selection-end-line="33" selection-end-column="12" />
+                  <folding>
+                    <element signature="e#36#366#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/view/FriendsView.kt">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="735">
+                  <caret line="65" column="38" selection-start-line="65" selection-start-column="38" selection-end-line="65" selection-end-column="38" />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/Group.kt">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="60">
+                  <caret line="5" column="25" selection-start-line="5" selection-start-column="25" selection-end-line="5" selection-end-column="25" />
+                  <folding>
+                    <element signature="e#46#92#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/Friend.kt">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="90">
+                  <caret line="7" column="1" selection-start-line="7" selection-start-column="1" selection-end-line="7" selection-end-column="1" />
+                  <folding>
+                    <element signature="e#46#92#0" expanded="true" />
                   </folding>
                 </state>
               </provider>
@@ -167,73 +170,22 @@
       </split-first>
       <split-second>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/view/ChatView.kt">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="735">
-                  <caret line="49" selection-start-line="49" selection-end-line="49" />
-                  <folding>
-                    <element signature="e#36#578#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/view/FriendsView.kt">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="90">
-                  <caret line="45" selection-start-line="45" selection-end-line="45" />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/MainActivity.kt">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="233">
-                  <caret line="101" column="46" selection-start-line="101" selection-start-column="46" selection-end-line="101" selection-end-column="46" />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
+          <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/viewModel/FriendViewModel.kt">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="690">
-                  <caret line="46" column="51" selection-start-line="46" selection-start-column="51" selection-end-line="46" selection-end-column="51" />
-                  <folding>
-                    <element signature="e#41#346#0" expanded="true" />
-                  </folding>
+                <state relative-caret-position="243">
+                  <caret line="25" column="37" selection-start-line="25" selection-start-column="37" selection-end-line="25" selection-end-column="37" />
                 </state>
               </provider>
             </entry>
           </file>
           <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/viewModel/ChatViewModel.kt">
+            <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/manager/MessageManager.kt">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="240">
-                  <caret line="23" column="1" selection-start-line="23" selection-start-column="1" selection-end-line="23" selection-end-column="1" />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/manager/RoomManager.kt">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="373">
-                  <caret line="67" column="43" lean-forward="true" selection-start-line="67" selection-start-column="43" selection-end-line="67" selection-end-column="43" />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/manager/UserManager.kt">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="222">
-                  <caret line="120" selection-start-line="120" selection-end-line="120" />
+                <state relative-caret-position="375">
+                  <caret line="25" column="1" lean-forward="true" selection-start-line="25" selection-start-column="1" selection-end-line="25" selection-end-column="1" />
                   <folding>
-                    <element signature="e#54#288#0" expanded="true" />
+                    <element signature="e#54#325#0" expanded="true" />
                   </folding>
                 </state>
               </provider>
@@ -242,8 +194,8 @@
           <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/manager/FriendManager.kt">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="210">
-                  <caret line="14" selection-start-line="14" selection-end-line="14" selection-end-column="50" />
+                <state relative-caret-position="45">
+                  <caret line="7" selection-start-line="7" selection-end-line="7" />
                   <folding>
                     <element signature="e#54#266#0" expanded="true" />
                   </folding>
@@ -252,10 +204,19 @@
             </entry>
           </file>
           <file pinned="false" current-in-tab="false">
-            <entry file="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/bcff898385186a2ee48f88238f57e238/jetified-firebase-firestore-20.2.0/jars/classes.jar!/com/google/firebase/firestore/CollectionReference.class">
+            <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/manager/RoomManager.kt">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="420">
-                  <caret line="60" column="35" selection-start-line="60" selection-start-column="35" selection-end-line="60" selection-end-column="35" />
+                <state relative-caret-position="955">
+                  <caret line="142" column="46" selection-start-line="142" selection-start-column="46" selection-end-line="142" selection-end-column="46" />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/app/src/main/res/values/styles.xml">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="45">
+                  <caret line="3" column="62" selection-start-line="3" selection-start-column="62" selection-end-line="3" selection-end-column="62" />
                 </state>
               </provider>
             </entry>
@@ -264,8 +225,44 @@
             <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_chat.xml">
               <provider editor-type-id="android-designer2" />
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="1005">
-                  <caret line="68" column="41" selection-start-line="68" selection-start-column="41" selection-end-line="68" selection-end-column="41" />
+                <state relative-caret-position="135">
+                  <caret line="9" column="22" selection-start-line="9" selection-start-column="22" selection-end-line="9" selection-end-column="22" />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/app/src/main/res/values/strings.xml">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="375">
+                  <caret line="25" column="34" selection-start-line="25" selection-start-column="34" selection-end-line="25" selection-end-column="34" />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/app/src/main/res/values/colors.xml">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="321">
+                  <caret line="145" column="39" selection-start-line="145" selection-start-column="33" selection-end-line="145" selection-end-column="39" />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
+            <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/androidx.lifecycle/lifecycle-livedata-core/2.1.0/5411028b44e34d8adc95797fe7f6e05d322ebe83/lifecycle-livedata-core-2.1.0-sources.jar!/androidx/lifecycle/LiveData.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="4395">
+                  <caret line="317" column="13" selection-start-line="317" selection-start-column="13" selection-end-line="317" selection-end-column="13" />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
+            <entry file="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/bcff898385186a2ee48f88238f57e238/jetified-firebase-firestore-20.2.0/jars/classes.jar!/com/google/firebase/firestore/CollectionReference.class">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="420">
+                  <caret line="41" column="25" selection-start-line="41" selection-start-column="25" selection-end-line="41" selection-end-column="25" />
                 </state>
               </provider>
             </entry>
@@ -285,12 +282,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>com.example.flchat</find>
-      <find>FLChat</find>
-      <find>flchat</find>
-      <find>username</find>
-      <find>userid</find>
-      <find>Result</find>
       <find>ERROR</find>
       <find>LoginResult</find>
       <find>LoginRepository</find>
@@ -314,6 +305,13 @@
       <find>UUID</find>
       <find>toDate</find>
       <find>snapshot</find>
+      <find>hhmms</find>
+      <find>getLoginUserRooms(</find>
+      <find>set</find>
+      <find>@</find>
+      <find>observe</find>
+      <find>getTargetUserRoom</find>
+      <find>roomPairs</find>
     </findStrings>
     <replaceStrings>
       <replace>com.komugirice.flchat</replace>
@@ -342,8 +340,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/app/src/main/res/layout/design_fragment_icon_room.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/res/layout/design_fragment_icon_chat.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/design_fragment_icon_interest.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/design_fragment_icon_person.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/values/styles.xml" />
@@ -352,7 +348,6 @@
         <option value="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/group.kt" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/friend.kt" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/user.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/Group.kt" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/ui/login/LoginActivity.kt" />
         <option value="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/extension/string.kt" />
@@ -363,44 +358,47 @@
         <option value="$PROJECT_DIR$/app/src/main/res/layout/user_cell.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/UserAdapter.kt" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/FriendAdapter.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/User.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/Friend.kt" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/FriendsView.kt" />
         <option value="$PROJECT_DIR$/build.gradle" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/fragment_friend.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/fragment_interest.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/fragment_room.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/util/FireStoreUtil.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/fragment/FriendFragment.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/viewModel/FriendViewModel.kt" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/friend_cell.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/values/strings.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/Message.kt" />
         <option value="$PROJECT_DIR$/app/src/main/res/values/colors.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/chat_message_cell.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/view/ChatView.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/viewModel/ChatViewModel.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/view/FriendsView.kt" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/drawable/background_chat_input_edit_text.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/drawable/aa.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/drawable/background_chat_message.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_chat.xml" />
         <option value="$PROJECT_DIR$/app/build.gradle" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/manager/FriendManager.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/manager/UserManager.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/ChatActivity.kt" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/Room.kt" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/User.kt" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/Message.kt" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/Group.kt" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/Friend.kt" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/manager/UserManager.kt" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/fragment/DebugFragment.kt" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/view/FriendsView.kt" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/fragment/FriendFragment.kt" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/manager/RoomManager.kt" />
+        <option value="$PROJECT_DIR$/app/src/main/res/drawable/ic_send_blue_48dp.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_chat.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/manager/MessageManager.kt" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/ChatActivity.kt" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/view/ChatView.kt" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/viewModel/ChatViewModel.kt" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/viewModel/FriendViewModel.kt" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="1443" />
-    <option name="y" value="23" />
-    <option name="width" value="1597" />
-    <option name="height" value="877" />
+    <option name="x" value="180" />
+    <option name="y" value="126" />
+    <option name="width" value="1080" />
+    <option name="height" value="620" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -410,6 +408,17 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="ICChat" type="b2602c69:ProjectViewProjectNode" />
+              <item name="ICChat" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
       <pane id="Scope">
         <subPane subId="Scope 'Project Source Files'; set:Project Source Files; class com.jetbrains.cidr.lang.search.scopes.ProjectSourcesScopeProvider$SourceFilesScope">
           <expand>
@@ -602,17 +611,7 @@
           <select />
         </subPane>
       </pane>
-      <pane id="ProjectPane">
-        <subPane>
-          <expand>
-            <path>
-              <item name="ICChat" type="b2602c69:ProjectViewProjectNode" />
-              <item name="ICChat" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
+      <pane id="PackagesPane" />
       <pane id="AndroidView">
         <subPane>
           <expand>
@@ -660,27 +659,6 @@
               <item name="app" type="feadf853:AndroidModuleNode" />
               <item name="java" type="edd41e36:AndroidSourceTypeNode" />
               <item name="icchat" type="cbb59c9e:AndroidPsiDirectoryNode" />
-              <item name="extension" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="ICChat" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
-              <item name="icchat" type="cbb59c9e:AndroidPsiDirectoryNode" />
-              <item name="fragment" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="ICChat" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
-              <item name="icchat" type="cbb59c9e:AndroidPsiDirectoryNode" />
-              <item name="util" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="ICChat" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
-              <item name="icchat" type="cbb59c9e:AndroidPsiDirectoryNode" />
               <item name="view" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -721,7 +699,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -732,7 +709,7 @@
     <property name="android.project.structure.proportion" value="0.15" />
     <property name="android.sdk.path" value="$USER_HOME$/Library/Android/sdk" />
     <property name="last_directory_selection" value="$PROJECT_DIR$/app/src/main/res/drawable" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/app/src/main/res/drawable" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="not.eligible.for.single.variant.sync" value="true" />
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
     <property name="settings.editor.selected.configurable" value="experimental" />
@@ -949,7 +926,14 @@
       <option name="project" value="LOCAL" />
       <updated>1575365733474</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="RoomManager作成中">
+      <created>1575449634328</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1575449634328</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TodoView">
@@ -962,19 +946,19 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="1443" y="23" width="1597" height="877" extended-state="6" />
+    <frame x="0" y="23" width="1440" height="826" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Captures" order="0" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="1" />
-      <window_info content_ui="combo" id="Project" order="2" visible="true" weight="0.19678457" />
+      <window_info active="true" content_ui="combo" id="Project" order="2" visible="true" weight="0.22031474" />
       <window_info id="Structure" order="3" side_tool="true" />
       <window_info id="Favorites" order="4" side_tool="true" />
       <window_info id="Build Variants" order="5" side_tool="true" />
       <window_info id="Image Layers" order="6" />
       <window_info id="Resources Explorer" order="7" />
       <window_info id="Capture Tool" order="8" />
-      <window_info anchor="bottom" id="Build" order="0" sideWeight="0.4961489" weight="0.18216561" />
+      <window_info anchor="bottom" id="Build" order="0" sideWeight="0.4961489" visible="true" weight="0.23297003" />
       <window_info anchor="bottom" id="Run" order="1" sideWeight="0.49935815" weight="0.32738853" />
       <window_info anchor="bottom" id="TODO" order="2" weight="0.32674572" />
       <window_info anchor="bottom" id="Statistic" order="3" weight="0.32674572" />
@@ -982,7 +966,7 @@
       <window_info anchor="bottom" id="Terminal" order="5" sideWeight="0.49807444" weight="0.36815286" />
       <window_info anchor="bottom" id="Event Log" order="6" sideWeight="0.3145058" side_tool="true" weight="0.32793522" />
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.14394905" />
-      <window_info anchor="bottom" id="Logcat" order="8" sideWeight="0.68549424" visible="true" weight="0.35031846" />
+      <window_info anchor="bottom" id="Logcat" order="8" sideWeight="0.68549424" weight="0.17302452" />
       <window_info anchor="bottom" id="Android Profiler" order="9" weight="0.32806325" />
       <window_info anchor="right" id="Preview" order="0" />
       <window_info anchor="right" id="Device File Explorer" order="1" side_tool="true" />
@@ -990,7 +974,7 @@
       <window_info anchor="right" id="Theme Preview" order="3" />
       <window_info anchor="right" id="Gradle" order="4" />
       <window_info anchor="right" id="Palette&#9;" order="5" />
-      <window_info active="true" anchor="right" id="Debug" order="6" visible="true" weight="0.19935691" />
+      <window_info anchor="right" id="Debug" order="6" weight="0.19742489" />
       <window_info anchor="right" x="0" y="0" width="310" height="626" id="Documentation" order="7" side_tool="true" weight="0.3297568" />
     </layout>
   </component>
@@ -1004,7 +988,8 @@
     <MESSAGE value="FriendFragmentの表示成功" />
     <MESSAGE value="FriendFragmentのmvvm化対応中" />
     <MESSAGE value="FriendFragmentのmvvm化" />
-    <option name="LAST_COMMIT_MESSAGE" value="FriendFragmentのmvvm化" />
+    <MESSAGE value="RoomManager作成中" />
+    <option name="LAST_COMMIT_MESSAGE" value="RoomManager作成中" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1023,7 +1008,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="kotlin-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/view/FriendsView.kt</url>
-          <line>50</line>
+          <line>57</line>
           <properties />
           <option name="timeStamp" value="32" />
         </line-breakpoint>
@@ -1032,12 +1017,6 @@
           <line>25</line>
           <properties />
           <option name="timeStamp" value="55" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="kotlin-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/manager/RoomManager.kt</url>
-          <line>42</line>
-          <properties />
-          <option name="timeStamp" value="72" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="kotlin-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/fragment/DebugFragment.kt</url>
@@ -1053,27 +1032,51 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="kotlin-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/manager/RoomManager.kt</url>
-          <line>52</line>
+          <line>33</line>
           <properties />
           <option name="timeStamp" value="82" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="kotlin-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/manager/RoomManager.kt</url>
-          <line>62</line>
+          <line>84</line>
           <properties />
-          <option name="timeStamp" value="83" />
+          <option name="timeStamp" value="96" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="kotlin-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/manager/RoomManager.kt</url>
+          <line>75</line>
+          <properties />
+          <option name="timeStamp" value="97" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="kotlin-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/manager/RoomManager.kt</url>
           <line>67</line>
           <properties />
-          <option name="timeStamp" value="84" />
+          <option name="timeStamp" value="98" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="kotlin-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/manager/RoomManager.kt</url>
-          <line>55</line>
+          <line>47</line>
           <properties />
-          <option name="timeStamp" value="85" />
+          <option name="timeStamp" value="101" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="kotlin-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/manager/RoomManager.kt</url>
+          <line>46</line>
+          <properties />
+          <option name="timeStamp" value="104" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="kotlin-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/manager/RoomManager.kt</url>
+          <line>52</line>
+          <properties />
+          <option name="timeStamp" value="107" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="kotlin-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/manager/RoomManager.kt</url>
+          <line>121</line>
+          <properties />
+          <option name="timeStamp" value="117" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/build.gradle</url>
@@ -1087,6 +1090,11 @@
   <component name="debuggerHistoryManager">
     <expressions id="watch">
       <expression>
+        <expression-string>inputEditText</expression-string>
+        <language-id>kotlin</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
         <expression-string>userList</expression-string>
         <language-id>kotlin</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
@@ -1099,71 +1107,6 @@
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/LoginDataSource.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="11" column="3" selection-start-line="11" selection-start-column="3" selection-end-line="11" selection-end-column="3" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/row_spinner.xml">
-      <provider selected="true" editor-type-id="android-designer2" />
-      <provider editor-type-id="text-editor">
-        <state relative-caret-position="45">
-          <caret line="3" column="37" selection-start-line="3" selection-start-column="37" selection-end-line="3" selection-end-column="37" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_room.xml">
-      <provider selected="true" editor-type-id="android-designer2" />
-      <provider editor-type-id="text-editor">
-        <state relative-caret-position="195">
-          <caret line="13" lean-forward="true" selection-start-line="13" selection-end-line="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/45320070a3814931514a58bea4238e5d/appcompat-1.1.0/res/values-land/values-land.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="2" column="17" selection-start-line="2" selection-start-column="17" selection-end-line="2" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/values/dimens.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="5" lean-forward="true" selection-start-line="5" selection-end-line="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/45320070a3814931514a58bea4238e5d/appcompat-1.1.0/res/values/values.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="564" column="42" lean-forward="true" selection-start-line="564" selection-start-column="42" selection-end-line="564" selection-end-column="80" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/Friend.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="6" column="1" selection-start-line="6" selection-start-column="1" selection-end-line="6" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/Group.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="5" selection-start-line="5" selection-end-line="8" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/Message.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="8" column="26" selection-start-line="8" selection-start-column="26" selection-end-line="8" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable/ic_settings_white_48dp.xml">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -1183,24 +1126,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/values/styles.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="45">
-          <caret line="3" column="62" selection-start-line="3" selection-start-column="62" selection-end-line="3" selection-end-column="62" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/values/strings.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="375">
-          <caret line="25" column="34" selection-start-line="25" selection-start-column="34" selection-end-line="25" selection-end-column="34" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable/ic_launcher_background.xml">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable/ic_keyboard_arrow_left_black_24dp.xml">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_friend.xml">
@@ -1208,13 +1134,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="375">
           <caret line="25" column="9" selection-start-line="25" selection-start-column="9" selection-end-line="25" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/fragment/FriendFragment.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="22" column="24" selection-start-line="22" selection-start-column="24" selection-end-line="22" selection-end-column="24" />
         </state>
       </provider>
     </entry>
@@ -1228,24 +1147,8 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/values/colors.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="69">
-          <caret line="68" column="18" selection-start-line="68" selection-start-column="18" selection-end-line="68" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable/background_chat_input_edit_text＿.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="1" selection-start-line="1" selection-end-line="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable/aa.xml">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable/background_chat_input_edit_text＿.xml" />
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable/aa.xml" />
     <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable/background_chat_input_edit_text.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="75">
@@ -1260,59 +1163,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_chat.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1005">
-          <caret line="68" column="41" selection-start-line="68" selection-start-column="41" selection-end-line="68" selection-end-column="41" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/view/ChatView.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="735">
-          <caret line="49" selection-start-line="49" selection-end-line="49" />
-          <folding>
-            <element signature="e#36#578#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/viewModel/FriendViewModel.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="690">
-          <caret line="46" column="51" selection-start-line="46" selection-start-column="51" selection-end-line="46" selection-end-column="51" />
-          <folding>
-            <element signature="e#41#346#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/viewModel/ChatViewModel.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="23" column="1" selection-start-line="23" selection-start-column="1" selection-end-line="23" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/build.gradle">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="71">
           <caret line="27" column="1" selection-start-line="27" selection-start-column="1" selection-end-line="27" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/bcff898385186a2ee48f88238f57e238/jetified-firebase-firestore-20.2.0/jars/classes.jar!/com/google/firebase/firestore/CollectionReference.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="420">
-          <caret line="60" column="35" selection-start-line="60" selection-start-column="35" selection-end-line="60" selection-end-column="35" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/androidx.lifecycle/lifecycle-livedata-core/2.1.0/5411028b44e34d8adc95797fe7f6e05d322ebe83/lifecycle-livedata-core-2.1.0-sources.jar!/androidx/lifecycle/LiveData.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="200">
-          <caret line="317" column="4" selection-start-line="317" selection-start-column="4" selection-end-line="317" selection-end-column="4" />
         </state>
       </provider>
     </entry>
@@ -1321,13 +1175,6 @@
       <provider editor-type-id="text-editor">
         <state relative-caret-position="420">
           <caret line="28" column="20" selection-start-line="28" selection-start-column="20" selection-end-line="28" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/ChatActivity.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="585">
-          <caret line="50" column="13" lean-forward="true" selection-start-line="50" selection-start-column="13" selection-end-line="50" selection-end-column="13" />
         </state>
       </provider>
     </entry>
@@ -1359,23 +1206,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/MainActivity.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="233">
-          <caret line="101" column="46" selection-start-line="101" selection-start-column="46" selection-end-line="101" selection-end-column="46" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/util/FireStoreUtil.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="234">
-          <caret line="33" column="12" selection-start-line="33" selection-start-column="12" selection-end-line="33" selection-end-column="12" />
-          <folding>
-            <element signature="e#36#366#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/Library/Android/sdk/sources/android-29/android/view/accessibility/AccessibilityManager.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="445">
@@ -1385,8 +1215,8 @@
     </entry>
     <entry file="file://$USER_HOME$/Library/Android/sdk/sources/android-29/android/view/View.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="198">
-          <caret line="21256" selection-start-line="21256" selection-end-line="21256" />
+        <state relative-caret-position="18">
+          <caret line="21244" column="17" selection-start-line="21244" selection-start-column="17" selection-end-line="21244" selection-end-column="17" />
         </state>
       </provider>
     </entry>
@@ -1404,12 +1234,13 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/manager/FriendManager.kt">
+    <entry file="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/bcff898385186a2ee48f88238f57e238/jetified-firebase-firestore-20.2.0/jars/classes.jar!/com/google/firebase/firestore/Query.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="14" selection-start-line="14" selection-end-line="14" selection-end-column="50" />
+        <state relative-caret-position="202">
+          <caret line="453" column="31" selection-start-line="453" selection-start-column="31" selection-end-line="453" selection-end-column="31" />
           <folding>
-            <element signature="e#54#266#0" expanded="true" />
+            <element signature="e#21923#21924#0" expanded="true" />
+            <element signature="e#21970#21971#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1423,14 +1254,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/extension/string.kt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="188">
+        <state relative-caret-position="2430">
           <caret line="164" column="17" selection-start-line="164" selection-start-column="11" selection-end-line="164" selection-end-column="17" />
         </state>
       </provider>
     </entry>
     <entry file="file://$USER_HOME$/Library/Android/sdk/sources/android-29/android/widget/TextView.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="273">
+        <state relative-caret-position="152850">
           <caret line="10577" selection-start-line="10577" selection-end-line="10577" />
           <folding>
             <element signature="e#405914#405915#0" expanded="true" />
@@ -1439,41 +1270,217 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/view/FriendsView.kt">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/manager/UserManager" />
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/User.kt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="45" selection-start-line="45" selection-end-line="45" />
+        <state relative-caret-position="60">
+          <caret line="6" column="10" lean-forward="true" selection-start-line="6" selection-start-column="10" selection-end-line="6" selection-end-column="24" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/Room.kt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="4" column="6" selection-start-line="4" selection-start-column="6" selection-end-line="4" selection-end-column="6" />
+        <state relative-caret-position="135">
+          <caret line="9" column="1" lean-forward="true" selection-start-line="9" selection-start-column="1" selection-end-line="9" selection-end-column="1" />
+          <folding>
+            <element signature="e#46#92#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/manager/UserManager.kt">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/Message.kt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="222">
-          <caret line="120" selection-start-line="120" selection-end-line="120" />
-          <folding>
-            <element signature="e#54#288#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="75">
+          <caret line="5" column="27" selection-start-line="5" selection-start-column="27" selection-end-line="5" selection-end-column="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/MainActivity.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="193">
+          <caret line="66" column="7" selection-start-line="66" selection-start-column="7" selection-end-line="66" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/bcff898385186a2ee48f88238f57e238/jetified-firebase-firestore-20.2.0/jars/classes.jar!/com/google/firebase/firestore/DocumentReference.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-336">
+          <caret line="88" column="22" selection-start-line="88" selection-start-column="22" selection-end-line="88" selection-end-column="22" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/fragment/DebugFragment.kt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="228">
+        <state relative-caret-position="585">
           <caret line="63" selection-start-line="63" selection-end-line="63" />
+          <folding>
+            <element signature="e#41#1137#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/util/FireStoreUtil.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="405">
+          <caret line="33" column="12" selection-start-line="33" selection-start-column="12" selection-end-line="33" selection-end-column="12" />
+          <folding>
+            <element signature="e#36#366#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/view/FriendsView.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="735">
+          <caret line="65" column="38" selection-start-line="65" selection-start-column="38" selection-end-line="65" selection-end-column="38" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/Group.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="5" column="25" selection-start-line="5" selection-start-column="25" selection-end-line="5" selection-end-column="25" />
+          <folding>
+            <element signature="e#46#92#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/Friend.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="7" column="1" selection-start-line="7" selection-start-column="1" selection-end-line="7" selection-end-column="1" />
+          <folding>
+            <element signature="e#46#92#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/fragment/FriendFragment.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="525">
+          <caret line="50" column="29" selection-start-line="50" selection-start-column="29" selection-end-line="50" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/manager/FriendManager.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="45">
+          <caret line="7" selection-start-line="7" selection-end-line="7" />
+          <folding>
+            <element signature="e#54#266#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/androidx.lifecycle/lifecycle-livedata-core/2.1.0/5411028b44e34d8adc95797fe7f6e05d322ebe83/lifecycle-livedata-core-2.1.0-sources.jar!/androidx/lifecycle/LiveData.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4395">
+          <caret line="317" column="13" selection-start-line="317" selection-start-column="13" selection-end-line="317" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/bcff898385186a2ee48f88238f57e238/jetified-firebase-firestore-20.2.0/jars/classes.jar!/com/google/firebase/firestore/CollectionReference.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="420">
+          <caret line="41" column="25" selection-start-line="41" selection-start-column="25" selection-end-line="41" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable/ic_keyboard_arrow_left_black_24dp.xml">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/values/strings.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="375">
+          <caret line="25" column="34" selection-start-line="25" selection-start-column="34" selection-end-line="25" selection-end-column="34" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/values/colors.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="321">
+          <caret line="145" column="39" selection-start-line="145" selection-start-column="33" selection-end-line="145" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/values/styles.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="45">
+          <caret line="3" column="62" selection-start-line="3" selection-start-column="62" selection-end-line="3" selection-end-column="62" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/drawable/ic_send_blue_48dp.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="4" lean-forward="true" selection-start-line="4" selection-end-line="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_chat.xml">
+      <provider editor-type-id="android-designer2" />
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="9" column="22" selection-start-line="9" selection-start-column="22" selection-end-line="9" selection-end-column="22" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/manager/RoomManager.kt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="373">
-          <caret line="67" column="43" lean-forward="true" selection-start-line="67" selection-start-column="43" selection-end-line="67" selection-end-column="43" />
+        <state relative-caret-position="955">
+          <caret line="142" column="46" selection-start-line="142" selection-start-column="46" selection-end-line="142" selection-end-column="46" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/manager/MessageManager.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="375">
+          <caret line="25" column="1" lean-forward="true" selection-start-line="25" selection-start-column="1" selection-end-line="25" selection-end-column="1" />
+          <folding>
+            <element signature="e#54#325#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/ChatActivity.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="29" column="7" lean-forward="true" selection-start-line="29" selection-start-column="7" selection-end-line="29" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/view/ChatView.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="369">
+          <caret line="63" column="22" selection-start-line="63" selection-start-column="16" selection-end-line="63" selection-end-column="22" />
+          <folding>
+            <element signature="e#36#578#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/data/firestore/manager/UserManager.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="169">
+          <caret line="102" column="37" selection-start-line="102" selection-start-column="37" selection-end-line="102" selection-end-column="37" />
+          <folding>
+            <element signature="e#54#499#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/viewModel/ChatViewModel.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="14" column="48" selection-start-line="14" selection-start-column="48" selection-end-line="14" selection-end-column="48" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/komugirice/icchat/viewModel/FriendViewModel.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="243">
+          <caret line="25" column="37" selection-start-line="25" selection-start-column="37" selection-end-line="25" selection-end-column="37" />
         </state>
       </provider>
     </entry>

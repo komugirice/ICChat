@@ -5,6 +5,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.FirebaseFirestore
+import com.komugirice.icchat.data.firestore.Room
 import com.komugirice.icchat.data.firestore.User
 import com.komugirice.icchat.util.FireStoreUtil
 
@@ -12,17 +13,18 @@ import com.komugirice.icchat.util.FireStoreUtil
 class FriendViewModel: ViewModel() {
 
     val items = MutableLiveData<List<User>>()
-    val friendList = MutableLiveData<MutableList<String>>()
     val isException = MutableLiveData<Throwable>()
+
 
 //    fun initData(friendList: MutableLiveData<MutableList<String>>) {
 //        updateFriends(friendList)
 //    }
     fun initData(@NonNull owner: LifecycleOwner) {
-        FireStoreUtil.getFriends(friendList)
-        friendList.observe(owner, androidx.lifecycle.Observer {
-            updateFriends(friendList)
-        })
+        val friendList = MutableLiveData<MutableList<String>>()
+            FireStoreUtil.getFriends(friendList)
+            friendList.observe(owner, androidx.lifecycle.Observer {
+                updateFriends(friendList)
+            })
     }
 
     fun updateFriends(friendList: MutableLiveData<MutableList<String>>) {
