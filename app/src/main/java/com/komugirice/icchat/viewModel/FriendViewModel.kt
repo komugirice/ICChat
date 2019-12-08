@@ -34,7 +34,7 @@ class FriendViewModel: ViewModel() {
             friendList.value?.also {
                 it.forEach {
                     FirebaseFirestore.getInstance()
-                        .collection("user")
+                        .collection("users")
                         .whereEqualTo("userId", it)
                         .get()
                         .addOnCompleteListener {
@@ -43,7 +43,8 @@ class FriendViewModel: ViewModel() {
                                 return@addOnCompleteListener
                             // TODO 取得は複数件しか扱えないのか
                             it.result?.toObjects(User::class.java)?.also { users ->
-                                userList.add(users[0])
+                                if(users.isNotEmpty())
+                                    userList.add(users[0])
                             }
                             // 後処理
                             items.postValue(userList)

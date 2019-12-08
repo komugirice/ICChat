@@ -7,4 +7,5 @@ class Room: Serializable {
     var documentId: String = ""
     var name: String =""
     var createdAt: Date? = Date()
+    var userIdList = mutableListOf<String>()
 }

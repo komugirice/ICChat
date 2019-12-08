@@ -1,6 +1,5 @@
 package com.komugirice.icchat
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -10,16 +9,13 @@ import android.view.inputmethod.InputMethodManager
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import com.komugirice.icchat.data.firestore.Friend
 import com.komugirice.icchat.data.firestore.Room
-import com.komugirice.icchat.data.firestore.User
-import com.komugirice.icchat.data.firestore.manager.MessageManager
+import com.komugirice.icchat.data.firestore.store.MessageStore
 import com.komugirice.icchat.databinding.ActivityChatBinding
-import com.komugirice.icchat.databinding.FragmentFriendBinding
 import com.komugirice.icchat.viewModel.ChatViewModel
-import com.komugirice.icchat.viewModel.FriendViewModel
 import kotlinx.android.synthetic.main.activity_chat.*
-import kotlinx.android.synthetic.main.chat_message_cell.*
+import kotlinx.android.synthetic.main.activity_chat.swipeRefreshLayout
+import kotlinx.android.synthetic.main.fragment_friend.*
 
 class ChatActivity : AppCompatActivity() {
 
@@ -27,7 +23,6 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var viewModel: ChatViewModel
 
     lateinit var room: Room
-    lateinit var friend: Friend
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,7 +37,7 @@ class ChatActivity : AppCompatActivity() {
     private fun initialize() {
         // roomId設定
         intent.getSerializableExtra(KEY_ROOM).also {
-            if(it is Room)
+            if(it is Room && it.documentId.isNotEmpty())
                 room = it
             else
                 this.onBackPressed()
@@ -89,6 +84,7 @@ class ChatActivity : AppCompatActivity() {
         initText()
         initEditText()
         initClick()
+        initSwipeRefreshLayout()
     }
 
     /**
@@ -103,7 +99,7 @@ class ChatActivity : AppCompatActivity() {
         // 送信ボタン
         sendImageView.setOnClickListener {
             if(inputEditText.text.isNotEmpty()) {
-                MessageManager.registerMessage(room.documentId, inputEditText.text.toString())
+                MessageStore.registerMessage(room.documentId, inputEditText.text.toString())
                 hideKeybord()
                 inputEditText.text.clear()
             }
@@ -131,7 +127,7 @@ class ChatActivity : AppCompatActivity() {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 // EditTextに値がある場合
                 if(textView.text.toString().isNotEmpty()) {
-                    MessageManager.registerMessage(room.documentId, textView.text.toString())
+                    MessageStore.registerMessage(room.documentId, textView.text.toString())
                 }
                 //true
             }
@@ -147,6 +143,12 @@ class ChatActivity : AppCompatActivity() {
         viewModel.initData(this@ChatActivity, room.documentId)
     }
 
+    private fun initSwipeRefreshLayout() {
+        swipeRefreshLayout.setOnRefreshListener {
+            viewModel.initData(this@ChatActivity, room.documentId)
+        }
+    }
+
     /**
      * hideKeybordメソッド
      *
@@ -156,12 +158,10 @@ class ChatActivity : AppCompatActivity() {
     }
 
     companion object {
-        private const val KEY_FRIEND = "key_friend"
         private const val KEY_ROOM = "key_room"
-        fun start(context: Context?, room: Room, friend: Friend) =
+        fun start(context: Context?, room: Room) =
             context?.startActivity(
                 Intent(context, ChatActivity::class.java)
-                    .putExtra(KEY_FRIEND, friend)
                     .putExtra(KEY_ROOM, room)
             )
     }
