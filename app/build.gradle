@@ -49,6 +49,8 @@ dependencies {
     // ViewModel
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycler_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycler_version"
+    // ログ出力
+    implementation "com.jakewharton.timber:timber:$timber_version"
 }
 
 apply plugin: 'com.google.gms.google-services'

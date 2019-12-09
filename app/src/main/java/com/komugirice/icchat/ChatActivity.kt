@@ -2,10 +2,10 @@ package com.komugirice.icchat
 
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -14,8 +14,6 @@ import com.komugirice.icchat.data.firestore.store.MessageStore
 import com.komugirice.icchat.databinding.ActivityChatBinding
 import com.komugirice.icchat.viewModel.ChatViewModel
 import kotlinx.android.synthetic.main.activity_chat.*
-import kotlinx.android.synthetic.main.activity_chat.swipeRefreshLayout
-import kotlinx.android.synthetic.main.fragment_friend.*
 
 class ChatActivity : AppCompatActivity() {
 
@@ -66,11 +64,10 @@ class ChatActivity : AppCompatActivity() {
      */
     private fun initViewModel() {
         viewModel = ViewModelProviders.of(this).get(ChatViewModel::class.java).apply {
-            // QiitaApiが実行されて正常終了した
             items.observe(this@ChatActivity, Observer {
                 binding.apply {
                     ChatView.customAdapter.refresh(it)
-                    //swipeRefreshLayout.isRefreshing = false
+                    swipeRefreshLayout.isRefreshing = false
                 }
             })
         }
@@ -143,11 +140,16 @@ class ChatActivity : AppCompatActivity() {
         viewModel.initData(this@ChatActivity, room.documentId)
     }
 
+    /**
+     * initSwipeRefreshLayoutメソッド
+     *
+     */
     private fun initSwipeRefreshLayout() {
         swipeRefreshLayout.setOnRefreshListener {
             viewModel.initData(this@ChatActivity, room.documentId)
         }
     }
+
 
     /**
      * hideKeybordメソッド

@@ -18,7 +18,7 @@ class MessageStore {
             }
 
             FirebaseFirestore.getInstance()
-                .collection("messages/$roomId/messages")
+                .collection("rooms/$roomId/messages")
                 .document(msgObj.documentId)
                 .set(msgObj)
         }
@@ -26,7 +26,7 @@ class MessageStore {
         fun getMessages(roomId: String, liveMsgList: MutableLiveData<List<Message>>) {
 
             FirebaseFirestore.getInstance()
-                .collection("messages/$roomId/messages")
+                .collection("rooms/$roomId/messages")
                 .get()
                 .addOnSuccessListener {
                     val messages = it.toObjects(Message::class.java)

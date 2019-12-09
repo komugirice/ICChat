@@ -3,15 +3,10 @@ package com.komugirice.icchat.view
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.komugirice.icchat.R
 import com.komugirice.icchat.data.firestore.Message
-import com.komugirice.icchat.data.firestore.User
 import com.komugirice.icchat.databinding.ChatMessageCellBinding
 
 
