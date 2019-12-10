@@ -52,16 +52,16 @@ class UserStore {
                 val tmp = User().apply {
                     userId = it
                     name = "ユーザ_" + it
-                    val i = it.substring(it.length-1, it.length)
+                    val i = it.substring(it.length - 1, it.length)
                     val birthString =
-                        ("199" +  i + "/" + (i + 1).toString() + "/" + (i + 1).toString())
+                        ("199" + i + "/" + (i + 1).toString() + "/" + (i + 1).toString())
                     birthDay = birthString.toDate("yyyy/MM/dd")
                     friendIdList.add(UserManager.myUserId)
                     documentId = UUID.randomUUID().toString()
                 }
                 // ログインユーザID専用
                 if (it.equals(UserManager.myUserId)) {
-                    tmp.documentId =  FirebaseAuth.getInstance().currentUser?.uid.toString()
+                    tmp.documentId = FirebaseAuth.getInstance().currentUser?.uid.toString()
                     tmp.friendIdList.clear()
                     //tmp.friendIdList = userIdList.filter{ it!= UserManager.myUserId}.toMutableList()
                 }
@@ -146,7 +146,7 @@ class UserStore {
         }
 
         /**
-         * デバッグ用ユーザリスト登録
+         * フレンドではないユーザリスト取得
          *
          * @param friendIdList フレンドであるuserId配列
          * @param notFriendIdArray フレンドではないuserId配列
@@ -188,37 +188,61 @@ class UserStore {
 
         /**
          * 友だち追加
+         * 追加していない友だちしか呼び出せない設計
          *
          * @return user
          *
          */
         fun addFriend(context: Context?, friendId: String) {
             val myUserId = UserManager.myUserId
-            // TODO 後で消す
+            // UserManagerのMyUser出来たら消す。
             FirebaseFirestore.getInstance()
                 .collection("users")
                 .whereEqualTo("userId", myUserId)
                 .get()
                 .addOnCompleteListener {
                     it.result?.toObjects(User::class.java)?.firstOrNull().also {
-                        it?.also{
-                            it.friendIdList.add(friendId)
+                        it?.also {
+                            it.friendIdList.contains(friendId).not().apply {
+                                it.friendIdList.add(friendId)
+                            }
                             // friend追加の後更新
                             FirebaseFirestore.getInstance()
                                 .collection("users")
                                 .document(it.documentId)
                                 .set(it)
 
-                            Toast.makeText(
-                                context,
-                                "友だち追加が完了しました。",
-                                Toast.LENGTH_LONG
-                            ).show()
-                        }
-                    }
+                            // 友だち側登録
+                            FirebaseFirestore.getInstance()
+                                .collection("users")
+                                .whereEqualTo("userId", friendId)
+                                .get()
+                                .addOnCompleteListener {
+                                    it.result?.toObjects(User::class.java)?.firstOrNull().also {
+                                        it?.also {
+                                            it.friendIdList.contains(myUserId).not().apply {
+                                                it.friendIdList.add(myUserId)
+                                            }
+                                            // friend追加の後更新
+                                            FirebaseFirestore.getInstance()
+                                                .collection("users")
+                                                .document(it.documentId)
+                                                .set(it)
 
+
+                                            Toast.makeText(
+                                                context,
+                                                "友だち追加が完了しました。",
+                                                Toast.LENGTH_LONG
+                                            ).show()
+                                        }
+                                    }
+
+                                }
+                        }
+
+                    }
                 }
         }
-
     }
 }

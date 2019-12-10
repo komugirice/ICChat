@@ -33,7 +33,6 @@ class RoomStore {
                     tempRooms.forEach {
                         if (it.userIdList.contains(userId))
                             rooms.add(it)
-                        // 最後の要素確認
                     }
                     pRooms.postValue(rooms)
                 }
@@ -42,45 +41,45 @@ class RoomStore {
         /**
          * ログインユーザと友だちのサシのチャットの重複チェックを行い、存在しなかったら登録する。
          * @param rooms: MutableList<Room>      ログインユーザのルームリスト
-         * @param targetUserList: List<User>    デバッグユーザ登録リスト
+         * @param targetUserId: String    対象ユーザID
          *
          *
          */
-        fun registerDebugRooms(rooms: MutableList<Room>?, targetUserList: List<User>){
+        fun registerSingleUserRooms(rooms: MutableList<Room>?, targetUserId: String){
             val loginUserId = UserManager.myUserId
-            targetUserList.forEach targetUserLoop@{ targetUser ->
 
-                val tmpUserIdList = mutableListOf(loginUserId, targetUser.userId)
+            val サシリスト = mutableListOf(loginUserId, targetUserId)
 
-                // 全てのroomでサシチャットの重複対象チェック
-                rooms?.forEach {
-                    if(it.userIdList.size == tmpUserIdList.size
-                        && it.userIdList.toList().containsAll(tmpUserIdList)) {
-                        // 重複
-                        return@targetUserLoop
+            // 全てのroomでサシチャットの重複対象チェック
+            rooms?.forEach {
+                if(it.userIdList.size == サシリスト.size
+                    && it.userIdList.toList().containsAll(サシリスト)) {
+                    // 重複
+                    return@forEach
 
-                    }
                 }
                 // 重複しない場合、新規登録
                 val room = Room().apply {
-                    name = targetUser.name
+                    //name = targetUser.name
                     documentId = UUID.randomUUID().toString()
-                    userIdList = tmpUserIdList
+                    userIdList = サシリスト
                 }
                 FirebaseFirestore.getInstance()
                     .collection("rooms")
                     .document(room.documentId)
                     .set(room)
             }
+
         }
 
         /**
          * getTargetUserRoomメソッド
          *
-         * @param userId 取得対象ユーザID
+         * @param targetUser 取得対象ユーザ
          * @return retRoom 取得対象ユーザのRoomを設定します
          */
-        fun getTargetUserRoom(userId: String, retRoom: MutableLiveData<Room>) {
+        fun getTargetUserRoom(targetUser: User, retRoom: MutableLiveData<Room>) {
+            val サシリスト = mutableListOf(UserManager.myUserId, targetUser.userId)
             // rooms取得
             FirebaseFirestore.getInstance()
                 .collection("rooms")
@@ -89,9 +88,12 @@ class RoomStore {
 
                     var tempRooms = it.toObjects(Room::class.java)
 
-                    // 引数のuserIdに紐づくRoom取得
+                    // 引数のuserIdに紐づくサシチャットのRoom取得
                     tempRooms.forEach {
-                        if (it.userIdList.contains(userId)) {
+                        if (it.userIdList.size == サシリスト.size
+                            && it.userIdList.containsAll(サシリスト)) {
+                            // サシチャットはルーム名を対象ユーザ名に設定する。
+                            it.name = targetUser.name
                             retRoom.postValue(it)
                             return@addOnSuccessListener
                         }

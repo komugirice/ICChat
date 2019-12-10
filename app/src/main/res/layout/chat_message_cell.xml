@@ -9,10 +9,10 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     android:id="@+id/rootView"
     android:layout_width="match_parent"
-    android:paddingStart="16dp"
+    android:paddingStart="40dp"
     android:paddingEnd="16dp"
-    android:paddingTop="4dp"
-    android:paddingBottom="4dp"
+    android:paddingTop="16dp"
+    android:paddingBottom="16dp"
     android:layout_height="wrap_content">
 
     <TextView
@@ -20,7 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right"
-        android:background="@drawable/background_chat_message"
+        android:background="@drawable/background_chat_right_message"
         android:paddingStart="12dp"
         android:paddingTop="5dp"
         android:paddingEnd="12dp"

@@ -47,23 +47,26 @@ class DebugFragment : Fragment() {
         // デバッグユーザ追加
         buttonAddDebugUser.setOnClickListener {
             UserStore.registerDebugUsers()
-            var rooms = MutableLiveData<MutableList<Room>>()
-            RoomStore.getLoginUserRooms(rooms)
-            rooms.observe(this, androidx.lifecycle.Observer {
-                RoomStore.registerDebugRooms(rooms.value, UserStore.getDebugUserList())
-                Toast.makeText(
-                    context,
-                    "デバッグユーザ登録が完了しました。",
-                    Toast.LENGTH_LONG
-                ).show()
 
-            })
+            Toast.makeText(
+                context,
+                "デバッグユーザ登録が完了しました。",
+                Toast.LENGTH_LONG
+            ).show()
+
+
         }
 
         // 友だち追加
         buttonAddDebugFriend.setOnClickListener {
             val friendId: String = SpinnerUsers.selectedItem.toString()
             UserStore.addFriend(context, friendId)
+
+            var rooms = MutableLiveData<MutableList<Room>>()
+            RoomStore.getLoginUserRooms(rooms)
+            rooms.observe(this, androidx.lifecycle.Observer {
+                RoomStore.registerSingleUserRooms(rooms.value, friendId)
+            })
         }
 
         buttonRefresh.setOnClickListener{

@@ -105,12 +105,12 @@ class LoginActivity : AppCompatActivity() {
 
             login.setOnClickListener {
                 loading.visibility = View.VISIBLE
-                //loginViewModel.login(userId.text.toString(), password.text.toString())
+                loginViewModel.login(userId.text.toString(), password.text.toString())
 
             }
         }
         //デバッグ
-        loginViewModel.login("000000", "000000")
+        //loginViewModel.login("000000", "000000")
     }
 
     fun initLayout() {

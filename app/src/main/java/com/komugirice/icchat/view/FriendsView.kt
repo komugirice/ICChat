@@ -71,7 +71,7 @@ class FriendsView  : RecyclerView {
 
             holder.binding.root.setOnClickListener {
                 // roomForChatActivity設定でChatActivityに遷移させる。
-                RoomStore.getTargetUserRoom(data.userId, roomForChatActivity)
+                RoomStore.getTargetUserRoom(data, roomForChatActivity)
 
             }
         }

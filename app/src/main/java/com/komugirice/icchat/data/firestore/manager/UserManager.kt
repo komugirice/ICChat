@@ -8,7 +8,7 @@ object UserManager {
 
     val myUserId = FireStoreUtil.getLoginUserId() // ここにSharedPreferencesから取得する
 
-    var myUser = User()
+    var myUser = User() // TODO
         set(value) {
             field = value
             myFriends = allUsers.filter { value.friendIdList.contains(it.userId) }
