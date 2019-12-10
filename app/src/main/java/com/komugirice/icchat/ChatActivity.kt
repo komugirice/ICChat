@@ -42,7 +42,6 @@ class ChatActivity : BaseActivity() {
             else
                 this.onBackPressed()
         }
-        // TODO userID必要？
         initBinding()
         initViewModel()
         initLayout()
@@ -72,6 +71,11 @@ class ChatActivity : BaseActivity() {
                     // 一番下へ移動
                     ChatView.scrollToPosition(ChatView.customAdapter.itemCount - 1)
                     swipeRefreshLayout.isRefreshing = false
+                }
+            })
+            users.observe(this@ChatActivity, Observer {
+                binding.apply {
+                    ChatView.customAdapter.setUsers(it)
                 }
             })
         }

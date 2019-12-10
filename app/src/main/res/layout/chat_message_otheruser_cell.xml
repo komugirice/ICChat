@@ -6,8 +6,8 @@
             name="message"
             type="com.komugirice.icchat.data.firestore.Message" />
         <variable
-            name="userName"
-            type="String" />
+            name="user"
+            type="com.komugirice.icchat.data.firestore.User" />
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/rootView"
@@ -25,7 +25,7 @@
             android:textColor="@android:color/black"
             android:layout_marginTop="2dp"
             android:textSize="10sp"
-            android:text="@{userName}"
+            android:text="@{user.name}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 

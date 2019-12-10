@@ -10,7 +10,9 @@ import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 import com.komugirice.icchat.data.firestore.Message
 import com.komugirice.icchat.data.firestore.Room
+import com.komugirice.icchat.data.firestore.User
 import com.komugirice.icchat.data.firestore.store.MessageStore
+import com.komugirice.icchat.data.firestore.store.RoomStore
 import timber.log.Timber
 import java.util.*
 
@@ -20,14 +22,18 @@ class ChatViewModel: ViewModel() {
     val items = MutableLiveData<List<Message>>()
     val isException = MutableLiveData<Throwable>()
     private var messageListener: ListenerRegistration? = null
+    val users = MutableLiveData<List<User>>()
 
 
     fun initData(@NonNull owner: LifecycleOwner, roomId: String) {
         MessageStore.getMessages(roomId, items)
         items.observe(owner, Observer {
+            // 監視
             val lastCreatedAt = it.map{ it.createdAt }.max() ?: Date()
             initSubscribe(roomId, lastCreatedAt)
         })
+        // ユーザ情報保持
+        RoomStore.getTargetRoomUsers(roomId, users)
     }
 
     /**

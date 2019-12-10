@@ -1,6 +1,7 @@
 package com.komugirice.icchat.view
 
 import android.content.Context
+import android.text.method.TextKeyListener.clear
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
@@ -11,10 +12,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.komugirice.icchat.BaseActivity
 import com.komugirice.icchat.data.firestore.Message
+import com.komugirice.icchat.data.firestore.User
 import com.komugirice.icchat.data.firestore.manager.UserManager
 import com.komugirice.icchat.databinding.ChatMessageCellBinding
 import com.komugirice.icchat.databinding.ChatMessageOtheruserCellBinding
-
+import java.util.Collections.addAll
 
 
 class ChatView  : RecyclerView {
@@ -41,6 +43,7 @@ class ChatView  : RecyclerView {
 
     class Adapter(val context: Context) : RecyclerView.Adapter<ViewHolder>() {
         private val items = mutableListOf<Message>()
+        private val usersMap = mutableMapOf<String, User>()
 
         fun refresh(list: List<Message>) {
             items.apply {
@@ -50,9 +53,11 @@ class ChatView  : RecyclerView {
             notifyDataSetChanged()
         }
 
-        fun addItem(list: List<Message>) {
-            items.apply {
-                addAll(list)
+        fun setUsers(list: List<User>) {
+            val map = list.map{ it.userId to it}.toMap()
+            usersMap.apply {
+                clear()
+                putAll(map)
             }
             notifyDataSetChanged()
         }
@@ -135,7 +140,7 @@ class ChatView  : RecyclerView {
             val data = items[position]
             holder.binding.message = data
             // TODO UserManagerのfriendsから取得
-            holder.binding.userName = "テストユーザ"
+            holder.binding.user = usersMap[data.userId]
         }
 
         /**

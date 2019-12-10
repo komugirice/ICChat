@@ -101,5 +101,40 @@ class RoomStore {
 
                 }
         }
+
+        /**
+         * 対象のルームに所属するユーザ情報を取得する
+         * ChatViewModelで使用
+         *
+         * @param roomId 対象のルーム
+         */
+        fun getTargetRoomUsers(roomId: String, users: MutableLiveData<List<User>>) {
+            val userList = mutableListOf<User>()
+            // rooms取得
+            FirebaseFirestore.getInstance()
+                .collection("rooms")
+                .document(roomId)
+                .get()
+                .addOnSuccessListener {
+                    var room: Room? = it.toObject(Room::class.java)
+                    room?.userIdList?.apply{
+                        this.remove(UserManager.myUserId)
+                        this.forEach{
+                            FirebaseFirestore.getInstance()
+                                .collection("users")
+                                .whereEqualTo("userId", it)
+                                .get()
+                                .addOnCompleteListener {
+                                    it.result?.toObjects(User::class.java)?.firstOrNull().also {
+                                        it?.apply{userList.add(it)}
+                                        users.postValue(userList)
+                                    }
+                                }
+
+                        }
+                    }
+
+                }
+        }
     }
 }
