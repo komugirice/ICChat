@@ -69,6 +69,8 @@ class ChatActivity : BaseActivity() {
             items.observe(this@ChatActivity, Observer {
                 binding.apply {
                     ChatView.customAdapter.refresh(it)
+                    // 一番下へ移動
+                    ChatView.scrollToPosition(ChatView.customAdapter.itemCount - 1)
                     swipeRefreshLayout.isRefreshing = false
                 }
             })
@@ -105,6 +107,7 @@ class ChatActivity : BaseActivity() {
 
 
         }
+
     }
 
     /**
@@ -133,7 +136,7 @@ class ChatActivity : BaseActivity() {
             false
         }
 
-        // TODO EditText以外をタッチしてもフォーカスが変わらない
+        // swipeRefreshLayoutはクリックしてもフォーカスが変わらない。
         inputEditText.setOnFocusChangeListener { v, hasFocus ->
             if(!hasFocus)
                 hideKeybord(v)
@@ -156,16 +159,6 @@ class ChatActivity : BaseActivity() {
         swipeRefreshLayout.setOnRefreshListener {
             viewModel.initData(this@ChatActivity, room.documentId)
         }
-    }
-
-    /**
-     * dispatchTouchEvent
-     *
-     */
-    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
-        // TODO EditText押下しても消えてしまう
-        hideKeybord(inputEditText)
-        return super.dispatchTouchEvent(ev)
     }
 
     companion object {

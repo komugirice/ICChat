@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:focusableInTouchMode="true"
+    android:clickable="true"
     tools:context=".ChatActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -46,6 +47,8 @@
         android:id="@+id/swipeRefreshLayout"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:focusableInTouchMode="true"
+        android:clickable="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/header"
@@ -53,6 +56,8 @@
 
         <com.komugirice.icchat.view.ChatView
             android:id="@+id/ChatView"
+            android:focusableInTouchMode="true"
+            android:clickable="true"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
