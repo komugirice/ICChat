@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
         <variable
             name="message"
             type="com.komugirice.icchat.data.firestore.Message" />
     </data>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<androidx.constraintlayout.widget.ConstraintLayout
     android:id="@+id/rootView"
     android:layout_width="match_parent"
     android:paddingStart="16dp"
@@ -19,25 +19,27 @@
         android:id="@+id/messageTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp"
-        android:paddingStart="12dp"
-        android:paddingEnd="12dp"
-        android:text="@{message.message}"
+        android:layout_gravity="right"
         android:background="@drawable/background_chat_message"
-        android:gravity="start"
+        android:paddingStart="12dp"
+        android:paddingTop="5dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="5dp"
+        android:text="@{message.message}"
         android:textColor="@android:color/black"
         android:textSize="12sp"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/dateTextView"
         android:layout_width="wrap_content"
-        android:layout_height="20dp"
+        android:layout_height="wrap_content"
         android:textColor="@android:color/black"
+        android:layout_marginTop="2dp"
         android:textSize="10sp"
-        app:layout_constraintEnd_toEndOf="@id/messageTextView"
+        app:dateTime="@{message.createdAt}"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/messageTextView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

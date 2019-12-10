@@ -63,6 +63,7 @@ class ChatView  : RecyclerView {
         private fun onBindViewHolder(holder: ChatMessageCellViewHolder, position: Int) {
             val data = items[position]
             holder.binding.message = data
+            holder.binding.messageTextView
         }
 
     }

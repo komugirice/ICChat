@@ -3,6 +3,8 @@ package com.komugirice.icchat
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.MotionEvent
+import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
@@ -15,7 +17,7 @@ import com.komugirice.icchat.databinding.ActivityChatBinding
 import com.komugirice.icchat.viewModel.ChatViewModel
 import kotlinx.android.synthetic.main.activity_chat.*
 
-class ChatActivity : AppCompatActivity() {
+class ChatActivity : BaseActivity() {
 
     private lateinit var binding: ActivityChatBinding
     private lateinit var viewModel: ChatViewModel
@@ -97,7 +99,7 @@ class ChatActivity : AppCompatActivity() {
         sendImageView.setOnClickListener {
             if(inputEditText.text.isNotEmpty()) {
                 MessageStore.registerMessage(room.documentId, inputEditText.text.toString())
-                hideKeybord()
+                hideKeybord(it)
                 inputEditText.text.clear()
             }
 
@@ -130,6 +132,12 @@ class ChatActivity : AppCompatActivity() {
             }
             false
         }
+
+        // TODO EditText以外をタッチしてもフォーカスが変わらない
+        inputEditText.setOnFocusChangeListener { v, hasFocus ->
+            if(!hasFocus)
+                hideKeybord(v)
+        }
     }
 
     /**
@@ -150,13 +158,14 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
-
     /**
-     * hideKeybordメソッド
+     * dispatchTouchEvent
      *
      */
-    private fun hideKeybord() {
-        (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).hideSoftInputFromWindow(inputEditText.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        // TODO EditText押下しても消えてしまう
+        hideKeybord(inputEditText)
+        return super.dispatchTouchEvent(ev)
     }
 
     companion object {

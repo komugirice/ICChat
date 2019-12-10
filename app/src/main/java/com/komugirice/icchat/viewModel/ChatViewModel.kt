@@ -25,7 +25,7 @@ class ChatViewModel: ViewModel() {
     fun initData(@NonNull owner: LifecycleOwner, roomId: String) {
         MessageStore.getMessages(roomId, items)
         items.observe(owner, Observer {
-            val lastCreatedAt = it.map{ it.createdAt }.max() ?: return@Observer
+            val lastCreatedAt = it.map{ it.createdAt }.max() ?: Date()
             initSubscribe(roomId, lastCreatedAt)
         })
     }
