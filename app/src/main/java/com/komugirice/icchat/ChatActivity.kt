@@ -111,6 +111,10 @@ class ChatActivity : BaseActivity() {
 
 
         }
+        // RecyclerCiewクリックしても発火しない…
+//        binding.root.setOnClickListener {
+//            hideKeybord(it)
+//        }
 
     }
 

@@ -25,4 +25,8 @@
 
     <!-- ChatActivity -->
     <string name="inputMessageHint">メッセージを入力</string>
+
+    <!-- Facebookログイン-->
+    <string name="facebook_app_id">646620032538120</string> <string name="fb_login_protocol_scheme">fb646620032538120</string>
+
 </resources>

@@ -6,6 +6,7 @@ import android.graphics.Paint
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
@@ -13,25 +14,45 @@ import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.annotation.StringRes
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import com.example.qiitaapplication.extension.getIdFromEmail
+import com.facebook.CallbackManager
+import com.facebook.FacebookCallback
+import com.facebook.FacebookException
+import com.facebook.login.LoginManager
+import com.facebook.login.LoginResult
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.common.api.GoogleApiClient
+import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
+import com.komugirice.icchat.BaseActivity
 import com.komugirice.icchat.MainActivity
 import com.komugirice.icchat.R
 import kotlinx.android.synthetic.main.activity_login.*
+import timber.log.Timber
 
 
-class LoginActivity : AppCompatActivity() {
+class LoginActivity : BaseActivity() {
 
     private lateinit var loginViewModel: LoginViewModel
+
+    private lateinit var googleSignInClient: GoogleSignInClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_login)
 
+        // TODO 最適な位置に移動する必要がある
+        FirebaseAuth.getInstance().signOut()
         // 表示前の処理
-        initLayout()
+        init()
 
         // 表示後の処理
         val userId = findViewById<EditText>(R.id.userId)
@@ -113,8 +134,111 @@ class LoginActivity : AppCompatActivity() {
         //loginViewModel.login("000000", "000000")
     }
 
+    fun init() {
+        initFacebook()
+        initGoogle()
+        initLayout()
+        initClick()
+    }
+
+    fun initFacebook() {
+        facebookLoginButton.registerCallback(CallbackManager.Factory.create(),
+            object: FacebookCallback<LoginResult> {
+                override fun onSuccess(loginResult: LoginResult ) {
+                    MainActivity.start(this@LoginActivity)
+                }
+
+                override fun onCancel() {
+                    // App code
+                }
+
+                override fun onError(exception: FacebookException ) {
+                    // App code
+                    Timber.log(0,"error facebook")
+                }
+            });
+
+    }
+
+    fun initGoogle() {
+        // Configure Google Sign In
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(getString(R.string.default_web_client_id))
+            .requestEmail()
+            .build()
+
+        googleSignInClient = GoogleSignIn.getClient(this, gso)
+    }
+
+    /**
+     * Google SignIn
+     */
+    private fun googleSignIn() {
+        val signInIntent = googleSignInClient.signInIntent
+        startActivityForResult(signInIntent, RC_SIGN_IN)
+    }
+
+    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+        if (requestCode == RC_SIGN_IN) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+            try {
+                // Google Sign In was successful, authenticate with Firebase
+                val account = task.getResult(ApiException::class.java)
+                firebaseAuthWithGoogle(account!!)
+            } catch (e: ApiException) {
+                // Google Sign In failed, update UI appropriately
+                Log.w(TAG, "Google sign in failed", e)
+                //updateUI(null)
+            }
+        }
+    }
+
+    private fun firebaseAuthWithGoogle(acct: GoogleSignInAccount) {
+        Log.d(TAG, "firebaseAuthWithGoogle:" + acct.id!!)
+
+        val credential = GoogleAuthProvider.getCredential(acct.idToken, null)
+        FirebaseAuth.getInstance().signInWithCredential(credential)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    // Sign in success, update UI with the signed-in user's information
+                    Log.d(TAG, "signInWithCredential:success")
+                    val user = FirebaseAuth.getInstance().currentUser
+                    // ログイン成功
+                    loginViewModel.loginSuccess(user?.email?.also{it.getIdFromEmail()}, user?.displayName)
+                } else {
+                    // If sign in fails, display a message to the user.
+                    Log.w(TAG, "signInWithCredential:failure", task.exception)
+                    Snackbar.make(container, "Authentication Failed.", Snackbar.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        applicationContext,
+                        "ログインに失敗しました。",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+
+            }
+    }
+
     fun initLayout() {
         createUserTextView.paintFlags = createUserTextView.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+    }
+
+    fun initClick() {
+        userId.setOnFocusChangeListener { v, hasFocus ->
+            if(!hasFocus)
+                hideKeybord(v)
+        }
+        password.setOnFocusChangeListener { v, hasFocus ->
+            if(!hasFocus)
+                hideKeybord(v)
+        }
+
+        googleLoginButton.setOnClickListener{
+            googleSignIn()
+        }
     }
 
 
@@ -136,6 +260,9 @@ class LoginActivity : AppCompatActivity() {
     }
 
     companion object {
+        private val TAG = "LoginActivity"
+        private val RC_SIGN_IN = 9001;
+
         fun start(activity: Activity) = activity.startActivity(Intent(activity, LoginActivity::class.java))
     }
 }

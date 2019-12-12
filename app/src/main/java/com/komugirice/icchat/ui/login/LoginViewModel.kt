@@ -9,6 +9,7 @@ import com.komugirice.icchat.data.Result
 
 import com.komugirice.icchat.R
 import com.komugirice.icchat.data.model.LoggedInUser
+import kotlinx.android.synthetic.main.activity_login.*
 
 class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel() {
 
@@ -21,6 +22,12 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
     fun login(userId: String, password: String) {
         // can be launched in a separate asynchronous job
         loginRepository.login(userId, password, _loginResult)
+    }
+
+    fun loginSuccess(userId: String?, userName: String?) {
+        _loginResult.value = LoginResult(success =
+            LoggedInUserView(userId = userId ?: "", displayName = userName ?: "")
+        )
     }
 
     fun loginDataChanged(userId: String, password: String) {
