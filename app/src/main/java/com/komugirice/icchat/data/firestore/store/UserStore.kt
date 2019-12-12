@@ -34,6 +34,23 @@ class UserStore {
         }
 
         /**
+         * 全Userオブジェクト取得
+         * UserManagerに反映する
+         *
+         *
+         */
+        fun getAllUsers() {
+            val myUserId = UserManager.myUserId
+            FirebaseFirestore.getInstance()
+                .collection("users")
+                .get()
+                .addOnCompleteListener {
+                    it.result?.toObjects(User::class.java)?.also {
+                        UserManager.allUsers = it
+                    }
+                }
+        }
+        /**
          * デバッグ用ユーザリスト取得
          *
          * @return MutableList<User> デバッグユーザリスト

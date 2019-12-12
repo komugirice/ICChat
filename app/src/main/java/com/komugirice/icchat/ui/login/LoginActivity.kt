@@ -14,26 +14,30 @@ import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.annotation.StringRes
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.example.qiitaapplication.extension.getIdFromEmail
+import com.facebook.AccessToken
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
 import com.facebook.FacebookException
-import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.komugirice.icchat.BaseActivity
 import com.komugirice.icchat.MainActivity
+import com.komugirice.icchat.ProfileSettingActivity
 import com.komugirice.icchat.R
+import com.komugirice.icchat.data.firestore.User
+import com.komugirice.icchat.data.firestore.store.UserStore
 import kotlinx.android.synthetic.main.activity_login.*
 import timber.log.Timber
 
@@ -43,6 +47,11 @@ class LoginActivity : BaseActivity() {
     private lateinit var loginViewModel: LoginViewModel
 
     private lateinit var googleSignInClient: GoogleSignInClient
+
+    // facebookログインで使用
+    private lateinit var callbackManager: CallbackManager
+
+    private val auth = FirebaseAuth.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,6 +97,9 @@ class LoginActivity : BaseActivity() {
                 return@Observer
             }
             if (loginResult.success != null) {
+                // TODO 非同期大丈夫？
+                // UserManager初期設定
+                UserStore.getAllUsers()
                 // 次の画面に遷移
                 updateUiWithUser(loginResult.success)
             }
@@ -142,19 +154,20 @@ class LoginActivity : BaseActivity() {
     }
 
     fun initFacebook() {
-        facebookLoginButton.registerCallback(CallbackManager.Factory.create(),
+        callbackManager = CallbackManager.Factory.create()
+        facebookLoginButton.registerCallback(callbackManager,
             object: FacebookCallback<LoginResult> {
                 override fun onSuccess(loginResult: LoginResult ) {
-                    MainActivity.start(this@LoginActivity)
+                    handleFacebookAccessToken(loginResult.accessToken)
                 }
 
                 override fun onCancel() {
-                    // App code
+                    Timber.d("facebook:onCancel")
                 }
 
                 override fun onError(exception: FacebookException ) {
                     // App code
-                    Timber.log(0,"error facebook")
+                    Timber.e(exception,"facebook:onError")
                 }
             });
 
@@ -193,7 +206,31 @@ class LoginActivity : BaseActivity() {
                 Log.w(TAG, "Google sign in failed", e)
                 //updateUI(null)
             }
+        } else {
+            // Pass the activity result back to the Facebook SDK
+            callbackManager.onActivityResult(requestCode, resultCode, data)
         }
+    }
+
+    private fun handleFacebookAccessToken(token: AccessToken) {
+        Log.d(TAG, "handleFacebookAccessToken:$token")
+
+        val credential = FacebookAuthProvider.getCredential(token.token)
+        auth.signInWithCredential(credential)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    // ログイン成功
+                    Log.d(TAG, "signInWithCredential:success")
+                    val user = auth.currentUser
+                    loginViewModel.loginSuccess(user?.email?.also{it.getIdFromEmail()}, user?.displayName)
+                } else {
+                    // If sign in fails, display a message to the user.
+                    Log.w(TAG, "signInWithCredential:failure", task.exception)
+                    Toast.makeText(baseContext, "Authentication failed.",
+                        Toast.LENGTH_SHORT).show()
+                    //updateUI(null)
+                }
+            }
     }
 
     private fun firebaseAuthWithGoogle(acct: GoogleSignInAccount) {
@@ -242,10 +279,16 @@ class LoginActivity : BaseActivity() {
     }
 
 
+    /**
+     * ログイン成功したら呼ばれる
+     * @param model: LoggedInUserView
+     */
     private fun updateUiWithUser(model: LoggedInUserView) {
         val welcome = getString(R.string.welcome)
         val displayName = model.displayName
         // TODO : initiate successful logged in experience
+        val user = MutableLiveData<User>()
+
         Toast.makeText(
             applicationContext,
             "$welcome $displayName",
@@ -264,6 +307,11 @@ class LoginActivity : BaseActivity() {
         private val RC_SIGN_IN = 9001;
 
         fun start(activity: Activity) = activity.startActivity(Intent(activity, LoginActivity::class.java))
+
+        fun signOut(activity: Activity) {
+            FirebaseAuth.getInstance().signOut()
+            activity.startActivity(Intent(activity, LoginActivity::class.java))
+        }
     }
 }
 

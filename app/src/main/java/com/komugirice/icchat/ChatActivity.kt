@@ -35,7 +35,7 @@ class ChatActivity : BaseActivity() {
      *
      */
     private fun initialize() {
-        // roomId設定
+        // room設定
         intent.getSerializableExtra(KEY_ROOM).also {
             if(it is Room && it.documentId.isNotEmpty())
                 room = it

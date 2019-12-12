@@ -18,6 +18,10 @@
     <string name="tab_interest">興味</string>
     <string name="tab_debug">デバッグ</string>
 
+    <!-- Menu -->
+    <string name="profile_settings">プロフィール設定</string>
+    <string name="logout_settings">ログアウト</string>
+
     <!-- デバッグFragment -->
     <string name="buttonAddDebugUser">デバッグユーザ追加</string>
     <string name="buttonAddDebugFriend">友だち追加</string>
@@ -26,7 +30,14 @@
     <!-- ChatActivity -->
     <string name="inputMessageHint">メッセージを入力</string>
 
+    <!-- ProfileSettingActivity -->
+    <string name="title_profile_setting">プロフィール設定</string>
+    <string name="user_name_label">名前</string>
+    <string name="user_id_label">ID</string>
+    <string name="birthday_label">誕生日</string>
+
     <!-- Facebookログイン-->
-    <string name="facebook_app_id">646620032538120</string> <string name="fb_login_protocol_scheme">fb646620032538120</string>
+    <string name="facebook_app_id">646620032538120</string>
+    <string name="fb_login_protocol_scheme">fb646620032538120</string>
 
 </resources>
