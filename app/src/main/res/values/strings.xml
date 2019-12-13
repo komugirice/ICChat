@@ -36,6 +36,10 @@
     <string name="user_id_label">ID</string>
     <string name="birthday_label">誕生日</string>
 
+    <!-- UserNameActivity -->
+    <string name="save_button">保存</string>
+    <string name="title_user_name">名前</string>
+
     <!-- Facebookログイン-->
     <string name="facebook_app_id">646620032538120</string>
     <string name="fb_login_protocol_scheme">fb646620032538120</string>
