@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.komugirice.icchat.data.firestore.Room
-import com.komugirice.icchat.data.firestore.User
+import com.komugirice.icchat.data.firestore.model.Room
+import com.komugirice.icchat.data.firestore.model.User
 import com.komugirice.icchat.data.firestore.store.RoomStore
 import com.komugirice.icchat.databinding.FriendCellBinding
 

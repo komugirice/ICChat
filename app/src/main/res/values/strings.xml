@@ -23,7 +23,7 @@
     <string name="logout_settings">ログアウト</string>
 
     <!-- デバッグFragment -->
-    <string name="buttonAddDebugUser">デバッグユーザ追加</string>
+    <string name="buttonAddDebugUser">ユーザ情報登録</string>
     <string name="buttonAddDebugFriend">友だち追加</string>
     <string name="buttonRefresh">更新</string>
 

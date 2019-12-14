@@ -2,12 +2,12 @@ package com.komugirice.icchat.data.firestore.manager
 
 import com.google.firebase.auth.FirebaseAuth
 import com.komugirice.icchat.BuildConfig
-import com.komugirice.icchat.data.firestore.User
+import com.komugirice.icchat.data.firestore.model.User
 import com.komugirice.icchat.util.FireStoreUtil
 
 object UserManager {
 
-    val myUserId = FireStoreUtil.getLoginUserId() // ここにSharedPreferencesから取得する
+    var myUserId = FireStoreUtil.getLoginUserId() // ここにSharedPreferencesから取得する
 
     var myUser = User()
         set(value) {
@@ -28,4 +28,9 @@ object UserManager {
         }
 
     var myFriends = listOf<User>()
+
+    fun addMyFriends (friendId: String){
+        myUser.friendIdList.add(friendId)
+        myFriends = allUsers.filter { myUser.friendIdList.contains(it.userId) }
+    }
 }

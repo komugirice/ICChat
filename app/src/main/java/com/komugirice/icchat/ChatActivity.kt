@@ -3,15 +3,11 @@ package com.komugirice.icchat
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.MotionEvent
-import android.view.View
 import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
-import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import com.komugirice.icchat.data.firestore.Room
+import com.komugirice.icchat.data.firestore.model.Room
 import com.komugirice.icchat.data.firestore.store.MessageStore
 import com.komugirice.icchat.databinding.ActivityChatBinding
 import com.komugirice.icchat.viewModel.ChatViewModel

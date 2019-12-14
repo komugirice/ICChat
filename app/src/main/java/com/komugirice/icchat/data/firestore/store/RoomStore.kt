@@ -1,12 +1,10 @@
 package com.komugirice.icchat.data.firestore.store
 
-import android.graphics.Insets.add
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.firestore.FirebaseFirestore
-import com.komugirice.icchat.data.firestore.Room
-import com.komugirice.icchat.data.firestore.User
+import com.komugirice.icchat.data.firestore.model.Room
+import com.komugirice.icchat.data.firestore.model.User
 import com.komugirice.icchat.data.firestore.manager.UserManager
-import com.komugirice.icchat.util.FireStoreUtil
 import java.util.*
 
 class RoomStore {
@@ -47,17 +45,18 @@ class RoomStore {
          */
         fun registerSingleUserRooms(rooms: MutableList<Room>?, targetUserId: String){
             val loginUserId = UserManager.myUserId
-
             val サシリスト = mutableListOf(loginUserId, targetUserId)
+            var updFlg = true
 
             // 全てのroomでサシチャットの重複対象チェック
             rooms?.forEach {
                 if(it.userIdList.size == サシリスト.size
                     && it.userIdList.toList().containsAll(サシリスト)) {
                     // 重複
-                    return@forEach
-
+                    updFlg = false
                 }
+            }
+            if(updFlg) {
                 // 重複しない場合、新規登録
                 val room = Room().apply {
                     //name = targetUser.name
@@ -116,7 +115,8 @@ class RoomStore {
                 .document(roomId)
                 .get()
                 .addOnSuccessListener {
-                    var room: Room? = it.toObject(Room::class.java)
+                    var room: Room? = it.toObject(
+                        Room::class.java)
                     room?.userIdList?.apply{
                         this.remove(UserManager.myUserId)
                         this.forEach{

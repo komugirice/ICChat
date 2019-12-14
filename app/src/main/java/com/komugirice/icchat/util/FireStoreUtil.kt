@@ -4,7 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import com.example.qiitaapplication.extension.getIdFromEmail
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.komugirice.icchat.data.firestore.User
+import com.komugirice.icchat.data.firestore.model.User
 import com.komugirice.icchat.data.firestore.manager.UserManager
 
 class FireStoreUtil {

@@ -8,9 +8,9 @@ import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
-import com.komugirice.icchat.data.firestore.Message
-import com.komugirice.icchat.data.firestore.Room
-import com.komugirice.icchat.data.firestore.User
+import com.komugirice.icchat.data.firestore.model.Message
+import com.komugirice.icchat.data.firestore.model.Room
+import com.komugirice.icchat.data.firestore.model.User
 import com.komugirice.icchat.data.firestore.store.MessageStore
 import com.komugirice.icchat.data.firestore.store.RoomStore
 import timber.log.Timber

@@ -9,8 +9,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
-import com.komugirice.icchat.data.firestore.Room
-import com.komugirice.icchat.data.firestore.User
+import com.komugirice.icchat.data.firestore.model.Room
 import com.komugirice.icchat.data.firestore.store.RoomStore
 import com.komugirice.icchat.data.firestore.store.UserStore
 import com.komugirice.icchat.util.FireStoreUtil
@@ -46,11 +45,11 @@ class DebugFragment : Fragment() {
     private fun initClick() {
         // デバッグユーザ追加
         buttonAddDebugUser.setOnClickListener {
-            UserStore.registerDebugUsers()
+            UserStore.registerLoginUser()
 
             Toast.makeText(
                 context,
-                "デバッグユーザ登録が完了しました。",
+                "ユーザ情報登録が完了しました。",
                 Toast.LENGTH_LONG
             ).show()
 

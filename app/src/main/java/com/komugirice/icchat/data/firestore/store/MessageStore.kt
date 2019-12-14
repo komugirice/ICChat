@@ -3,10 +3,8 @@ package com.komugirice.icchat.data.firestore.store
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import com.komugirice.icchat.data.firestore.Message
-import com.komugirice.icchat.data.firestore.Room
+import com.komugirice.icchat.data.firestore.model.Message
 import com.komugirice.icchat.data.firestore.manager.UserManager
-import com.komugirice.icchat.util.FireStoreUtil
 import java.util.*
 
 class MessageStore {

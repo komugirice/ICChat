@@ -3,10 +3,7 @@ package com.komugirice.icchat
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.UserManager
-import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.PopupMenu
@@ -14,11 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.fragment.app.FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import androidx.viewpager.widget.ViewPager
-import com.komugirice.icchat.data.firestore.User
-import com.komugirice.icchat.data.firestore.store.UserStore
 import com.komugirice.icchat.ui.login.LoginActivity
 import kotlinx.android.synthetic.main.activity_main.*
 

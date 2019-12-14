@@ -5,17 +5,11 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
-import android.widget.CalendarView
 import android.widget.DatePicker
-import android.widget.Toast
 import com.example.qiitaapplication.extension.getDateToString
 import com.google.firebase.firestore.FirebaseFirestore
-import com.komugirice.icchat.data.firestore.Room
-import com.komugirice.icchat.data.firestore.User
 import com.komugirice.icchat.data.firestore.manager.UserManager
 import kotlinx.android.synthetic.main.activity_profile_setting.*
-import java.time.LocalDate
 import java.util.*
 
 class ProfileSettingActivity : AppCompatActivity() {
@@ -23,6 +17,11 @@ class ProfileSettingActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile_setting)
+        initialize()
+    }
+
+    override fun onResume() {
+        super.onResume()
         initialize()
     }
 
@@ -35,7 +34,7 @@ class ProfileSettingActivity : AppCompatActivity() {
         // TODO UserManager.myUserの設定
         val myUser = UserManager.myUser
         userId.text = myUser.userId
-        userName.text = myUser.name
+        userName.text = myUser.name ?: "設定なし"
         birthDay.text = myUser.birthDay?.getDateToString() ?: "設定なし"
     }
 
@@ -77,6 +76,8 @@ class ProfileSettingActivity : AppCompatActivity() {
                 if (task.isSuccessful) {
                     UserManager.myUser.birthDay = birthDay
                     initLayout()
+                } else {
+                    // TODO エラーダイアログ
                 }
             }
     }

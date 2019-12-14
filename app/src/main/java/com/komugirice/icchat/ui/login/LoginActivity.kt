@@ -34,10 +34,11 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.komugirice.icchat.BaseActivity
 import com.komugirice.icchat.MainActivity
-import com.komugirice.icchat.ProfileSettingActivity
 import com.komugirice.icchat.R
-import com.komugirice.icchat.data.firestore.User
+import com.komugirice.icchat.data.firestore.manager.UserManager
+import com.komugirice.icchat.data.firestore.model.User
 import com.komugirice.icchat.data.firestore.store.UserStore
+import com.komugirice.icchat.util.FireStoreUtil
 import kotlinx.android.synthetic.main.activity_login.*
 import timber.log.Timber
 
@@ -97,9 +98,6 @@ class LoginActivity : BaseActivity() {
                 return@Observer
             }
             if (loginResult.success != null) {
-                // TODO 非同期大丈夫？
-                // UserManager初期設定
-                UserStore.getAllUsers()
                 // 次の画面に遷移
                 updateUiWithUser(loginResult.success)
             }
@@ -188,7 +186,9 @@ class LoginActivity : BaseActivity() {
      */
     private fun googleSignIn() {
         val signInIntent = googleSignInClient.signInIntent
-        startActivityForResult(signInIntent, RC_SIGN_IN)
+        startActivityForResult(signInIntent,
+            RC_SIGN_IN
+        )
     }
 
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -285,9 +285,15 @@ class LoginActivity : BaseActivity() {
      */
     private fun updateUiWithUser(model: LoggedInUserView) {
         val welcome = getString(R.string.welcome)
-        val displayName = model.displayName
+        val displayName: String
         // TODO : initiate successful logged in experience
-        val user = MutableLiveData<User>()
+
+        // UserManager初期設定
+        UserManager.myUserId = FireStoreUtil.getLoginUserId() // 再ログイン対応
+        // TODO 非同期大丈夫？
+        UserStore.getAllUsers()
+
+        displayName = UserManager.myUser.name
 
         Toast.makeText(
             applicationContext,

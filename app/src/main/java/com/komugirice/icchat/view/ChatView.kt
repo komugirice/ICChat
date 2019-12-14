@@ -1,22 +1,18 @@
 package com.komugirice.icchat.view
 
 import android.content.Context
-import android.text.method.TextKeyListener.clear
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.komugirice.icchat.BaseActivity
-import com.komugirice.icchat.data.firestore.Message
-import com.komugirice.icchat.data.firestore.User
+import com.komugirice.icchat.data.firestore.model.Message
+import com.komugirice.icchat.data.firestore.model.User
 import com.komugirice.icchat.data.firestore.manager.UserManager
 import com.komugirice.icchat.databinding.ChatMessageCellBinding
 import com.komugirice.icchat.databinding.ChatMessageOtheruserCellBinding
-import java.util.Collections.addAll
 
 
 class ChatView  : RecyclerView {
