@@ -34,7 +34,7 @@ class ProfileSettingActivity : AppCompatActivity() {
         // TODO UserManager.myUserの設定
         val myUser = UserManager.myUser
         userId.text = myUser.userId
-        userName.text = myUser.name ?: "設定なし"
+        userName.text = if(myUser.name.isNotEmpty()) myUser.name else "設定なし"
         birthDay.text = myUser.birthDay?.getDateToString() ?: "設定なし"
     }
 
@@ -70,7 +70,7 @@ class ProfileSettingActivity : AppCompatActivity() {
 
         FirebaseFirestore.getInstance()
             .collection("users")
-            .document(UserManager.myUser.documentId)
+            .document(UserManager.myUser.userId)
             .update("birthDay", birthDay)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {

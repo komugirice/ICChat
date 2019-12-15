@@ -7,7 +7,7 @@ import com.komugirice.icchat.util.FireStoreUtil
 
 object UserManager {
 
-    var myUserId = FireStoreUtil.getLoginUserId() // ここにSharedPreferencesから取得する
+    var myUserId = "" // ここにSharedPreferencesから取得する
 
     var myUser = User()
         set(value) {
@@ -22,7 +22,7 @@ object UserManager {
             if (myUserId.isEmpty() && BuildConfig.DEBUG)
                 throw RuntimeException("myUserIdを入れてからじゃないとダメ!!")
             field = value
-            value.firstOrNull { it.documentId == FirebaseAuth.getInstance().currentUser?.uid ?: "" }?.also {
+            value.firstOrNull { it.uids.contains(FirebaseAuth.getInstance().currentUser?.uid) }?.also {
                 myUser = it
             }
         }

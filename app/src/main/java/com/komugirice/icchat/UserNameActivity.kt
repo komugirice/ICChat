@@ -44,7 +44,7 @@ class UserNameActivity : AppCompatActivity() {
         val userName = userNameEditText.text.toString()
         FirebaseFirestore.getInstance()
             .collection("users")
-            .document(UserManager.myUser.documentId)
+            .document(UserManager.myUser.userId)
             .update("name", userName)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {

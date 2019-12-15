@@ -29,14 +29,9 @@ class LoginRepository(val dataSource: LoginDataSource) {
         dataSource.logout()
     }
 
-    fun login(userId: String, password: String, _loginResult: MutableLiveData<LoginResult>) {
+    fun login(email: String, password: String, _loginResult: MutableLiveData<LoginResult>) {
         // handle login
-        //val result: Result<LoggedInUser>
-        dataSource.login(userId, password, _loginResult)
-
-        //if (result is Result.Success) {
-        //    setLoggedInUser(result.data)
-        //}
+        dataSource.login(email, password, _loginResult)
     }
 
 

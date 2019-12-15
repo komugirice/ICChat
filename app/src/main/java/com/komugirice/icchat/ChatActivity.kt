@@ -3,6 +3,7 @@ package com.komugirice.icchat
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.view.inputmethod.EditorInfo
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -17,6 +18,7 @@ class ChatActivity : BaseActivity() {
 
     private lateinit var binding: ActivityChatBinding
     private lateinit var viewModel: ChatViewModel
+    private val handler = Handler()
 
     lateinit var room: Room
 
@@ -63,15 +65,17 @@ class ChatActivity : BaseActivity() {
         viewModel = ViewModelProviders.of(this).get(ChatViewModel::class.java).apply {
             items.observe(this@ChatActivity, Observer {
                 binding.apply {
-                    ChatView.customAdapter.refresh(it)
+                    chatView.customAdapter.refresh(it)
                     // 一番下へ移動
-                    ChatView.scrollToPosition(ChatView.customAdapter.itemCount - 1)
+                    handler.postDelayed({
+                        chatView.scrollToPosition(chatView.customAdapter.itemCount - 1)
+                    }, 100L)
                     swipeRefreshLayout.isRefreshing = false
                 }
             })
             users.observe(this@ChatActivity, Observer {
                 binding.apply {
-                    ChatView.customAdapter.setUsers(it)
+                    chatView.customAdapter.setUsers(it)
                 }
             })
         }

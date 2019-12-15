@@ -1,8 +1,11 @@
 package com.komugirice.icchat.data.firestore.store
 
+import androidx.lifecycle.MutableLiveData
 import com.example.qiitaapplication.extension.toDate
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.komugirice.icchat.BuildConfig
+import com.komugirice.icchat.ICChatApplication.Companion.isDevelop
 import com.komugirice.icchat.data.firestore.manager.UserManager
 import com.komugirice.icchat.data.firestore.model.User
 import java.util.*
@@ -26,24 +29,25 @@ class DebugUserStore {
             userIdList.forEach {
 
                 val tmp = User().apply {
-                    userId = it
+                    userId = UUID.randomUUID().toString()
+                    if(BuildConfig.DEBUG)
+                        userId.replace("^.{${it.length}}", it)
+
                     name = "ユーザ_" + it
                     val i = it.substring(it.length - 1, it.length)
                     val birthString =
                         ("199" + i + "/" + (i + 1).toString() + "/" + (i + 1).toString())
                     birthDay = birthString.toDate("yyyy/MM/dd")
                     //friendIdList.add(UserManager.myUserId)
-                    // TODO authのUIDの取得が必要
 
-                    documentId = UUID.randomUUID().toString()
+                    uids.add(UUID.randomUUID().toString())
                 }
                 // ログインユーザID専用
                 if (it.equals(UserManager.myUserId)) {
-                    tmp.documentId = FirebaseAuth.getInstance().currentUser?.uid.toString()
+                    tmp.uids.add(FirebaseAuth.getInstance().currentUser?.uid.toString())
                     tmp.friendIdList.clear()
                     //tmp.friendIdList = userIdList.filter{ it!= UserManager.myUserId}.toMutableList()
                 }
-
 
                 debugUserlist.add(tmp)
 
@@ -116,11 +120,52 @@ class DebugUserStore {
                     // 新規登録（documentIdが主キー）
                     FirebaseFirestore.getInstance()
                         .collection("users")
-                        .document(user.documentId)
+                        .document(user.userId)
                         .set(user)
                 }
             }
 
+        }
+
+
+        /**
+         * フレンドではないユーザリスト取得
+         *
+         * @param friendIdList フレンドであるuserId配列
+         * @param notFriendIdArray フレンドではないuserId配列
+         *
+         */
+        fun getDebugNotFriendIdArray(
+            notFriendIdArray: MutableLiveData<Array<CharSequence>>
+        ) {
+            var notFriendList: MutableList<User> = mutableListOf()
+            // user情報取得
+            FirebaseFirestore.getInstance()
+                .collection("users")
+                // TODO なぜかwhereがうまくいかない。
+                //.whereGreaterThan("userId", UserManager.myUserId)
+                //.whereLessThan("userId", UserManager.myUserId)
+                .orderBy(User::userId.name)
+                //.limit(10)
+                .get()
+                .addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        it.result?.toObjects(User::class.java)?.also {
+                            // とりあえずuser全件をnotFriendListに格納
+                            notFriendList = it
+                        }
+                        var notFriendIdList: MutableList<String> =
+                            notFriendList.map { it.userId }.toMutableList()
+                        // notFriendIdListからfirendIdListを除外
+                        notFriendIdList.removeAll(UserManager.myUser.friendIdList)
+                        // 自分のIDも除外
+                        notFriendIdList.remove(UserManager.myUserId)
+
+                        // Spinner.adapterがarrayしか受け付けないので変換
+                        notFriendIdArray.postValue(notFriendIdList.toTypedArray())
+
+                    }
+                }
         }
     }
 }

@@ -14,17 +14,16 @@ import java.io.IOException
  */
 class LoginDataSource {
 
-    fun login(userId: String, password: String, _loginResult: MutableLiveData<LoginResult>) {
+    fun login(email: String, password: String, _loginResult: MutableLiveData<LoginResult>) {
         try {
             // TODO: handle loggedInUser authentication
-            val convEmailType = userId + "@example.com"
             var user: LoggedInUser? = null
-            FirebaseAuth.getInstance().signInWithEmailAndPassword(convEmailType, password)
+            FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener {
                     user = updateView()
                     if(user != null)
                         _loginResult.value =
-                            LoginResult(success = LoggedInUserView(userId = userId, displayName = user?.displayName ?: ""))
+                            LoginResult(success = LoggedInUserView(email = email, displayName = user?.displayName ?: ""))
                     else {
                         _loginResult.value = LoginResult(error = R.string.login_failed)
                     }

@@ -9,6 +9,6 @@ class User: Serializable {
     var name: String =""
     var birthDay: Date? = null
     var createdAt: Date = Date()
-    var documentId = ""
+    var uids = mutableListOf<String>()
     var friendIdList = mutableListOf<String>()
 }

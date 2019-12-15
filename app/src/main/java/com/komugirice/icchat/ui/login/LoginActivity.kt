@@ -14,6 +14,8 @@ import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.annotation.StringRes
+import androidx.core.app.ActivityCompat
+import androidx.core.app.ActivityCompat.finishAffinity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -65,7 +67,7 @@ class LoginActivity : BaseActivity() {
         init()
 
         // 表示後の処理
-        val userId = findViewById<EditText>(R.id.userId)
+        val email = findViewById<EditText>(R.id.email)
         val password = findViewById<EditText>(R.id.password)
         val login = findViewById<Button>(R.id.login)
         val loading = findViewById<ProgressBar>(R.id.loading)
@@ -78,11 +80,11 @@ class LoginActivity : BaseActivity() {
         loginViewModel.loginFormState.observe(this@LoginActivity, Observer {
             val loginState = it ?: return@Observer
 
-            // disable login button unless both userId / password is valid
+            // disable login button unless both email / password is valid
             login.isEnabled = loginState.isDataValid
 
-            if (loginState.userIdError != null) {
-                userId.error = getString(loginState.userIdError)
+            if (loginState.emailError != null) {
+                email.error = getString(loginState.emailError)
             }
             if (loginState.passwordError != null) {
                 password.error = getString(loginState.passwordError)
@@ -108,9 +110,9 @@ class LoginActivity : BaseActivity() {
 
         })
 
-        userId.afterTextChanged {
+        email.afterTextChanged {
             loginViewModel.loginDataChanged(
-                userId.text.toString(),
+                email.text.toString(),
                 password.text.toString()
             )
         }
@@ -118,7 +120,7 @@ class LoginActivity : BaseActivity() {
         password.apply {
             afterTextChanged {
                 loginViewModel.loginDataChanged(
-                    userId.text.toString(),
+                    email.text.toString(),
                     password.text.toString()
                 )
             }
@@ -127,7 +129,7 @@ class LoginActivity : BaseActivity() {
                 when (actionId) {
                     EditorInfo.IME_ACTION_DONE ->
                         loginViewModel.login(
-                            userId.text.toString(),
+                            email.text.toString(),
                             password.text.toString()
                         )
                 }
@@ -136,7 +138,7 @@ class LoginActivity : BaseActivity() {
 
             login.setOnClickListener {
                 loading.visibility = View.VISIBLE
-                loginViewModel.login(userId.text.toString(), password.text.toString())
+                loginViewModel.login(email.text.toString(), password.text.toString())
 
             }
         }
@@ -264,7 +266,7 @@ class LoginActivity : BaseActivity() {
     }
 
     fun initClick() {
-        userId.setOnFocusChangeListener { v, hasFocus ->
+        email.setOnFocusChangeListener { v, hasFocus ->
             if(!hasFocus)
                 hideKeybord(v)
         }
@@ -285,23 +287,31 @@ class LoginActivity : BaseActivity() {
      */
     private fun updateUiWithUser(model: LoggedInUserView) {
         val welcome = getString(R.string.welcome)
-        val displayName: String
         // TODO : initiate successful logged in experience
 
         // UserManager初期設定
-        UserManager.myUserId = FireStoreUtil.getLoginUserId() // 再ログイン対応
-        // TODO 非同期大丈夫？
-        UserStore.getAllUsers()
+        UserStore.getLoginUser() {
+            it.result?.toObjects(User::class.java)?.firstOrNull().also {
+                it?.also {
+                    UserManager.myUserId = it.userId
+                    UserManager.myUser = it
+                    // TODO 非同期大丈夫？
+                    UserStore.getAllUsers()
 
-        displayName = UserManager.myUser.name
+                    val displayName = UserManager.myUser.name
 
-        Toast.makeText(
-            applicationContext,
-            "$welcome $displayName",
-            Toast.LENGTH_LONG
-        ).show()
+                    Toast.makeText(
+                        applicationContext,
+                        "$welcome $displayName",
+                        Toast.LENGTH_LONG
+                    ).show()
 
-        MainActivity.start(this)
+                    MainActivity.start(this)
+                }
+            }
+        }
+
+
     }
 
     private fun showLoginFailed(@StringRes errorString: Int) {
@@ -312,7 +322,10 @@ class LoginActivity : BaseActivity() {
         private val TAG = "LoginActivity"
         private val RC_SIGN_IN = 9001;
 
-        fun start(activity: Activity) = activity.startActivity(Intent(activity, LoginActivity::class.java))
+        fun start(activity: Activity) = activity.apply {
+            finishAffinity()
+            activity.startActivity(Intent(activity, LoginActivity::class.java))
+        }
 
         fun signOut(activity: Activity) {
             FirebaseAuth.getInstance().signOut()

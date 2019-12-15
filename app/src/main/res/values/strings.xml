@@ -2,12 +2,12 @@
     <!-- ログイン画面 -->
     <string name="app_name">ICChat</string>
     <string name="title_activity_login">Sign in</string>
-    <string name="prompt_email">ID</string>
+    <string name="prompt_email">メールアドレス</string>
     <string name="prompt_password">パスワード</string>
     <string name="action_sign_in">Sign in or register</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="welcome">"Welcome !"</string>
-    <string name="invalid_userId">IDを入力して下さい</string>
+    <string name="invalid_email">メールアドレスを入力して下さい</string>
     <string name="invalid_password">パスワードは6文字以上入力して下さい</string>
     <string name="login_failed">"Login failed"</string>
     <string name="text_create_user">アカウントを作成する</string>

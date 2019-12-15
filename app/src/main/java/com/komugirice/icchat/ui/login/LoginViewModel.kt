@@ -19,20 +19,20 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
     private val _loginResult = MutableLiveData<LoginResult>()
     val loginResult: LiveData<LoginResult> = _loginResult
 
-    fun login(userId: String, password: String) {
+    fun login(email: String, password: String) {
         // can be launched in a separate asynchronous job
-        loginRepository.login(userId, password, _loginResult)
+        loginRepository.login(email, password, _loginResult)
     }
 
-    fun loginSuccess(userId: String?, userName: String?) {
+    fun loginSuccess(email: String?, userName: String?) {
         _loginResult.value = LoginResult(success =
-            LoggedInUserView(userId = userId ?: "", displayName = userName ?: "")
+            LoggedInUserView(email = email ?: "", displayName = userName ?: "")
         )
     }
 
-    fun loginDataChanged(userId: String, password: String) {
-        if (!isuserIdEmptyValid(userId)) {
-            _loginForm.value = LoginFormState(userIdError = R.string.invalid_userId)
+    fun loginDataChanged(email: String, password: String) {
+        if (!isemailEmptyValid(email)) {
+            _loginForm.value = LoginFormState(emailError = R.string.invalid_email)
         } else if (!isPasswordValid(password)) {
             _loginForm.value = LoginFormState(passwordError = R.string.invalid_password)
         } else {
@@ -40,9 +40,9 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
         }
     }
 
-    // A placeholder userId validation check
-    private fun isuserIdEmptyValid(userId: String): Boolean {
-        return userId.isNotBlank()
+    // A placeholder email validation check
+    private fun isemailEmptyValid(email: String): Boolean {
+        return email.isNotBlank()
     }
 
     // A placeholder password validation check

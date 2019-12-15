@@ -9,7 +9,9 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
+import com.komugirice.icchat.data.firestore.manager.UserManager
 import com.komugirice.icchat.data.firestore.model.Room
+import com.komugirice.icchat.data.firestore.store.DebugUserStore
 import com.komugirice.icchat.data.firestore.store.RoomStore
 import com.komugirice.icchat.data.firestore.store.UserStore
 import com.komugirice.icchat.util.FireStoreUtil
@@ -77,24 +79,17 @@ class DebugFragment : Fragment() {
     private fun initSpinner() {
         var adapter: ArrayAdapter<CharSequence>
         var notFriendIdArray = MutableLiveData<Array<CharSequence>>()
-        val friendList = MutableLiveData<MutableList<String>>()
-        FireStoreUtil.getFriends(friendList)
 
-        friendList.observe(this, androidx.lifecycle.Observer {
-            var friendIdList: MutableList<String> = friendList.value ?: mutableListOf()
+        DebugUserStore.getDebugNotFriendIdArray(notFriendIdArray)
 
-            UserStore.getDebugNotFriendIdArray(friendIdList, notFriendIdArray)
+        notFriendIdArray.observe(this, androidx.lifecycle.Observer {
+            context?.also {
+                val value = notFriendIdArray.value ?: arrayOf()
+                adapter = ArrayAdapter<CharSequence>(
+                    it, R.layout.row_spinner, value)
 
-            notFriendIdArray.observe(this, androidx.lifecycle.Observer {
-                context?.also {
-                    val value = notFriendIdArray.value ?: arrayOf()
-                    adapter = ArrayAdapter<CharSequence>(
-                        it, R.layout.row_spinner, value)
-
-                    SpinnerUsers.adapter = adapter
-                }
-            })
-
+                SpinnerUsers.adapter = adapter
+            }
         })
 
     }

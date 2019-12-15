@@ -4,8 +4,11 @@ import android.content.Context
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import com.example.qiitaapplication.extension.toDate
+import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.QuerySnapshot
+import com.komugirice.icchat.ICChatApplication.Companion.isDevelop
 import com.komugirice.icchat.data.firestore.model.User
 import com.komugirice.icchat.data.firestore.manager.UserManager
 import com.komugirice.icchat.util.FireStoreUtil
@@ -20,16 +23,14 @@ class UserStore {
          * @return user
          *
          */
-        fun getLoginUser(user: MutableLiveData<User>) {
-            val myUserId = UserManager.myUserId
+        fun getLoginUser(onComplete: (Task<QuerySnapshot>) -> Unit) {
+            val myDocumentId = FirebaseAuth.getInstance().currentUser?.uid.toString()
             FirebaseFirestore.getInstance()
                 .collection("users")
-                .whereEqualTo("userId", myUserId)
+                .whereArrayContains("uids",myDocumentId)
                 .get()
                 .addOnCompleteListener {
-                    it.result?.toObjects(User::class.java)?.firstOrNull().also {
-                        user.postValue(it)
-                    }
+                    onComplete.invoke(it)
                 }
         }
 
@@ -40,7 +41,6 @@ class UserStore {
          *
          */
         fun getAllUsers() {
-            val myUserId = UserManager.myUserId
             FirebaseFirestore.getInstance()
                 .collection("users")
                 .get()
@@ -52,46 +52,6 @@ class UserStore {
         }
 
 
-        /**
-         * フレンドではないユーザリスト取得
-         *
-         * @param friendIdList フレンドであるuserId配列
-         * @param notFriendIdArray フレンドではないuserId配列
-         *
-         */
-        fun getDebugNotFriendIdArray(
-            friendIdList: MutableList<String>,
-            notFriendIdArray: MutableLiveData<Array<CharSequence>>
-        ) {
-            var notFriendList: MutableList<User> = mutableListOf()
-            // user情報取得
-            FirebaseFirestore.getInstance()
-                .collection("users")
-                // TODO なぜかwhereがうまくいかない。
-                //.whereGreaterThan("userId", userId)
-                //.whereLessThan("userId", userId)
-                .orderBy(User::userId.name)
-                //.limit(10)
-                .get()
-                .addOnCompleteListener {
-                    if (it.isSuccessful) {
-                        it.result?.toObjects(User::class.java)?.also {
-                            // とりあえずuser全件をnotFriendListに格納
-                            notFriendList = it
-                        }
-                        var notFriendIdList: MutableList<String> =
-                            notFriendList.map { it.userId }.toMutableList()
-                        // notFriendIdListからfirendIdListを除外
-                        notFriendIdList.removeAll(friendIdList)
-                        // 自分のIDも除外
-                        notFriendIdList.remove(UserManager.myUserId)
-
-                        // Spinner.adapterがarrayしか受け付けないので変換
-                        notFriendIdArray.postValue(notFriendIdList.toTypedArray())
-
-                    }
-                }
-        }
 
         /**
          * 友だち追加
@@ -114,7 +74,7 @@ class UserStore {
             // ログインユーザ側登録
             FirebaseFirestore.getInstance()
                 .collection("users")
-                .document(UserManager.myUser.documentId)
+                .document(UserManager.myUser.userId)
                 .update("friendIdList", UserManager.myUser.friendIdList)
 
 
@@ -128,7 +88,7 @@ class UserStore {
                 // 友だち側登録
                 FirebaseFirestore.getInstance()
                     .collection("users")
-                    .document(friend.documentId)
+                    .document(friend.userId)
                     .update("friendIdList", friend.friendIdList)
                     .addOnCompleteListener {
 
@@ -152,13 +112,13 @@ class UserStore {
         fun registerLoginUser() {
             val loginUserUID = FirebaseAuth.getInstance().currentUser?.uid.toString()
             val user = User().apply {
-                userId = FireStoreUtil.getLoginUserId()
-                documentId = loginUserUID
+                userId = if(UserManager.myUserId.isNotEmpty()) UserManager.myUserId else FireStoreUtil.createLoginUserId()
+                uids.add(loginUserUID)
             }
 
             FirebaseFirestore.getInstance()
                 .collection("users")
-                .document(loginUserUID)
+                .document(user.userId)
                 .set(user)
                 .addOnCompleteListener {
                     if (it.isSuccessful) {
