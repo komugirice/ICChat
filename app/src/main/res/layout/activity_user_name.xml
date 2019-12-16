@@ -59,6 +59,7 @@
             android:layout_height="wrap_content"
             android:gravity="left|center"
             android:textSize="20sp"
+            android:maxLength="20"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

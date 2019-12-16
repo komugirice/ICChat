@@ -32,13 +32,11 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
-import com.komugirice.icchat.BaseActivity
-import com.komugirice.icchat.BuildConfig
-import com.komugirice.icchat.MainActivity
-import com.komugirice.icchat.R
+import com.komugirice.icchat.*
 import com.komugirice.icchat.data.firestore.manager.UserManager
 import com.komugirice.icchat.data.firestore.model.User
 import com.komugirice.icchat.data.firestore.store.UserStore
+import com.komugirice.icchat.extension.afterTextChanged
 import kotlinx.android.synthetic.main.activity_login.*
 import timber.log.Timber
 
@@ -301,6 +299,10 @@ class LoginActivity : BaseActivity() {
         container.setOnClickListener {
             hideKeybord(it)
         }
+        createUserTextView.setOnClickListener {
+            CreateUserActivity.start(this)
+        }
+
 
     }
 
@@ -351,17 +353,4 @@ class LoginActivity : BaseActivity() {
     }
 }
 
-/**
- * Extension function to simplify setting an afterTextChanged action to EditText components.
- */
-fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
-    this.addTextChangedListener(object : TextWatcher {
-        override fun afterTextChanged(editable: Editable?) {
-            afterTextChanged.invoke(editable.toString())
-        }
 
-        override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-
-        override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
-    })
-}

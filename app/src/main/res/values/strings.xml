@@ -1,7 +1,7 @@
 <resources>
     <!-- ログイン画面 -->
     <string name="app_name">ICChat</string>
-    <string name="title_activity_login">Sign in</string>
+    <string name="title_activity_login">ログイン</string>
     <string name="prompt_email">メールアドレス</string>
     <string name="prompt_password">パスワード</string>
     <string name="action_sign_in">ログイン</string>
@@ -13,6 +13,16 @@
     <string name="login_failed_no_user">ユーザ情報が無いのでログインできませんでした</string>
     <string name="text_create_user">アカウントを作成する</string>
 
+    <!-- ユーザ登録 -->
+    <string name="title_activity_create_user">ユーザ登録</string>
+    <string name="password_label">パスワード</string>
+    <string name="password_confirm_label">パスワード（確認用）</string>
+    <string name="create_button">登録</string>
+    <string name="required_mark">*</string>
+    <string name="invalid_userName">ユーザ名を入力して下さい</string>
+    <string name="invalid_password_create_user">パスワードは6文字以上、64文字以下で入力して下さい</string>
+    <string name="invalid_pattern_email">メールアドレスの形式が違います</string>
+    <string name="invalid_match_password">パスワード（確認用）が一致していません</string>
     <!-- TabLayout -->
     <string name="tab_frient">友だち</string>
     <string name="tab_room">トーク</string>
