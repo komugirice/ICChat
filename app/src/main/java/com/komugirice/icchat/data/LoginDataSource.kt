@@ -17,7 +17,7 @@ class LoginDataSource {
     fun login(email: String, password: String, _loginResult: MutableLiveData<LoginResult>) {
         try {
             // TODO: handle loggedInUser authentication
-            var user: LoggedInUser? = null
+            var user: LoggedInUser?
             FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener {
                     user = updateView()
@@ -41,7 +41,7 @@ class LoginDataSource {
             //throw IOException()
             return null
         }
-        // TODO FirebaseAuthからユーザ名取得する
+
         return LoggedInUser(user.email?.also{it.getIdFromEmail()} ?: "", "Dummy")
     }
 

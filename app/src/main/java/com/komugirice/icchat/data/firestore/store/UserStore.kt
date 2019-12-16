@@ -127,5 +127,35 @@ class UserStore {
                 }
 
         }
+
+        /**
+         * uid追加
+         *
+         */
+        fun addUid(context: Context?) {
+            val uid = FirebaseAuth.getInstance().currentUser?.uid.toString()
+            if (UserManager.myUser.uids.contains(uid)) {
+                Toast.makeText(
+                    context,
+                    "既に連携済みです。",
+                    Toast.LENGTH_LONG
+                ).show()
+                return
+            } else {
+                UserManager.myUser.uids.add(uid)
+            }
+
+
+            // ログインユーザ側登録
+            FirebaseFirestore.getInstance()
+                .collection("users")
+                .document(UserManager.myUser.userId)
+                .update("uids", UserManager.myUser.uids)
+
+            Toast.makeText(
+                context,
+                "Facebookに連携しました",
+                Toast.LENGTH_LONG).show()
+        }
     }
 }

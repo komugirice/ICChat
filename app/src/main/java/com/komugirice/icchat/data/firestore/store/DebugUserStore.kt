@@ -1,10 +1,10 @@
 package com.komugirice.icchat.data.firestore.store
 
+import androidx.databinding.library.BuildConfig
 import androidx.lifecycle.MutableLiveData
 import com.example.qiitaapplication.extension.toDate
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.komugirice.icchat.BuildConfig
 import com.komugirice.icchat.ICChatApplication.Companion.isDevelop
 import com.komugirice.icchat.data.firestore.manager.UserManager
 import com.komugirice.icchat.data.firestore.model.User

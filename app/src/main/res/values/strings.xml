@@ -4,12 +4,13 @@
     <string name="title_activity_login">Sign in</string>
     <string name="prompt_email">メールアドレス</string>
     <string name="prompt_password">パスワード</string>
-    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in">ログイン</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="welcome">"Welcome !"</string>
     <string name="invalid_email">メールアドレスを入力して下さい</string>
     <string name="invalid_password">パスワードは6文字以上入力して下さい</string>
     <string name="login_failed">"Login failed"</string>
+    <string name="login_failed_no_user">ユーザ情報が無いのでログインできませんでした</string>
     <string name="text_create_user">アカウントを作成する</string>
 
     <!-- TabLayout -->
@@ -33,7 +34,7 @@
     <!-- ProfileSettingActivity -->
     <string name="title_profile_setting">プロフィール設定</string>
     <string name="user_name_label">名前</string>
-    <string name="user_id_label">ID</string>
+    <string name="email_label">メールアドレス</string>
     <string name="birthday_label">誕生日</string>
 
     <!-- UserNameActivity -->

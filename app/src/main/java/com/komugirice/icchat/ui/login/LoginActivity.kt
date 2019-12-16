@@ -14,9 +14,6 @@ import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.annotation.StringRes
-import androidx.core.app.ActivityCompat
-import androidx.core.app.ActivityCompat.finishAffinity
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.example.qiitaapplication.extension.getIdFromEmail
@@ -24,6 +21,7 @@ import com.facebook.AccessToken
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
 import com.facebook.FacebookException
+import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -35,12 +33,12 @@ import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.komugirice.icchat.BaseActivity
+import com.komugirice.icchat.BuildConfig
 import com.komugirice.icchat.MainActivity
 import com.komugirice.icchat.R
 import com.komugirice.icchat.data.firestore.manager.UserManager
 import com.komugirice.icchat.data.firestore.model.User
 import com.komugirice.icchat.data.firestore.store.UserStore
-import com.komugirice.icchat.util.FireStoreUtil
 import kotlinx.android.synthetic.main.activity_login.*
 import timber.log.Timber
 
@@ -68,6 +66,9 @@ class LoginActivity : BaseActivity() {
 
         // 表示後の処理
         val email = findViewById<EditText>(R.id.email)
+        if(BuildConfig.DEBUG)
+            email.setText("000000@example.com")
+
         val password = findViewById<EditText>(R.id.password)
         val login = findViewById<Button>(R.id.login)
         val loading = findViewById<ProgressBar>(R.id.loading)
@@ -99,14 +100,33 @@ class LoginActivity : BaseActivity() {
                 showLoginFailed(loginResult.error)
                 return@Observer
             }
+            // 認証成功
             if (loginResult.success != null) {
-                // 次の画面に遷移
-                updateUiWithUser(loginResult.success)
-            }
-            setResult(Activity.RESULT_OK)
 
-            //Complete and destroy login activity once successful
-            finish()
+                // ユーザ情報取得
+                UserStore.getLoginUser {
+                    it.result?.toObjects(User::class.java)?.firstOrNull().also {
+
+                        it?.also {
+                            // 次の画面に遷移
+                            updateUiWithUser(it)
+
+                            setResult(Activity.RESULT_OK)
+                            //Complete and destroy login activity once successful
+                            finish()
+                        }
+                    } ?: run {
+                        // ユーザ情報が無いのでログインできませんでした
+                        Toast.makeText(
+                            applicationContext,
+                            R.string.login_failed_no_user,
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
+
+            }
+
 
         })
 
@@ -169,7 +189,7 @@ class LoginActivity : BaseActivity() {
                     // App code
                     Timber.e(exception,"facebook:onError")
                 }
-            });
+            })
 
     }
 
@@ -278,39 +298,35 @@ class LoginActivity : BaseActivity() {
         googleLoginButton.setOnClickListener{
             googleSignIn()
         }
-    }
+        container.setOnClickListener {
+            hideKeybord(it)
+        }
 
+    }
 
     /**
      * ログイン成功したら呼ばれる
-     * @param model: LoggedInUserView
+     * @param user: User
      */
-    private fun updateUiWithUser(model: LoggedInUserView) {
+    private fun updateUiWithUser(user: User) {
         val welcome = getString(R.string.welcome)
         // TODO : initiate successful logged in experience
 
         // UserManager初期設定
-        UserStore.getLoginUser() {
-            it.result?.toObjects(User::class.java)?.firstOrNull().also {
-                it?.also {
-                    UserManager.myUserId = it.userId
-                    UserManager.myUser = it
-                    // TODO 非同期大丈夫？
-                    UserStore.getAllUsers()
+        UserManager.myUserId = user.userId
+        UserManager.myUser = user
+        // TODO 非同期大丈夫？
+        UserStore.getAllUsers()
 
-                    val displayName = UserManager.myUser.name
+        val displayName = UserManager.myUser.name
 
-                    Toast.makeText(
-                        applicationContext,
-                        "$welcome $displayName",
-                        Toast.LENGTH_LONG
-                    ).show()
+        Toast.makeText(
+            applicationContext,
+            "$welcome $displayName",
+            Toast.LENGTH_LONG
+        ).show()
 
-                    MainActivity.start(this)
-                }
-            }
-        }
-
+        MainActivity.start(this)
 
     }
 
@@ -320,7 +336,7 @@ class LoginActivity : BaseActivity() {
 
     companion object {
         private val TAG = "LoginActivity"
-        private val RC_SIGN_IN = 9001;
+        private val RC_SIGN_IN = 9001 // Google
 
         fun start(activity: Activity) = activity.apply {
             finishAffinity()
@@ -329,6 +345,7 @@ class LoginActivity : BaseActivity() {
 
         fun signOut(activity: Activity) {
             FirebaseAuth.getInstance().signOut()
+            LoginManager.getInstance().logOut()
             activity.startActivity(Intent(activity, LoginActivity::class.java))
         }
     }

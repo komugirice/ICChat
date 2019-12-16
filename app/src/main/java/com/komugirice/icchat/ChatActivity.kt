@@ -1,5 +1,6 @@
 package com.komugirice.icchat
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -171,9 +172,9 @@ class ChatActivity : BaseActivity() {
 
     companion object {
         private const val KEY_ROOM = "key_room"
-        fun start(context: Context?, room: Room) =
-            context?.startActivity(
-                Intent(context, ChatActivity::class.java)
+        fun start(activity: Activity?, room: Room) =
+            activity?.startActivity(
+                Intent(activity, ChatActivity::class.java)
                     .putExtra(KEY_ROOM, room)
             )
     }

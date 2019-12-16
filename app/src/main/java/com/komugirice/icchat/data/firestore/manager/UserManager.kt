@@ -1,9 +1,8 @@
 package com.komugirice.icchat.data.firestore.manager
 
+import androidx.databinding.library.BuildConfig
 import com.google.firebase.auth.FirebaseAuth
-import com.komugirice.icchat.BuildConfig
 import com.komugirice.icchat.data.firestore.model.User
-import com.komugirice.icchat.util.FireStoreUtil
 
 object UserManager {
 

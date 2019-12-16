@@ -1,5 +1,6 @@
 package com.komugirice.icchat
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -55,9 +56,9 @@ class UserNameActivity : AppCompatActivity() {
     }
 
     companion object {
-        fun start(context: Context?) =
-            context?.startActivity(
-                Intent(context, UserNameActivity::class.java)
+        fun start(activity: Activity?) =
+            activity?.startActivity(
+                Intent(activity, UserNameActivity::class.java)
             )
     }
 }

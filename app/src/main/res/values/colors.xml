@@ -185,5 +185,6 @@
     <color name="Nagahoritsurumiryokuchi_Line_Yellow_Green">#a9cc51</color>
     <color name="Imazatosuji_Line_Orange">#ee7b1a</color>
     <color name="Nanko_port_town_Line_Cerulean_Blue">#00a0de</color>
-
+    <!---->
+    <color name="facebook">#1877f2</color>
 </resources>

@@ -42,9 +42,8 @@ class FriendFragment : Fragment() {
                 }
             })
         }
-        // TODO これで良いか三浦さんに質問
         binding.FriendsView.customAdapter.roomForChatActivity.observe(this@FriendFragment, Observer {
-            ChatActivity.start(context, it)
+            ChatActivity.start(activity, it)
         })
         return binding.root
     }
