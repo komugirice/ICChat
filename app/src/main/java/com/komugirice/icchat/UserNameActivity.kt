@@ -9,9 +9,13 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.komugirice.icchat.data.firestore.manager.UserManager
 import com.komugirice.icchat.extension.afterTextChanged
+import kotlinx.android.synthetic.main.activity_create_user.*
 import kotlinx.android.synthetic.main.activity_profile_setting.*
 import kotlinx.android.synthetic.main.activity_user_name.*
 import kotlinx.android.synthetic.main.activity_user_name.backImageView
+import kotlinx.android.synthetic.main.activity_user_name.saveButton
+import kotlinx.android.synthetic.main.activity_user_name.userNameEditText
+import kotlinx.android.synthetic.main.activity_user_name.userNameLength
 
 class UserNameActivity : AppCompatActivity() {
 
@@ -48,7 +52,7 @@ class UserNameActivity : AppCompatActivity() {
     }
 
     private fun update() {
-        val userName = userNameEditText.text.toString()
+        val userName = userNameEditText.text.toString().trim()
         FirebaseFirestore.getInstance()
             .collection("users")
             .document(UserManager.myUser.userId)

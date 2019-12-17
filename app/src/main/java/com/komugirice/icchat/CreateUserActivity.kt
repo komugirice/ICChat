@@ -113,13 +113,11 @@ class CreateUserActivity : BaseActivity() {
             hideKeybord(it)
         }
 
-        birthDayEditText.setOnFocusChangeListener { v, hasFocus ->
-            if (hasFocus) {
-                showDateDialog() {
-                    birthDayEditText.setText(it.getDateToString())
-                    // birthDayEditText.afterTextChangedに検知されないので無理やり変える
-                    birthDayEditText.error = null
-                }
+        calendarImageView.setOnClickListener {
+            showDateDialog() {
+                birthDayEditText.setText(it.getDateToString())
+                // birthDayEditText.afterTextChangedに検知されないので無理やり変える
+                birthDayEditText.error = null
             }
         }
 
@@ -203,7 +201,7 @@ class CreateUserActivity : BaseActivity() {
     }
 
     private fun createUser() {
-        val email = emailEditText.text.toString()
+        val email = emailEditText.text.toString().trim()
         val password = passwordEditText.text.toString()
 
         FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
@@ -228,7 +226,7 @@ class CreateUserActivity : BaseActivity() {
     }
 
     private fun createUserFireStore() {
-        val userName = userNameEditText.text.toString()
+        val userName = userNameEditText.text.toString().trim()
         val birthDay = birthDayEditText.text.toString().toDate()
 
         val user = User().apply {

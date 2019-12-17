@@ -17,6 +17,7 @@ import androidx.annotation.StringRes
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.example.qiitaapplication.extension.getIdFromEmail
+import com.example.qiitaapplication.extension.loggingSize
 import com.facebook.AccessToken
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
@@ -38,8 +39,12 @@ import com.komugirice.icchat.data.firestore.manager.UserManager
 import com.komugirice.icchat.data.firestore.model.User
 import com.komugirice.icchat.data.firestore.store.UserStore
 import com.komugirice.icchat.extension.afterTextChanged
+import com.komugirice.icchat.extension.loggingSize
+import kotlinx.android.synthetic.main.activity_create_user.*
 import kotlinx.android.synthetic.main.activity_login.*
+import kotlinx.android.synthetic.main.activity_login.container
 import timber.log.Timber
+import java.util.logging.Logger
 
 
 class LoginActivity : BaseActivity() {
@@ -301,8 +306,6 @@ class LoginActivity : BaseActivity() {
         createUserTextView.setOnClickListener {
             CreateUserActivity.start(this)
         }
-
-
     }
 
     /**
@@ -331,6 +334,19 @@ class LoginActivity : BaseActivity() {
 
     private fun showLoginFailed(@StringRes errorString: Int) {
         Toast.makeText(applicationContext, errorString, Toast.LENGTH_SHORT).show()
+    }
+
+    /**
+     * デバッグ用
+     *
+     */
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        emailEditText?.loggingSize()
+        login.loggingSize()
+        facebookLoginButton.loggingSize()
+        googleLoginButton.loggingSize()
+
     }
 
     companion object {

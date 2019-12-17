@@ -92,7 +92,8 @@
             android:gravity="left|center"
             android:textSize="16sp"
             android:maxLength="20"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:inputType="text"
+        app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/userNameLabel" />
 
@@ -136,14 +137,25 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/emailEditText" />
 
+        <ImageView
+            android:id="@+id/calendarImageView"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:src="@drawable/ic_calendar_16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/birthDayLabel"
+            app:layout_constraintBottom_toBottomOf="@+id/birthDayEditText"/>
+
         <EditText
             android:id="@+id/birthDayEditText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:gravity="left|center"
             android:textSize="16sp"
+            android:layout_marginLeft="8dp"
+            android:inputType="text"
+            app:layout_constraintStart_toEndOf="@+id/calendarImageView"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/birthDayLabel" />
 
         <TextView
