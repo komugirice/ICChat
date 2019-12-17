@@ -33,6 +33,7 @@ import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.komugirice.icchat.*
+import com.komugirice.icchat.ICChatApplication.Companion.applicationContext
 import com.komugirice.icchat.data.firestore.manager.UserManager
 import com.komugirice.icchat.data.firestore.model.User
 import com.komugirice.icchat.data.firestore.store.UserStore
@@ -102,28 +103,26 @@ class LoginActivity : BaseActivity() {
             if (loginResult.success != null) {
 
                 // ユーザ情報取得
-                UserStore.getLoginUser {
-                    it.result?.toObjects(User::class.java)?.firstOrNull().also {
+                //UserStore.getLoginUser {
+                    //it.result?.toObjects(User::class.java)?.firstOrNull().also {
 
-                        it?.also {
+//                        it?.also {
                             // 次の画面に遷移
-                            updateUiWithUser(it)
+                            updateUiWithUser()
 
                             setResult(Activity.RESULT_OK)
                             //Complete and destroy login activity once successful
                             finish()
-                        }
-                    } ?: run {
-                        // ユーザ情報が無いのでログインできませんでした
-                        Toast.makeText(
-                            applicationContext,
-                            R.string.login_failed_no_user,
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
+//                        }
+//                    } ?: run {
+//                        // ユーザ情報が無いのでログインできませんでした
+//                        Toast.makeText(
+//                            applicationContext,
+//                            R.string.login_failed_no_user,
+//                            Toast.LENGTH_LONG
+//                        ).show()
+//                    }
                 }
-
-            }
 
 
         })
@@ -310,12 +309,12 @@ class LoginActivity : BaseActivity() {
      * ログイン成功したら呼ばれる
      * @param user: User
      */
-    private fun updateUiWithUser(user: User) {
+    private fun updateUiWithUser() {
         val welcome = getString(R.string.welcome)
         // TODO : initiate successful logged in experience
 
         // UserManager初期設定
-        UserManager.initUserManager(user)
+        UserManager.initUserManager()
 
         val displayName = UserManager.myUser.name
 

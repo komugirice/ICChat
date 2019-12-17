@@ -36,12 +36,23 @@ object UserManager {
 
     /**
      * UserManager初期化
+     * FirebaseAuthのcurrentUserが取得出来る前提
      * @param user: User
      */
-    fun initUserManager(user: User) {
-        UserManager.myUserId = user.userId
-        UserManager.myUser = user
-        // TODO 非同期大丈夫？
-        UserStore.getAllUsers()
+    fun initUserManager() {
+        UserStore.getLoginUser {
+            it.result?.toObjects(User::class.java)?.firstOrNull().also {
+                it?.also {
+                    UserManager.myUserId = it.userId
+                    UserManager.myUser = it
+                    // TODO 非同期大丈夫？
+                    UserStore.getAllUsers()
+                }
+            } ?: run {
+                if(BuildConfig.DEBUG)
+                    throw RuntimeException("initUserManager(): currentUserがnull")
+            }
+
+        }
     }
 }

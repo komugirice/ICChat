@@ -19,22 +19,13 @@ class CreateUserCompleteActivity : AppCompatActivity() {
 
     private fun initClick() {
         loginButton.setOnClickListener {
-            // ユーザ情報取得
-            UserStore.getLoginUser {
-                it.result?.toObjects(User::class.java)?.firstOrNull().also {
+            // UserManager初期化
+            UserManager.initUserManager()
+            // メイン画面に遷移
+            MainActivity.start(this)
 
-                    it?.also {
-                        // UserManager初期化
-                        UserManager.initUserManager(it)
-                        // メイン画面に遷移
-                        MainActivity.start(this)
-
-                        //Complete and destroy login activity once successful
-                        finish()
-                    }
-                }
-
-            }
+            //Complete and destroy login activity once successful
+            finish()
         }
     }
 
