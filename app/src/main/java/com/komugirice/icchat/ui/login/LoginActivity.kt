@@ -315,10 +315,7 @@ class LoginActivity : BaseActivity() {
         // TODO : initiate successful logged in experience
 
         // UserManager初期設定
-        UserManager.myUserId = user.userId
-        UserManager.myUser = user
-        // TODO 非同期大丈夫？
-        UserStore.getAllUsers()
+        UserManager.initUserManager(user)
 
         val displayName = UserManager.myUser.name
 
@@ -331,6 +328,7 @@ class LoginActivity : BaseActivity() {
         MainActivity.start(this)
 
     }
+
 
     private fun showLoginFailed(@StringRes errorString: Int) {
         Toast.makeText(applicationContext, errorString, Toast.LENGTH_SHORT).show()

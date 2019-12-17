@@ -8,6 +8,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.komugirice.icchat.ICChatApplication.Companion.isDevelop
 import com.komugirice.icchat.data.firestore.manager.UserManager
 import com.komugirice.icchat.data.firestore.model.User
+import com.komugirice.icchat.util.FireStoreUtil
 import java.util.*
 
 class DebugUserStore {
@@ -166,6 +167,30 @@ class DebugUserStore {
 
                     }
                 }
+        }
+
+        /**
+         * ログインユーザ情報登録
+         *
+         *
+         */
+        fun registerLoginUser() {
+            val loginUserUID = FirebaseAuth.getInstance().currentUser?.uid.toString()
+            val user = User().apply {
+                userId = if(UserManager.myUserId.isNotEmpty()) UserManager.myUserId else FireStoreUtil.createLoginUserId()
+                uids.add(loginUserUID)
+            }
+
+            FirebaseFirestore.getInstance()
+                .collection("users")
+                .document(user.userId)
+                .set(user)
+                .addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        UserManager.myUser = user
+                    }
+                }
+
         }
     }
 }

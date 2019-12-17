@@ -103,26 +103,19 @@ class UserStore {
             }
         }
 
-
         /**
-         * ログインユーザ情報登録
+         * ユーザ情報登録
          *
          *
          */
-        fun registerLoginUser() {
-            val loginUserUID = FirebaseAuth.getInstance().currentUser?.uid.toString()
-            val user = User().apply {
-                userId = if(UserManager.myUserId.isNotEmpty()) UserManager.myUserId else FireStoreUtil.createLoginUserId()
-                uids.add(loginUserUID)
-            }
-
+        fun registerUser(user: User, onSuccess: (Task<Void>) -> Unit) {
             FirebaseFirestore.getInstance()
                 .collection("users")
                 .document(user.userId)
                 .set(user)
                 .addOnCompleteListener {
                     if (it.isSuccessful) {
-                        UserManager.myUser = user
+                        onSuccess.invoke(it)
                     }
                 }
 

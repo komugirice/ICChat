@@ -3,6 +3,7 @@ package com.komugirice.icchat.data.firestore.manager
 import androidx.databinding.library.BuildConfig
 import com.google.firebase.auth.FirebaseAuth
 import com.komugirice.icchat.data.firestore.model.User
+import com.komugirice.icchat.data.firestore.store.UserStore
 
 object UserManager {
 
@@ -31,5 +32,16 @@ object UserManager {
     fun addMyFriends (friendId: String){
         myUser.friendIdList.add(friendId)
         myFriends = allUsers.filter { myUser.friendIdList.contains(it.userId) }
+    }
+
+    /**
+     * UserManager初期化
+     * @param user: User
+     */
+    fun initUserManager(user: User) {
+        UserManager.myUserId = user.userId
+        UserManager.myUser = user
+        // TODO 非同期大丈夫？
+        UserStore.getAllUsers()
     }
 }

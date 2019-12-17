@@ -47,7 +47,7 @@ class DebugFragment : Fragment() {
     private fun initClick() {
         // デバッグユーザ追加
         buttonAddDebugUser.setOnClickListener {
-            UserStore.registerLoginUser()
+            DebugUserStore.registerLoginUser()
 
             Toast.makeText(
                 context,

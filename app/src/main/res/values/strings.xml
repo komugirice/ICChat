@@ -24,6 +24,13 @@
     <string name="invalid_password_create_user">パスワードは6文字以上、64文字以下で入力して下さい</string>
     <string name="invalid_pattern_email">メールアドレスの形式が違います</string>
     <string name="invalid_match_password">パスワード（確認用）が一致していません</string>
+    <string name="invalid_duplicate_email">ご指定のメールアドレスは登録済です。別のメールアドレスに変更してください</string>
+    <string name="invalid_unknown_exception">予期せぬエラーが発生しました</string>
+
+    <!-- ユーザ登録完了 -->
+    <string name="title_activity_create_user_complete">ユーザ登録完了</string>
+    <string name="message_activity_create_user_complete">ユーザ登録が完了しました。</string>
+
     <!-- TabLayout -->
     <string name="tab_frient">友だち</string>
     <string name="tab_room">トーク</string>

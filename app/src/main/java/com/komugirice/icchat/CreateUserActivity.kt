@@ -1,29 +1,38 @@
 package com.komugirice.icchat
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.app.DatePickerDialog
+import android.app.PendingIntent.getActivity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.DatePicker
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.example.qiitaapplication.extension.getDateToString
+import com.example.qiitaapplication.extension.toDate
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.komugirice.icchat.data.firestore.model.User
+import com.komugirice.icchat.data.firestore.store.UserStore
 import com.komugirice.icchat.databinding.ActivityCreateUserBinding
 import com.komugirice.icchat.extension.afterTextChanged
 import com.komugirice.icchat.ui.createUser.CreateUserViewModel
+import com.komugirice.icchat.util.FireStoreUtil
 import kotlinx.android.synthetic.main.activity_chat.backImageView
 import kotlinx.android.synthetic.main.activity_create_user.*
 import kotlinx.android.synthetic.main.activity_login.container
+import timber.log.Timber
 import java.util.*
 
 class CreateUserActivity : BaseActivity() {
 
     private lateinit var binding: ActivityCreateUserBinding
     private lateinit var viewModel: CreateUserViewModel
+    private var errorMsg = MutableLiveData<String>()
 
-    var createUser = User()
     var tmpYear: Int = 2000
     var tmpMonth: Int = 1
     var tmpDayOfMonth: Int = 1
@@ -58,6 +67,11 @@ class CreateUserActivity : BaseActivity() {
                 }
             })
         }
+
+        errorMsg.observe(this, Observer{
+            showDialog("エラー", it)
+        })
+
         setContentView(R.layout.activity_create_user)
         initBinding()
         initLayout()
@@ -107,6 +121,10 @@ class CreateUserActivity : BaseActivity() {
                     birthDayEditText.error = null
                 }
             }
+        }
+
+        saveButton.setOnClickListener {
+            createUser()
         }
     }
 
@@ -183,6 +201,56 @@ class CreateUserActivity : BaseActivity() {
         }, tmpYear, tmpMonth, tmpDayOfMonth)
         dialog.show()
     }
+
+    private fun createUser() {
+        val email = emailEditText.text.toString()
+        val password = passwordEditText.text.toString()
+
+        FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener{
+                if(it.isSuccessful) {
+                    createUserFireStore()
+                } else {
+
+                    when(it.exception) {
+                        is FirebaseAuthUserCollisionException ->  {
+                            Timber.e(it.exception)
+                            errorMsg.postValue(getString(R.string.invalid_duplicate_email))
+                        }
+                        else -> {
+                            Timber.e(it.exception)
+                            errorMsg.postValue(getString(R.string.invalid_unknown_exception))
+                        }
+                    }
+                }
+            }
+
+    }
+
+    private fun createUserFireStore() {
+        val userName = userNameEditText.text.toString()
+        val birthDay = birthDayEditText.text.toString().toDate()
+
+        val user = User().apply {
+            this.name = userName
+            this.birthDay = birthDay
+            this.userId = FireStoreUtil.createLoginUserId()
+            this.uids.add(FirebaseAuth.getInstance().currentUser?.uid.toString())
+        }
+
+        UserStore.registerUser(user){
+            // ユーザ登録完了画面に遷移
+                CreateUserCompleteActivity.start(this)
+        }
+    }
+
+    private fun showDialog(title: String, msg: String) {
+        AlertDialog.Builder(this)
+            .setTitle(title)
+            .setMessage(msg)
+            .show();
+    }
+
 
     companion object {
         fun start(activity: Activity?) =
