@@ -70,10 +70,21 @@
             android:textSize="16sp"
             android:text="@string/user_name_label"
             app:requiredMarkVisible="@{true}"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/userNameLength"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <TextView
+            android:id="@+id/userNameLength"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="right"
+            android:textColor="@color/gray"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/userNameLabel"
+            app:layout_constraintTop_toTopOf="parent" />
         <EditText
             android:id="@+id/userNameEditText"
             android:layout_width="0dp"

@@ -43,7 +43,7 @@ class RoomStore {
          *
          *
          */
-        fun registerSingleUserRooms(rooms: MutableList<Room>?, targetUserId: String){
+        fun registerSingleUserRooms(rooms: List<Room>?, targetUserId: String){
             val loginUserId = UserManager.myUserId
             val サシリスト = mutableListOf(loginUserId, targetUserId)
             var updFlg = true

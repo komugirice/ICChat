@@ -18,7 +18,7 @@ class DebugUserStore {
          * @return MutableList<User> デバッグユーザリスト
          *
          */
-        fun getDebugUserList(): MutableList<User> {
+        fun getDebugUserList(): List<User> {
             var debugUserlist: MutableList<User> = mutableListOf()
             var userIdList = mutableListOf<String>().apply {
                 for (i in 0..9) {
@@ -101,7 +101,7 @@ class DebugUserStore {
          */
         private fun registerDebugUsers(currentUsers: List<Pair<String, User>>) {
             // 登録対象のデバッグユーザを取得
-            var debugUserlist: MutableList<User> = getDebugUserList()
+            var debugUserlist: MutableList<User> = getDebugUserList().toMutableList()
 
             val currentUserIds = currentUsers.map { it.second.userId }
             debugUserlist.forEach { user ->

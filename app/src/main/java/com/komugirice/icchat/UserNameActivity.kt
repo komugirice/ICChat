@@ -8,6 +8,7 @@ import android.os.Bundle
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.komugirice.icchat.data.firestore.manager.UserManager
+import com.komugirice.icchat.extension.afterTextChanged
 import kotlinx.android.synthetic.main.activity_profile_setting.*
 import kotlinx.android.synthetic.main.activity_user_name.*
 import kotlinx.android.synthetic.main.activity_user_name.backImageView
@@ -28,6 +29,12 @@ class UserNameActivity : AppCompatActivity() {
     private fun initLayout() {
         userNameEditText.setText(UserManager.myUser.name)
 
+        // ユーザ名の文字数表示
+        userNameLength.text = "${userNameEditText.length()}/20"
+        userNameEditText.afterTextChanged {
+            userNameLength.text = "${userNameEditText.length()}/20"
+        }
+
     }
     private fun initClick() {
         backImageView.setOnClickListener {
@@ -38,7 +45,6 @@ class UserNameActivity : AppCompatActivity() {
             if(userNameEditText.text.isNotEmpty())
                 update()
         }
-
     }
 
     private fun update() {

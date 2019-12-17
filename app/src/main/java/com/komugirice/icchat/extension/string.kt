@@ -162,7 +162,7 @@ fun String.formatDateStrWithoutValidate(dateStrIn: String?): String? {
  * @param pattern (yyyy/MM/dd)
  * @return Date
  */
-fun String.toDate(pattern: String): Date? {
+fun String.toDate(pattern: String = "yyyy/MM/dd"): Date? {
      val sdFormat = try {
           SimpleDateFormat(pattern)
      } catch (e: IllegalArgumentException) {
@@ -315,6 +315,18 @@ fun String.isHanStrBigOnly(): Boolean {
  */
 fun String.isHanBigStr(): Boolean {
      return if (!this.matches("^[A-Z]+$".toRegex())) {
+          false
+     } else true
+}
+
+/**
+ * 日付文字チェック
+ *
+ * @param s チェック対象文字列
+ * @return true, 日付文字; false, それ以外
+ */
+fun String.isDateStr(): Boolean {
+     return if (!this.matches("^[/0-9]+$".toRegex())) {
           false
      } else true
 }

@@ -20,6 +20,7 @@
     <string name="create_button">登録</string>
     <string name="required_mark">*</string>
     <string name="invalid_userName">ユーザ名を入力して下さい</string>
+    <string name="invalid_birthDay">日付を入力して下さい</string>
     <string name="invalid_password_create_user">パスワードは6文字以上、64文字以下で入力して下さい</string>
     <string name="invalid_pattern_email">メールアドレスの形式が違います</string>
     <string name="invalid_match_password">パスワード（確認用）が一致していません</string>
