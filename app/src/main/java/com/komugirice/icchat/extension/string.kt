@@ -67,7 +67,7 @@ fun String.addDate(dateText: String?, dayCount: Int): String? {
      val sdf = SimpleDateFormat("yyyyMMdd")
      sdf.isLenient = false
 
-     var baseDate: Date?
+     var baseDate: Date
      try {
           baseDate = sdf.parse(dateText)
      } catch (e: ParseException) {

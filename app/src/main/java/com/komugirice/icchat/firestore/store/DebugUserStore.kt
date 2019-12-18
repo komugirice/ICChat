@@ -1,13 +1,14 @@
-package com.komugirice.icchat.data.firestore.store
+package com.komugirice.icchat.firestore.store
 
 import androidx.databinding.library.BuildConfig
 import androidx.lifecycle.MutableLiveData
 import com.example.qiitaapplication.extension.toDate
+import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.komugirice.icchat.ICChatApplication.Companion.isDevelop
-import com.komugirice.icchat.data.firestore.manager.UserManager
-import com.komugirice.icchat.data.firestore.model.User
+import com.google.firebase.firestore.QuerySnapshot
+import com.komugirice.icchat.firestore.manager.UserManager
+import com.komugirice.icchat.firestore.model.User
 import com.komugirice.icchat.util.FireStoreUtil
 import java.util.*
 
@@ -90,7 +91,9 @@ class DebugUserStore {
                             }
                         }
                     }
-                    registerDebugUsers(currentUserPairs)
+                    registerDebugUsers(
+                        currentUserPairs
+                    )
                 }
         }
 
@@ -102,7 +105,8 @@ class DebugUserStore {
          */
         private fun registerDebugUsers(currentUsers: List<Pair<String, User>>) {
             // 登録対象のデバッグユーザを取得
-            var debugUserlist: MutableList<User> = getDebugUserList().toMutableList()
+            var debugUserlist: MutableList<User> = getDebugUserList()
+                .toMutableList()
 
             val currentUserIds = currentUsers.map { it.second.userId }
             debugUserlist.forEach { user ->
@@ -137,10 +141,9 @@ class DebugUserStore {
          *
          */
         fun getDebugNotFriendIdArray(
-            notFriendIdArray: MutableLiveData<Array<CharSequence>>
+            onComplete: (Task<QuerySnapshot>) -> Unit
         ) {
-            var notFriendList: MutableList<User> = mutableListOf()
-            // user情報取得
+            // users情報取得
             FirebaseFirestore.getInstance()
                 .collection("users")
                 // TODO なぜかwhereがうまくいかない。
@@ -150,23 +153,8 @@ class DebugUserStore {
                 //.limit(10)
                 .get()
                 .addOnCompleteListener {
-                    if (it.isSuccessful) {
-                        it.result?.toObjects(User::class.java)?.also {
-                            // とりあえずuser全件をnotFriendListに格納
-                            notFriendList = it
-                        }
-                        var notFriendIdList: MutableList<String> =
-                            notFriendList.map { it.userId }.toMutableList()
-                        // notFriendIdListからfirendIdListを除外
-                        notFriendIdList.removeAll(UserManager.myUser.friendIdList)
-                        // 自分のIDも除外
-                        notFriendIdList.remove(UserManager.myUserId)
-
-                        // Spinner.adapterがarrayしか受け付けないので変換
-                        notFriendIdArray.postValue(notFriendIdList.toTypedArray())
-
-                    }
-                }
+                    onComplete.invoke(it)
+            }
         }
 
         /**

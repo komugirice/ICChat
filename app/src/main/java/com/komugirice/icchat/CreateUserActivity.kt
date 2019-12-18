@@ -3,7 +3,6 @@ package com.komugirice.icchat
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.DatePickerDialog
-import android.app.PendingIntent.getActivity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.DatePicker
@@ -15,8 +14,8 @@ import com.example.qiitaapplication.extension.getDateToString
 import com.example.qiitaapplication.extension.toDate
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
-import com.komugirice.icchat.data.firestore.model.User
-import com.komugirice.icchat.data.firestore.store.UserStore
+import com.komugirice.icchat.firestore.model.User
+import com.komugirice.icchat.firestore.store.UserStore
 import com.komugirice.icchat.databinding.ActivityCreateUserBinding
 import com.komugirice.icchat.extension.afterTextChanged
 import com.komugirice.icchat.ui.createUser.CreateUserViewModel

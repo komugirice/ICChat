@@ -43,7 +43,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.login.LoginActivity"
+            android:name=".LoginActivity"
             android:screenOrientation="portrait">
         </activity>
         <activity android:name=".ChatActivity" />

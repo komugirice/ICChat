@@ -3,8 +3,6 @@ package com.komugirice.icchat
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.DatePickerDialog
-import android.app.PendingIntent.getActivity
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -28,9 +26,8 @@ import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
-import com.komugirice.icchat.data.firestore.manager.UserManager
-import com.komugirice.icchat.data.firestore.store.UserStore
-import kotlinx.android.synthetic.main.activity_login.*
+import com.komugirice.icchat.firestore.manager.UserManager
+import com.komugirice.icchat.firestore.store.UserStore
 import kotlinx.android.synthetic.main.activity_profile_setting.*
 import kotlinx.android.synthetic.main.activity_profile_setting.container
 import kotlinx.android.synthetic.main.activity_profile_setting.email

@@ -9,12 +9,12 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
-import com.komugirice.icchat.data.firestore.manager.UserManager
-import com.komugirice.icchat.data.firestore.model.Room
-import com.komugirice.icchat.data.firestore.store.DebugUserStore
-import com.komugirice.icchat.data.firestore.store.RoomStore
-import com.komugirice.icchat.data.firestore.store.UserStore
-import com.komugirice.icchat.util.FireStoreUtil
+import com.komugirice.icchat.firestore.manager.UserManager
+import com.komugirice.icchat.firestore.model.Room
+import com.komugirice.icchat.firestore.model.User
+import com.komugirice.icchat.firestore.store.DebugUserStore
+import com.komugirice.icchat.firestore.store.RoomStore
+import com.komugirice.icchat.firestore.store.UserStore
 import kotlinx.android.synthetic.main.fragment_debug.*
 
 /**
@@ -60,15 +60,58 @@ class DebugFragment : Fragment() {
 
         // 友だち追加
         buttonAddDebugFriend.setOnClickListener {
-            val friendId: String = SpinnerUsers.selectedItem.toString()
+            val friendId: String = SpinnerAddUsers.selectedItem.toString()
+            var rooms: MutableList<Room> = mutableListOf()
             UserStore.addFriend(context, friendId)
 
-            var rooms = MutableLiveData<MutableList<Room>>()
-            RoomStore.getLoginUserRooms(rooms)
-            rooms.observe(this, androidx.lifecycle.Observer {
-                RoomStore.registerSingleUserRooms(rooms.value, friendId)
-            })
+            RoomStore.getLoginUserRooms() {
+                if (it.isSuccessful) {
+                    it.result?.toObjects(Room::class.java)?.also { users ->
+                        var tempRooms = users
+
+                        // roomsに紐づくfriends取得
+                        tempRooms.forEach {
+                            if (it.userIdList.contains( UserManager.myUserId))
+                                rooms.add(it)
+                        }
+                        RoomStore.registerSingleUserRooms(rooms, friendId)
+                    }
+                }
+            }
         }
+
+        // 友だち削除
+        buttonDelDebugFriend.setOnClickListener {
+            val friendId: String = SpinnerDelUsers.selectedItem.toString()
+            var rooms: MutableList<Room> = mutableListOf()
+            // User削除
+            UserStore.delFriend(friendId) {
+
+                // Room削除
+                RoomStore.getLoginUserRooms() {
+                    if (it.isSuccessful) {
+                        it.result?.toObjects(Room::class.java)?.also { users ->
+                            var tempRooms = users
+
+                            // roomsに紐づくfriends取得
+                            tempRooms.forEach {
+                                if (it.userIdList.contains(UserManager.myUserId))
+                                    rooms.add(it)
+                            }
+                            RoomStore.delSingleUserRooms(rooms, friendId)
+                        }
+
+                    }
+                    Toast.makeText(
+                        context,
+                        "友だち削除が完了しました。",
+                        Toast.LENGTH_LONG
+                    ).show()
+
+                }
+            }
+        }
+
 
         buttonRefresh.setOnClickListener{
             initSpinner()
@@ -78,19 +121,48 @@ class DebugFragment : Fragment() {
 
     private fun initSpinner() {
         var adapter: ArrayAdapter<CharSequence>
-        var notFriendIdArray = MutableLiveData<Array<CharSequence>>()
+        var tmpList: List<User>
 
-        DebugUserStore.getDebugNotFriendIdArray(notFriendIdArray)
+        // NotFriend
+        DebugUserStore.getDebugNotFriendIdArray() {
+            if (it.isSuccessful) {
+                it.result?.toObjects(User::class.java)?.also {
+                    // とりあえずuser全件をnotFriendListに格納
+                    tmpList = it
 
-        notFriendIdArray.observe(this, androidx.lifecycle.Observer {
-            context?.also {
-                val value = notFriendIdArray.value ?: arrayOf()
-                adapter = ArrayAdapter<CharSequence>(
-                    it, R.layout.row_spinner, value)
+                    var notFriendIdList: MutableList<String> =
+                        tmpList.map { it.userId }.toMutableList()
+                    // notFriendIdListからfirendIdListを除外
+                    notFriendIdList.removeAll(UserManager.myUser.friendIdList)
+                    // 自分のIDも除外
+                    notFriendIdList.remove(UserManager.myUserId)
 
-                SpinnerUsers.adapter = adapter
+                    //notFriendIdList = notFriendIdList.map { it.substring(0, 10) }.toMutableList()
+
+                    context?.also {
+                        adapter = ArrayAdapter<CharSequence>(
+                            // Spinner.adapterがarrayしか受け付けないので変換
+                            it, R.layout.row_spinner, notFriendIdList.toTypedArray()
+                        )
+                        SpinnerAddUsers.adapter = adapter
+                    }
+
+
+                }
             }
-        })
+        }
+        // Friend
+        context?.also {
+            //var friendIdList: MutableList<String> =
+            //    UserManager.myUser.friendIdList.map { it.substring(0, 10) }.toMutableList()
+            val friendIdList = UserManager.myUser.friendIdList
+            adapter = ArrayAdapter<CharSequence>(
+                // Spinner.adapterがarrayしか受け付けないので変換
+
+                it, R.layout.row_spinner, friendIdList.toTypedArray()
+            )
+            SpinnerDelUsers.adapter = adapter
+        }
 
     }
 

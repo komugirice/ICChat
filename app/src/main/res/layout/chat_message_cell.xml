@@ -4,7 +4,7 @@
     <data>
         <variable
             name="message"
-            type="com.komugirice.icchat.data.firestore.model.Message" />
+            type="com.komugirice.icchat.firestore.model.Message" />
     </data>
 <androidx.constraintlayout.widget.ConstraintLayout
     android:id="@+id/rootView"

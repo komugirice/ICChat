@@ -1,17 +1,12 @@
 package com.komugirice.icchat
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.SetOptions
-import com.komugirice.icchat.data.firestore.manager.UserManager
+import com.komugirice.icchat.firestore.manager.UserManager
 import com.komugirice.icchat.extension.afterTextChanged
-import kotlinx.android.synthetic.main.activity_create_user.*
-import kotlinx.android.synthetic.main.activity_profile_setting.*
-import kotlinx.android.synthetic.main.activity_user_name.*
 import kotlinx.android.synthetic.main.activity_user_name.backImageView
 import kotlinx.android.synthetic.main.activity_user_name.saveButton
 import kotlinx.android.synthetic.main.activity_user_name.userNameEditText

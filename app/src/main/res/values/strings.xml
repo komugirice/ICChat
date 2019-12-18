@@ -44,6 +44,7 @@
     <!-- デバッグFragment -->
     <string name="buttonAddDebugUser">ユーザ情報登録</string>
     <string name="buttonAddDebugFriend">友だち追加</string>
+    <string name="buttonDelDebugFriend">友だち削除</string>
     <string name="buttonRefresh">更新</string>
 
     <!-- ChatActivity -->

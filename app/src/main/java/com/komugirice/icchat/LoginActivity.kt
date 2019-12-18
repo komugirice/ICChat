@@ -1,11 +1,9 @@
-package com.komugirice.icchat.ui.login
+package com.komugirice.icchat
 
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -33,18 +31,15 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
-import com.komugirice.icchat.*
-import com.komugirice.icchat.ICChatApplication.Companion.applicationContext
-import com.komugirice.icchat.data.firestore.manager.UserManager
-import com.komugirice.icchat.data.firestore.model.User
-import com.komugirice.icchat.data.firestore.store.UserStore
+import com.komugirice.icchat.firestore.manager.UserManager
 import com.komugirice.icchat.extension.afterTextChanged
 import com.komugirice.icchat.extension.loggingSize
+import com.komugirice.icchat.ui.login.LoginViewModel
+import com.komugirice.icchat.ui.login.LoginViewModelFactory
 import kotlinx.android.synthetic.main.activity_create_user.*
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.activity_login.container
 import timber.log.Timber
-import java.util.logging.Logger
 
 
 class LoginActivity : BaseActivity() {
@@ -107,27 +102,15 @@ class LoginActivity : BaseActivity() {
             // 認証成功
             if (loginResult.success != null) {
 
-                // ユーザ情報取得
-                //UserStore.getLoginUser {
-                    //it.result?.toObjects(User::class.java)?.firstOrNull().also {
+                // 次の画面に遷移
+                updateUiWithUser()
 
-//                        it?.also {
-                            // 次の画面に遷移
-                            updateUiWithUser()
+                setResult(Activity.RESULT_OK)
 
-                            setResult(Activity.RESULT_OK)
-                            //Complete and destroy login activity once successful
-                            finish()
-//                        }
-//                    } ?: run {
-//                        // ユーザ情報が無いのでログインできませんでした
-//                        Toast.makeText(
-//                            applicationContext,
-//                            R.string.login_failed_no_user,
-//                            Toast.LENGTH_LONG
-//                        ).show()
-//                    }
-                }
+                //Complete and destroy login activity once successful
+                finish()
+
+            }
 
 
         })
@@ -147,16 +130,16 @@ class LoginActivity : BaseActivity() {
                 )
             }
 
-            setOnEditorActionListener { _, actionId, _ ->
-                when (actionId) {
-                    EditorInfo.IME_ACTION_DONE ->
-                        loginViewModel.login(
-                            email.text.toString(),
-                            password.text.toString()
-                        )
-                }
-                false
-            }
+//            setOnEditorActionListener { _, actionId, _ ->
+//                when (actionId) {
+//                    EditorInfo.IME_ACTION_DONE ->
+//                        loginViewModel.login(
+//                            email.text.toString(),
+//                            password.text.toString()
+//                        )
+//                }
+//                false
+//            }
 
             login.setOnClickListener {
                 loading.visibility = View.VISIBLE
@@ -317,17 +300,18 @@ class LoginActivity : BaseActivity() {
         // TODO : initiate successful logged in experience
 
         // UserManager初期設定
-        UserManager.initUserManager()
+        UserManager.initUserManager(){
 
-        val displayName = UserManager.myUser.name
+            val displayName = UserManager.myUser.name
 
-        Toast.makeText(
-            applicationContext,
-            "$welcome $displayName",
-            Toast.LENGTH_LONG
-        ).show()
+            Toast.makeText(
+                applicationContext,
+                "$welcome $displayName",
+                Toast.LENGTH_LONG
+            ).show()
 
-        MainActivity.start(this)
+            MainActivity.start(this)
+        }
 
     }
 
@@ -361,7 +345,10 @@ class LoginActivity : BaseActivity() {
         fun signOut(activity: Activity) {
             FirebaseAuth.getInstance().signOut()
             LoginManager.getInstance().logOut()
-            activity.startActivity(Intent(activity, LoginActivity::class.java))
+            activity.apply {
+                finishAffinity()
+                activity.startActivity(Intent(activity, LoginActivity::class.java))
+            }
         }
     }
 }

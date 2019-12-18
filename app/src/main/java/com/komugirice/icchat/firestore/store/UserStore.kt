@@ -1,18 +1,13 @@
-package com.komugirice.icchat.data.firestore.store
+package com.komugirice.icchat.firestore.store
 
 import android.content.Context
 import android.widget.Toast
-import androidx.lifecycle.MutableLiveData
-import com.example.qiitaapplication.extension.toDate
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
-import com.komugirice.icchat.ICChatApplication.Companion.isDevelop
-import com.komugirice.icchat.data.firestore.model.User
-import com.komugirice.icchat.data.firestore.manager.UserManager
-import com.komugirice.icchat.util.FireStoreUtil
-import java.util.*
+import com.komugirice.icchat.firestore.model.User
+import com.komugirice.icchat.firestore.manager.UserManager
 
 class UserStore {
     companion object {
@@ -40,14 +35,12 @@ class UserStore {
          *
          *
          */
-        fun getAllUsers() {
+        fun getAllUsers(onComplete: (Task<QuerySnapshot>) -> Unit) {
             FirebaseFirestore.getInstance()
                 .collection("users")
                 .get()
                 .addOnCompleteListener {
-                    it.result?.toObjects(User::class.java)?.also {
-                        UserManager.allUsers = it
-                    }
+                    onComplete.invoke(it)
                 }
         }
 
@@ -100,6 +93,37 @@ class UserStore {
                         ).show()
                     }
                 }
+            }
+        }
+
+        /**
+         * 友だち削除
+         *
+         */
+        fun delFriend(friendId: String, onComplete: (Task<Void>) -> Unit) {
+            // フレンドユーザ取得
+            val friend = UserManager.myFriends.filter {
+                it.userId.equals(friendId)
+            }.first()
+
+            UserManager.removeMyFriends(friendId)
+
+            // ログインユーザ側更新
+            FirebaseFirestore.getInstance()
+                .collection("users")
+                .document(UserManager.myUser.userId)
+                .update("friendIdList", UserManager.myUser.friendIdList)
+
+            // フレンドユーザ側更新
+            friend.apply{
+                friend.friendIdList.remove(UserManager.myUserId)
+                FirebaseFirestore.getInstance()
+                    .collection("users")
+                    .document(friend.userId)
+                    .update("friendIdList", friend.friendIdList)
+                    .addOnCompleteListener {
+                        onComplete.invoke(it)
+                    }
             }
         }
 

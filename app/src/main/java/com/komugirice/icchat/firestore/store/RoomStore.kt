@@ -1,10 +1,12 @@
-package com.komugirice.icchat.data.firestore.store
+package com.komugirice.icchat.firestore.store
 
 import androidx.lifecycle.MutableLiveData
+import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.FirebaseFirestore
-import com.komugirice.icchat.data.firestore.model.Room
-import com.komugirice.icchat.data.firestore.model.User
-import com.komugirice.icchat.data.firestore.manager.UserManager
+import com.google.firebase.firestore.QuerySnapshot
+import com.komugirice.icchat.firestore.model.Room
+import com.komugirice.icchat.firestore.model.User
+import com.komugirice.icchat.firestore.manager.UserManager
 import java.util.*
 
 class RoomStore {
@@ -16,23 +18,13 @@ class RoomStore {
          * @param pRooms ログインユーザのRoomペアオブジェクトを設定します。
          *
          */
-        fun getLoginUserRooms(pRooms: MutableLiveData<MutableList<Room>>) {
-            val userId = UserManager.myUserId
-            var rooms: MutableList<Room> = mutableListOf()
+        fun getLoginUserRooms(onComplete: (Task<QuerySnapshot>) -> Unit) {
             // rooms取得
             FirebaseFirestore.getInstance()
                 .collection("rooms")
                 .get()
-                .addOnSuccessListener {
-
-                    var tempRooms = it.toObjects(Room::class.java)
-
-                    // roomsに紐づくfriends取得
-                    tempRooms.forEach {
-                        if (it.userIdList.contains(userId))
-                            rooms.add(it)
-                    }
-                    pRooms.postValue(rooms)
+                .addOnCompleteListener {
+                    onComplete.invoke(it)
                 }
         }
 
@@ -67,6 +59,38 @@ class RoomStore {
                     .collection("rooms")
                     .document(room.documentId)
                     .set(room)
+            }
+
+        }
+
+        /**
+         * ログインユーザと友だちのサシのチャットの重複チェックを行い、存在したら削除する。
+         * @param rooms: MutableList<Room>      ログインユーザのルームリスト
+         * @param targetUserId: String    対象ユーザID
+         *
+         *
+         */
+        fun delSingleUserRooms(rooms: List<Room>?, targetUserId: String){
+            val loginUserId = UserManager.myUserId
+            val サシリスト = mutableListOf(loginUserId, targetUserId)
+            var updFlg = false
+            lateinit var targetRoom: Room
+
+            // 全てのroomでサシチャットの重複対象チェック
+            rooms?.forEach {
+                if(it.userIdList.size == サシリスト.size
+                    && it.userIdList.toList().containsAll(サシリスト)) {
+                    // 存在
+                    updFlg = true
+                    targetRoom = it
+                }
+            }
+            if(updFlg) {
+                // 存在する場合、削除
+                FirebaseFirestore.getInstance()
+                    .collection("rooms")
+                    .document(targetRoom.documentId)
+                    .delete()
             }
 
         }

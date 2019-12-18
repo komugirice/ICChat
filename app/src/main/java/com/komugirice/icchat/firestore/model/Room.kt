@@ -1,4 +1,4 @@
-package com.komugirice.icchat.data.firestore.model
+package com.komugirice.icchat.firestore.model
 
 import java.io.Serializable
 import java.util.*

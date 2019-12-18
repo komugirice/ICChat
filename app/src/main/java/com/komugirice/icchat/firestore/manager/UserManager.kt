@@ -1,9 +1,9 @@
-package com.komugirice.icchat.data.firestore.manager
+package com.komugirice.icchat.firestore.manager
 
 import androidx.databinding.library.BuildConfig
 import com.google.firebase.auth.FirebaseAuth
-import com.komugirice.icchat.data.firestore.model.User
-import com.komugirice.icchat.data.firestore.store.UserStore
+import com.komugirice.icchat.firestore.model.User
+import com.komugirice.icchat.firestore.store.UserStore
 
 object UserManager {
 
@@ -34,19 +34,29 @@ object UserManager {
         myFriends = allUsers.filter { myUser.friendIdList.contains(it.userId) }
     }
 
+    fun removeMyFriends (friendId: String) {
+        myUser.friendIdList.remove(friendId)
+        myFriends = allUsers.filter { myUser.friendIdList.contains(it.userId) }
+    }
+
     /**
      * UserManager初期化
      * FirebaseAuthのcurrentUserが取得出来る前提
      * @param user: User
      */
-    fun initUserManager() {
+    fun initUserManager(onComplete: () -> Unit) {
         UserStore.getLoginUser {
             it.result?.toObjects(User::class.java)?.firstOrNull().also {
                 it?.also {
-                    UserManager.myUserId = it.userId
-                    UserManager.myUser = it
+                    myUserId = it.userId
+                    myUser = it
                     // TODO 非同期大丈夫？
-                    UserStore.getAllUsers()
+                    UserStore.getAllUsers(){
+                        it.result?.toObjects(User::class.java)?.also {
+                            UserManager.allUsers = it
+                        }
+                        onComplete.invoke()
+                    }
                 }
             } ?: run {
                 if(BuildConfig.DEBUG)
