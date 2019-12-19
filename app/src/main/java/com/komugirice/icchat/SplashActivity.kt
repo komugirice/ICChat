@@ -8,7 +8,7 @@ import com.komugirice.icchat.firestore.manager.UserManager
 
 class SplashActivity : AppCompatActivity() {
 
-    val SPLASH_TIME = 2000L;
+    val SPLASH_TIME = 1000L;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

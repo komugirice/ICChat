@@ -3,12 +3,20 @@ package com.komugirice.icchat
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.DatePickerDialog
+import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Matrix
+import android.graphics.drawable.BitmapDrawable
+import android.media.ExifInterface
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.widget.DatePicker
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
 import com.example.qiitaapplication.extension.getDateToString
 import com.facebook.AccessToken
 import com.facebook.CallbackManager
@@ -21,17 +29,23 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.common.util.IOUtils
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import com.komugirice.icchat.firestore.manager.UserManager
 import com.komugirice.icchat.firestore.store.UserStore
+import com.yalantis.ucrop.UCrop
 import kotlinx.android.synthetic.main.activity_profile_setting.*
-import kotlinx.android.synthetic.main.activity_profile_setting.container
-import kotlinx.android.synthetic.main.activity_profile_setting.email
+import kotlinx.serialization.json.Json.Companion.context
 import timber.log.Timber
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileInputStream
+import java.io.InputStream
 import java.util.*
 
 class ProfileSettingActivity : AppCompatActivity() {
@@ -74,6 +88,10 @@ class ProfileSettingActivity : AppCompatActivity() {
             finish()
         }
 
+        userIconImageView.setOnClickListener {
+            selectImage()
+        }
+
         userName.setOnClickListener {
             UserNameActivity.start(this)
         }
@@ -89,6 +107,10 @@ class ProfileSettingActivity : AppCompatActivity() {
 
     }
 
+    /**
+     * 日付ダイアログ
+     *
+     */
     private fun showDateDialog() {
         val dialog = DatePickerDialog(this, object: DatePickerDialog.OnDateSetListener{
             override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
@@ -98,6 +120,10 @@ class ProfileSettingActivity : AppCompatActivity() {
         dialog.show()
     }
 
+    /**
+     * 誕生日更新
+     *
+     */
     fun updateBirthDay(year: Int, month: Int, dayOfMonth: Int) {
         val birthDay = Calendar.getInstance().run {
             set(year, month, dayOfMonth, 0, 0, 0)
@@ -122,6 +148,10 @@ class ProfileSettingActivity : AppCompatActivity() {
             }
     }
 
+    /**
+     * Facebook連携機能初期化
+     *
+     */
     fun initFacebook() {
         callbackManager = CallbackManager.Factory.create()
         LoginManager.getInstance().registerCallback(callbackManager,
@@ -142,6 +172,10 @@ class ProfileSettingActivity : AppCompatActivity() {
 
     }
 
+    /**
+     * Facebook連携機能
+     *
+     */
     private fun handleFacebookAccessToken(token: AccessToken) {
         Log.d(TAG, "handleFacebookAccessToken:$token")
 
@@ -164,27 +198,10 @@ class ProfileSettingActivity : AppCompatActivity() {
             }
     }
 
-    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-        if (requestCode == RC_SIGN_IN) {
-            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-            try {
-                // Google Sign In was successful, authenticate with Firebase
-                val account = task.getResult(ApiException::class.java)
-                firebaseAuthWithGoogle(account!!)
-            } catch (e: ApiException) {
-                // Google Sign In failed, update UI appropriately
-                Log.w(TAG, "Google sign in failed", e)
-                //updateUI(null)
-            }
-        } else {
-            // Pass the activity result back to the Facebook SDK
-            callbackManager.onActivityResult(requestCode, resultCode, data)
-        }
-    }
-
+    /**
+     * Google連携機能初期化
+     *
+     */
     fun initGoogle() {
         // Configure Google Sign In
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -201,10 +218,14 @@ class ProfileSettingActivity : AppCompatActivity() {
     private fun googleSignIn() {
         val signInIntent = googleSignInClient.signInIntent
         startActivityForResult(signInIntent,
-            RC_SIGN_IN
+            RC_GOOGLE_SIGN_IN
         )
     }
 
+    /**
+     * Google連携のFirebaseAuth認証
+     *
+     */
     private fun firebaseAuthWithGoogle(acct: GoogleSignInAccount) {
         Log.d(TAG, "firebaseAuthWithGoogle:" + acct.id!!)
 
@@ -230,11 +251,98 @@ class ProfileSettingActivity : AppCompatActivity() {
             }
     }
 
+    /**
+     * ActivityResult
+     *
+     */
+    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
 
+        if (resultCode != Activity.RESULT_OK || data == null)
+            return
+        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+        when(requestCode) {
+            // Google連携
+            RC_GOOGLE_SIGN_IN -> {
+                val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+                try {
+                    // Google Sign In was successful, authenticate with Firebase
+                    val account = task.getResult(ApiException::class.java)
+                    firebaseAuthWithGoogle(account!!)
+                } catch (e: ApiException) {
+                    // Google Sign In failed, update UI appropriately
+                    Log.w(TAG, "Google sign in failed", e)
+                    //updateUI(null)
+                }
+            }
+            // Facebook連携
+            RC_FACEBOOK_SIGN_IN -> {
+                // Pass the activity result back to the Facebook SDK
+                callbackManager.onActivityResult(requestCode, resultCode, data)
+            }
+            // アイコン画像
+            RC_CHOOSE_IMAGE -> {
+
+                data.data?.also {
+
+//                    val destinationFileName = "/${UserManager.myUserId?: "noUser"}/${System.currentTimeMillis()}.jpg"
+//                    val image = File(this.filesDir, destinationFileName)
+//                    image.createNewFile()
+//
+//                    val outputUri = FileProvider.getUriForFile(
+//                        this, BuildConfig.APPLICATION_ID + ".provider", image
+//                    )
+//                    UCrop.of(it, outputUri)
+//                        .start(this)
+
+                    //upload()
+                }
+
+            }
+            UCrop.REQUEST_CROP -> {
+                val resultUri = UCrop.getOutput(data)
+                Timber.d(resultUri.toString())
+            }
+            UCrop.RESULT_ERROR -> {
+                Timber.d(UCrop.getError(data))
+            }
+
+        }
+    }
+
+    /**
+     * 画像選択
+     *
+     */
+    private fun selectImage() {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
+            .addCategory(Intent.CATEGORY_OPENABLE)
+            .setType("image/jpeg")
+        startActivityForResult(intent, RC_CHOOSE_IMAGE)
+    }
+
+    private fun upload() {
+        val ref = FirebaseStorage.getInstance().reference.child("${UserManager.myUserId?: "noUser"}/${System.currentTimeMillis()}.jpg")
+        val bitmap = (userIconImageView.drawable as BitmapDrawable).bitmap
+        val baos = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos)
+        val data = baos.toByteArray()
+        ref.putBytes(data)
+            .addOnFailureListener {
+                Toast.makeText(this, "Upload失敗", Toast.LENGTH_SHORT).show()
+                bitmap.recycle()
+            }
+            .addOnSuccessListener {
+                Toast.makeText(this, "Upload成功", Toast.LENGTH_SHORT).show()
+                bitmap.recycle()
+            }
+    }
 
     companion object {
-        private val TAG = "ProfileSettingActivity"
-        private val RC_SIGN_IN = 9001
+        private const val TAG = "ProfileSettingActivity"
+        private const val RC_GOOGLE_SIGN_IN = 9001
+        private const val RC_FACEBOOK_SIGN_IN = 64206
+        private const val RC_CHOOSE_IMAGE = 1000
 
         fun start(activity: Activity?) =
             activity?.startActivity(

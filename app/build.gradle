@@ -52,6 +52,8 @@ dependencies {
     implementation "com.google.firebase:firebase-firestore:$firebase_firestore_version"
     // FirebaseAuth
     implementation "com.google.firebase:firebase-auth:$firebase_auth_version"
+    // FirebaseStrage
+    implementation "com.google.firebase:firebase-storage:$firebase_storage_version"
     // ViewModel
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycler_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycler_version"
@@ -62,6 +64,9 @@ dependencies {
     //implementation 'com.facebook.android:facebook-android-sdk:[4,5)'
     // Google認証
     implementation 'com.google.android.gms:play-services-auth:17.0.0'
+    // 画像
+    implementation "com.squareup.picasso:picasso:$picasso_version"
+    implementation "com.github.yalantis:ucrop:2.2.4"
 }
 
 apply plugin: 'com.google.gms.google-services'
