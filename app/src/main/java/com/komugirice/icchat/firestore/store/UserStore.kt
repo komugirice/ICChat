@@ -174,5 +174,24 @@ class UserStore {
                 "Facebookに連携しました",
                 Toast.LENGTH_LONG).show()
         }
+
+        /**
+         * imageUrl更新
+         *
+         *
+         */
+        fun updateImageUrl(imageUrl: String, onSuccess: (Task<Void>) -> Unit) {
+            val user = UserManager.myUser
+            FirebaseFirestore.getInstance()
+                .collection("users")
+                .document(user.userId)
+                .update("imageUrl", imageUrl)
+                .addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        onSuccess.invoke(it)
+                    }
+                }
+
+        }
     }
 }

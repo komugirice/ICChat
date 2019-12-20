@@ -8,6 +8,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.media.ExifInterface
 import android.net.Uri
 import android.os.Bundle
@@ -17,6 +18,7 @@ import android.widget.DatePicker
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
+import androidx.core.net.toUri
 import com.example.qiitaapplication.extension.getDateToString
 import com.facebook.AccessToken
 import com.facebook.CallbackManager
@@ -38,6 +40,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.komugirice.icchat.firestore.manager.UserManager
 import com.komugirice.icchat.firestore.store.UserStore
+import com.squareup.picasso.Callback
+import com.squareup.picasso.Picasso
+import com.squareup.picasso.Target
 import com.yalantis.ucrop.UCrop
 import kotlinx.android.synthetic.main.activity_profile_setting.*
 import kotlinx.serialization.json.Json.Companion.context
@@ -46,6 +51,7 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream
+import java.lang.Exception
 import java.util.*
 
 class ProfileSettingActivity : AppCompatActivity() {
@@ -56,6 +62,8 @@ class ProfileSettingActivity : AppCompatActivity() {
     private lateinit var callbackManager: CallbackManager
 
     private val auth = FirebaseAuth.getInstance()
+
+    private lateinit var uCropSrcUri: Uri
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,8 +84,15 @@ class ProfileSettingActivity : AppCompatActivity() {
     }
 
     private fun initLayout() {
-        // TODO UserManager.myUserの設定
         val myUser = UserManager.myUser
+
+        // プロフィール画像
+        FirebaseStorage.getInstance().reference.child("${myUser.userId}/${myUser.imageUrl}").downloadUrl
+            .addOnSuccessListener {
+                Picasso.get().load(it).into(userIconImageView)
+                uCropSrcUri = it
+            }
+
         email.text = FirebaseAuth.getInstance().currentUser?.email
         userName.text = if(myUser.name.isNotEmpty()) myUser.name else "設定なし"
         birthDay.text = myUser.birthDay?.getDateToString() ?: "設定なし"
@@ -88,8 +103,11 @@ class ProfileSettingActivity : AppCompatActivity() {
             finish()
         }
 
-        userIconImageView.setOnClickListener {
+        usrIconUploadButton.setOnClickListener {
             selectImage()
+        }
+        uCropButton.setOnClickListener {
+            startUCrop()
         }
 
         userName.setOnClickListener {
@@ -284,27 +302,49 @@ class ProfileSettingActivity : AppCompatActivity() {
             RC_CHOOSE_IMAGE -> {
 
                 data.data?.also {
-
-//                    val destinationFileName = "/${UserManager.myUserId?: "noUser"}/${System.currentTimeMillis()}.jpg"
-//                    val image = File(this.filesDir, destinationFileName)
-//                    image.createNewFile()
-//
-//                    val outputUri = FileProvider.getUriForFile(
-//                        this, BuildConfig.APPLICATION_ID + ".provider", image
-//                    )
-//                    UCrop.of(it, outputUri)
+//                    var file = File.createTempFile("${System.currentTimeMillis()}", ".temp", cacheDir)
+//                    UCrop.of(it, file.toUri())
 //                        .start(this)
 
+                    // 過去のbitmap削除
+                    (userIconImageView.drawable as? BitmapDrawable)?.bitmap?.recycle()
+
+
+//                    initUCrop(it)
+//                    val uri = UCrop.getOutput(data)
+//                    userIconImageView.setImageURI(uri)
                     //upload()
+
+                    // 新しい画像登録
+                    Picasso.get().load(it).into(userIconImageView, object: Callback {
+                        override fun onSuccess() {
+                            uCropSrcUri = it
+                            startUCrop()
+//                            upload()
+                        }
+
+                        override fun onError(e: Exception?) {
+                            Toast.makeText(this@ProfileSettingActivity, "画像の取得に失敗しました", Toast.LENGTH_SHORT).show()
+                        }
+                    })
+
                 }
+//                (data.extras?.get("data") as? Bitmap)?.also {
+//                    userIconImageView.setImageBitmap(it)
+//                    upload()
+//                }
 
             }
             UCrop.REQUEST_CROP -> {
                 val resultUri = UCrop.getOutput(data)
                 Timber.d(resultUri.toString())
+                userIconImageView.setImageURI(resultUri)
+                upload()
             }
             UCrop.RESULT_ERROR -> {
                 Timber.d(UCrop.getError(data))
+                // TODO エラーダイアログ
+                Toast.makeText(this@ProfileSettingActivity, "画像の加工に失敗しました", Toast.LENGTH_SHORT).show()
             }
 
         }
@@ -321,8 +361,24 @@ class ProfileSettingActivity : AppCompatActivity() {
         startActivityForResult(intent, RC_CHOOSE_IMAGE)
     }
 
+    private fun startUCrop() {
+        var file = File.createTempFile("${System.currentTimeMillis()}", ".temp", cacheDir)
+        UCrop.of(uCropSrcUri, file.toUri())
+            .start(this)
+    }
+    private fun initUCrop(srcUri: Uri) {
+        var file = File.createTempFile("${System.currentTimeMillis()}", ".temp", cacheDir)
+        UCrop.of(srcUri, file.toUri())
+    }
+
     private fun upload() {
-        val ref = FirebaseStorage.getInstance().reference.child("${UserManager.myUserId?: "noUser"}/${System.currentTimeMillis()}.jpg")
+
+        // 元画像削除
+        if(UserManager.myUser.imageUrl.isNotEmpty())
+            FirebaseStorage.getInstance().reference.child("${UserManager.myUserId}/${UserManager.myUser.imageUrl}").delete()
+
+        val imageUrl = "${System.currentTimeMillis()}.jpg"
+        val ref = FirebaseStorage.getInstance().reference.child("${UserManager.myUserId?: "noUser"}/${imageUrl}")
         val bitmap = (userIconImageView.drawable as BitmapDrawable).bitmap
         val baos = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos)
@@ -333,8 +389,12 @@ class ProfileSettingActivity : AppCompatActivity() {
                 bitmap.recycle()
             }
             .addOnSuccessListener {
-                Toast.makeText(this, "Upload成功", Toast.LENGTH_SHORT).show()
-                bitmap.recycle()
+                UserStore.updateImageUrl(imageUrl) {
+                    // UserManagerの更新は必須
+                    UserManager.myUser.imageUrl = imageUrl
+                    Toast.makeText(this, "Upload成功", Toast.LENGTH_SHORT).show()
+                    //bitmap.recycle()
+                }
             }
     }
 

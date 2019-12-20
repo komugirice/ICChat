@@ -56,7 +56,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/userImageField"
             android:layout_width="0dp"
-            android:layout_height="136dp"
+            android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -76,14 +76,40 @@
 
             <ImageView
                 android:id="@+id/userIconImageView"
-                android:layout_width="96dp"
-                android:layout_height="96dp"
+                android:layout_width="128dp"
+                android:layout_height="128dp"
+                android:layout_marginTop="8dp"
                 android:scaleType="centerCrop"
                 android:background="@drawable/background_user_icon_image"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/userImageLabel"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                app:layout_constraintTop_toBottomOf="@+id/userImageLabel"/>
+
+            <Button
+                android:id="@+id/usrIconUploadButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/background_user_icon_upload_button"
+                android:text="@string/user_imon_upload_button"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/userIconImageView" />
+
+            <Button
+                android:id="@+id/uCropButton"
+                android:layout_width="0dp"
+                android:layout_height="32dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/background_user_icon_upload_button"
+                android:text="@string/u_crop_button"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="@+id/usrIconUploadButton"
+                app:layout_constraintStart_toStartOf="@+id/usrIconUploadButton"
+                app:layout_constraintTop_toBottomOf="@+id/usrIconUploadButton" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -198,7 +224,7 @@
             android:layout_marginTop="24dp"
             android:layout_marginEnd="16dp"
             android:background="@color/facebook"
-            android:text="facebookと連携"
+            android:text="@string/facebook_connect_button"
             android:textColor="@color/white"
             android:textSize="12sp"
             app:layout_constraintEnd_toEndOf="parent"
