@@ -6,7 +6,6 @@ import android.graphics.Paint
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
@@ -31,9 +30,9 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
-import com.komugirice.icchat.firestore.manager.UserManager
 import com.komugirice.icchat.extension.afterTextChanged
 import com.komugirice.icchat.extension.loggingSize
+import com.komugirice.icchat.firestore.manager.UserManager
 import com.komugirice.icchat.ui.login.LoginViewModel
 import com.komugirice.icchat.ui.login.LoginViewModelFactory
 import kotlinx.android.synthetic.main.activity_create_user.*
@@ -108,7 +107,8 @@ class LoginActivity : BaseActivity() {
                 setResult(Activity.RESULT_OK)
 
                 //Complete and destroy login activity once successful
-                finish()
+                // 一瞬アプリが消えるバグの為、削除
+                //finish()
 
             }
 

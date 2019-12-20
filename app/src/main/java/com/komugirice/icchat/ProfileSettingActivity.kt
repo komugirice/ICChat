@@ -12,6 +12,7 @@ import android.graphics.drawable.Drawable
 import android.media.ExifInterface
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.DatePicker
@@ -302,44 +303,28 @@ class ProfileSettingActivity : AppCompatActivity() {
             RC_CHOOSE_IMAGE -> {
 
                 data.data?.also {
-//                    var file = File.createTempFile("${System.currentTimeMillis()}", ".temp", cacheDir)
-//                    UCrop.of(it, file.toUri())
-//                        .start(this)
 
                     // 過去のbitmap削除
-                    (userIconImageView.drawable as? BitmapDrawable)?.bitmap?.recycle()
+                    //(userIconImageView.drawable as? BitmapDrawable)?.bitmap?.recycle()
 
-
-//                    initUCrop(it)
-//                    val uri = UCrop.getOutput(data)
-//                    userIconImageView.setImageURI(uri)
-                    //upload()
-
-                    // 新しい画像登録
-                    Picasso.get().load(it).into(userIconImageView, object: Callback {
-                        override fun onSuccess() {
-                            uCropSrcUri = it
-                            startUCrop()
-//                            upload()
-                        }
-
-                        override fun onError(e: Exception?) {
-                            Toast.makeText(this@ProfileSettingActivity, "画像の取得に失敗しました", Toast.LENGTH_SHORT).show()
-                        }
-                    })
+                    // uCrop実行
+                    uCropSrcUri = it
+                    startUCrop()
 
                 }
-//                (data.extras?.get("data") as? Bitmap)?.also {
-//                    userIconImageView.setImageBitmap(it)
-//                    upload()
-//                }
+
 
             }
             UCrop.REQUEST_CROP -> {
-                val resultUri = UCrop.getOutput(data)
-                Timber.d(resultUri.toString())
-                userIconImageView.setImageURI(resultUri)
-                upload()
+                val resultUri = UCrop.getOutput(data) // スレッドが違うのだろう
+
+                resultUri?.also {
+                    Timber.d(it.toString())
+                    userIconImageView.setImageURI(it)
+                    uCropSrcUri = it
+                    upload()
+                }
+
             }
             UCrop.RESULT_ERROR -> {
                 Timber.d(UCrop.getError(data))
@@ -385,14 +370,15 @@ class ProfileSettingActivity : AppCompatActivity() {
         val data = baos.toByteArray()
         ref.putBytes(data)
             .addOnFailureListener {
-                Toast.makeText(this, "Upload失敗", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Uploadに失敗しました", Toast.LENGTH_SHORT).show()
                 bitmap.recycle()
             }
             .addOnSuccessListener {
                 UserStore.updateImageUrl(imageUrl) {
                     // UserManagerの更新は必須
                     UserManager.myUser.imageUrl = imageUrl
-                    Toast.makeText(this, "Upload成功", Toast.LENGTH_SHORT).show()
+
+                    Timber.d("Upload成功：${imageUrl}")
                     //bitmap.recycle()
                 }
             }
