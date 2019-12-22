@@ -2,11 +2,13 @@ package com.komugirice.icchat.util
 
 import com.komugirice.icchat.R
 import android.text.Html
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.example.qiitaapplication.extension.HHmmToString
 import com.example.qiitaapplication.extension.compareDate
 import com.example.qiitaapplication.extension.yyyyMMddHHmmToString
+import com.squareup.picasso.Picasso
 import java.util.*
 
 
@@ -46,5 +48,17 @@ object ICChatUtil {
             val defaultText = text.replace(requiredMark, "")
             this.text = defaultText
         }
+    }
+
+    /**
+     * xmlでImageViewに:imageUrlを設定すると画像が取得できる
+     *
+     * @param url
+     *
+     */
+    @JvmStatic
+    @BindingAdapter("imageUrl")
+    fun ImageView.loadImage(url: String?) {
+        Picasso.get().load(url).into(this)
     }
 }

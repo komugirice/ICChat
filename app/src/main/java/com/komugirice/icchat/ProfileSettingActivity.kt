@@ -6,19 +6,23 @@ import android.app.DatePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.ImageDecoder
 import android.graphics.Matrix
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.media.ExifInterface
+import android.media.Image
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.DatePicker
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
+import androidx.core.graphics.drawable.RoundedBitmapDrawable
 import androidx.core.net.toUri
 import com.example.qiitaapplication.extension.getDateToString
 import com.facebook.AccessToken
@@ -39,8 +43,12 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import com.komugirice.icchat.extension.setRoundedImageView
 import com.komugirice.icchat.firestore.manager.UserManager
 import com.komugirice.icchat.firestore.store.UserStore
+import com.komugirice.icchat.util.FireStorageUtil
+import com.makeramen.roundedimageview.RoundedDrawable
+import com.makeramen.roundedimageview.RoundedImageView
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Target
@@ -74,41 +82,60 @@ class ProfileSettingActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        initialize()
+        initLayout()
     }
 
     private fun initialize() {
         initFacebook()
         initGoogle()
         initLayout()
+        initUserIcon()
         initClick()
     }
 
     private fun initLayout() {
         val myUser = UserManager.myUser
-
-        // プロフィール画像
-        FirebaseStorage.getInstance().reference.child("${myUser.userId}/${myUser.imageUrl}").downloadUrl
-            .addOnSuccessListener {
-                Picasso.get().load(it).into(userIconImageView)
-                uCropSrcUri = it
-            }
-
         email.text = FirebaseAuth.getInstance().currentUser?.email
         userName.text = if(myUser.name.isNotEmpty()) myUser.name else "設定なし"
         birthDay.text = myUser.birthDay?.getDateToString() ?: "設定なし"
     }
+
+    /**
+     * プロフィール画像初期化
+     *
+     */
+    private fun initUserIcon() {
+        val myUser = UserManager.myUser
+
+        FireStorageUtil.getUserIconImage(UserManager.myUserId) {
+            it?.result?.apply {
+                userIconImageView.setRoundedImageView(this) // UIスレッド
+                uCropSrcUri = this
+            }
+        }
+
+    }
+
 
     private fun initClick() {
         backImageView.setOnClickListener {
             finish()
         }
 
-        usrIconUploadButton.setOnClickListener {
+        usrIconSelectButton.setOnClickListener {
             selectImage()
         }
+
         uCropButton.setOnClickListener {
             startUCrop()
+        }
+
+        usrIconUploadButton.setOnClickListener {
+            upload()
+        }
+
+        usrIconDeleteButton.setOnClickListener {
+            delete()
         }
 
         userName.setOnClickListener {
@@ -303,26 +330,39 @@ class ProfileSettingActivity : AppCompatActivity() {
             RC_CHOOSE_IMAGE -> {
 
                 data.data?.also {
-
-                    // 過去のbitmap削除
-                    //(userIconImageView.drawable as? BitmapDrawable)?.bitmap?.recycle()
-
                     // uCrop実行
                     uCropSrcUri = it
                     startUCrop()
-
                 }
-
 
             }
             UCrop.REQUEST_CROP -> {
-                val resultUri = UCrop.getOutput(data) // スレッドが違うのだろう
+                val resultUri = UCrop.getOutput(data)
 
                 resultUri?.also {
                     Timber.d(it.toString())
-                    userIconImageView.setImageURI(it)
+
+                    //userIconImageView.setImageURI(it)
+
+                    userIconImageView.setRoundedImageView(it) // UIスレッド
                     uCropSrcUri = it
-                    upload()
+
+                    // Piccaso onSUccess()はよく失敗するので使うべきではない
+//                    Picasso.get().load(it).into(userIconImageView, object: Callback {
+//                        override fun onSuccess() {
+//                            uCropSrcUri = it
+//                            upload()
+//                        }
+//
+//                        override fun onError(e: Exception?) {
+//                            Toast.makeText(
+//                                this@ProfileSettingActivity,
+//                                "画像の取得に失敗しました",
+//                                Toast.LENGTH_SHORT
+//                            ).show()
+//                        }
+//                    })
+
                 }
 
             }
@@ -336,7 +376,7 @@ class ProfileSettingActivity : AppCompatActivity() {
     }
 
     /**
-     * 画像選択
+     * プロフィール画像選択
      *
      */
     private fun selectImage() {
@@ -346,25 +386,41 @@ class ProfileSettingActivity : AppCompatActivity() {
         startActivityForResult(intent, RC_CHOOSE_IMAGE)
     }
 
+    /**
+     * uCropActivity表示
+     *
+     */
     private fun startUCrop() {
         var file = File.createTempFile("${System.currentTimeMillis()}", ".temp", cacheDir)
         UCrop.of(uCropSrcUri, file.toUri())
+            .withAspectRatio(1f, 1f)
+            .withOptions(UCrop.Options().apply {
+                setHideBottomControls(true)
+                setCircleDimmedLayer(true)
+                setShowCropGrid(false)
+                setShowCropFrame(false)
+            })
             .start(this)
     }
-    private fun initUCrop(srcUri: Uri) {
-        var file = File.createTempFile("${System.currentTimeMillis()}", ".temp", cacheDir)
-        UCrop.of(srcUri, file.toUri())
-    }
 
+    /**
+     * プロフィール画像アップロード
+     *
+     */
     private fun upload() {
 
         // 元画像削除
         if(UserManager.myUser.imageUrl.isNotEmpty())
-            FirebaseStorage.getInstance().reference.child("${UserManager.myUserId}/${UserManager.myUser.imageUrl}").delete()
+            FirebaseStorage.getInstance().reference.child("${UserManager.myUserId}/${FireStorageUtil.USER_ICON_PATH}/${UserManager.myUser.imageUrl}").delete()
 
         val imageUrl = "${System.currentTimeMillis()}.jpg"
-        val ref = FirebaseStorage.getInstance().reference.child("${UserManager.myUserId?: "noUser"}/${imageUrl}")
-        val bitmap = (userIconImageView.drawable as BitmapDrawable).bitmap
+        val ref = FirebaseStorage.getInstance().reference.child("${UserManager.myUserId?: "noUser"}/${FireStorageUtil.USER_ICON_PATH}/${imageUrl}")
+
+        // RoundedImageViewの不具合修正
+        val bitmap = when (userIconImageView) {
+            is RoundedImageView -> (userIconImageView.drawable as RoundedDrawable).toBitmap()
+            else -> (userIconImageView.drawable as BitmapDrawable).bitmap
+        }
         val baos = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos)
         val data = baos.toByteArray()
@@ -378,10 +434,29 @@ class ProfileSettingActivity : AppCompatActivity() {
                     // UserManagerの更新は必須
                     UserManager.myUser.imageUrl = imageUrl
 
+                    Toast.makeText(this, "プロフィール画像を設定しました", Toast.LENGTH_SHORT).show()
                     Timber.d("Upload成功：${imageUrl}")
+                    // ImageViewだとなぜか落ちる
                     //bitmap.recycle()
                 }
             }
+    }
+
+    /**
+     * プロフィール画像削除
+     *
+     */
+    private fun delete() {
+        // 元画像削除
+        if(UserManager.myUser.imageUrl.isEmpty()) {
+            Toast.makeText(this, "プロフィール画像が設定されていません", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        userIconImageView.setRoundedImageView(null)
+        FirebaseStorage.getInstance().reference.child("${UserManager.myUserId}/${FireStorageUtil.USER_ICON_PATH}/${UserManager.myUser.imageUrl}").delete()
+        Toast.makeText(this, "プロフィール画像を削除しました", Toast.LENGTH_SHORT).show()
+
     }
 
     companion object {

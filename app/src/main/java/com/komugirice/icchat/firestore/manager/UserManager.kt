@@ -34,6 +34,10 @@ object UserManager {
         myFriends = allUsers.filter { myUser.friendIdList.contains(it.userId) }
     }
 
+    fun getMyFriend (friendId: String): User?{
+        return myFriends.filter { it.userId.equals(friendId) }.firstOrNull()
+    }
+
     fun removeMyFriends (friendId: String) {
         myUser.friendIdList.remove(friendId)
         myFriends = allUsers.filter { myUser.friendIdList.contains(it.userId) }

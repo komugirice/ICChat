@@ -56,8 +56,10 @@
     <string name="user_name_label">名前</string>
     <string name="email_label">メールアドレス</string>
     <string name="birthday_label">誕生日</string>
-    <string name="user_imon_upload_button">写真を選択する</string>
+    <string name="user_icon_select_button">写真を選択する</string>
+    <string name="user_icon_upload_button">アップロードする</string>
     <string name="u_crop_button">写真を加工する</string>
+    <string name="user_icon_delete_button">写真を削除する</string>
     <string name="facebook_connect_button">facebookと連携</string>
 
     <!-- UserNameActivity -->

@@ -67,6 +67,7 @@ dependencies {
     // 画像
     implementation "com.squareup.picasso:picasso:$picasso_version"
     implementation "com.github.yalantis:ucrop:2.2.4"
+    implementation 'com.makeramen:roundedimageview:2.3.0'
 }
 
 apply plugin: 'com.google.gms.google-services'
