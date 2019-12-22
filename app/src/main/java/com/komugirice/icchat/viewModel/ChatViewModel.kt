@@ -26,14 +26,18 @@ class ChatViewModel: ViewModel() {
 
 
     fun initData(@NonNull owner: LifecycleOwner, roomId: String) {
-        MessageStore.getMessages(roomId, items)
-        items.observe(owner, Observer {
-            // 監視
-            val lastCreatedAt = it.map{ it.createdAt }.max() ?: Date()
-            initSubscribe(roomId, lastCreatedAt)
-        })
         // ユーザ情報保持
-        RoomStore.getTargetRoomUsers(roomId, users)
+        RoomStore.getTargetRoomUsers(roomId){
+            users.postValue(it)
+
+            // message情報
+            MessageStore.getMessages(roomId, items)
+            items.observe(owner, Observer {
+                // 監視
+                val lastCreatedAt = it.map{ it.createdAt }.max() ?: Date()
+                initSubscribe(roomId, lastCreatedAt)
+            })
+        }
     }
 
     /**

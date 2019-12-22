@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.firestore.proto.MutationQueueOrBuilder
 import com.komugirice.icchat.firestore.model.Room
 import com.komugirice.icchat.firestore.model.User
 import com.komugirice.icchat.firestore.manager.UserManager
@@ -127,11 +128,12 @@ class RoomStore {
 
         /**
          * 対象のルームに所属するユーザ情報を取得する
+         * （UserManagerのfriends以外から取得する可能性がある）
          * ChatViewModelで使用
          *
          * @param roomId 対象のルーム
          */
-        fun getTargetRoomUsers(roomId: String, users: MutableLiveData<List<User>>) {
+        fun getTargetRoomUsers(roomId: String, onComplete: (MutableList<User>) -> Unit) {
             val userList = mutableListOf<User>()
             // rooms取得
             FirebaseFirestore.getInstance()
@@ -151,8 +153,9 @@ class RoomStore {
                                 .addOnCompleteListener {
                                     it.result?.toObjects(User::class.java)?.firstOrNull().also {
                                         it?.apply{userList.add(it)}
-                                        users.postValue(userList)
                                     }
+                                    if (userList.size == room.userIdList.size)
+                                        onComplete.invoke(userList)
                                 }
 
                         }

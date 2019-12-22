@@ -8,6 +8,7 @@ import androidx.databinding.BindingAdapter
 import com.example.qiitaapplication.extension.HHmmToString
 import com.example.qiitaapplication.extension.compareDate
 import com.example.qiitaapplication.extension.yyyyMMddHHmmToString
+import com.komugirice.icchat.extension.setRoundedImageView
 import com.squareup.picasso.Picasso
 import java.util.*
 
@@ -60,5 +61,19 @@ object ICChatUtil {
     @BindingAdapter("imageUrl")
     fun ImageView.loadImage(url: String?) {
         Picasso.get().load(url).into(this)
+    }
+
+    /**
+     * ユーザアイコンを設定する
+     *
+     * @param url
+     *
+     */
+    @JvmStatic
+    @BindingAdapter("userIconImageUrl")
+    fun ImageView.loadUserIconImage(userId: String) {
+        FireStorageUtil.getUserIconImage(userId) {
+            this.setRoundedImageView(it)
+        }
     }
 }

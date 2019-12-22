@@ -16,9 +16,10 @@
         android:id="@+id/userImage"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_marginStart="4dp"
-        android:layout_marginEnd="4dp"
+        android:padding="4dp"
+        android:scaleType="centerCrop"
         android:gravity="left"
+        app:userIconImageUrl="@{user.userId}"
         app:layout_constraintEnd_toStartOf="@+id/nameTextView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

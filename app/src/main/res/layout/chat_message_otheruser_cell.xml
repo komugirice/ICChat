@@ -1,33 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <data>
+
         <variable
             name="message"
             type="com.komugirice.icchat.firestore.model.Message" />
+
         <variable
             name="user"
             type="com.komugirice.icchat.firestore.model.User" />
     </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/rootView"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:paddingStart="16dp"
-        android:paddingEnd="40dp"
         android:paddingTop="16dp"
-        android:paddingBottom="16dp"
-        android:layout_height="wrap_content">
+        android:paddingEnd="40dp"
+        android:paddingBottom="16dp">
+
+        <ImageView
+        android:id="@+id/userImage"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:gravity="left"
+        android:paddingRight="8dp"
+        android:paddingBottom="8dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintEnd_toStartOf="@+id/nameTextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:userIconImageUrl="@{user.userId}" />
 
         <TextView
             android:id="@+id/userNameTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@android:color/black"
-            android:layout_marginTop="2dp"
-            android:textSize="10sp"
+            android:gravity="center_vertical"
             android:text="@{user.name}"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:textColor="@android:color/black"
+            android:textSize="10sp"
+            app:layout_constraintBottom_toBottomOf="@+id/userImage"
+            app:layout_constraintStart_toEndOf="@+id/userImage"
+            app:layout_constraintTop_toTopOf="@+id/userImage" />
 
         <TextView
             android:id="@+id/messageTextView"
@@ -43,14 +61,15 @@
             android:textColor="@android:color/black"
             android:textSize="12sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/userNameTextView"/>
+            app:layout_constraintTop_toBottomOf="@+id/userImage" />
 
         <TextView
             android:id="@+id/dateTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@android:color/black"
             android:layout_marginTop="2dp"
+            android:gravity="right"
+            android:textColor="@android:color/black"
             android:textSize="10sp"
             app:dateTime="@{message.createdAt}"
             app:layout_constraintStart_toStartOf="parent"

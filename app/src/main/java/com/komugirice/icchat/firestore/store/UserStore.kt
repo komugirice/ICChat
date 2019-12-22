@@ -142,7 +142,6 @@ class UserStore {
                         onSuccess.invoke(it)
                     }
                 }
-
         }
 
         /**
@@ -191,7 +190,6 @@ class UserStore {
                         onSuccess.invoke(it)
                     }
                 }
-
         }
     }
 }

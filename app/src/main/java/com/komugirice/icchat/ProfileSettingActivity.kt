@@ -3,26 +3,15 @@ package com.komugirice.icchat
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.DatePickerDialog
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.ImageDecoder
-import android.graphics.Matrix
 import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.Drawable
-import android.media.ExifInterface
-import android.media.Image
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
-import android.provider.MediaStore
 import android.util.Log
 import android.widget.DatePicker
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.FileProvider
-import androidx.core.graphics.drawable.RoundedBitmapDrawable
 import androidx.core.net.toUri
 import com.example.qiitaapplication.extension.getDateToString
 import com.facebook.AccessToken
@@ -36,7 +25,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.common.util.IOUtils
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
@@ -49,18 +37,11 @@ import com.komugirice.icchat.firestore.store.UserStore
 import com.komugirice.icchat.util.FireStorageUtil
 import com.makeramen.roundedimageview.RoundedDrawable
 import com.makeramen.roundedimageview.RoundedImageView
-import com.squareup.picasso.Callback
-import com.squareup.picasso.Picasso
-import com.squareup.picasso.Target
 import com.yalantis.ucrop.UCrop
 import kotlinx.android.synthetic.main.activity_profile_setting.*
-import kotlinx.serialization.json.Json.Companion.context
 import timber.log.Timber
 import java.io.ByteArrayOutputStream
 import java.io.File
-import java.io.FileInputStream
-import java.io.InputStream
-import java.lang.Exception
 import java.util.*
 
 class ProfileSettingActivity : AppCompatActivity() {
@@ -72,7 +53,9 @@ class ProfileSettingActivity : AppCompatActivity() {
 
     private val auth = FirebaseAuth.getInstance()
 
-    private lateinit var uCropSrcUri: Uri
+    private var uCropSrcUri: Uri? = null
+
+    private var prevSettingUri: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -108,10 +91,9 @@ class ProfileSettingActivity : AppCompatActivity() {
         val myUser = UserManager.myUser
 
         FireStorageUtil.getUserIconImage(UserManager.myUserId) {
-            it?.result?.apply {
-                userIconImageView.setRoundedImageView(this) // UIスレッド
-                uCropSrcUri = this
-            }
+                userIconImageView.setRoundedImageView(it) // UIスレッド
+                uCropSrcUri = it
+                prevSettingUri = it.toString()
         }
 
     }
@@ -127,14 +109,27 @@ class ProfileSettingActivity : AppCompatActivity() {
         }
 
         uCropButton.setOnClickListener {
+            if (uCropSrcUri == null) {
+                Toast.makeText(this, "プロフィール画像が設定されていません", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
             startUCrop()
         }
 
         usrIconUploadButton.setOnClickListener {
+            if (uCropSrcUri == null) {
+                Toast.makeText(this, "プロフィール画像が設定されていません", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
             upload()
         }
 
         usrIconDeleteButton.setOnClickListener {
+            // 元画像削除
+            if(prevSettingUri.isEmpty()) {
+                Toast.makeText(this, "プロフィール画像が設定されていません", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
             delete()
         }
 
@@ -367,6 +362,7 @@ class ProfileSettingActivity : AppCompatActivity() {
 
             }
             UCrop.RESULT_ERROR -> {
+                uCropSrcUri = null
                 Timber.d(UCrop.getError(data))
                 // TODO エラーダイアログ
                 Toast.makeText(this@ProfileSettingActivity, "画像の加工に失敗しました", Toast.LENGTH_SHORT).show()
@@ -392,15 +388,17 @@ class ProfileSettingActivity : AppCompatActivity() {
      */
     private fun startUCrop() {
         var file = File.createTempFile("${System.currentTimeMillis()}", ".temp", cacheDir)
-        UCrop.of(uCropSrcUri, file.toUri())
-            .withAspectRatio(1f, 1f)
-            .withOptions(UCrop.Options().apply {
-                setHideBottomControls(true)
-                setCircleDimmedLayer(true)
-                setShowCropGrid(false)
-                setShowCropFrame(false)
-            })
-            .start(this)
+        uCropSrcUri?.apply {
+            UCrop.of(this, file.toUri())
+                .withAspectRatio(1f, 1f)
+                .withOptions(UCrop.Options().apply {
+                    setHideBottomControls(true)
+                    setCircleDimmedLayer(true)
+                    setShowCropGrid(false)
+                    setShowCropFrame(false)
+                })
+                .start(this@ProfileSettingActivity)
+        }
     }
 
     /**
@@ -409,10 +407,10 @@ class ProfileSettingActivity : AppCompatActivity() {
      */
     private fun upload() {
 
-        // 元画像削除
-        if(UserManager.myUser.imageUrl.isNotEmpty())
-            FirebaseStorage.getInstance().reference.child("${UserManager.myUserId}/${FireStorageUtil.USER_ICON_PATH}/${UserManager.myUser.imageUrl}").delete()
-
+        // 前画像削除
+        if(prevSettingUri.isNotEmpty())
+            //FirebaseStorage.getInstance().reference.child("${UserManager.myUserId}/${FireStorageUtil.USER_ICON_PATH}/${prevSettingUri}").delete()
+            FirebaseStorage.getInstance().getReferenceFromUrl(prevSettingUri).delete()
         val imageUrl = "${System.currentTimeMillis()}.jpg"
         val ref = FirebaseStorage.getInstance().reference.child("${UserManager.myUserId?: "noUser"}/${FireStorageUtil.USER_ICON_PATH}/${imageUrl}")
 
@@ -431,12 +429,11 @@ class ProfileSettingActivity : AppCompatActivity() {
             }
             .addOnSuccessListener {
                 UserStore.updateImageUrl(imageUrl) {
-                    // UserManagerの更新は必須
-                    UserManager.myUser.imageUrl = imageUrl
+                    prevSettingUri = ref.toString()
 
                     Toast.makeText(this, "プロフィール画像を設定しました", Toast.LENGTH_SHORT).show()
                     Timber.d("Upload成功：${imageUrl}")
-                    // ImageViewだとなぜか落ちる
+                    // ImageViewのbitmapだとなぜか落ちる
                     //bitmap.recycle()
                 }
             }
@@ -447,14 +444,11 @@ class ProfileSettingActivity : AppCompatActivity() {
      *
      */
     private fun delete() {
-        // 元画像削除
-        if(UserManager.myUser.imageUrl.isEmpty()) {
-            Toast.makeText(this, "プロフィール画像が設定されていません", Toast.LENGTH_SHORT).show()
-            return
-        }
-
         userIconImageView.setRoundedImageView(null)
-        FirebaseStorage.getInstance().reference.child("${UserManager.myUserId}/${FireStorageUtil.USER_ICON_PATH}/${UserManager.myUser.imageUrl}").delete()
+        //FirebaseStorage.getInstance().reference.child("${UserManager.myUserId}/${FireStorageUtil.USER_ICON_PATH}/${prevSettingUri}").delete()
+        FirebaseStorage.getInstance().getReferenceFromUrl(prevSettingUri).delete()
+        prevSettingUri = "";
+        uCropSrcUri = null
         Toast.makeText(this, "プロフィール画像を削除しました", Toast.LENGTH_SHORT).show()
 
     }
