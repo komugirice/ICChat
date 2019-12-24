@@ -65,43 +65,20 @@ class DebugFragment : Fragment() {
             UserStore.addFriend(context, friendId)
 
             RoomStore.getLoginUserRooms() {
-                if (it.isSuccessful) {
-                    it.result?.toObjects(Room::class.java)?.also { users ->
-                        var tempRooms = users
-
-                        // roomsに紐づくfriends取得
-                        tempRooms.forEach {
-                            if (it.userIdList.contains( UserManager.myUserId))
-                                rooms.add(it)
-                        }
-                        RoomStore.registerSingleUserRooms(rooms, friendId)
-                    }
-                }
+                RoomStore.registerSingleUserRooms(it, friendId)
             }
         }
 
         // 友だち削除
         buttonDelDebugFriend.setOnClickListener {
             val friendId: String = SpinnerDelUsers.selectedItem.toString()
-            var rooms: MutableList<Room> = mutableListOf()
+
             // User削除
             UserStore.delFriend(friendId) {
 
                 // Room削除
                 RoomStore.getLoginUserRooms() {
-                    if (it.isSuccessful) {
-                        it.result?.toObjects(Room::class.java)?.also { users ->
-                            var tempRooms = users
-
-                            // roomsに紐づくfriends取得
-                            tempRooms.forEach {
-                                if (it.userIdList.contains(UserManager.myUserId))
-                                    rooms.add(it)
-                            }
-                            RoomStore.delSingleUserRooms(rooms, friendId)
-                        }
-
-                    }
+                    RoomStore.delSingleUserRooms(it, friendId)
                     Toast.makeText(
                         context,
                         "友だち削除が完了しました。",

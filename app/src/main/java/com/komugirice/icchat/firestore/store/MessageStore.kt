@@ -1,8 +1,10 @@
 package com.komugirice.icchat.firestore.store
 
 import androidx.lifecycle.MutableLiveData
+import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.QuerySnapshot
 import com.komugirice.icchat.firestore.model.Message
 import com.komugirice.icchat.firestore.manager.UserManager
 import java.util.*
@@ -33,6 +35,17 @@ class MessageStore {
                     val messages = it.toObjects(Message::class.java)
                     //val messages: List<Message> = it.data.map{ it.value }.toList()
                     liveMsgList.postValue(messages)
+                }
+        }
+
+        fun getLastMessage(roomId: String, onComplete: (Task<QuerySnapshot>) -> Unit) {
+            FirebaseFirestore.getInstance()
+                .collection("rooms/$roomId/messages")
+                .orderBy(Message::createdAt.name, Query.Direction.DESCENDING)
+                .limit(1)
+                .get()
+                .addOnCompleteListener {
+                    onComplete.invoke(it)
                 }
         }
     }

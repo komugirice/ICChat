@@ -9,7 +9,7 @@ class FireStorageUtil {
         val USER_ICON_PATH = "userIcon"
 
         fun getUserIconImage(userId: String, onSuccess: (Uri) -> Unit) {
-            val url = "${userId}/${USER_ICON_PATH}"
+            val url = "${USER_ICON_PATH}/${userId}"
             FirebaseStorage.getInstance().getReference(url).list(1)
                 .addOnCompleteListener {
                     if (it.isSuccessful) {

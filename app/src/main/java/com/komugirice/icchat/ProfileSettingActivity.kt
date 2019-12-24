@@ -434,7 +434,7 @@ class ProfileSettingActivity : AppCompatActivity() {
             //FirebaseStorage.getInstance().reference.child("${UserManager.myUserId}/${FireStorageUtil.USER_ICON_PATH}/${prevSettingUri}").delete()
             FirebaseStorage.getInstance().getReferenceFromUrl(prevSettingUri).delete()
         val imageUrl = "${System.currentTimeMillis()}.jpg"
-        val ref = FirebaseStorage.getInstance().reference.child("${UserManager.myUserId?: "noUser"}/${FireStorageUtil.USER_ICON_PATH}/${imageUrl}")
+        val ref = FirebaseStorage.getInstance().reference.child("${FireStorageUtil.USER_ICON_PATH}/${UserManager.myUserId?: "noUser"}/${imageUrl}")
 
         // RoundedImageViewの不具合修正
         val bitmap = when (userIconImageView) {

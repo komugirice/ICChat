@@ -6,20 +6,66 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import com.komugirice.icchat.R
+import com.komugirice.icchat.databinding.FragmentRoomBinding
+import com.komugirice.icchat.view.RoomsView
+import com.komugirice.icchat.viewModel.RoomViewModel
+import kotlinx.android.synthetic.main.fragment_friend.*
 
 /**
  * A simple [Fragment] subclass.
  */
 class RoomFragment : Fragment() {
 
+    private lateinit var binding: FragmentRoomBinding
+    private lateinit var viewModel: RoomViewModel
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_room, container, false)
+        inflater.inflate(R.layout.fragment_room, container, false)
+        binding = FragmentRoomBinding.inflate(inflater, container, false)
+        binding.lifecycleOwner = this
+
+        viewModel = ViewModelProviders.of(this).get(RoomViewModel::class.java).apply {
+
+            items.observe(this@RoomFragment, Observer {
+                binding.apply{
+                    RoomsView.customAdapter.refresh(it)
+                    swipeRefreshLayout.isRefreshing = false
+                }
+            })
+        }
+        return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initialize()
+    }
+
+    private fun initialize() {
+        initLayout()
+        viewModel.initData(this)
+    }
+
+    private fun initLayout() {
+        initClick()
+        initSwipeRefreshLayout()
+    }
+
+    private fun initClick() {
+
+    }
+
+    private fun initSwipeRefreshLayout() {
+        swipeRefreshLayout.setOnRefreshListener {
+            viewModel.initData(this)
+        }
+    }
 
 }

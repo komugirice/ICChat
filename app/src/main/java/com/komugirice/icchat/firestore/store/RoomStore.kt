@@ -19,13 +19,25 @@ class RoomStore {
          * @param pRooms ログインユーザのRoomペアオブジェクトを設定します。
          *
          */
-        fun getLoginUserRooms(onComplete: (Task<QuerySnapshot>) -> Unit) {
+        fun getLoginUserRooms(onSuccess: (List<Room>) -> Unit) {
+            var rooms = mutableListOf<Room>()
             // rooms取得
             FirebaseFirestore.getInstance()
                 .collection("rooms")
                 .get()
                 .addOnCompleteListener {
-                    onComplete.invoke(it)
+                    if (it.isSuccessful) {
+                        it.result?.toObjects(Room::class.java)?.also {
+                            // roomsに紐づくfriends取得
+                            it.forEach {
+                                if (it.userIdList.contains( UserManager.myUserId))
+                                    rooms.add(it)
+                            }
+
+                        }
+                        onSuccess.invoke(rooms)
+                    }
+
                 }
         }
 
