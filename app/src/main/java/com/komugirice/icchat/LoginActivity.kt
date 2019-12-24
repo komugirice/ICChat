@@ -130,6 +130,7 @@ class LoginActivity : BaseActivity() {
                 )
             }
 
+            // フォーカス外れた場合に実行される
 //            setOnEditorActionListener { _, actionId, _ ->
 //                when (actionId) {
 //                    EditorInfo.IME_ACTION_DONE ->

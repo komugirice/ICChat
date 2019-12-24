@@ -23,17 +23,18 @@
         android:paddingBottom="16dp">
 
         <ImageView
-        android:id="@+id/userImage"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:gravity="left"
-        android:paddingRight="8dp"
-        android:paddingBottom="8dp"
-        android:scaleType="centerCrop"
-        app:layout_constraintEnd_toStartOf="@+id/nameTextView"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:userIconImageUrl="@{user.userId}" />
+            android:id="@+id/userImage"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:gravity="left|center"
+            android:paddingRight="8dp"
+            android:paddingBottom="4dp"
+            android:paddingTop="4dp"
+            android:scaleType="centerCrop"
+            app:layout_constraintEnd_toStartOf="@+id/nameTextView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:userIconImageUrl="@{user.userId}" />
 
         <TextView
             android:id="@+id/userNameTextView"
@@ -72,7 +73,7 @@
             android:textColor="@android:color/black"
             android:textSize="10sp"
             app:dateTime="@{message.createdAt}"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/messageTextView"
             app:layout_constraintTop_toBottomOf="@id/messageTextView" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
