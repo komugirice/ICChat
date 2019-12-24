@@ -25,6 +25,7 @@
             android:gravity="left"
             android:padding="4dp"
             android:scaleType="centerCrop"
+            app:roomIconImageUrl="@{room}"
             app:layout_constraintEnd_toStartOf="@+id/nameTextView"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -37,7 +38,7 @@
             android:ellipsize="end"
             android:gravity="start|top"
             android:lines="1"
-            android:text="@{room.name}"
+            app:setRoomName="@{room}"
             android:textColor="@android:color/black"
             android:textSize="15sp"
             app:layout_constraintEnd_toEndOf="parent"

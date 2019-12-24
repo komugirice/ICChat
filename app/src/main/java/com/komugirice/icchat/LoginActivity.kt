@@ -32,6 +32,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.komugirice.icchat.extension.afterTextChanged
 import com.komugirice.icchat.extension.loggingSize
+import com.komugirice.icchat.firestore.manager.RoomManager
 import com.komugirice.icchat.firestore.manager.UserManager
 import com.komugirice.icchat.ui.login.LoginViewModel
 import com.komugirice.icchat.ui.login.LoginViewModelFactory
@@ -302,16 +303,18 @@ class LoginActivity : BaseActivity() {
 
         // UserManager初期設定
         UserManager.initUserManager(){
+            RoomManager.initRoomManager() {
 
-            val displayName = UserManager.myUser.name
+                val displayName = UserManager.myUser.name
 
-            Toast.makeText(
-                applicationContext,
-                "$welcome $displayName",
-                Toast.LENGTH_LONG
-            ).show()
+                Toast.makeText(
+                    applicationContext,
+                    "$welcome $displayName",
+                    Toast.LENGTH_LONG
+                ).show()
 
-            MainActivity.start(this)
+                MainActivity.start(this)
+            }
         }
 
     }

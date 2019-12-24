@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import com.google.firebase.auth.FirebaseAuth
+import com.komugirice.icchat.firestore.manager.RoomManager
 import com.komugirice.icchat.firestore.manager.UserManager
 
 class SplashActivity : AppCompatActivity() {
@@ -16,10 +17,12 @@ class SplashActivity : AppCompatActivity() {
 
         if(FirebaseAuth.getInstance().currentUser != null) {
             UserManager.initUserManager() {
-                Handler().postDelayed({
-                    finishAffinity()
-                    MainActivity.start(this)
-                }, SPLASH_TIME)
+                RoomManager.initRoomManager() {
+                    Handler().postDelayed({
+                        finishAffinity()
+                        MainActivity.start(this)
+                    }, SPLASH_TIME)
+                }
             }
         } else {
             Handler().postDelayed({

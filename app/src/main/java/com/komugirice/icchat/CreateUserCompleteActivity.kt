@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.komugirice.icchat.firestore.manager.RoomManager
 import com.komugirice.icchat.firestore.manager.UserManager
 import kotlinx.android.synthetic.main.activity_create_user_complete.*
 
@@ -19,11 +20,13 @@ class CreateUserCompleteActivity : AppCompatActivity() {
         loginButton.setOnClickListener {
             // UserManager初期化
             UserManager.initUserManager() {
-                // メイン画面に遷移
-                MainActivity.start(this)
+                RoomManager.initRoomManager() {
+                    // メイン画面に遷移
+                    MainActivity.start(this)
 
-                //Complete and destroy login activity once successful
-                finish()
+                    //Complete and destroy login activity once successful
+                    finish()
+                }
             }
         }
     }

@@ -4,6 +4,8 @@ import androidx.annotation.NonNull
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.komugirice.icchat.firestore.manager.RoomManager
+import com.komugirice.icchat.firestore.manager.UserManager
 import com.komugirice.icchat.firestore.model.Message
 import com.komugirice.icchat.firestore.model.Room
 import com.komugirice.icchat.firestore.store.MessageStore
@@ -22,26 +24,24 @@ class RoomViewModel: ViewModel() {
      */
     fun update() {
         var list = mutableListOf<Pair<Room, Message>>()
-        RoomStore.getLoginUserRooms { rooms->
-            rooms.forEach { room->
-                // とりあえずroom to ダミー
-                var pair = (room to Message())
-                MessageStore.getLastMessage(room.documentId) {
-                    if(it.isSuccessful) {
-                        val message = it.result?.toObjects(Message::class.java)?.firstOrNull()
-                        message?.also {
-                            // 取得したらmessageも
-                            pair = pair.copy(second = it)
-                        }
+        RoomManager.myRooms.forEach { room ->
+            // とりあえずroom to ダミー
+            var pair = (room to Message())
+            MessageStore.getLastMessage(room.documentId) {
+                if (it.isSuccessful) {
+                    val message = it.result?.toObjects(Message::class.java)?.firstOrNull()
+                    message?.also {
+                        // 取得したらmessageも
+                        pair = pair.copy(second = it)
                     }
-                    list.add(pair)
-
-                    if(rooms.size == list.size)
-                        items.postValue(list)
                 }
-            }
+                list.add(pair)
 
+                if (RoomManager.myRooms.size == list.size)
+                    items.postValue(list)
+            }
         }
+
     }
 
 }

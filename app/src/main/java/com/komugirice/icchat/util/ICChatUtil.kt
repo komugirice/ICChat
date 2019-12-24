@@ -9,6 +9,9 @@ import com.example.qiitaapplication.extension.HHmmToString
 import com.example.qiitaapplication.extension.compareDate
 import com.example.qiitaapplication.extension.yyyyMMddHHmmToString
 import com.komugirice.icchat.extension.setRoundedImageView
+import com.komugirice.icchat.firestore.manager.UserManager
+import com.komugirice.icchat.firestore.model.Room
+import com.komugirice.icchat.util.ICChatUtil.loadUserIconImage
 import com.squareup.picasso.Picasso
 import java.util.*
 
@@ -76,4 +79,50 @@ object ICChatUtil {
             this.setRoundedImageView(it)
         }
     }
+
+    /**
+     * RoomFragmentにnameを設定する
+     *
+     * @param url
+     *
+     */
+    @JvmStatic
+    @BindingAdapter("setRoomName")
+    fun TextView.setRoomName(room: Room) {
+        // ルーム名を設定する
+        var text = room.name
+
+        // シングルルームとグループルームで分岐
+        if(room.userIdList.size <= 2) {
+            // シングルルームの場合
+            val friendId  = room.userIdList.filter{ !it.equals(UserManager.myUserId) }.first()
+            val friend = UserManager.myFriends.filter{ it.userId.equals(friendId)}.first()
+            // ルーム名をユーザ名にする
+            text = friend.name
+        }
+        this.text = text
+    }
+
+    /**
+     * RoomFragmentにnameを設定する
+     *
+     * @param url
+     *
+     */
+    @JvmStatic
+    @BindingAdapter("roomIconImageUrl")
+    fun ImageView.loadUserIconImage(room: Room) {
+
+        // シングルルームとグループルームで分岐
+        if(room.userIdList.size <= 2) {
+            // シングルルームの場合
+            val friendId  = room.userIdList.filter{ !it.equals(UserManager.myUserId) }.first()
+            FireStorageUtil.getUserIconImage(friendId) {
+                this.setRoundedImageView(it)
+            }
+        } else {
+            // グループルームの場合
+        }
+    }
+
 }

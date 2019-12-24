@@ -46,9 +46,9 @@ object UserManager {
     /**
      * UserManager初期化
      * FirebaseAuthのcurrentUserが取得出来る前提
-     * @param user: User
+     * @param onSuccess: () -> Unit
      */
-    fun initUserManager(onComplete: () -> Unit) {
+    fun initUserManager(onSuccess: () -> Unit) {
         UserStore.getLoginUser {
             it.result?.toObjects(User::class.java)?.firstOrNull().also {
                 it?.also {
@@ -59,7 +59,7 @@ object UserManager {
                         it.result?.toObjects(User::class.java)?.also {
                             UserManager.allUsers = it
                         }
-                        onComplete.invoke()
+                        onSuccess.invoke()
                     }
                 }
             } ?: run {
