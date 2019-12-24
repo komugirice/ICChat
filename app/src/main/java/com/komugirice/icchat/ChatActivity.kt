@@ -54,6 +54,7 @@ class ChatActivity : BaseActivity() {
         binding = DataBindingUtil.setContentView(this,
             R.layout.activity_chat
         )
+        binding.room = room
         binding.lifecycleOwner = this
     }
 
@@ -86,7 +87,6 @@ class ChatActivity : BaseActivity() {
      *
      */
     private fun initLayout() {
-        initText()
         initEditText()
         initClick()
         initSwipeRefreshLayout()
@@ -112,15 +112,6 @@ class ChatActivity : BaseActivity() {
 
         }
 
-    }
-
-    /**
-     * initTextメソッド
-     *
-     */
-    private fun initText() {
-        // タイトル設定
-        chatTitleTextView.text = room.name
     }
 
     /**

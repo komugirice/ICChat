@@ -37,8 +37,11 @@ class RoomViewModel: ViewModel() {
                 }
                 list.add(pair)
 
-                if (RoomManager.myRooms.size == list.size)
+                if (RoomManager.myRooms.size == list.size) {
+                    list.sortByDescending { it.second.createdAt }
                     items.postValue(list)
+                }
+
             }
         }
 

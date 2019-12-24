@@ -114,7 +114,7 @@ class RoomStore {
          * @param targetUser 取得対象ユーザ
          * @return retRoom 取得対象ユーザのRoomを設定します
          */
-        fun getTargetUserRoom(targetUser: User, retRoom: MutableLiveData<Room>) {
+        fun getTargetUserRoom(targetUser: User, onSuccess: (Room) -> Unit) {
             val サシリスト = mutableListOf(UserManager.myUserId, targetUser.userId)
             // rooms取得
             FirebaseFirestore.getInstance()
@@ -130,7 +130,7 @@ class RoomStore {
                             && it.userIdList.containsAll(サシリスト)) {
                             // サシチャットはルーム名を対象ユーザ名に設定する。
                             it.name = targetUser.name
-                            retRoom.postValue(it)
+                            onSuccess.invoke(it)
                             return@addOnSuccessListener
                         }
                     }

@@ -17,10 +17,10 @@ object RoomManager {
      * FirebaseAuthのcurrentUserが取得出来る前提
      * @param onComplete: () -> Unit
      */
-    fun initRoomManager(onSuccess: () -> Unit) {
+    fun initRoomManager(onSuccess: (List<Room>) -> Unit) {
         RoomStore.getLoginUserRooms {
             myRooms = it
-            onSuccess.invoke()
+            onSuccess.invoke(it)
         }
     }
 }

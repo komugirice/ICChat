@@ -7,12 +7,11 @@ import android.view.ViewGroup
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.komugirice.icchat.firestore.model.Room
-import com.komugirice.icchat.firestore.model.User
-import com.komugirice.icchat.firestore.store.RoomStore
+import com.komugirice.icchat.ChatActivity
 import com.komugirice.icchat.databinding.FriendCellBinding
+import com.komugirice.icchat.firestore.model.Room
 
-class FriendsView  : RecyclerView {
+class FriendsView : RecyclerView {
 
     constructor(ctx: Context) : super(ctx)
     constructor(ctx: Context, attrs: AttributeSet?) : super(ctx, attrs)
@@ -35,12 +34,13 @@ class FriendsView  : RecyclerView {
     }
 
     class Adapter(val context: Context) : RecyclerView.Adapter<ViewHolder>() {
-        private val items = mutableListOf<User>()
+        private val items = mutableListOf<Room>()
+
         // ↓に値が入ったらChatActivityに遷移する仕組み
         var roomForChatActivity = MutableLiveData<Room>()
 
 
-        fun refresh(list: List<User>) {
+        fun refresh(list: List<Room>) {
             items.apply {
                 clear()
                 addAll(list)
@@ -48,7 +48,7 @@ class FriendsView  : RecyclerView {
             notifyDataSetChanged()
         }
 
-        fun addItem(list: List<User>) {
+        fun addItem(list: List<Room>) {
             items.apply {
                 addAll(list)
             }
@@ -63,7 +63,13 @@ class FriendsView  : RecyclerView {
         override fun getItemCount(): Int = items.size
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
-            FriendCellViewHolder(FriendCellBinding.inflate(LayoutInflater.from(context), parent, false))
+            FriendCellViewHolder(
+                FriendCellBinding.inflate(
+                    LayoutInflater.from(context),
+                    parent,
+                    false
+                )
+            )
 
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
             if (holder is FriendCellViewHolder)
@@ -72,15 +78,16 @@ class FriendsView  : RecyclerView {
 
         private fun onBindViewHolder(holder: FriendCellViewHolder, position: Int) {
             val data = items[position]
-            holder.binding.user = data
+            holder.binding.room = data
 
             holder.binding.root.setOnClickListener {
                 // roomForChatActivity設定でChatActivityに遷移させる。
-                RoomStore.getTargetUserRoom(data, roomForChatActivity)
-
+                roomForChatActivity.postValue(data)
             }
         }
 
     }
-    class FriendCellViewHolder(val binding: FriendCellBinding) : RecyclerView.ViewHolder(binding.root)
+
+    class FriendCellViewHolder(val binding: FriendCellBinding) :
+        RecyclerView.ViewHolder(binding.root)
 }

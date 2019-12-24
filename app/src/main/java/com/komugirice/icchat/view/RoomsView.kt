@@ -4,13 +4,14 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.komugirice.icchat.databinding.RoomCellBinding
 import com.komugirice.icchat.firestore.model.Message
 import com.komugirice.icchat.firestore.model.Room
 
-class RoomsView  : RecyclerView {
+class RoomsView : RecyclerView {
     constructor(ctx: Context) : super(ctx)
     constructor(ctx: Context, attrs: AttributeSet?) : super(ctx, attrs)
     constructor(ctx: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
@@ -33,6 +34,9 @@ class RoomsView  : RecyclerView {
 
     class Adapter(val context: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         private val items = mutableListOf<Pair<Room, Message>>()
+
+        // ↓に値が入ったらChatActivityに遷移する仕組み
+        var roomForChatActivity = MutableLiveData<Room>()
 
 
         fun refresh(list: List<Pair<Room, Message>>) {
@@ -72,12 +76,13 @@ class RoomsView  : RecyclerView {
 
             holder.binding.root.setOnClickListener {
                 // roomForChatActivity設定でChatActivityに遷移させる。
-                
+                roomForChatActivity.postValue(data.first)
 
             }
         }
 
     }
+
     class RoomCellViewHolder(val binding: RoomCellBinding) : RecyclerView.ViewHolder(binding.root)
 
 }
