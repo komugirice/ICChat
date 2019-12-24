@@ -148,7 +148,7 @@ class UserStore {
          * uid追加
          *
          */
-        fun addUid(context: Context?) {
+        fun addUid(context: Context?, onSuccess: (Void) -> Unit) {
             val uid = FirebaseAuth.getInstance().currentUser?.uid.toString()
             if (UserManager.myUser.uids.contains(uid)) {
                 Toast.makeText(
@@ -157,21 +157,18 @@ class UserStore {
                     Toast.LENGTH_LONG
                 ).show()
                 return
-            } else {
-                UserManager.myUser.uids.add(uid)
             }
 
+            UserManager.myUser.uids.add(uid)
 
             // ログインユーザ側登録
             FirebaseFirestore.getInstance()
                 .collection("users")
                 .document(UserManager.myUser.userId)
                 .update("uids", UserManager.myUser.uids)
-
-            Toast.makeText(
-                context,
-                "Facebookに連携しました",
-                Toast.LENGTH_LONG).show()
+                .addOnSuccessListener {
+                    onSuccess.invoke(it)
+                }
         }
 
         /**

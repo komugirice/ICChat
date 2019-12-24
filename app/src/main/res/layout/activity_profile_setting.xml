@@ -264,21 +264,46 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/birthDay" />
 
+
+
                 <Button
                     android:id="@+id/facebookConnectButton"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="32dp"
                     android:layout_gravity="left"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="24dp"
                     android:layout_marginEnd="16dp"
+                    android:padding="8dp"
                     android:background="@color/facebook"
                     android:text="@string/facebook_connect_button"
                     android:textColor="@color/white"
                     android:textSize="12sp"
+                    android:drawableLeft="@drawable/ic_facebook_24dp"
+                    android:drawablePadding="8sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/birthDayLine" />
+
+                <Button
+                    android:id="@+id/googleConnectButton"
+                    android:layout_width="0dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="left"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="16dp"
+                    android:padding="8dp"
+                    android:background="@color/white"
+                    android:elevation="5dp"
+                    android:text="@string/google_connect_button"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    android:drawableLeft="@drawable/ic_google_24dp"
+                    android:drawablePadding="8sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/facebookConnectButton" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

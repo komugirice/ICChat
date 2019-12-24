@@ -60,7 +60,8 @@
     <string name="user_icon_upload_button">アップロードする</string>
     <string name="u_crop_button">写真を加工する</string>
     <string name="user_icon_delete_button">写真を削除する</string>
-    <string name="facebook_connect_button">facebookと連携</string>
+    <string name="facebook_connect_button">Facebookと連携</string>
+    <string name="google_connect_button">Googleと連携</string>
 
     <!-- UserNameActivity -->
     <string name="save_button">保存</string>

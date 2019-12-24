@@ -38,7 +38,10 @@ import com.komugirice.icchat.util.FireStorageUtil
 import com.makeramen.roundedimageview.RoundedDrawable
 import com.makeramen.roundedimageview.RoundedImageView
 import com.yalantis.ucrop.UCrop
+import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.activity_profile_setting.*
+import kotlinx.android.synthetic.main.activity_profile_setting.container
+import kotlinx.android.synthetic.main.activity_profile_setting.email
 import timber.log.Timber
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -144,6 +147,9 @@ class ProfileSettingActivity : AppCompatActivity() {
         facebookConnectButton.setOnClickListener {
             LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile", "user_friends"));
         }
+        googleConnectButton.setOnClickListener{
+            googleSignIn()
+        }
 
 
     }
@@ -226,7 +232,14 @@ class ProfileSettingActivity : AppCompatActivity() {
                 if (task.isSuccessful) {
                     // Facebook認証成功
                     Log.d(TAG, "signInWithCredential:success")
-                    UserStore.addUid(this)
+                    UserStore.addUid(this){
+
+                        Toast.makeText(
+                            this,
+                            "Facebookに連携しました",
+                            Toast.LENGTH_LONG).show()
+
+                    }
 
 
                 } else {
@@ -277,6 +290,14 @@ class ProfileSettingActivity : AppCompatActivity() {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "signInWithCredential:success")
                     // 認証成功
+                    UserStore.addUid(this) {
+                        Toast.makeText(
+                            this,
+                            "Googleに連携しました。",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+
 
                 } else {
                     // If sign in fails, display a message to the user.
@@ -284,7 +305,7 @@ class ProfileSettingActivity : AppCompatActivity() {
                     Snackbar.make(container, "Authentication Failed.", Snackbar.LENGTH_SHORT).show()
                     Toast.makeText(
                         applicationContext,
-                        "ログインに失敗しました。",
+                        "Google連携に失敗しました。",
                         Toast.LENGTH_LONG
                     ).show()
                 }
@@ -312,8 +333,9 @@ class ProfileSettingActivity : AppCompatActivity() {
                     firebaseAuthWithGoogle(account!!)
                 } catch (e: ApiException) {
                     // Google Sign In failed, update UI appropriately
+                    Toast.makeText(this@ProfileSettingActivity, "Google連携に失敗しました", Toast.LENGTH_SHORT).show()
                     Log.w(TAG, "Google sign in failed", e)
-                    //updateUI(null)
+
                 }
             }
             // Facebook連携
