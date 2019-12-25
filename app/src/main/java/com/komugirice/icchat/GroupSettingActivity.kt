@@ -62,6 +62,8 @@ class GroupSettingActivity : BaseActivity() {
 
     private var prevSettingUri: String = ""
 
+    private var deleteFlg: Boolean = false
+
     private val displayFlg by lazy { intent.getIntExtra(KEY_DISPLAY_FLG, DISPLAY_FLAG_INSERT)}
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,8 +71,8 @@ class GroupSettingActivity : BaseActivity() {
 
         initBinding()
         initViewModel()
-        initLayout()
         if (displayFlg == DISPLAY_FLAG_UPDATE) initData()
+        initLayout()
         initClick()
         initCheckBox()
 
@@ -131,6 +133,7 @@ class GroupSettingActivity : BaseActivity() {
                 finish()
             }
         }
+        viewModel.name.postValue(this.room.name)
         initGroupIcon()
     }
 
@@ -164,7 +167,7 @@ class GroupSettingActivity : BaseActivity() {
 
         binding.uCropButton.setOnClickListener {
             if (uCropSrcUri == null) {
-                Toast.makeText(this, "プロフィール画像が設定されていません", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "グループ画像が設定されていません", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             startUCrop()
@@ -172,8 +175,9 @@ class GroupSettingActivity : BaseActivity() {
 
         binding.imageDeleteButton.setOnClickListener {
             // 元画像削除
-            if(prevSettingUri.isEmpty()) {
-                Toast.makeText(this, "プロフィール画像が設定されていません", Toast.LENGTH_SHORT).show()
+            // プロフィール画面と違い、このボタンで削除しない。登録ボタンで削除するのでuCropSrcUriで判定
+            if(uCropSrcUri == null) {
+                Toast.makeText(this, "グループ画像が設定されていません", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             delete()
@@ -200,8 +204,10 @@ class GroupSettingActivity : BaseActivity() {
             checkBox.text = it.name
             checkBox.textSize = 16f
 
-            if(displayFlg ==DISPLAY_FLAG_UPDATE && room.userIdList.contains(it.userId))
+            if(displayFlg ==DISPLAY_FLAG_UPDATE && room.userIdList.contains(it.userId)) {
                 checkBox.isChecked = true
+                viewModel._inviteUser.add(it)
+            }
 
             checkBox.setOnCheckedChangeListener { v, isChecked ->
                 viewModel.apply {
@@ -215,6 +221,8 @@ class GroupSettingActivity : BaseActivity() {
             }
             inviteCheckBoxContainer.addView(checkBox)
         }
+        if(displayFlg ==DISPLAY_FLAG_UPDATE)
+            viewModel.inviteUser.postValue(viewModel._inviteUser)
 
     }
 
@@ -247,7 +255,7 @@ class GroupSettingActivity : BaseActivity() {
 
                     groupIconImageView.setRoundedImageView(it) // UIスレッド
                     uCropSrcUri = it
-
+                    deleteFlg = false
                 }
 
             }
@@ -297,15 +305,12 @@ class GroupSettingActivity : BaseActivity() {
      */
     private fun upload(room: Room, onSuccess: (UploadTask.TaskSnapshot) -> Unit) {
 
-        // 前画像削除
-        if(prevSettingUri.isNotEmpty())
-            FirebaseStorage.getInstance().getReferenceFromUrl(prevSettingUri).delete()
 
         val imageUrl = "${System.currentTimeMillis()}.jpg"
         val ref = FirebaseStorage.getInstance().reference.child("${FireStorageUtil.ROOM_PATH}/${room.documentId}/${FireStorageUtil.ROOM_ICON_PATH}/${imageUrl}")
 
         // RoundedImageViewの不具合修正
-        val bitmap = when (userIconImageView) {
+        val bitmap = when (groupIconImageView) {
             is RoundedImageView -> (groupIconImageView.drawable as RoundedDrawable).toBitmap()
             else -> (groupIconImageView.drawable as BitmapDrawable).bitmap
         }
@@ -333,9 +338,9 @@ class GroupSettingActivity : BaseActivity() {
     private fun delete() {
         groupIconImageView.setRoundedImageView(null)
         //FirebaseStorage.getInstance().getReferenceFromUrl(prevSettingUri).delete()
-        prevSettingUri = "";
+        deleteFlg = true
         uCropSrcUri = null
-        Toast.makeText(this, "プロフィール画像を削除しました", Toast.LENGTH_SHORT).show()
+        //Toast.makeText(this, "プロフィール画像を削除しました", Toast.LENGTH_SHORT).show()
 
     }
 
@@ -372,17 +377,22 @@ class GroupSettingActivity : BaseActivity() {
         // Room登録
         RoomStore.registerGroupRoom(tmpRoom) {
             if(it.isSuccessful) {
-                // 画像登録
-                upload(tmpRoom){
+
+                if(deleteFlg == true) {
+                    // 前画像削除
+                    if (prevSettingUri.isNotEmpty())
+                        FirebaseStorage.getInstance().getReferenceFromUrl(prevSettingUri).delete()
+                } else {
+                    // 画像登録
+                    upload(tmpRoom) {
+                    }
+                }
+                // RoomManager更新
+                RoomManager.initRoomManager {
                     Toast.makeText(this, "グループを登録しました", Toast.LENGTH_SHORT).show()
                     Timber.tag(TAG)
                     Timber.d("グループ登録成功：${tmpRoom.documentId}")
-
-                    // RoomManager更新
-                    RoomManager.initRoomManager {
-                        finish()
-                    }
-
+                    finish()
                 }
             } else {
                 Toast.makeText(this, "グループ登録に失敗しました", Toast.LENGTH_SHORT).show()
