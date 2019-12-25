@@ -56,6 +56,8 @@ class GroupSettingActivity : BaseActivity() {
     private lateinit var binding: ActivityGroupSettingBinding
     private lateinit var viewModel: GroupSettingViewModel
 
+    private lateinit var room: Room
+
     private var uCropSrcUri: Uri? = null
 
     private var prevSettingUri: String = ""
@@ -68,6 +70,7 @@ class GroupSettingActivity : BaseActivity() {
         initBinding()
         initViewModel()
         initLayout()
+        if (displayFlg == DISPLAY_FLAG_UPDATE) initData()
         initClick()
         initCheckBox()
 
@@ -117,7 +120,33 @@ class GroupSettingActivity : BaseActivity() {
         if(displayFlg == DISPLAY_FLAG_INSERT) {
             imageDeleteButton.visibility = View.GONE
         }
+
     }
+
+    private fun initData() {
+        intent.getSerializableExtra(KEY_ROOM).also {
+            if (it is Room && it.documentId.isNotEmpty()) {
+                this.room = it
+            } else {
+                finish()
+            }
+        }
+        initGroupIcon()
+    }
+
+    /**
+     * グループ画像初期化
+     *
+     */
+    private fun initGroupIcon() {
+        FireStorageUtil.getGroupIconImage(this.room.documentId) {
+            groupIconImageView.setRoundedImageView(it) // UIスレッド
+            uCropSrcUri = it
+            prevSettingUri = it.toString()
+        }
+
+    }
+
 
     /**
      * initClickメソッド
@@ -170,6 +199,10 @@ class GroupSettingActivity : BaseActivity() {
             val checkBox = CheckBox(this)
             checkBox.text = it.name
             checkBox.textSize = 16f
+
+            if(displayFlg ==DISPLAY_FLAG_UPDATE && room.userIdList.contains(it.userId))
+                checkBox.isChecked = true
+
             checkBox.setOnCheckedChangeListener { v, isChecked ->
                 viewModel.apply {
                     if(isChecked) {
@@ -298,9 +331,8 @@ class GroupSettingActivity : BaseActivity() {
      *
      */
     private fun delete() {
-        userIconImageView.setRoundedImageView(null)
-        //FirebaseStorage.getInstance().reference.child("${UserManager.myUserId}/${FireStorageUtil.USER_ICON_PATH}/${prevSettingUri}").delete()
-        FirebaseStorage.getInstance().getReferenceFromUrl(prevSettingUri).delete()
+        groupIconImageView.setRoundedImageView(null)
+        //FirebaseStorage.getInstance().getReferenceFromUrl(prevSettingUri).delete()
         prevSettingUri = "";
         uCropSrcUri = null
         Toast.makeText(this, "プロフィール画像を削除しました", Toast.LENGTH_SHORT).show()
@@ -312,10 +344,10 @@ class GroupSettingActivity : BaseActivity() {
      *
      */
     private fun createGroup() {
-        var room: Room = Room()
+        var tmpRoom: Room = Room()
         // Room作成
         if(displayFlg == DISPLAY_FLAG_INSERT) {
-            room.apply {
+            tmpRoom.apply {
                 documentId =  UUID.randomUUID().toString()
                 name = groupNameEditText.text.toString()
                 userIdList.add(UserManager.myUserId)
@@ -326,30 +358,25 @@ class GroupSettingActivity : BaseActivity() {
                 ownerId = UserManager.myUserId
             }
         } else {
-            intent.getSerializableExtra(KEY_ROOM).also {
-                if(it is Room && it.documentId.isNotEmpty()) {
-                    it.name = groupNameEditText.text.toString()
-                    it.userIdList.clear()
-                    it.userIdList.add(UserManager.myUserId)
-                    viewModel._inviteUser.forEach { user->
-                        it.userIdList.add(user.userId)
-                    }
-
-                    it.isGroup = true
-
-                    room = it
-                }
-
+            this.room.name = groupNameEditText.text.toString()
+            this.room.userIdList.clear()
+            this.room.userIdList.add(UserManager.myUserId)
+            viewModel._inviteUser.forEach { user->
+                this.room.userIdList.add(user.userId)
             }
+
+            this.room.isGroup = true
+
+            tmpRoom = this.room
         }
         // Room登録
-        RoomStore.registerGroupRoom(room) {
+        RoomStore.registerGroupRoom(tmpRoom) {
             if(it.isSuccessful) {
                 // 画像登録
-                upload(room){
+                upload(tmpRoom){
                     Toast.makeText(this, "グループを登録しました", Toast.LENGTH_SHORT).show()
                     Timber.tag(TAG)
-                    Timber.d("グループ登録成功：${room.documentId}")
+                    Timber.d("グループ登録成功：${tmpRoom.documentId}")
 
                     // RoomManager更新
                     RoomManager.initRoomManager {
