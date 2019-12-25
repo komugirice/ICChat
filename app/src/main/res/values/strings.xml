@@ -42,6 +42,10 @@
     <string name="logout_settings">ログアウト</string>
     <string name="add_friends">友だち追加</string>
     <string name="create_group">グループ作成</string>
+    <string name="confirm_logout">ログアウトしてよろしいですか？</string>
+    <string name="chat_activity">チャット画面表示</string>
+    <string name="group_settings">グループ情報設定</string>
+    <string name="group_delete">グループ削除</string>
 
     <!-- デバッグFragment -->
     <string name="buttonAddDebugUser">ユーザ情報登録</string>

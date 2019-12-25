@@ -1,6 +1,7 @@
 package com.komugirice.icchat
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
@@ -306,6 +307,10 @@ class GroupSettingActivity : BaseActivity() {
 
     }
 
+    /**
+     * グループ作成（全画面の中でここだけ）
+     *
+     */
     private fun createGroup() {
         var room: Room = Room()
         // Room作成
@@ -318,6 +323,7 @@ class GroupSettingActivity : BaseActivity() {
                     userIdList.add(it.userId)
                 }
                 isGroup = true
+                ownerId = UserManager.myUserId
             }
         } else {
             intent.getSerializableExtra(KEY_ROOM).also {
@@ -344,7 +350,7 @@ class GroupSettingActivity : BaseActivity() {
                     Toast.makeText(this, "グループを登録しました", Toast.LENGTH_SHORT).show()
                     Timber.tag(TAG)
                     Timber.d("グループ登録成功：${room.documentId}")
-                    
+
                     // RoomManager更新
                     RoomManager.initRoomManager {
                         finish()
@@ -367,16 +373,16 @@ class GroupSettingActivity : BaseActivity() {
         private const val DISPLAY_FLAG_UPDATE = 1
         private const val TAG = "GroupSettingActivity"
 
-        fun start(activity: Activity?) {
-            activity?.startActivity(
-                Intent(activity, GroupSettingActivity::class.java)
+        fun start(context: Context?) {
+            context?.startActivity(
+                Intent(context, GroupSettingActivity::class.java)
                     .putExtra(KEY_DISPLAY_FLG, DISPLAY_FLAG_INSERT)
             )
         }
 
-        fun update(activity: Activity?, room: Room) =
-            activity?.startActivity(
-                Intent(activity, ChatActivity::class.java)
+        fun update(context: Context?, room: Room) =
+            context?.startActivity(
+                Intent(context, GroupSettingActivity::class.java)
                     .putExtra(KEY_ROOM, room)
                     .putExtra(KEY_DISPLAY_FLG, DISPLAY_FLAG_UPDATE)
             )

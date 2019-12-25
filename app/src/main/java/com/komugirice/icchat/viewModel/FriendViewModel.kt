@@ -15,6 +15,7 @@ class FriendViewModel: ViewModel() {
 
     val items = MutableLiveData<List<Room>>()
     val isException = MutableLiveData<Throwable>()
+    val groupFlg = MutableLiveData<Int>()
 
     fun initData(@NonNull owner: LifecycleOwner) {
         update()
@@ -24,5 +25,11 @@ class FriendViewModel: ViewModel() {
         RoomManager.initRoomManager {
             items.postValue(it)
         }
+    }
+
+    companion object {
+        private const val GROUP_FLAG_OFF = 0
+        private const val GROUP_FLAG_MEMBER = 1
+        private const val GROUP_FLAG_OWNER = 2
     }
 }

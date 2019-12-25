@@ -42,9 +42,6 @@ class FriendFragment : Fragment() {
                 }
             })
         }
-        binding.FriendsView.customAdapter.roomForChatActivity.observe(this@FriendFragment, Observer {
-            ChatActivity.start(activity, it)
-        })
         return binding.root
     }
 

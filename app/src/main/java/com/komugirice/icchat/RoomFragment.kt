@@ -40,9 +40,6 @@ class RoomFragment : Fragment() {
                 }
             })
         }
-        binding.RoomsView.customAdapter.roomForChatActivity.observe(this@RoomFragment, Observer {
-            ChatActivity.start(activity, it)
-        })
         return binding.root
     }
 

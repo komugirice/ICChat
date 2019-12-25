@@ -1,7 +1,9 @@
 package com.komugirice.icchat
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
@@ -137,8 +139,15 @@ class MainActivity : BaseActivity() {
                         return true
                     }
                     R.id.logout_settings -> {
-                        // TODO 確認ダイアログ表示
-                        LoginActivity.signOut(this@MainActivity)
+                        AlertDialog.Builder(this@MainActivity)
+                            .setMessage(getString(R.string.confirm_logout))
+                            .setPositiveButton("OK", object: DialogInterface.OnClickListener {
+                                override fun onClick(dialog: DialogInterface?, which: Int) {
+                                    LoginActivity.signOut(this@MainActivity)
+                                }
+                            })
+                            .setNegativeButton("Cancel", null)
+                            .show()
                         return true
                     }
                     else -> return false

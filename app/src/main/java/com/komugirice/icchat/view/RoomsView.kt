@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.komugirice.icchat.ChatActivity
 import com.komugirice.icchat.databinding.RoomCellBinding
 import com.komugirice.icchat.firestore.model.Message
 import com.komugirice.icchat.firestore.model.Room
@@ -34,9 +35,6 @@ class RoomsView : RecyclerView {
 
     class Adapter(val context: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         private val items = mutableListOf<Pair<Room, Message>>()
-
-        // ↓に値が入ったらChatActivityに遷移する仕組み
-        var roomForChatActivity = MutableLiveData<Room>()
 
 
         fun refresh(list: List<Pair<Room, Message>>) {
@@ -75,8 +73,7 @@ class RoomsView : RecyclerView {
             holder.binding.message = data.second
 
             holder.binding.root.setOnClickListener {
-                // roomForChatActivity設定でChatActivityに遷移させる。
-                roomForChatActivity.postValue(data.first)
+                ChatActivity.start(context, data.first)
 
             }
         }

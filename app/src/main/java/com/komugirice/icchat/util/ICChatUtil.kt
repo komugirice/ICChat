@@ -104,7 +104,7 @@ object ICChatUtil {
     }
 
     /**
-     * RoomFragmentにnameを設定する
+     * RoomFragmentにアイコン画像を設定する
      *
      * @param url
      *
@@ -114,7 +114,7 @@ object ICChatUtil {
     fun ImageView.loadUserIconImage(room: Room) {
 
         // シングルルームとグループルームで分岐
-        if(room.userIdList.size <= 2) {
+        if(!room.isGroup) {
             // シングルルームの場合
             val friendId  = room.userIdList.filter{ !it.equals(UserManager.myUserId) }.first()
             FireStorageUtil.getUserIconImage(friendId) {
@@ -122,6 +122,9 @@ object ICChatUtil {
             }
         } else {
             // グループルームの場合
+            FireStorageUtil.getGroupIconImage(room.documentId) {
+                this.setRoundedImageView(it)
+            }
         }
     }
 
