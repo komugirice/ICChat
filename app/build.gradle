@@ -68,6 +68,9 @@ dependencies {
     implementation "com.squareup.picasso:picasso:$picasso_version"
     implementation "com.github.yalantis:ucrop:2.2.4"
     implementation 'com.makeramen:roundedimageview:2.3.0'
+    // MaterialDialog
+    implementation "com.afollestad.material-dialogs:core:$material_dialog_version"
+    implementation "com.afollestad.material-dialogs:input:$material_dialog_version"
 }
 
 apply plugin: 'com.google.gms.google-services'
