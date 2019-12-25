@@ -51,6 +51,11 @@ class RoomFragment : Fragment() {
         initialize()
     }
 
+    override fun onResume() {
+        super.onResume()
+        initialize()
+    }
+
     private fun initialize() {
         initLayout()
         viewModel.initData(this)

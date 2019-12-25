@@ -450,14 +450,12 @@ class ProfileSettingActivity : AppCompatActivity() {
                 bitmap.recycle()
             }
             .addOnSuccessListener {
-                UserStore.updateImageUrl(imageUrl) {
-                    prevSettingUri = ref.toString()
+                prevSettingUri = ref.toString()
 
-                    Toast.makeText(this, "プロフィール画像を設定しました", Toast.LENGTH_SHORT).show()
-                    Timber.d("Upload成功：${imageUrl}")
-                    // ImageViewのbitmapだとなぜか落ちる
-                    //bitmap.recycle()
-                }
+                Toast.makeText(this, "プロフィール画像を設定しました", Toast.LENGTH_SHORT).show()
+                Timber.d("Upload成功：${imageUrl}")
+                // ImageViewのbitmapだとなぜか落ちる
+                //bitmap.recycle()
             }
     }
 

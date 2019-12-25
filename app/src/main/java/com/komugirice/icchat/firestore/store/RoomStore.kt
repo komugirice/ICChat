@@ -77,6 +77,22 @@ class RoomStore {
         }
 
         /**
+         * グループルームの登録
+         * @param room: Room
+         * @param onComplete
+         *
+         */
+        fun registerGroupRoom(room: Room, onComplete: (Task<Void>) -> Unit) {
+            FirebaseFirestore.getInstance()
+                .collection("rooms")
+                .document(room.documentId)
+                .set(room)
+                .addOnCompleteListener{
+                    onComplete.invoke(it)
+                }
+        }
+
+        /**
          * ログインユーザと友だちのサシのチャットの重複チェックを行い、存在したら削除する。
          * @param rooms: MutableList<Room>      ログインユーザのルームリスト
          * @param targetUserId: String    対象ユーザID

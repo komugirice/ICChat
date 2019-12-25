@@ -40,6 +40,8 @@
     <!-- Menu -->
     <string name="profile_settings">プロフィール設定</string>
     <string name="logout_settings">ログアウト</string>
+    <string name="add_friends">友だち追加</string>
+    <string name="create_group">グループ作成</string>
 
     <!-- デバッグFragment -->
     <string name="buttonAddDebugUser">ユーザ情報登録</string>
@@ -56,10 +58,10 @@
     <string name="user_name_label">名前</string>
     <string name="email_label">メールアドレス</string>
     <string name="birthday_label">誕生日</string>
-    <string name="user_icon_select_button">写真を選択する</string>
-    <string name="user_icon_upload_button">アップロードする</string>
+    <string name="image_select_button">写真を選択する</string>
+    <string name="image_upload_button">アップロードする</string>
     <string name="u_crop_button">写真を加工する</string>
-    <string name="user_icon_delete_button">写真を削除する</string>
+    <string name="image_delete_button">写真を削除する</string>
     <string name="facebook_connect_button">Facebookと連携</string>
     <string name="google_connect_button">Googleと連携</string>
 
@@ -70,5 +72,14 @@
     <!-- Facebookログイン-->
     <string name="facebook_app_id">646620032538120</string>
     <string name="fb_login_protocol_scheme">fb646620032538120</string>
+
+    <!-- GroupSettingActivity -->
+    <string name="title_create_group">グループ作成</string>
+    <string name="group_image_label">グループ画像</string>
+    <string name="group_name_label">グループ名</string>
+    <string name="group_invite_label">グループに招待するユーザ</string>
+    <string name="invalid_groupName">グループ名を入力して下さい</string>
+    <string name="invalid_length_groupName">グループ名は20文字以内で入力して下さい</string>
+    <string name="invite_description">※２人以上を選択して下さい</string>
 
 </resources>

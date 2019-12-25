@@ -54,7 +54,11 @@ class MainActivity : BaseActivity() {
      */
     private fun initClick() {
         settingImageView.setOnClickListener {
-            showMenu(it)
+            showSettingMenu(it)
+        }
+
+        addFriendsImageView.setOnClickListener {
+            showAddFriendsMenu(it)
         }
     }
 
@@ -117,11 +121,11 @@ class MainActivity : BaseActivity() {
 
     /**
      * 設定アイコンのオプションメニュー
-     * @param menu: Menu
+     * @param v: View
      * @return Boolean
      *
      */
-    fun showMenu(v: View) {
+    fun showSettingMenu(v: View) {
         val popup = PopupMenu(this, v)
         popup.inflate(R.menu.setting)
         popup.setOnMenuItemClickListener ( object: PopupMenu.OnMenuItemClickListener {
@@ -135,6 +139,35 @@ class MainActivity : BaseActivity() {
                     R.id.logout_settings -> {
                         // TODO 確認ダイアログ表示
                         LoginActivity.signOut(this@MainActivity)
+                        return true
+                    }
+                    else -> return false
+
+                }
+            }
+        })
+        popup.show()
+    }
+
+    /**
+     * 友だち追加アイコンのオプションメニュー
+     * @param v: View
+     * @return Boolean
+     *
+     */
+    fun showAddFriendsMenu(v: View) {
+        val popup = PopupMenu(this, v)
+        popup.inflate(R.menu.add_friends)
+        popup.setOnMenuItemClickListener ( object: PopupMenu.OnMenuItemClickListener {
+
+            override fun onMenuItemClick(item: MenuItem?): Boolean {
+                when (item?.itemId) {
+                    R.id.addFriends -> {
+                        //ProfileSettingActivity.start(this@MainActivity)
+                        return true
+                    }
+                    R.id.groupSetting -> {
+                        GroupSettingActivity.start(this@MainActivity)
                         return true
                     }
                     else -> return false
