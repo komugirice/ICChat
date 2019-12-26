@@ -1,21 +1,28 @@
 package com.komugirice.icchat.view
 
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItems
+import com.google.firebase.storage.FirebaseStorage
 import com.komugirice.icchat.ChatActivity
 import com.komugirice.icchat.GroupSettingActivity
+import com.komugirice.icchat.LoginActivity
 import com.komugirice.icchat.R
 import com.komugirice.icchat.databinding.FriendCellBinding
 import com.komugirice.icchat.databinding.TitleCellBinding
 import com.komugirice.icchat.firestore.manager.UserManager
 import com.komugirice.icchat.firestore.model.Room
+import com.komugirice.icchat.firestore.store.RoomStore
+import com.komugirice.icchat.util.FireStorageUtil
 
 class FriendsView : RecyclerView {
 
@@ -139,6 +146,23 @@ class FriendsView : RecyclerView {
                                         GroupSettingActivity.update(context, data.room)
                                     }
                                     menuList.get(2).first -> {
+                                        AlertDialog.Builder(context)
+                                            .setMessage(context.getString(R.string.confirm_group_delete))
+                                            .setPositiveButton("OK", object: DialogInterface.OnClickListener {
+                                                override fun onClick(dialog: DialogInterface?, which: Int) {
+                                                    RoomStore.deleteRoom(data.room.documentId) {
+                                                        FireStorageUtil.deleteGroupIconImage(data.room.documentId) {
+                                                            Toast.makeText(
+                                                                context,
+                                                                context.getString(R.string.success_group_delete),
+                                                                Toast.LENGTH_LONG
+                                                            ).show()
+                                                        }
+                                                    }
+                                                }
+                                            })
+                                            .setNegativeButton("Cancel", null)
+                                            .show()
                                     }
                                     else -> return@listItems
                                 }

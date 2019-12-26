@@ -192,5 +192,15 @@ class RoomStore {
 
                 }
         }
+
+        fun deleteRoom(roomId: String, onComplete: (Task<Void>) -> Unit) {
+            FirebaseFirestore.getInstance()
+                .collection("rooms")
+                .document(roomId)
+                .delete()
+                .addOnCompleteListener {
+                    onComplete.invoke(it)
+                }
+        }
     }
 }

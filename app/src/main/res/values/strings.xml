@@ -50,6 +50,8 @@
     <!-- FriendFragment -->
     <string name="title_friend">友だち</string>
     <string name="title_group">グループ</string>
+    <string name="confirm_group_delete">グループを削除してよろしいですか？</string>
+    <string name="success_group_delete">グループを削除しました</string>
     <!-- デバッグFragment -->
     <string name="buttonAddDebugUser">ユーザ情報登録</string>
     <string name="buttonAddDebugFriend">友だち追加</string>

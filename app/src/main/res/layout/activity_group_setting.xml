@@ -90,7 +90,8 @@
                     android:textSize="20sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:requiredMarkVisible="@{true}" />
 
                 <TextView
                     android:id="@+id/groupNameLength"
@@ -224,8 +225,8 @@
                     android:gravity="left"
                     android:text="@string/invite_description"
                     android:textSize="14sp"
-                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/inviteLabel" />
 
                 <LinearLayout
