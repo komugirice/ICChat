@@ -35,6 +35,7 @@ class RoomStore {
                             }
 
                         }
+                        rooms.sortBy { it.name }
                         onSuccess.invoke(rooms)
                     }
 

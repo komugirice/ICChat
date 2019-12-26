@@ -26,7 +26,9 @@ object ICChatUtil {
      */
     @JvmStatic
     @BindingAdapter("dateTime")
-    fun TextView.getDateTime(dateTime: Date) {
+    fun TextView.getDateTime(dateTime: Date?) {
+        if (dateTime == null) return
+
         // 本日日付と比較
         if(dateTime.compareDate(Date()))
             this.text = dateTime.HHmmToString()
@@ -92,7 +94,7 @@ object ICChatUtil {
         // ルーム名を設定する
         var text = room.name
 
-        // シングルルームとグループルームで分岐
+        // シングルルームの場合はルーム名をユーザ名にする
         if(room.userIdList.size <= 2) {
             // シングルルームの場合
             val friendId  = room.userIdList.filter{ !it.equals(UserManager.myUserId) }.first()
@@ -111,7 +113,8 @@ object ICChatUtil {
      */
     @JvmStatic
     @BindingAdapter("roomIconImageUrl")
-    fun ImageView.loadUserIconImage(room: Room) {
+    fun ImageView.loadRoomIconImage(room: Room) {
+        this.setImageDrawable(null)
 
         // シングルルームとグループルームで分岐
         if(!room.isGroup) {

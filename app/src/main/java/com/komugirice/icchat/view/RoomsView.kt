@@ -34,10 +34,10 @@ class RoomsView : RecyclerView {
     }
 
     class Adapter(val context: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-        private val items = mutableListOf<Pair<Room, Message>>()
+        private val items = mutableListOf<Pair<Room, Message?>>()
 
 
-        fun refresh(list: List<Pair<Room, Message>>) {
+        fun refresh(list: List<Pair<Room, Message?>>) {
             items.apply {
                 clear()
                 addAll(list)
@@ -45,7 +45,7 @@ class RoomsView : RecyclerView {
             notifyDataSetChanged()
         }
 
-        fun addItem(list: List<Pair<Room, Message>>) {
+        fun addItem(list: List<Pair<Room, Message?>>) {
             items.apply {
                 addAll(list)
             }

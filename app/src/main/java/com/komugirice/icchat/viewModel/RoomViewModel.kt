@@ -12,7 +12,7 @@ import com.komugirice.icchat.firestore.store.MessageStore
 import com.komugirice.icchat.firestore.store.RoomStore
 
 class RoomViewModel: ViewModel() {
-    val items = MutableLiveData<List<Pair<Room, Message>>>()
+    val items = MutableLiveData<List<Pair<Room, Message?>>>()
 
     fun initData(@NonNull owner: LifecycleOwner) {
         update()
@@ -23,22 +23,20 @@ class RoomViewModel: ViewModel() {
      *
      */
     fun update() {
-        var list = mutableListOf<Pair<Room, Message>>()
+        var list = mutableListOf<Pair<Room, Message?>>()
         RoomManager.myRooms.forEach { room ->
             // とりあえずroom to ダミー
-            var pair = (room to Message())
+            var pair : Pair<Room, Message?> = (room to null)
             MessageStore.getLastMessage(room.documentId) {
                 if (it.isSuccessful) {
                     val message = it.result?.toObjects(Message::class.java)?.firstOrNull()
-                    message?.also {
-                        // 取得したらmessageも
-                        pair = pair.copy(second = it)
-                    }
+                    // 取得したらmessageも
+                    pair = pair.copy(second = message)
                 }
                 list.add(pair)
 
                 if (RoomManager.myRooms.size == list.size) {
-                    list.sortByDescending { it.second.createdAt }
+                    list.sortByDescending { it.second?.createdAt }
                     items.postValue(list)
                 }
 
