@@ -62,7 +62,7 @@ class GroupSettingActivity : BaseActivity() {
 
     private var prevSettingUri: String = ""
 
-    private var deleteFlg: Boolean = false
+    private var deleteImageFlg: Boolean = false
 
     private val displayFlg by lazy { intent.getIntExtra(KEY_DISPLAY_FLG, DISPLAY_FLAG_INSERT)}
 
@@ -255,7 +255,7 @@ class GroupSettingActivity : BaseActivity() {
 
                     groupIconImageView.setRoundedImageView(it) // UIスレッド
                     uCropSrcUri = it
-                    deleteFlg = false
+                    deleteImageFlg = false
                 }
 
             }
@@ -338,7 +338,7 @@ class GroupSettingActivity : BaseActivity() {
     private fun delete() {
         groupIconImageView.setRoundedImageView(null)
         //FirebaseStorage.getInstance().getReferenceFromUrl(prevSettingUri).delete()
-        deleteFlg = true
+        deleteImageFlg = true
         uCropSrcUri = null
         //Toast.makeText(this, "プロフィール画像を削除しました", Toast.LENGTH_SHORT).show()
 
@@ -378,7 +378,7 @@ class GroupSettingActivity : BaseActivity() {
         RoomStore.registerGroupRoom(tmpRoom) {
             if(it.isSuccessful) {
 
-                if(deleteFlg == true) {
+                if(deleteImageFlg == true) {
                     // 前画像削除
                     if (prevSettingUri.isNotEmpty())
                         FirebaseStorage.getInstance().getReferenceFromUrl(prevSettingUri).delete()

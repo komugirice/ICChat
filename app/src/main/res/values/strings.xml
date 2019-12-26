@@ -47,6 +47,9 @@
     <string name="group_settings">グループ情報設定</string>
     <string name="group_delete">グループ削除</string>
 
+    <!-- FriendFragment -->
+    <string name="title_friend">友だち</string>
+    <string name="title_group">グループ</string>
     <!-- デバッグFragment -->
     <string name="buttonAddDebugUser">ユーザ情報登録</string>
     <string name="buttonAddDebugFriend">友だち追加</string>
