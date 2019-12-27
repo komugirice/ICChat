@@ -129,7 +129,7 @@ class MainActivity : BaseActivity() {
      */
     fun showSettingMenu(v: View) {
         val popup = PopupMenu(this, v)
-        popup.inflate(R.menu.setting)
+        popup.inflate(R.menu.main_setting)
         popup.setOnMenuItemClickListener ( object: PopupMenu.OnMenuItemClickListener {
 
             override fun onMenuItemClick(item: MenuItem?): Boolean {

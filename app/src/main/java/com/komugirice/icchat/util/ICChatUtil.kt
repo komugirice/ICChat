@@ -92,8 +92,7 @@ object ICChatUtil {
     @BindingAdapter("setRoomName")
     fun TextView.setRoomName(room: Room) {
         // ルーム名を設定する
-        var text = room.name
-
+        var text: String
         // シングルルームの場合はルーム名をユーザ名にする
         if(room.userIdList.size <= 2) {
             // シングルルームの場合
@@ -101,6 +100,9 @@ object ICChatUtil {
             val friend = UserManager.myFriends.filter{ it.userId.equals(friendId)}.first()
             // ルーム名をユーザ名にする
             text = friend.name
+        } else {
+            text = room.name + "(${room.userIdList.size})"
+
         }
         this.text = text
     }

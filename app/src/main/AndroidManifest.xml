@@ -12,7 +12,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".GroupSettingActivity"></activity>
+        <activity android:name=".GroupInfoActivity"></activity>
+        <activity android:name=".GroupSettingActivity" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -56,7 +57,7 @@
         </activity>
         <activity
             android:name=".LoginActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity android:name=".ChatActivity" />
         <activity
             android:name=".MainActivity"

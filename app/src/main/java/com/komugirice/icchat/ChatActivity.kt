@@ -1,17 +1,20 @@
 package com.komugirice.icchat
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.view.MenuItem
+import android.view.View
 import android.view.inputmethod.EditorInfo
+import android.widget.PopupMenu
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import com.komugirice.icchat.databinding.ActivityChatBinding
+import com.komugirice.icchat.firestore.manager.UserManager
 import com.komugirice.icchat.firestore.model.Room
 import com.komugirice.icchat.firestore.store.MessageStore
-import com.komugirice.icchat.databinding.ActivityChatBinding
 import com.komugirice.icchat.viewModel.ChatViewModel
 import kotlinx.android.synthetic.main.activity_chat.*
 
@@ -112,6 +115,14 @@ class ChatActivity : BaseActivity() {
 
 
         }
+        // 設定アイコン
+        settingImageView.setOnClickListener {
+
+            if(room.isGroup)
+                showGroupSettingMenu(it)
+            else
+                showUserSettingMenu(it)
+        }
 
     }
 
@@ -155,6 +166,64 @@ class ChatActivity : BaseActivity() {
         swipeRefreshLayout.setOnRefreshListener {
             viewModel.initData(this@ChatActivity, room.documentId)
         }
+    }
+
+    /**
+     * 設定アイコンのユーザオプションメニュー
+     * @param v: View
+     * @return Boolean
+     *
+     */
+    fun showUserSettingMenu(v: View) {
+        val popup = PopupMenu(this, v)
+        popup.inflate(R.menu.chat_user_setting)
+        popup.setOnMenuItemClickListener ( object: PopupMenu.OnMenuItemClickListener {
+
+            override fun onMenuItemClick(item: MenuItem?): Boolean {
+                when (item?.itemId) {
+                    R.id.user_info -> {
+
+                        return true
+                    }
+                    else -> return false
+
+                }
+            }
+        })
+        popup.show()
+    }
+
+    /**
+     * 設定アイコンのグループオプションメニュー
+     * @param v: View
+     * @return Boolean
+     *
+     */
+    fun showGroupSettingMenu(v: View) {
+        val popup = PopupMenu(this, v)
+        popup.inflate(R.menu.chat_group_setting)
+
+        if(room.ownerId == UserManager.myUserId)
+            popup.menu.findItem(R.id.group_withdraw).setVisible(false)
+
+        popup.setOnMenuItemClickListener ( object: PopupMenu.OnMenuItemClickListener {
+
+            override fun onMenuItemClick(item: MenuItem?): Boolean {
+                when (item?.itemId) {
+                    R.id.group_info -> {
+                        GroupInfoActivity.start(this@ChatActivity, room)
+                        return true
+                    }
+                    R.id.group_withdraw -> {
+
+                        return true
+                    }
+                    else -> return false
+
+                }
+            }
+        })
+        popup.show()
     }
 
     companion object {

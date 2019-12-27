@@ -171,5 +171,27 @@ class UserStore {
                 }
         }
 
+        /**
+         * ターゲットユーザのUserオブジェクト取得
+         *
+         * @param userID
+         * @param onSuccess
+         *
+         */
+        fun getTargetUser(userId: String, onSuccess: (User) -> Unit) {
+            FirebaseFirestore.getInstance()
+                .collection("users")
+                .document(userId)
+                .get()
+                .addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        it.result?.toObject(User::class.java)?.also {
+                            onSuccess.invoke(it)
+                        }
+
+                    }
+                }
+        }
+
     }
 }

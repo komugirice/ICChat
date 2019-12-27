@@ -33,28 +33,5 @@ class FireStoreUtil {
             return userId
         }
 
-        /**
-         * ログインユーザに紐づくFriendList返却します。
-         *
-         * @param List<FriendFragment.Friend>
-         */
-        fun getFriends(friendList:MutableLiveData<MutableList<String>>) {
-            val myUserId = UserManager.myUserId
-            FirebaseFirestore.getInstance()
-                .collection("users")
-                .get()
-                .addOnCompleteListener {
-                    if (it.isSuccessful)
-                        it.result?.toObjects(User::class.java)?.also {
-
-                            it.forEach {
-                                if(it.userId.equals(myUserId))
-                                    friendList.postValue(it.friendIdList.toMutableList())
-                            }
-
-                        }
-                }
-        }
-
     }
 }

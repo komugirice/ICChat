@@ -46,6 +46,9 @@
     <string name="chat_activity">チャット画面表示</string>
     <string name="group_settings">グループ情報設定</string>
     <string name="group_delete">グループ削除</string>
+    <string name="group_withdraw">グループ退会</string>
+    <string name="user_info">ユーザ情報</string>
+    <string name="group_info">グループ情報</string>
 
     <!-- FriendFragment -->
     <string name="title_friend">友だち</string>
@@ -89,6 +92,10 @@
     <string name="group_invite_label">グループに招待するユーザ</string>
     <string name="invalid_groupName">グループ名を入力して下さい</string>
     <string name="invalid_length_groupName">グループ名は20文字以内で入力して下さい</string>
-    <string name="invite_description">※２人以上を選択して下さい</string>
+    <string name="invite_description">※２人以上選択して下さい</string>
+
+    <!-- GroupInfoActivity -->
+    <string name="group_member_label">メンバー</string>
+    <string name="invite_user_label">招待中</string>
 
 </resources>
