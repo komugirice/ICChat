@@ -94,7 +94,7 @@ object ICChatUtil {
         // ルーム名を設定する
         var text: String
         // シングルルームの場合はルーム名をユーザ名にする
-        if(room.userIdList.size <= 2) {
+        if(room.isGroup == false) {
             // シングルルームの場合
             val friendId  = room.userIdList.filter{ !it.equals(UserManager.myUserId) }.first()
             val friend = UserManager.myFriends.filter{ it.userId.equals(friendId)}.first()
@@ -119,7 +119,7 @@ object ICChatUtil {
         this.setImageDrawable(null)
 
         // シングルルームとグループルームで分岐
-        if(!room.isGroup) {
+        if(room.isGroup == false) {
             // シングルルームの場合
             val friendId  = room.userIdList.filter{ !it.equals(UserManager.myUserId) }.first()
             FireStorageUtil.getUserIconImage(friendId) {

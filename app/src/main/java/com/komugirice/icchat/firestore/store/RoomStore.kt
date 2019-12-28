@@ -30,7 +30,8 @@ class RoomStore {
                         it.result?.toObjects(Room::class.java)?.also {
                             // roomsに紐づくfriends取得
                             it.forEach {
-                                if (it.userIdList.contains( UserManager.myUserId))
+                                if (it.userIdList.contains( UserManager.myUserId)
+                                    || it.inviteIdList.contains(UserManager.myUserId))
                                     rooms.add(it)
                             }
 
@@ -201,6 +202,30 @@ class RoomStore {
                 .addOnCompleteListener {
                     onComplete.invoke(it)
                 }
+        }
+
+        fun acceptGroup(room: Room, userId: String, onComplete: (Task<Void>) -> Unit) {
+            if(room.isGroup == false) return
+
+            room.inviteIdList.remove(userId)
+            room.userIdList.add(userId)
+
+            registerGroupRoom(room) {
+                onComplete.invoke(it)
+            }
+
+        }
+
+        fun denyGroup(room: Room, userId: String, onComplete: (Task<Void>) -> Unit) {
+            if(room.isGroup == false) return
+
+            room.inviteIdList.remove(userId)
+            room.denyIdList.add(userId)
+
+            registerGroupRoom(room) {
+                onComplete.invoke(it)
+            }
+
         }
     }
 }

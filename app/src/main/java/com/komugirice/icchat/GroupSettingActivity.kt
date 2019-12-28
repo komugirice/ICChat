@@ -198,15 +198,32 @@ class GroupSettingActivity : BaseActivity() {
      *
      */
     private fun initCheckBox() {
+        // 招待者にはログインユーザの友だちを対象にする
         val friends = UserManager.myFriends
         friends.forEach {
             val checkBox = CheckBox(this)
             checkBox.text = it.name
             checkBox.textSize = 16f
 
-            if(displayFlg ==DISPLAY_FLAG_UPDATE && room.userIdList.contains(it.userId)) {
-                checkBox.isChecked = true
-                viewModel._inviteUser.add(it)
+            if(displayFlg == DISPLAY_FLAG_UPDATE){
+                // 加入済み
+                if(room.userIdList.contains(it.userId)) {
+                    checkBox.isChecked = true
+                    viewModel._inviteUser.add(it)
+                }
+                // 未加入、招待中
+                if(room.inviteIdList.contains(it.userId)) {
+                    checkBox.isChecked = true
+                    checkBox.text =  "(招待中) " + it.name
+                    // とりあえず申請中も変更できるようにしよう
+                    //checkBox.isEnabled = false
+                    viewModel._inviteUser.add(it)
+                }
+                // 拒否
+                if(room.denyIdList.contains(it.userId)) {
+                    checkBox.text = "(拒否) " + it.name
+                    checkBox.isEnabled = false
+                }
             }
 
             checkBox.setOnCheckedChangeListener { v, isChecked ->
@@ -357,18 +374,35 @@ class GroupSettingActivity : BaseActivity() {
                 name = groupNameEditText.text.toString()
                 userIdList.add(UserManager.myUserId)
                 viewModel._inviteUser.forEach {
-                    userIdList.add(it.userId)
+                    inviteIdList.add(it.userId)
                 }
                 isGroup = true
                 ownerId = UserManager.myUserId
             }
         } else {
             this.room.name = groupNameEditText.text.toString()
-            this.room.userIdList.clear()
-            this.room.userIdList.add(UserManager.myUserId)
-            viewModel._inviteUser.forEach { user->
-                this.room.userIdList.add(user.userId)
+
+            var inviteIdList = mutableListOf<String>()
+            var userIdList = mutableListOf<String>().apply {
+                add(UserManager.myUserId)
             }
+
+            viewModel._inviteUser.map{it.userId}.forEach {
+
+                if(this.room.userIdList.contains(it)) {
+                    // 前：userIdListにいる 後：チェック有り
+                    userIdList.add(it)
+                } else if(this.room.inviteIdList.contains(it)){
+                    // 前：userIdListにいない、inviteIdListにいる 後：チェック有り
+                    inviteIdList.add(it)
+                } else {
+                    // 前：userIdListにいない、inviteIdListにいない 後：チェック有り
+                    inviteIdList.add(it)
+                }
+                // 前：userIdListにいるorinviteIdListにいる 後：チェック無しは両方から外す
+            }
+            this.room.userIdList = userIdList
+            this.room.inviteIdList = inviteIdList
 
             this.room.isGroup = true
 

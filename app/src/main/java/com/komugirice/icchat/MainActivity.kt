@@ -33,6 +33,16 @@ class MainActivity : BaseActivity() {
     }
 
     /**
+     * 各Activityから戻った時にRoomが更新されていないバグ対応
+     * かといってタブ切り替えでは更新したくない
+     *
+     */
+    override fun onRestart() {
+        super.onRestart()
+        initialize()
+    }
+
+    /**
      * initializeメソッド
      *
      */

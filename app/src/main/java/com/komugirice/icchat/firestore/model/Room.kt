@@ -10,4 +10,6 @@ class Room: Serializable {
     var createdAt: Date? = Date()
     var ownerId: String = ""    // isGroup = trueの場合だけ使用
     var userIdList = mutableListOf<String>()
+    var inviteIdList = mutableListOf<String>()
+    var denyIdList = mutableListOf<String>()
 }

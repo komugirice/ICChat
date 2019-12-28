@@ -63,6 +63,10 @@ class GroupInfoActivity : BaseActivity() {
         }
     }
 
+    /**
+     * グループメンバー
+     *
+     */
     private fun initGroupMemberRecyclerView() {
 
         val userList = mutableListOf<User>()
@@ -79,8 +83,21 @@ class GroupInfoActivity : BaseActivity() {
         }
     }
 
+    /**
+     * 招待中
+     *
+     */
     private fun initInviteUserRecyclerView() {
+        val userList = mutableListOf<User>()
 
+        room.inviteIdList.forEach {
+            UserStore.getTargetUser(it) {
+                userList.add(it)
+                if(userList.size == room.inviteIdList.size)
+                    inviteUserRecyclerView.customAdapter.refresh(userList)
+
+            }
+        }
     }
 
     companion object {

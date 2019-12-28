@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.FirebaseFirestore
 import com.komugirice.icchat.firestore.manager.RoomManager
+import com.komugirice.icchat.firestore.manager.UserManager
 import com.komugirice.icchat.firestore.model.Room
 import com.komugirice.icchat.firestore.model.User
 import com.komugirice.icchat.util.FireStoreUtil
@@ -25,27 +26,30 @@ class FriendViewModel: ViewModel() {
         RoomManager.initRoomManager {
             val list = mutableListOf<FriendsView.FriendsViewData>()
 
+            // グループタイトル
             list.add(FriendsView.FriendsViewData(Room(), FriendsView.VIEW_TYPE_TITLE_GROUP))
-
-            val groups = it.filter {it.isGroup == true}
+            // グループアイテム
+            val groups = it.filter {it.isGroup == true && it.userIdList.contains(UserManager.myUserId)}
             groups.forEach {
-                list.add(FriendsView.FriendsViewData(it, FriendsView.VIEW_TYPE_ITEM))
+                list.add(FriendsView.FriendsViewData(it, FriendsView.VIEW_TYPE_ITEM_GROUP))
             }
-
+            // 友だちタイトル
             list.add(FriendsView.FriendsViewData(Room(), FriendsView.VIEW_TYPE_TITLE_FRIEND))
-
+            // 友だちアイテム
             val friends = it.filter {it.isGroup == false}
             friends.forEach {
-                list.add(FriendsView.FriendsViewData(it, FriendsView.VIEW_TYPE_ITEM))
+                list.add(FriendsView.FriendsViewData(it, FriendsView.VIEW_TYPE_ITEM_FRIEND))
+            }
+            // 招待中タイトル
+            list.add(FriendsView.FriendsViewData(Room(), FriendsView.VIEW_TYPE_TITLE_INVITE))
+            // 招待中アイテム
+            val invites = it.filter {it.isGroup == true && it.inviteIdList.contains(UserManager.myUserId)}
+            invites.forEach {
+                list.add(FriendsView.FriendsViewData(it, FriendsView.VIEW_TYPE_ITEM_INVITE))
             }
 
             items.postValue(list)
         }
     }
 
-    companion object {
-        private const val GROUP_FLAG_OFF = 0
-        private const val GROUP_FLAG_MEMBER = 1
-        private const val GROUP_FLAG_OWNER = 2
-    }
 }

@@ -84,7 +84,7 @@ class FriendsView : RecyclerView {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
 
-            if(viewType == VIEW_TYPE_ITEM) {
+            if(viewType <= VIEW_TYPE_ITEM_INVITE) {
                 return FriendCellViewHolder(
                         FriendCellBinding.inflate(
                             LayoutInflater.from(context),
@@ -116,6 +116,39 @@ class FriendsView : RecyclerView {
             holder.binding.room = data.room
 
             holder.binding.root.setOnClickListener {
+                // 招待中のグループの場合
+                if(data.viewType == VIEW_TYPE_ITEM_INVITE) {
+                    AlertDialog.Builder(context)
+                        .setMessage("招待中のグループを承認しますか？")
+                        .setPositiveButton("承認", object: DialogInterface.OnClickListener {
+                            override fun onClick(dialog: DialogInterface?, which: Int) {
+                                RoomStore.acceptGroup(data.room, UserManager.myUserId){
+                                    Toast.makeText(
+                                        context,
+                                        "承認しました",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
+                            }
+                        })
+                        .setNegativeButton("拒否", object: DialogInterface.OnClickListener {
+                            override fun onClick(dialog: DialogInterface?, which: Int) {
+                                RoomStore.denyGroup(data.room, UserManager.myUserId){
+                                    Toast.makeText(
+                                        context,
+                                        "拒否しました",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
+                            }
+                        })
+                        .setNeutralButton("キャンセル", object: DialogInterface.OnClickListener {
+                            override fun onClick(dialog: DialogInterface?, which: Int) {
+
+                            }
+                        }).show()
+                    return@setOnClickListener
+                }
                 ChatActivity.start(context, data.room)
 
             }
@@ -129,9 +162,10 @@ class FriendsView : RecyclerView {
                         Pair(2, R.string.group_delete)
                     )
 
-                    MaterialDialog(context).apply {
-                        if(data.room.isGroup == true && data.room.ownerId.equals(UserManager.myUserId) ) {
-                            // 管理者であるグループ
+
+                    if(data.viewType == VIEW_TYPE_ITEM_GROUP && data.room.ownerId.equals(UserManager.myUserId) ) {
+                        // 管理者であるグループ
+                        MaterialDialog(context).apply {
                             listItems(items = listOf(
                                 context.getString(menuList.get(0).second),
                                 context.getString(menuList.get(1).second),
@@ -168,21 +202,23 @@ class FriendsView : RecyclerView {
                                 }
 
                             })
-                        } else {
-                            // それ以外
+                        }.show()
+                    } else if( data.viewType == VIEW_TYPE_ITEM_FRIEND || data.viewType == VIEW_TYPE_ITEM_GROUP) {
+                        // グループだが管理者ではないor友だち
+                        MaterialDialog(context).apply {
                             listItems(items = listOf(
                                 context.getString(menuList.get(0).second)
                             ),
-                            selection = { dialog, index, text ->
-                                when (index) {
-                                    menuList.get(0).first -> {
-                                        ChatActivity.start(context, data.room)
+                                selection = { dialog, index, text ->
+                                    when (index) {
+                                        menuList.get(0).first -> {
+                                            ChatActivity.start(context, data.room)
+                                        }
+                                        else -> return@listItems
                                     }
-                                    else -> return@listItems
-                                }
-                            })
-                        }
-                    }.show()
+                                })
+                        }.show()
+                    }
                     return true
                 }
             })
@@ -191,13 +227,22 @@ class FriendsView : RecyclerView {
 
         private fun onBindViewHolder(holder: TitleCellViewHolder, position: Int) {
             val data = items[position]
-            if(data.viewType == VIEW_TYPE_TITLE_GROUP) {
-                val size = items.filter {it.room.isGroup == true && it.viewType == VIEW_TYPE_ITEM}.size
-                holder.binding.title = context.getString(R.string.title_group) + " ${size}"
-            } else {
-                val size = items.filter {it.room.isGroup == false && it.viewType == VIEW_TYPE_ITEM}.size
-                holder.binding.title = context.getString(R.string.title_friend) + " ${size}"
+            when(data.viewType ) {
+                VIEW_TYPE_TITLE_GROUP -> {
+                    val size = items.filter {it.viewType == VIEW_TYPE_ITEM_GROUP}.size
+                    holder.binding.title = context.getString(R.string.title_group) + " ${size}"
+                }
+                VIEW_TYPE_TITLE_FRIEND -> {
+                    val size = items.filter {it.viewType == VIEW_TYPE_ITEM_FRIEND}.size
+                    holder.binding.title = context.getString(R.string.title_friend) + " ${size}"
+                }
+                VIEW_TYPE_TITLE_INVITE -> {
+                    val size = items.filter {it.viewType == VIEW_TYPE_ITEM_INVITE}.size
+                    holder.binding.title = context.getString(R.string.title_invite) + " ${size}"
+                }
+                else -> return
             }
+
         }
 
     }
@@ -219,8 +264,11 @@ class FriendsView : RecyclerView {
     }
 
     companion object {
-        const val VIEW_TYPE_ITEM = 0
-        const val VIEW_TYPE_TITLE_GROUP = 1
-        const val VIEW_TYPE_TITLE_FRIEND = 2
+        const val VIEW_TYPE_ITEM_GROUP = 0
+        const val VIEW_TYPE_ITEM_FRIEND = 1
+        const val VIEW_TYPE_ITEM_INVITE = 2
+        const val VIEW_TYPE_TITLE_GROUP = 3
+        const val VIEW_TYPE_TITLE_FRIEND = 4
+        const val VIEW_TYPE_TITLE_INVITE = 5
     }
 }
