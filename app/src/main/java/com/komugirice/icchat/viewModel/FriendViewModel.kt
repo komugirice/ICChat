@@ -40,12 +40,19 @@ class FriendViewModel: ViewModel() {
             friends.forEach {
                 list.add(FriendsView.FriendsViewData(it, FriendsView.VIEW_TYPE_ITEM_FRIEND))
             }
-            // 招待中タイトル
+            // 招待グループタイトル
             list.add(FriendsView.FriendsViewData(Room(), FriendsView.VIEW_TYPE_TITLE_INVITE))
-            // 招待中アイテム
+            // 招待グループアイテム
             val invites = it.filter {it.isGroup == true && it.inviteIdList.contains(UserManager.myUserId)}
             invites.forEach {
                 list.add(FriendsView.FriendsViewData(it, FriendsView.VIEW_TYPE_ITEM_INVITE))
+            }
+            // 拒否グループタイトル
+            list.add(FriendsView.FriendsViewData(Room(), FriendsView.VIEW_TYPE_TITLE_DENY))
+            // 拒否グループアイテム
+            val denys = it.filter {it.isGroup == true && it.denyIdList.contains(UserManager.myUserId)}
+            denys.forEach {
+                list.add(FriendsView.FriendsViewData(it, FriendsView.VIEW_TYPE_ITEM_DENY))
             }
 
             items.postValue(list)

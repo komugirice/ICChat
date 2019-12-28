@@ -426,6 +426,7 @@ class GroupSettingActivity : BaseActivity() {
                     Toast.makeText(this, "グループを登録しました", Toast.LENGTH_SHORT).show()
                     Timber.tag(TAG)
                     Timber.d("グループ登録成功：${tmpRoom.documentId}")
+                    // 画面終了
                     finish()
                 }
             } else {

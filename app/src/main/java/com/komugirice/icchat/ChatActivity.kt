@@ -32,7 +32,8 @@ class ChatActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_chat)
+        // bindingがある場合は不要
+        //setContentView(R.layout.activity_chat)
         initialize()
     }
 

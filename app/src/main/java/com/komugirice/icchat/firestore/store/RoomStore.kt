@@ -31,7 +31,8 @@ class RoomStore {
                             // roomsに紐づくfriends取得
                             it.forEach {
                                 if (it.userIdList.contains( UserManager.myUserId)
-                                    || it.inviteIdList.contains(UserManager.myUserId))
+                                    || it.inviteIdList.contains(UserManager.myUserId)
+                                    || it.denyIdList.contains(UserManager.myUserId))
                                     rooms.add(it)
                             }
 
@@ -265,6 +266,24 @@ class RoomStore {
             if(room.isGroup == false) return
 
             room.userIdList.remove(userId)
+
+            registerGroupRoom(room) {
+                onComplete.invoke(it)
+            }
+
+        }
+
+        /**
+         * 拒否リストから削除する
+         *
+         * @param roomId 対象のルーム
+         * @param userId 対象のユーザ
+         * @param onComplete
+         */
+        fun cancelDenyGroup(room: Room, userId: String, onComplete: (Task<Void>) -> Unit) {
+            if(room.isGroup == false) return
+
+            room.denyIdList.remove(userId)
 
             registerGroupRoom(room) {
                 onComplete.invoke(it)

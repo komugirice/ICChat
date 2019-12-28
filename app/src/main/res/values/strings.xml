@@ -53,9 +53,11 @@
     <!-- FriendFragment -->
     <string name="title_friend">友だち</string>
     <string name="title_group">グループ</string>
-    <string name="title_invite">招待中</string>
+    <string name="title_invite_group">招待中グループ</string>
+    <string name="title_deny_group">拒否グループ</string>
     <string name="confirm_group_delete">グループを削除してよろしいですか？</string>
     <string name="success_group_delete">グループを削除しました</string>
+
     <!-- デバッグFragment -->
     <string name="buttonAddDebugUser">ユーザ情報登録</string>
     <string name="buttonAddDebugFriend">友だち追加</string>
