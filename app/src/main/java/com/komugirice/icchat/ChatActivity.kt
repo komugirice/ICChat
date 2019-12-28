@@ -1,6 +1,8 @@
 package com.komugirice.icchat
 
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -12,9 +14,11 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.komugirice.icchat.databinding.ActivityChatBinding
+import com.komugirice.icchat.firestore.manager.RoomManager
 import com.komugirice.icchat.firestore.manager.UserManager
 import com.komugirice.icchat.firestore.model.Room
 import com.komugirice.icchat.firestore.store.MessageStore
+import com.komugirice.icchat.firestore.store.RoomStore
 import com.komugirice.icchat.viewModel.ChatViewModel
 import kotlinx.android.synthetic.main.activity_chat.*
 
@@ -28,8 +32,25 @@ class ChatActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_chat)
+        // bindingがある場合は不要
+        //setContentView(R.layout.activity_chat)
         initialize()
+    }
+
+    /**
+     * GroupSettingActivityから戻った時にRoomが更新されていないバグ対応
+     *
+     */
+    override fun onRestart() {
+        super.onRestart()
+        // GroupSettingActivityの更新内容をRoomに反映
+        RoomManager.getTargetRoom(room.documentId)?.also {
+            room = it
+        } ?: run {
+            onBackPressed()
+        }
+        initBinding()
+        initData()
     }
 
     /**
@@ -91,6 +112,9 @@ class ChatActivity : BaseActivity() {
      *
      */
     private fun initLayout() {
+        if(!room.isGroup)
+            settingImageView.visibility = View.GONE
+
         initEditText()
         initClick()
         initSwipeRefreshLayout()
@@ -117,11 +141,7 @@ class ChatActivity : BaseActivity() {
         }
         // 設定アイコン
         settingImageView.setOnClickListener {
-
-            if(room.isGroup)
-                showGroupSettingMenu(it)
-            else
-                showUserSettingMenu(it)
+            showGroupSettingMenu(it)
         }
 
     }
@@ -143,7 +163,7 @@ class ChatActivity : BaseActivity() {
             false
         }
 
-        // swipeRefreshLayoutはクリックしてもフォーカスが変わらない。
+        // swipeRefreshLayoutの場合はクリックしてもフォーカスが変わらないので下の処理は適用されない
         inputEditText.setOnFocusChangeListener { v, hasFocus ->
             if(!hasFocus)
                 hideKeybord(v)
@@ -169,31 +189,6 @@ class ChatActivity : BaseActivity() {
     }
 
     /**
-     * 設定アイコンのユーザオプションメニュー
-     * @param v: View
-     * @return Boolean
-     *
-     */
-    fun showUserSettingMenu(v: View) {
-        val popup = PopupMenu(this, v)
-        popup.inflate(R.menu.chat_user_setting)
-        popup.setOnMenuItemClickListener ( object: PopupMenu.OnMenuItemClickListener {
-
-            override fun onMenuItemClick(item: MenuItem?): Boolean {
-                when (item?.itemId) {
-                    R.id.user_info -> {
-
-                        return true
-                    }
-                    else -> return false
-
-                }
-            }
-        })
-        popup.show()
-    }
-
-    /**
      * 設定アイコンのグループオプションメニュー
      * @param v: View
      * @return Boolean
@@ -205,6 +200,8 @@ class ChatActivity : BaseActivity() {
 
         if(room.ownerId == UserManager.myUserId)
             popup.menu.findItem(R.id.group_withdraw).setVisible(false)
+        else
+            popup.menu.findItem(R.id.group_setting).setVisible(false)
 
         popup.setOnMenuItemClickListener ( object: PopupMenu.OnMenuItemClickListener {
 
@@ -214,8 +211,37 @@ class ChatActivity : BaseActivity() {
                         GroupInfoActivity.start(this@ChatActivity, room)
                         return true
                     }
+                    R.id.group_setting -> {
+                        GroupSettingActivity.update(this@ChatActivity, room)
+                        return true
+                    }
                     R.id.group_withdraw -> {
+                        // グループを退会しますか？
+                        AlertDialog.Builder(this@ChatActivity)
+                            .setMessage(getString(R.string.confirm_group_withdraw))
+                            .setNegativeButton("キャンセル", null)
+                            .setPositiveButton("OK", object: DialogInterface.OnClickListener {
+                                override fun onClick(dialog: DialogInterface?, which: Int) {
 
+                                    RoomStore.removeGroupMember(room, UserManager.myUserId) {
+                                        // グループを退会しました
+                                        AlertDialog.Builder(this@ChatActivity)
+                                            .setMessage(getString(R.string.success_group_withdraw))
+                                            .setPositiveButton("OK", object: DialogInterface.OnClickListener {
+                                                override fun onClick(dialog: DialogInterface?, which: Int) {
+                                                    finish()
+                                                }
+                                            })
+                                            .setOnDismissListener (object: DialogInterface.OnDismissListener {
+                                                override fun onDismiss(dialog: DialogInterface?) {
+                                                    finish()
+                                                }
+                                            })
+                                            .show()
+                                    }
+                                }
+                            })
+                            .show()
                         return true
                     }
                     else -> return false

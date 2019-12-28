@@ -38,13 +38,13 @@
     <string name="tab_debug">デバッグ</string>
 
     <!-- Menu -->
-    <string name="profile_settings">プロフィール設定</string>
-    <string name="logout_settings">ログアウト</string>
+    <string name="profile_setting">プロフィール設定</string>
+    <string name="logout_setting">ログアウト</string>
     <string name="add_friends">友だち追加</string>
     <string name="create_group">グループ作成</string>
     <string name="confirm_logout">ログアウトしてよろしいですか？</string>
     <string name="chat_activity">チャット画面表示</string>
-    <string name="group_settings">グループ情報設定</string>
+    <string name="group_setting">グループ情報設定</string>
     <string name="group_delete">グループ削除</string>
     <string name="group_withdraw">グループ退会</string>
     <string name="user_info">ユーザ情報</string>
@@ -53,9 +53,11 @@
     <!-- FriendFragment -->
     <string name="title_friend">友だち</string>
     <string name="title_group">グループ</string>
-    <string name="title_invite">招待中</string>
+    <string name="title_invite_group">招待中グループ</string>
+    <string name="title_deny_group">拒否グループ</string>
     <string name="confirm_group_delete">グループを削除してよろしいですか？</string>
     <string name="success_group_delete">グループを削除しました</string>
+
     <!-- デバッグFragment -->
     <string name="buttonAddDebugUser">ユーザ情報登録</string>
     <string name="buttonAddDebugFriend">友だち追加</string>
@@ -64,6 +66,8 @@
 
     <!-- ChatActivity -->
     <string name="inputMessageHint">メッセージを入力</string>
+    <string name="confirm_group_withdraw">グループを退会しますか？</string>
+    <string name="success_group_withdraw">グループを退会しました</string>
 
     <!-- ProfileSettingActivity -->
     <string name="title_profile_setting">プロフィール設定</string>

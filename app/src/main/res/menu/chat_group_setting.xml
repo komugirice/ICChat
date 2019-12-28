@@ -8,6 +8,12 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/group_setting"
+        android:orderInCategory="100"
+        android:title="@string/group_setting"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/group_withdraw"
         android:orderInCategory="100"
         android:title="@string/group_withdraw"
