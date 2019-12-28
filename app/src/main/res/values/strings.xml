@@ -99,4 +99,8 @@
     <string name="group_member_label">メンバー</string>
     <string name="invite_user_label">招待中</string>
 
+    <!-- AddFriendActivity -->
+    <string name="read_qrcode_button">友だちのQRコードを読み取る</string>
+    <string name="display_qrcode_button">自分のQRコードを表示する</string>
+    <string name="search_mail_button">メールアドレスで検索する</string>
 </resources>

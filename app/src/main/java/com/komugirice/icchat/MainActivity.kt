@@ -182,7 +182,7 @@ class MainActivity : BaseActivity() {
             override fun onMenuItemClick(item: MenuItem?): Boolean {
                 when (item?.itemId) {
                     R.id.addFriends -> {
-                        //ProfileSettingActivity.start(this@MainActivity)
+                        AddFriendActivity.start(this@MainActivity)
                         return true
                     }
                     R.id.groupSetting -> {
