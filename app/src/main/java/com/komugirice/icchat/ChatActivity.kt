@@ -46,10 +46,11 @@ class ChatActivity : BaseActivity() {
         // GroupSettingActivityの更新内容をRoomに反映
         RoomManager.getTargetRoom(room.documentId)?.also {
             room = it
+            binding.room = it
         } ?: run {
             onBackPressed()
         }
-        initBinding()
+//        initBinding()
         initData()
     }
 
