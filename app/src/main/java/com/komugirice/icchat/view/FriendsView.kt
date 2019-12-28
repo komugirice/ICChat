@@ -122,7 +122,7 @@ class FriendsView : RecyclerView {
                         .setMessage("招待中のグループを承認しますか？")
                         .setPositiveButton("承認", object: DialogInterface.OnClickListener {
                             override fun onClick(dialog: DialogInterface?, which: Int) {
-                                RoomStore.acceptGroup(data.room, UserManager.myUserId){
+                                RoomStore.acceptGroupMember(data.room, UserManager.myUserId){
                                     Toast.makeText(
                                         context,
                                         "承認しました",
@@ -158,7 +158,7 @@ class FriendsView : RecyclerView {
 
                     val menuList = listOf(
                         Pair(0, R.string.chat_activity),
-                        Pair(1, R.string.group_settings),
+                        Pair(1, R.string.group_setting),
                         Pair(2, R.string.group_delete)
                     )
 

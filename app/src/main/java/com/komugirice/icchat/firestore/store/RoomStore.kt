@@ -158,7 +158,7 @@ class RoomStore {
 
         /**
          * 対象のルームに所属するユーザ情報を取得する
-         * （UserManagerのfriends以外から取得する可能性がある）
+         * （ログインユーザのfriends以外から取得する可能性がある）
          * ChatViewModelで使用
          *
          * @param roomId 対象のルーム
@@ -171,29 +171,42 @@ class RoomStore {
                 .document(roomId)
                 .get()
                 .addOnSuccessListener {
+                    // Room.documentId検索なので必ず成功する
                     var room: Room? = it.toObject(
-                        Room::class.java)
-                    room?.userIdList?.apply{
+                        Room::class.java
+                    )
+                    room?.userIdList?.apply {
                         this.remove(UserManager.myUserId)
-                        this.forEach{
-                            FirebaseFirestore.getInstance()
-                                .collection("users")
-                                .whereEqualTo("userId", it)
-                                .get()
-                                .addOnCompleteListener {
-                                    it.result?.toObjects(User::class.java)?.firstOrNull().also {
-                                        it?.apply{userList.add(it)}
-                                    }
-                                    if (userList.size == room.userIdList.size)
-                                        onComplete.invoke(userList)
-                                }
 
+                        if (this.isNotEmpty()) {
+                            this.forEach {
+                                FirebaseFirestore.getInstance()
+                                    .collection("users")
+                                    .whereEqualTo("userId", it)
+                                    .get()
+                                    .addOnCompleteListener {
+                                        it.result?.toObjects(User::class.java)?.firstOrNull().also {
+                                            it?.apply { userList.add(it) }
+                                        }
+                                        if (userList.size == room.userIdList.size)
+                                            onComplete.invoke(userList)
+                                    }
+
+                            }
+                        } else {
+                            // userListが0件の可能性はある
+                            onComplete.invoke(mutableListOf())
                         }
                     }
-
                 }
         }
 
+        /**
+         * 対象のルームを削除する
+         *
+         * @param roomId 対象のルーム
+         * @param onComplete
+         */
         fun deleteRoom(roomId: String, onComplete: (Task<Void>) -> Unit) {
             FirebaseFirestore.getInstance()
                 .collection("rooms")
@@ -204,7 +217,14 @@ class RoomStore {
                 }
         }
 
-        fun acceptGroup(room: Room, userId: String, onComplete: (Task<Void>) -> Unit) {
+        /**
+         * グループメンバーに追加する
+         *
+         * @param roomId 対象のルーム
+         * @param userId 対象のユーザ
+         * @param onComplete
+         */
+        fun acceptGroupMember(room: Room, userId: String, onComplete: (Task<Void>) -> Unit) {
             if(room.isGroup == false) return
 
             room.inviteIdList.remove(userId)
@@ -216,11 +236,35 @@ class RoomStore {
 
         }
 
+        /**
+         * 拒否リストに追加する
+         *
+         * @param roomId 対象のルーム
+         * @param userId 対象のユーザ
+         * @param onComplete
+         */
         fun denyGroup(room: Room, userId: String, onComplete: (Task<Void>) -> Unit) {
             if(room.isGroup == false) return
 
             room.inviteIdList.remove(userId)
             room.denyIdList.add(userId)
+
+            registerGroupRoom(room) {
+                onComplete.invoke(it)
+            }
+
+        }
+        /**
+         * グループメンバーから外す
+         *
+         * @param roomId 対象のルーム
+         * @param userId 対象のユーザ
+         * @param onComplete
+         */
+        fun removeGroupMember(room: Room, userId: String, onComplete: (Task<Void>) -> Unit) {
+            if(room.isGroup == false) return
+
+            room.userIdList.remove(userId)
 
             registerGroupRoom(room) {
                 onComplete.invoke(it)

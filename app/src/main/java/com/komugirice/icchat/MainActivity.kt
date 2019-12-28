@@ -144,11 +144,11 @@ class MainActivity : BaseActivity() {
 
             override fun onMenuItemClick(item: MenuItem?): Boolean {
                 when (item?.itemId) {
-                    R.id.profile_settings -> {
+                    R.id.profile_setting -> {
                         ProfileSettingActivity.start(this@MainActivity)
                         return true
                     }
-                    R.id.logout_settings -> {
+                    R.id.logout_setting -> {
                         AlertDialog.Builder(this@MainActivity)
                             .setMessage(getString(R.string.confirm_logout))
                             .setPositiveButton("OK", object: DialogInterface.OnClickListener {
@@ -156,7 +156,7 @@ class MainActivity : BaseActivity() {
                                     LoginActivity.signOut(this@MainActivity)
                                 }
                             })
-                            .setNegativeButton("Cancel", null)
+                            .setNegativeButton("キャンセル", null)
                             .show()
                         return true
                     }

@@ -31,6 +31,7 @@ class MessageStore {
                 .collection("rooms/$roomId/messages")
                 .orderBy(Message::createdAt.name, Query.Direction.ASCENDING)
                 .get()
+                // 必ず成功する。messagesが作られて無くても成功する。
                 .addOnSuccessListener {
                     val messages = it.toObjects(Message::class.java)
                     //val messages: List<Message> = it.data.map{ it.value }.toList()

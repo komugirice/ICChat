@@ -38,13 +38,13 @@
     <string name="tab_debug">デバッグ</string>
 
     <!-- Menu -->
-    <string name="profile_settings">プロフィール設定</string>
-    <string name="logout_settings">ログアウト</string>
+    <string name="profile_setting">プロフィール設定</string>
+    <string name="logout_setting">ログアウト</string>
     <string name="add_friends">友だち追加</string>
     <string name="create_group">グループ作成</string>
     <string name="confirm_logout">ログアウトしてよろしいですか？</string>
     <string name="chat_activity">チャット画面表示</string>
-    <string name="group_settings">グループ情報設定</string>
+    <string name="group_setting">グループ情報設定</string>
     <string name="group_delete">グループ削除</string>
     <string name="group_withdraw">グループ退会</string>
     <string name="user_info">ユーザ情報</string>
@@ -64,6 +64,8 @@
 
     <!-- ChatActivity -->
     <string name="inputMessageHint">メッセージを入力</string>
+    <string name="confirm_group_withdraw">グループを退会しますか？</string>
+    <string name="success_group_withdraw">グループを退会しました</string>
 
     <!-- ProfileSettingActivity -->
     <string name="title_profile_setting">プロフィール設定</string>

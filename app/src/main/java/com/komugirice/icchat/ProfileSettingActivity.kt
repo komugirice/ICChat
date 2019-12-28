@@ -38,10 +38,7 @@ import com.komugirice.icchat.util.FireStorageUtil
 import com.makeramen.roundedimageview.RoundedDrawable
 import com.makeramen.roundedimageview.RoundedImageView
 import com.yalantis.ucrop.UCrop
-import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.activity_profile_setting.*
-import kotlinx.android.synthetic.main.activity_profile_setting.container
-import kotlinx.android.synthetic.main.activity_profile_setting.email
 import timber.log.Timber
 import java.io.ByteArrayOutputStream
 import java.io.File
