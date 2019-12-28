@@ -23,4 +23,8 @@ object RoomManager {
             onSuccess.invoke(it)
         }
     }
+
+    fun getTargetRoom(roomId: String): Room? {
+        return myRooms.filter{ it.documentId == roomId}.firstOrNull()
+    }
 }

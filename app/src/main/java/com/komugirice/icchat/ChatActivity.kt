@@ -14,6 +14,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.komugirice.icchat.databinding.ActivityChatBinding
+import com.komugirice.icchat.firestore.manager.RoomManager
 import com.komugirice.icchat.firestore.manager.UserManager
 import com.komugirice.icchat.firestore.model.Room
 import com.komugirice.icchat.firestore.store.MessageStore
@@ -41,7 +42,14 @@ class ChatActivity : BaseActivity() {
      */
     override fun onRestart() {
         super.onRestart()
-        initialize()
+        // GroupSettingActivityの更新内容をRoomに反映
+        RoomManager.getTargetRoom(room.documentId)?.also {
+            room = it
+        } ?: run {
+            onBackPressed()
+        }
+        initBinding()
+        initData()
     }
 
     /**
@@ -154,7 +162,7 @@ class ChatActivity : BaseActivity() {
             false
         }
 
-        // swipeRefreshLayoutはクリックしてもフォーカスが変わらない。
+        // swipeRefreshLayoutの場合はクリックしてもフォーカスが変わらないので下の処理は適用されない
         inputEditText.setOnFocusChangeListener { v, hasFocus ->
             if(!hasFocus)
                 hideKeybord(v)
