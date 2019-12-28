@@ -71,6 +71,11 @@ dependencies {
     // MaterialDialog
     implementation "com.afollestad.material-dialogs:core:$material_dialog_version"
     implementation "com.afollestad.material-dialogs:input:$material_dialog_version"
+    // Rx
+    implementation "io.reactivex.rxjava2:rxjava:$rx_java_version"
+    implementation "io.reactivex.rxjava2:rxandroid:$rx_android_version"
+    // SharedPreference
+    implementation 'androidx.preference:preference:1.0.0'
 }
 
 apply plugin: 'com.google.gms.google-services'
