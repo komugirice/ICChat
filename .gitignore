@@ -23,12 +23,18 @@ app/build/
 
 .idea/*.xml
 
-!.idea/gradle.xml
-!.idea/runConfigurations/*.xml
-.idea/codeStyles/Project.xml
+# User-specific configurations
 .idea/caches/build_file_checksums.ser
-.idea/inspectionProfiles/Project_Default.xml
+.idea/codeStyles/
+.idea/compiler.xml
+.idea/copyright/profiles_settings.xml
+.idea/dictionaries/
+.idea/libraries/
 .idea/misc.xml
 .idea/modules.xml
-.idea/*
+.idea/tasks.xml
+.idea/scopes/scope_settings.xml
+.idea/workspace.xml
+.idea/.name
+*.iml
 app/develop/release/output.json
