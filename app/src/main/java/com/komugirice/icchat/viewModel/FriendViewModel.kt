@@ -9,6 +9,7 @@ import com.komugirice.icchat.firestore.manager.RoomManager
 import com.komugirice.icchat.firestore.manager.UserManager
 import com.komugirice.icchat.firestore.model.Room
 import com.komugirice.icchat.firestore.model.User
+import com.komugirice.icchat.firestore.store.RoomStore
 import com.komugirice.icchat.util.FireStoreUtil
 import com.komugirice.icchat.view.FriendsView
 
@@ -29,18 +30,16 @@ class FriendViewModel: ViewModel() {
             // グループタイトル
             list.add(FriendsView.FriendsViewData(Room(), FriendsView.VIEW_TYPE_TITLE_GROUP))
             // グループアイテム
-            val groups = it.filter {it.isGroup == true && it.userIdList.contains(UserManager.myUserId)}
-            groups.forEach {
+            RoomManager.myGroupRooms.forEach {
                 list.add(FriendsView.FriendsViewData(it, FriendsView.VIEW_TYPE_ITEM_GROUP))
             }
             // 友だちタイトル
             list.add(FriendsView.FriendsViewData(Room(), FriendsView.VIEW_TYPE_TITLE_FRIEND))
             // 友だちアイテム
-            val friends = it.filter {it.isGroup == false}
-            friends.forEach {
+            RoomManager.mySingleRooms.forEach {
                 list.add(FriendsView.FriendsViewData(it, FriendsView.VIEW_TYPE_ITEM_FRIEND))
             }
-            val invites = it.filter {it.isGroup == true && it.inviteIdList.contains(UserManager.myUserId)}
+            val invites = RoomManager.myInviteRooms
             // 招待中1件以上の場合、タイトル表示
             if(invites.size > 0)
                 // 招待グループタイトル
@@ -50,7 +49,7 @@ class FriendViewModel: ViewModel() {
             invites.forEach {
                 list.add(FriendsView.FriendsViewData(it, FriendsView.VIEW_TYPE_ITEM_INVITE))
             }
-            val denys = it.filter {it.isGroup == true && it.denyIdList.contains(UserManager.myUserId)}
+            val denys = RoomManager.myDenyRooms
             // 拒否1件以上の場合、タイトル表示
             if(denys.size > 0)
                 // 拒否グループタイトル

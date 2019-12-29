@@ -14,12 +14,12 @@ class RoomStore {
     companion object {
 
         /**
-         * getLoginUserRoomsメソッド
+         * getLoginUserAllRoomsメソッド
          *
          * @param pRooms ログインユーザのRoomペアオブジェクトを設定します。
          *
          */
-        fun getLoginUserRooms(onSuccess: (List<Room>) -> Unit) {
+        fun getLoginUserAllRooms(onSuccess: (List<Room>) -> Unit) {
             var rooms = mutableListOf<Room>()
             // rooms取得
             FirebaseFirestore.getInstance()

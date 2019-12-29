@@ -5,12 +5,38 @@ import com.komugirice.icchat.firestore.store.RoomStore
 
 object RoomManager {
 
+    /** 全ルーム */
+    var allRooms = listOf<Room>()
+        set(value) {
+            if (value.isEmpty())
+                return
+            field = value
+            myRooms = value.filter {it.userIdList.contains(UserManager.myUserId)}
+            myInviteRooms = value.filter {it.inviteIdList.contains(UserManager.myUserId)}
+            myDenyRooms = value.filter {it.denyIdList.contains(UserManager.myUserId)}
+        }
+
+    /** マイルーム（シングル、グループ） */
     var myRooms = listOf<Room>()
         set(value) {
             if (value.isEmpty())
                 return
             field = value
+            mySingleRooms = value.filter { it.isGroup == false }
+            myGroupRooms = value.filter { it.isGroup == true }
         }
+
+    /** シングルルーム */
+    var mySingleRooms = listOf<Room>()
+
+    /** グループルーム */
+    var myGroupRooms = listOf<Room>()
+
+    /** 招待されているルーム */
+    var myInviteRooms = listOf<Room>()
+
+    /** 拒否したルーム */
+    var myDenyRooms = listOf<Room>()
 
     /**
      * RoomManager初期化
@@ -18,13 +44,13 @@ object RoomManager {
      * @param onComplete: () -> Unit
      */
     fun initRoomManager(onSuccess: (List<Room>) -> Unit) {
-        RoomStore.getLoginUserRooms {
-            myRooms = it
+        RoomStore.getLoginUserAllRooms {
+            allRooms = it
             onSuccess.invoke(it)
         }
     }
 
     fun getTargetRoom(roomId: String): Room? {
-        return myRooms.filter{ it.documentId == roomId}.firstOrNull()
+        return allRooms.filter{ it.documentId == roomId}.firstOrNull()
     }
 }

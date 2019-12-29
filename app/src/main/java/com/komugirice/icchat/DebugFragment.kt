@@ -64,7 +64,7 @@ class DebugFragment : Fragment() {
             var rooms: MutableList<Room> = mutableListOf()
             UserStore.addFriend(context, friendId)
 
-            RoomStore.getLoginUserRooms() {
+            RoomStore.getLoginUserAllRooms() {
                 RoomStore.registerSingleUserRooms(it, friendId)
             }
         }
@@ -77,7 +77,7 @@ class DebugFragment : Fragment() {
             UserStore.delFriend(friendId) {
 
                 // Room削除
-                RoomStore.getLoginUserRooms() {
+                RoomStore.getLoginUserAllRooms() {
                     RoomStore.delSingleUserRooms(it, friendId)
                     Toast.makeText(
                         context,
