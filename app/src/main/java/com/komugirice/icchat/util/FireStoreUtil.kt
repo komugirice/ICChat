@@ -4,8 +4,10 @@ import androidx.lifecycle.MutableLiveData
 import com.example.qiitaapplication.extension.getIdFromEmail
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.komugirice.icchat.data.firestore.model.User
-import com.komugirice.icchat.data.firestore.manager.UserManager
+import com.komugirice.icchat.BuildConfig
+import com.komugirice.icchat.firestore.model.User
+import com.komugirice.icchat.firestore.manager.UserManager
+import java.util.*
 
 class FireStoreUtil {
     companion object {
@@ -15,13 +17,19 @@ class FireStoreUtil {
          *
          * @param ログインユーザID
          */
-        fun getLoginUserId(): String {
+        fun createLoginUserId(): String {
             val user = FirebaseAuth.getInstance().currentUser
             user?.also {
             } ?: run {
                 return ""
             }
-            val userId = user.email?.also{return it.getIdFromEmail()} ?: ""
+
+            var userId = UUID.randomUUID().toString()
+            if(BuildConfig.DEBUG) {
+                val id = user.email?.getIdFromEmail() + "-" ?: ""
+                userId = userId.replace("^.{${id.length}}".toRegex(), id)
+            }
+
             return userId
         }
 

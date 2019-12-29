@@ -8,11 +8,11 @@ import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
-import com.komugirice.icchat.data.firestore.model.Message
-import com.komugirice.icchat.data.firestore.model.Room
-import com.komugirice.icchat.data.firestore.model.User
-import com.komugirice.icchat.data.firestore.store.MessageStore
-import com.komugirice.icchat.data.firestore.store.RoomStore
+import com.komugirice.icchat.firestore.model.Message
+import com.komugirice.icchat.firestore.model.Room
+import com.komugirice.icchat.firestore.model.User
+import com.komugirice.icchat.firestore.store.MessageStore
+import com.komugirice.icchat.firestore.store.RoomStore
 import timber.log.Timber
 import java.util.*
 
@@ -51,6 +51,7 @@ class ChatViewModel: ViewModel() {
                 Timber.d("initSubscribe snapshot:$snapshot firebaseFirestoreException:$firebaseFirestoreException")
                 if (firebaseFirestoreException != null) {
                     firebaseFirestoreException.printStackTrace()
+                    isException.postValue(firebaseFirestoreException)
                     return@addSnapshotListener
                 }
                 snapshot?.toObjects(Message::class.java)?.firstOrNull()?.also {

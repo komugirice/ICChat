@@ -2,6 +2,7 @@ package com.komugirice.icchat
 
 import android.app.Application
 import android.content.Context
+import androidx.databinding.library.BuildConfig
 import timber.log.Timber
 
 
@@ -23,5 +24,6 @@ class ICChatApplication: Application() {
 
     companion object {
         lateinit var applicationContext: Context
+        var isDevelop = BuildConfig.FLAVOR == "develop"
     }
 }

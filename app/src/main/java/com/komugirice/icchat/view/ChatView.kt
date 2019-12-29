@@ -8,9 +8,9 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.komugirice.icchat.data.firestore.model.Message
-import com.komugirice.icchat.data.firestore.model.User
-import com.komugirice.icchat.data.firestore.manager.UserManager
+import com.komugirice.icchat.firestore.model.Message
+import com.komugirice.icchat.firestore.model.User
+import com.komugirice.icchat.firestore.manager.UserManager
 import com.komugirice.icchat.databinding.ChatMessageCellBinding
 import com.komugirice.icchat.databinding.ChatMessageOtheruserCellBinding
 
@@ -146,7 +146,7 @@ class ChatView  : RecyclerView {
          */
         private fun hideKeyboard(v: View?) {
             (v?.getContext()?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).hideSoftInputFromWindow(
-                v?.windowToken,
+                v.windowToken,
                 InputMethodManager.HIDE_NOT_ALWAYS
             )
         }

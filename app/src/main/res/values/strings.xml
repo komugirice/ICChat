@@ -1,16 +1,35 @@
 <resources>
     <!-- ログイン画面 -->
     <string name="app_name">ICChat</string>
-    <string name="title_activity_login">Sign in</string>
-    <string name="prompt_email">ID</string>
+    <string name="title_activity_login">ログイン</string>
+    <string name="prompt_email">メールアドレス</string>
     <string name="prompt_password">パスワード</string>
-    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in">ログイン</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="welcome">"Welcome !"</string>
-    <string name="invalid_userId">IDを入力して下さい</string>
+    <string name="invalid_email">メールアドレスを入力して下さい</string>
     <string name="invalid_password">パスワードは6文字以上入力して下さい</string>
     <string name="login_failed">"Login failed"</string>
+    <string name="login_failed_no_user">ユーザ情報が無いのでログインできませんでした</string>
     <string name="text_create_user">アカウントを作成する</string>
+
+    <!-- ユーザ登録 -->
+    <string name="title_activity_create_user">ユーザ登録</string>
+    <string name="password_label">パスワード</string>
+    <string name="password_confirm_label">パスワード（確認用）</string>
+    <string name="create_button">登録</string>
+    <string name="required_mark">*</string>
+    <string name="invalid_userName">ユーザ名を入力して下さい</string>
+    <string name="invalid_birthDay">日付を入力して下さい</string>
+    <string name="invalid_password_create_user">パスワードは6文字以上、64文字以下で入力して下さい</string>
+    <string name="invalid_pattern_email">メールアドレスの形式が違います</string>
+    <string name="invalid_match_password">パスワード（確認用）が一致していません</string>
+    <string name="invalid_duplicate_email">ご指定のメールアドレスは登録済です。別のメールアドレスに変更してください</string>
+    <string name="invalid_unknown_exception">予期せぬエラーが発生しました</string>
+
+    <!-- ユーザ登録完了 -->
+    <string name="title_activity_create_user_complete">ユーザ登録完了</string>
+    <string name="message_activity_create_user_complete">ユーザ登録が完了しました。</string>
 
     <!-- TabLayout -->
     <string name="tab_frient">友だち</string>
@@ -25,6 +44,7 @@
     <!-- デバッグFragment -->
     <string name="buttonAddDebugUser">ユーザ情報登録</string>
     <string name="buttonAddDebugFriend">友だち追加</string>
+    <string name="buttonDelDebugFriend">友だち削除</string>
     <string name="buttonRefresh">更新</string>
 
     <!-- ChatActivity -->
@@ -33,7 +53,7 @@
     <!-- ProfileSettingActivity -->
     <string name="title_profile_setting">プロフィール設定</string>
     <string name="user_name_label">名前</string>
-    <string name="user_id_label">ID</string>
+    <string name="email_label">メールアドレス</string>
     <string name="birthday_label">誕生日</string>
 
     <!-- UserNameActivity -->

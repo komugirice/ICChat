@@ -5,7 +5,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.FirebaseFirestore
-import com.komugirice.icchat.data.firestore.model.User
+import com.komugirice.icchat.firestore.model.User
 import com.komugirice.icchat.util.FireStoreUtil
 
 
@@ -37,19 +37,23 @@ class FriendViewModel: ViewModel() {
                         .whereEqualTo("userId", it)
                         .get()
                         .addOnCompleteListener {
-                            // IOスレッドなので、レイアウト関係を扱えないので注意
+                            // IOスレッドなので、レイアウト関係を扱えないことを注意
                             if (!it.isSuccessful)
                                 return@addOnCompleteListener
                             // TODO 取得は複数件しか扱えないのか
                             it.result?.toObjects(User::class.java)?.also { users ->
-                                if(users.isNotEmpty())
+                                if(users.isNotEmpty()) {
                                     userList.add(users[0])
+                                    items.postValue(userList)
+                                }
                             }
-                            // 後処理
-                            items.postValue(userList)
-
                         }
                 }
+                // 0件の場合もpostValueするように
+                if(it.isEmpty())
+                    items.postValue(userList)
+
+
             }
     }
 }

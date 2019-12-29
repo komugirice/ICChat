@@ -1,14 +1,15 @@
 package com.komugirice.icchat
 
-import android.content.Context
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.view.inputmethod.EditorInfo
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import com.komugirice.icchat.data.firestore.model.Room
-import com.komugirice.icchat.data.firestore.store.MessageStore
+import com.komugirice.icchat.firestore.model.Room
+import com.komugirice.icchat.firestore.store.MessageStore
 import com.komugirice.icchat.databinding.ActivityChatBinding
 import com.komugirice.icchat.viewModel.ChatViewModel
 import kotlinx.android.synthetic.main.activity_chat.*
@@ -17,6 +18,7 @@ class ChatActivity : BaseActivity() {
 
     private lateinit var binding: ActivityChatBinding
     private lateinit var viewModel: ChatViewModel
+    private val handler = Handler()
 
     lateinit var room: Room
 
@@ -63,15 +65,17 @@ class ChatActivity : BaseActivity() {
         viewModel = ViewModelProviders.of(this).get(ChatViewModel::class.java).apply {
             items.observe(this@ChatActivity, Observer {
                 binding.apply {
-                    ChatView.customAdapter.refresh(it)
+                    chatView.customAdapter.refresh(it)
                     // 一番下へ移動
-                    ChatView.scrollToPosition(ChatView.customAdapter.itemCount - 1)
+                    handler.postDelayed({
+                        chatView.scrollToPosition(chatView.customAdapter.itemCount - 1)
+                    }, 100L)
                     swipeRefreshLayout.isRefreshing = false
                 }
             })
             users.observe(this@ChatActivity, Observer {
                 binding.apply {
-                    ChatView.customAdapter.setUsers(it)
+                    chatView.customAdapter.setUsers(it)
                 }
             })
         }
@@ -107,10 +111,6 @@ class ChatActivity : BaseActivity() {
 
 
         }
-        // RecyclerCiewクリックしても発火しない…
-//        binding.root.setOnClickListener {
-//            hideKeybord(it)
-//        }
 
     }
 
@@ -167,9 +167,9 @@ class ChatActivity : BaseActivity() {
 
     companion object {
         private const val KEY_ROOM = "key_room"
-        fun start(context: Context?, room: Room) =
-            context?.startActivity(
-                Intent(context, ChatActivity::class.java)
+        fun start(activity: Activity?, room: Room) =
+            activity?.startActivity(
+                Intent(activity, ChatActivity::class.java)
                     .putExtra(KEY_ROOM, room)
             )
     }

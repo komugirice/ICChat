@@ -55,7 +55,7 @@
         app:layout_constraintBottom_toTopOf="@+id/footer">
 
         <com.komugirice.icchat.view.ChatView
-            android:id="@+id/ChatView"
+            android:id="@+id/chatView"
             android:focusableInTouchMode="true"
             android:clickable="true"
             android:layout_width="match_parent"
@@ -92,8 +92,8 @@
 
         <ImageView
             android:id="@+id/sendImageView"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="48dp"
             android:src="@drawable/ic_send_blue_48dp"

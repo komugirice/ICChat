@@ -12,7 +12,6 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.fragment.app.FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT
 import androidx.viewpager.widget.ViewPager
-import com.komugirice.icchat.ui.login.LoginActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : BaseActivity() {
@@ -148,6 +147,8 @@ class MainActivity : BaseActivity() {
 
 
     companion object {
-        fun start(activity: Activity) = activity.startActivity(Intent(activity, MainActivity::class.java))
+        fun start(activity: Activity) = activity.apply {
+            startActivity(Intent(activity, MainActivity::class.java))
+        }
     }
 }
