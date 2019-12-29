@@ -14,6 +14,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.komugirice.icchat.databinding.ActivityChatBinding
+import com.komugirice.icchat.enum.ActivityEnum
 import com.komugirice.icchat.firestore.manager.RoomManager
 import com.komugirice.icchat.firestore.manager.UserManager
 import com.komugirice.icchat.firestore.model.Room
@@ -21,20 +22,22 @@ import com.komugirice.icchat.firestore.store.MessageStore
 import com.komugirice.icchat.firestore.store.RoomStore
 import com.komugirice.icchat.viewModel.ChatViewModel
 import kotlinx.android.synthetic.main.activity_chat.*
+import timber.log.Timber
 
 class ChatActivity : BaseActivity() {
 
     private lateinit var binding: ActivityChatBinding
     private lateinit var viewModel: ChatViewModel
     private val handler = Handler()
-
-    lateinit var room: Room
+    private lateinit var room: Room
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // bindingがある場合は不要
         //setContentView(R.layout.activity_chat)
-        initialize()
+        initBinding()
+        initViewModel()
+        initRoom()
     }
 
     /**
@@ -42,33 +45,41 @@ class ChatActivity : BaseActivity() {
      *
      */
     override fun onRestart() {
+        Timber.d("ChatActivity onRestart")
         super.onRestart()
-        // GroupSettingActivityの更新内容をRoomに反映
-        RoomManager.getTargetRoom(room.documentId)?.also {
-            room = it
-        } ?: run {
-            onBackPressed()
-        }
-        initBinding()
-        initData()
     }
 
     /**
      * initializeメソッド
      *
      */
-    private fun initialize() {
-        // room設定
-        intent.getSerializableExtra(KEY_ROOM).also {
-            if(it is Room && it.documentId.isNotEmpty())
-                room = it
-            else
-                this.onBackPressed()
+//    private fun initialize() {
+//        Timber.d("ChatActivity initialize")
+//        initBinding()
+//        initViewModel()
+//        initLayout()
+//        initData()
+//    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when(requestCode) {
+            ActivityEnum.GroupSettingActivity.id -> {
+                // GroupSettingActivityの更新内容をRoomに反映
+                if (!viewModel.initRoom(this.room))
+                    onBackPressed()
+            }
+            else -> {
+            }
+
         }
-        initBinding()
-        initViewModel()
-        initLayout()
-        initData()
+    }
+
+    private fun initRoom(){
+        if (!viewModel.initRoom(intent))
+            onBackPressed()
+
+
     }
 
     /**
@@ -79,7 +90,7 @@ class ChatActivity : BaseActivity() {
         binding = DataBindingUtil.setContentView(this,
             R.layout.activity_chat
         )
-        binding.room = room
+        //binding.room = Room()
         binding.lifecycleOwner = this
     }
 
@@ -89,6 +100,14 @@ class ChatActivity : BaseActivity() {
      */
     private fun initViewModel() {
         viewModel = ViewModelProviders.of(this).get(ChatViewModel::class.java).apply {
+            room.observe(this@ChatActivity, Observer {
+                binding.apply {
+                    room = it
+                }
+                this@ChatActivity.room = it
+                initLayout()
+                initData()
+            })
             items.observe(this@ChatActivity, Observer {
                 binding.apply {
                     chatView.customAdapter.refresh(it)
@@ -175,7 +194,9 @@ class ChatActivity : BaseActivity() {
      *
      */
     private fun initData() {
+
         viewModel.initData(this@ChatActivity, room.documentId)
+
     }
 
     /**
@@ -208,11 +229,11 @@ class ChatActivity : BaseActivity() {
             override fun onMenuItemClick(item: MenuItem?): Boolean {
                 when (item?.itemId) {
                     R.id.group_info -> {
-                        GroupInfoActivity.start(this@ChatActivity, room)
+                        GroupInfoActivity.startActivityForResult(this@ChatActivity, room)
                         return true
                     }
                     R.id.group_setting -> {
-                        GroupSettingActivity.update(this@ChatActivity, room)
+                        GroupSettingActivity.updateActivityForResult(this@ChatActivity, room)
                         return true
                     }
                     R.id.group_withdraw -> {
@@ -253,7 +274,7 @@ class ChatActivity : BaseActivity() {
     }
 
     companion object {
-        private const val KEY_ROOM = "key_room"
+        const val KEY_ROOM = "key_room"
         fun start(context: Context?, room: Room) =
             context?.startActivity(
                 Intent(context, ChatActivity::class.java)

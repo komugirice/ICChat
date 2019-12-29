@@ -25,6 +25,7 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.UploadTask
 import com.komugirice.icchat.databinding.ActivityCreateUserBinding
 import com.komugirice.icchat.databinding.ActivityGroupSettingBinding
+import com.komugirice.icchat.enum.ActivityEnum
 import com.komugirice.icchat.extension.afterTextChanged
 import com.komugirice.icchat.extension.setRoundedImageView
 import com.komugirice.icchat.firestore.manager.RoomManager
@@ -74,8 +75,7 @@ class GroupSettingActivity : BaseActivity() {
         if (displayFlg == DISPLAY_FLAG_UPDATE) initData()
         initLayout()
         initClick()
-        initCheckBox()
-
+        if (displayFlg == DISPLAY_FLAG_INSERT) initCheckBox()
     }
 
     /**
@@ -95,6 +95,13 @@ class GroupSettingActivity : BaseActivity() {
      */
     private fun initViewModel() {
         viewModel = ViewModelProviders.of(this).get(GroupSettingViewModel::class.java).apply {
+            // DISPLAY_FLAG_UPDATE時に入ってくる
+            room.observe(this@GroupSettingActivity, Observer {
+                this@GroupSettingActivity.room = it
+                name.postValue(it.name)
+                initGroupIcon()
+                initCheckBox()
+            })
             this.groupSettingFormState.observe(this@GroupSettingActivity, Observer {
                 val formState = it ?: return@Observer
 
@@ -126,15 +133,8 @@ class GroupSettingActivity : BaseActivity() {
     }
 
     private fun initData() {
-        intent.getSerializableExtra(KEY_ROOM).also {
-            if (it is Room && it.documentId.isNotEmpty()) {
-                this.room = it
-            } else {
-                finish()
-            }
-        }
-        viewModel.name.postValue(this.room.name)
-        initGroupIcon()
+        if (!viewModel.initRoom(intent))
+            finish()
     }
 
     /**
@@ -426,6 +426,7 @@ class GroupSettingActivity : BaseActivity() {
                     Toast.makeText(this, "グループを登録しました", Toast.LENGTH_SHORT).show()
                     Timber.tag(TAG)
                     Timber.d("グループ登録成功：${tmpRoom.documentId}")
+                    setResult(Activity.RESULT_OK, intent)
                     // 画面終了
                     finish()
                 }
@@ -458,5 +459,16 @@ class GroupSettingActivity : BaseActivity() {
                     .putExtra(KEY_ROOM, room)
                     .putExtra(KEY_DISPLAY_FLG, DISPLAY_FLAG_UPDATE)
             )
+
+        fun updateActivityForResult(activity: Activity?, room: Room) {
+            activity?.also {
+                it.startActivityForResult(
+                    Intent(it, GroupSettingActivity::class.java)
+                        .putExtra(KEY_ROOM, room)
+                        .putExtra(KEY_DISPLAY_FLG, DISPLAY_FLAG_UPDATE)
+                    , ActivityEnum.GroupSettingActivity.id
+                )
+            }
+        }
     }
 }

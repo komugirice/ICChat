@@ -12,8 +12,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".GroupInfoActivity"></activity>
-        <activity android:name=".GroupSettingActivity" />
+        <activity
+            android:name=".GroupInfoActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".GroupSettingActivity"
+            android:screenOrientation="portrait" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -25,15 +29,21 @@
                 android:resource="@xml/filepaths" />
         </provider>
 
-        <activity android:name=".SplashActivity">
+        <activity
+            android:name=".SplashActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CreateUserCompleteActivity" />
-        <activity android:name=".CreateUserActivity" />
+        <activity
+            android:name=".CreateUserCompleteActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".CreateUserActivity"
+            android:screenOrientation="portrait" />
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
@@ -62,12 +72,17 @@
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".UserNameActivity" />
-        <activity android:name=".ProfileSettingActivity" />
+        <activity
+            android:name=".UserNameActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ProfileSettingActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+
     </application>
 
 </manifest>

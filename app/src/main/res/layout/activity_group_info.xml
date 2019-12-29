@@ -3,6 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+
+        <variable
+            name="room"
+            type="com.komugirice.icchat.firestore.model.Room" />
+    </data>
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -71,6 +78,7 @@
                     android:layout_marginTop="8dp"
                     android:gravity="left"
                     android:textSize="20sp"
+                    android:text="@{room.name}"
                     android:textColor="@android:color/black"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -84,6 +92,7 @@
                     android:layout_marginTop="8dp"
                     android:background="@drawable/background_icon_image"
                     android:scaleType="centerCrop"
+                    app:roomIconImageUrl="@{room}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/groupNameTextView" />
