@@ -1,0 +1,169 @@
+package com.komugirice.icchat
+
+import android.app.Activity
+import android.app.AlertDialog
+import android.content.Context
+import android.content.Intent
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.view.inputmethod.EditorInfo
+import android.widget.CheckBox
+import android.widget.EditText
+import android.widget.TextView
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import com.google.firebase.auth.FirebaseAuth
+import com.google.gson.Gson
+import com.komugirice.icchat.databinding.ActivitySearchUserBinding
+import com.komugirice.icchat.extension.afterTextChanged
+import com.komugirice.icchat.firestore.model.User
+import com.komugirice.icchat.firestore.store.UserStore
+import com.komugirice.icchat.ui.groupSetting.GroupSettingViewModel
+import com.komugirice.icchat.viewModel.SearchUserViewModel
+import kotlinx.android.synthetic.*
+import kotlinx.android.synthetic.main.activity_chat.*
+import kotlinx.android.synthetic.main.activity_chat.backImageView
+import kotlinx.android.synthetic.main.activity_group_setting.*
+import kotlinx.android.synthetic.main.activity_search_user.*
+import kotlinx.android.synthetic.main.activity_search_user.container
+import timber.log.Timber
+import java.net.URLEncoder
+
+class SearchUserActivity : BaseActivity() {
+
+    private lateinit var binding: ActivitySearchUserBinding
+    private lateinit var viewModel: SearchUserViewModel
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        initBinding()
+        initViewModel()
+        initEditText()
+        initClick()
+    }
+
+    /**
+     * MVVMのBinding
+     *
+     */
+    private fun initBinding() {
+        binding = DataBindingUtil.setContentView(this,
+            R.layout.activity_search_user
+        )
+        binding.lifecycleOwner = this
+    }
+
+    /**
+     * MVVMのViewModel
+     *
+     */
+    private fun initViewModel() {
+        viewModel = ViewModelProviders.of(this).get(SearchUserViewModel::class.java).apply {
+            canSubmit.observe(this@SearchUserActivity, Observer {
+                binding.canSubmit = it
+            })
+        }
+    }
+    fun initEditText() {
+        // 検索キーワード
+        this@SearchUserActivity.searchEditText.apply{
+            // フォーカスアウト
+            this.setOnFocusChangeListener { v, hasFocus ->
+                if(!hasFocus && v is EditText) {
+                    val inputText = v.text.toString()
+                    UserStore.searchNotFriendUserName(inputText, { initCheckBox(null) }) {
+                        initCheckBox(it)
+                    }
+                }
+            }
+            // キーボードEnter
+            this.setOnEditorActionListener { v, actionId, event ->
+                if (actionId == EditorInfo.IME_ACTION_DONE && v is EditText) {
+                    val inputText = v.text.toString()
+                    UserStore.searchNotFriendUserName(inputText, { initCheckBox(null) }) {
+                        initCheckBox(it)
+                    }
+                    true
+                }
+                false
+            }
+
+        }
+    }
+
+
+    fun initClick() {
+        // <ボタン
+        backImageView.setOnClickListener {
+            this.onBackPressed()
+        }
+
+        searchButton.setOnClickListener {
+            search()
+        }
+
+        friendRequestButton.setOnClickListener {
+            requestFriend()
+        }
+        container.setOnClickListener {
+            hideKeybord(it)
+        }
+    }
+
+    fun search() {
+        val inputText = searchEditText.text.toString()
+        if(mailRadioButton.isChecked == true) {
+        } else {
+            val onFailure:()->Unit =
+                {
+                    AlertDialog.Builder(this)
+                        .setMessage(getString(R.string.invalid_search_result))
+                        .setPositiveButton("OK", null)
+                        .show()
+                }
+
+            UserStore.searchNotFriendUserName(inputText, onFailure){
+                initCheckBox(it)
+            }
+        }
+    }
+
+    fun initCheckBox(userList: List<User>?) {
+        userCheckBoxContainer.removeAllViews()
+        userList?.also{
+            it.forEach {
+                val checkBox = CheckBox(this)
+                checkBox.text = it.name
+                checkBox.textSize = 16f
+
+                checkBox.setOnCheckedChangeListener { _v, isChecked ->
+                    viewModel.apply {
+                        if(isChecked) {
+                            _requestUser.add(it)
+                        } else {
+                            _requestUser.remove(it)
+                        }
+                        requestUser.postValue(_requestUser)
+                    }
+                }
+                userCheckBoxContainer.addView(checkBox)
+            }
+        } ?: run {
+            val textView = TextView(this)
+            textView.text = getString(R.string.invalid_search_result)
+            userCheckBoxContainer.addView(textView)
+        }
+    }
+
+    fun requestFriend() {
+
+    }
+
+    companion object {
+        fun start(context: Context?) =
+            context?.startActivity(
+                Intent(context, SearchUserActivity::class.java)
+            )
+    }
+}

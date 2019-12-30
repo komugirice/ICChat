@@ -72,7 +72,7 @@
     <!-- ProfileSettingActivity -->
     <string name="title_profile_setting">プロフィール設定</string>
     <string name="user_image_label">プロフィール画像</string>
-    <string name="user_name_label">名前</string>
+    <string name="user_name_label">ユーザ名</string>
     <string name="email_label">メールアドレス</string>
     <string name="birthday_label">誕生日</string>
     <string name="image_select_button">写真を選択する</string>
@@ -84,7 +84,7 @@
 
     <!-- UserNameActivity -->
     <string name="save_button">保存</string>
-    <string name="title_user_name">名前</string>
+    <string name="title_user_name">ユーザ名</string>
 
     <!-- Facebookログイン-->
     <string name="facebook_app_id">646620032538120</string>
@@ -106,6 +106,12 @@
     <!-- AddFriendActivity -->
     <string name="read_qrcode_button">友だちのQRコードを読み取る</string>
     <string name="display_qrcode_button">自分のQRコードを表示する</string>
-    <string name="search_mail_button">メールアドレスで検索する</string>
+    <string name="user_search_activity_button">ユーザを検索する</string>
     <string name="close_button">閉じる</string>
+
+    <!-- UserSearchActivity -->
+    <string name="user_search_title">ユーザ検索</string>
+    <string name="user_search_button">検索</string>
+    <string name="friend_request_button">友だち申請する</string>
+    <string name="invalid_search_result">該当ユーザは存在しません</string>
 </resources>

@@ -2,6 +2,7 @@ package com.komugirice.icchat.firestore.store
 
 import android.content.Context
 import android.widget.Toast
+import com.example.qiitaapplication.extension.removeAllSpace
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -192,6 +193,30 @@ class UserStore {
                             onSuccess.invoke(it)
                         }
 
+                    }
+                }
+        }
+
+        fun searchNotFriendUserName(name: String, onFailuer:()->Unit, onSuccess: (List<User>) -> Unit) {
+            if (name.isEmpty()) return
+            FirebaseFirestore.getInstance()
+                .collection("users")
+                .get()
+                .addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        it.result?.toObjects(User::class.java)?.also {
+                            val ret = it.filter {
+                                !UserManager.myUserId.equals(it.userId) &&
+                                !UserManager.myUser.friendIdList.contains(it.userId) &&
+                                Regex(name.removeAllSpace()).containsMatchIn(it.name.removeAllSpace())
+                            }
+                            if(ret.size > 0)
+                                onSuccess.invoke(ret)
+                            else
+                                onFailuer.invoke()
+                        }
+                    } else {
+                        onFailuer.invoke()
                     }
                 }
         }

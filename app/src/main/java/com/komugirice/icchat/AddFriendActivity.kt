@@ -99,6 +99,10 @@ class AddFriendActivity : BaseActivity() {
             showQrDialog(makeQrBitmap(UserManager.myUserId))
         }
 
+        userSearchButton.setOnClickListener {
+            SearchUserActivity.start(this)
+        }
+
     }
 
     private fun showQrDialog(bitmap: Bitmap) {

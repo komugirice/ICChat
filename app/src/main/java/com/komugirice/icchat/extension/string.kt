@@ -3,8 +3,7 @@ package com.example.qiitaapplication.extension
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
-
-
+import java.util.regex.Pattern
 
 
 /**
@@ -411,4 +410,9 @@ fun String.zenkakuToHankaku(): String {
  */
 fun String.getIdFromEmail(): String {
      return this.substringBefore("@")
+}
+
+fun String.removeAllSpace(): String {
+     val str = Pattern.compile("[ 　]+").matcher(this).replaceAll("")
+     return str
 }
