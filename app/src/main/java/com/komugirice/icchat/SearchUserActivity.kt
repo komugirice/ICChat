@@ -3,6 +3,7 @@ package com.komugirice.icchat
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -17,7 +18,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.gson.Gson
 import com.komugirice.icchat.databinding.ActivitySearchUserBinding
 import com.komugirice.icchat.extension.afterTextChanged
+import com.komugirice.icchat.firestore.manager.RequestManager
 import com.komugirice.icchat.firestore.model.User
+import com.komugirice.icchat.firestore.store.RequestStore
 import com.komugirice.icchat.firestore.store.UserStore
 import com.komugirice.icchat.ui.groupSetting.GroupSettingViewModel
 import com.komugirice.icchat.viewModel.SearchUserViewModel
@@ -157,6 +160,23 @@ class SearchUserActivity : BaseActivity() {
     }
 
     fun requestFriend() {
+        viewModel._requestUser.forEach {
+            RequestStore.requestFriend(it.userId){
+                AlertDialog.Builder(this)
+                    .setMessage("友だち申請しました")
+                    .setPositiveButton("OK", object : DialogInterface.OnClickListener {
+                        override fun onClick(dialog: DialogInterface?, which: Int) {
+                            finish()
+                        }
+                    })
+                    .setOnDismissListener(object : DialogInterface.OnDismissListener {
+                        override fun onDismiss(dialog: DialogInterface?) {
+                            finish()
+                        }
+                    })
+                    .show()
+            }
+        }
 
     }
 

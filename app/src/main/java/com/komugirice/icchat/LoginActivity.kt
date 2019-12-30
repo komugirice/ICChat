@@ -32,6 +32,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.komugirice.icchat.extension.afterTextChanged
 import com.komugirice.icchat.extension.loggingSize
+import com.komugirice.icchat.firestore.manager.RequestManager
 import com.komugirice.icchat.firestore.manager.RoomManager
 import com.komugirice.icchat.firestore.manager.UserManager
 import com.komugirice.icchat.ui.login.LoginViewModel
@@ -302,22 +303,23 @@ class LoginActivity : BaseActivity() {
         // TODO : initiate successful logged in experience
 
         // UserManager初期設定
-        UserManager.initUserManager(){
-            RoomManager.initRoomManager() {
+        initManager() {
+            val displayName = UserManager.myUser.name
 
-                val displayName = UserManager.myUser.name
+            Toast.makeText(
+                applicationContext,
+                "$welcome $displayName",
+                Toast.LENGTH_LONG
+            ).show()
 
-                Toast.makeText(
-                    applicationContext,
-                    "$welcome $displayName",
-                    Toast.LENGTH_LONG
-                ).show()
-
-                MainActivity.start(this)
-            }
+            MainActivity.start(this)
         }
 
     }
+
+
+
+
 
 
     private fun showLoginFailed(@StringRes errorString: Int) {

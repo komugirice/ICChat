@@ -4,6 +4,9 @@ import android.content.Context
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
+import com.komugirice.icchat.firestore.manager.RequestManager
+import com.komugirice.icchat.firestore.manager.RoomManager
+import com.komugirice.icchat.firestore.manager.UserManager
 import kotlinx.android.synthetic.main.activity_chat.*
 
 abstract class BaseActivity : AppCompatActivity() {
@@ -17,5 +20,15 @@ abstract class BaseActivity : AppCompatActivity() {
             view.windowToken,
             InputMethodManager.HIDE_NOT_ALWAYS
         )
+    }
+
+    protected fun initManager(onSuccess: () -> Unit) {
+        UserManager.initUserManager() {
+            RoomManager.initRoomManager() {
+                RequestManager.initRequestManager() {
+                    onSuccess.invoke()
+                }
+            }
+        }
     }
 }

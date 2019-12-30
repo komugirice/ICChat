@@ -4,10 +4,11 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import com.google.firebase.auth.FirebaseAuth
+import com.komugirice.icchat.firestore.manager.RequestManager
 import com.komugirice.icchat.firestore.manager.RoomManager
 import com.komugirice.icchat.firestore.manager.UserManager
 
-class SplashActivity : AppCompatActivity() {
+class SplashActivity : BaseActivity() {
 
     val SPLASH_TIME = 1000L;
 
@@ -16,13 +17,11 @@ class SplashActivity : AppCompatActivity() {
         setContentView(R.layout.activity_splash)
 
         if(FirebaseAuth.getInstance().currentUser != null) {
-            UserManager.initUserManager() {
-                RoomManager.initRoomManager() {
-                    Handler().postDelayed({
-                        finishAffinity()
-                        MainActivity.start(this)
-                    }, SPLASH_TIME)
-                }
+            initManager() {
+                Handler().postDelayed({
+                    finishAffinity()
+                    MainActivity.start(this)
+                }, SPLASH_TIME)
             }
         } else {
             Handler().postDelayed({
