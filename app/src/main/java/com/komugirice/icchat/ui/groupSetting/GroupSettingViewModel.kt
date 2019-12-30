@@ -1,14 +1,19 @@
 package com.komugirice.icchat.ui.groupSetting
 
+import android.content.Intent
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.komugirice.icchat.GroupInfoActivity
 import com.komugirice.icchat.R
+import com.komugirice.icchat.firestore.model.Room
 import com.komugirice.icchat.firestore.model.User
 
 
 class GroupSettingViewModel  : ViewModel() {
+
+    val room = MutableLiveData<Room>()
 
     private val _groupSettingForm = MutableLiveData<GroupSettingFormState>()
     val groupSettingFormState: LiveData<GroupSettingFormState> = _groupSettingForm
@@ -20,6 +25,17 @@ class GroupSettingViewModel  : ViewModel() {
     val canSubmit = MediatorLiveData<Boolean>().also { result->
         result.addSource(name) {result.value = canSubmit()}
         result.addSource(inviteUser) {result.value = canSubmit()}
+    }
+
+    fun initRoom(intent: Intent): Boolean {
+        intent.getSerializableExtra(GroupInfoActivity.KEY_ROOM).also {
+            if (it is Room && it.documentId.isNotEmpty()) {
+                this.room.postValue(it)
+                return true
+            }
+            return false
+        }
+
     }
 
     private fun canSubmit(): Boolean {

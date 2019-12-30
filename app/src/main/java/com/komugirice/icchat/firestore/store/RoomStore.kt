@@ -16,12 +16,12 @@ class RoomStore {
     companion object {
 
         /**
-         * getLoginUserRoomsメソッド
+         * getLoginUserAllRoomsメソッド
          *
          * @param pRooms ログインユーザのRoomペアオブジェクトを設定します。
          *
          */
-        fun getLoginUserRooms(onSuccess: (List<Room>) -> Unit) {
+        fun getLoginUserAllRooms(onSuccess: (List<Room>) -> Unit) {
             var rooms = mutableListOf<Room>()
             // rooms取得
             FirebaseFirestore.getInstance()
@@ -56,7 +56,7 @@ class RoomStore {
             val loginUserId = UserManager.myUserId
             val サシリスト = mutableListOf(loginUserId, targetUserId)
 
-            getLoginUserRooms(){
+            getLoginUserAllRooms(){
                 // 全てのroomでサシチャットの重複対象チェック
                 it?.forEach {
                     if(it.userIdList.size == サシリスト.size
@@ -64,7 +64,7 @@ class RoomStore {
                         // 重複
                         Timber.d("registerSingleRoom 重複エラー ${Gson().toJson(it.userIdList)}")
                         // TODO 今のところ重複の場合のエラーメッセージ表示方法がない
-                        return@getLoginUserRooms
+                        return@getLoginUserAllRooms
                     }
                 }
                 // 重複しない場合、新規登録

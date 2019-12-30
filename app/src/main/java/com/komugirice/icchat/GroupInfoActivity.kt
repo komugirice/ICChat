@@ -1,55 +1,68 @@
 package com.komugirice.icchat
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.AttributeSet
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.komugirice.icchat.databinding.ChatMessageCellBinding
-import com.komugirice.icchat.databinding.FriendCellBinding
-import com.komugirice.icchat.databinding.GroupMemberCellBinding
-import com.komugirice.icchat.extension.setRoundedImageView
+import androidx.core.app.ActivityCompat.startActivityForResult
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import com.komugirice.icchat.databinding.ActivityGroupInfoBinding
+import com.komugirice.icchat.enum.ActivityEnum
 import com.komugirice.icchat.firestore.manager.UserManager
-import com.komugirice.icchat.firestore.model.Message
 import com.komugirice.icchat.firestore.model.Room
 import com.komugirice.icchat.firestore.model.User
 import com.komugirice.icchat.firestore.store.UserStore
-import com.komugirice.icchat.util.FireStorageUtil
+import com.komugirice.icchat.viewModel.GroupInfoViewModel
 import kotlinx.android.synthetic.main.activity_group_info.*
 
 class GroupInfoActivity : BaseActivity() {
 
+    private lateinit var binding: ActivityGroupInfoBinding
+    private lateinit var viewModel: GroupInfoViewModel
     private lateinit var room: Room
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_group_info)
 
+        initBinding()
+        initViewModel()
         initData()
         initClick()
-        initGroupMemberRecyclerView()
-        initInviteUserRecyclerView()
+    }
+
+    /**
+     * MVVMのBinding
+     *
+     */
+    private fun initBinding() {
+        binding = DataBindingUtil.setContentView(this,
+            R.layout.activity_group_info
+        )
+        binding.lifecycleOwner = this
+    }
+
+    /**
+     * MVVMのViewModel
+     *
+     */
+    private fun initViewModel() {
+        viewModel = ViewModelProviders.of(this).get(GroupInfoViewModel::class.java).apply {
+            room.observe(this@GroupInfoActivity, Observer {
+                binding.apply {
+                    room = it
+                }
+                this@GroupInfoActivity.room = it
+                initGroupMemberRecyclerView()
+                initInviteUserRecyclerView()
+            })
+        }
     }
 
     private fun initData() {
-        intent.getSerializableExtra(KEY_ROOM).also {
-            if (it is Room && it.documentId.isNotEmpty()) {
-                this.room = it
-            } else {
-                finish()
-            }
-        }
-        // グループ名
-        groupNameTextView.text = room.name
-        // グループ画像
-        FireStorageUtil.getGroupIconImage(this.room.documentId) {
-            groupIconImageView.setRoundedImageView(it) // UIスレッド
-        }
+        if(!viewModel.initRoom(intent))
+            finish()
     }
 
     /**
@@ -59,6 +72,7 @@ class GroupInfoActivity : BaseActivity() {
     private fun initClick() {
         // <ボタン
         backImageView.setOnClickListener {
+            setResult(Activity.RESULT_OK, intent)
             this.onBackPressed()
         }
     }
@@ -102,12 +116,21 @@ class GroupInfoActivity : BaseActivity() {
 
     companion object {
 
-        private const val KEY_ROOM = "key_room"
+        const val KEY_ROOM = "key_room"
         fun start(context: Context?, room: Room) {
             context?.startActivity(
                 Intent(context, GroupInfoActivity::class.java)
                     .putExtra(KEY_ROOM, room)
             )
+        }
+        fun startActivityForResult(activity: Activity?, room: Room) {
+            activity?.also {
+                it.startActivityForResult(
+                    Intent(it, GroupInfoActivity::class.java)
+                        .putExtra(KEY_ROOM, room)
+                    , ActivityEnum.GroupInfoActivity.id
+                )
+            }
         }
     }
 }

@@ -68,8 +68,8 @@ class DebugFragment : Fragment() {
                     "友だち登録が完了しました。",
                     Toast.LENGTH_LONG
                 ).show()
-
             }
+
         }
 
         // 友だち削除
@@ -80,14 +80,13 @@ class DebugFragment : Fragment() {
             UserStore.delFriend(friendId) {
 
                 // Room削除
-                RoomStore.getLoginUserRooms() {
+                RoomStore.getLoginUserAllRooms() {
                     RoomStore.delSingleUserRooms(it, friendId)
                     Toast.makeText(
                         context,
                         "友だち削除が完了しました。",
                         Toast.LENGTH_LONG
                     ).show()
-
                 }
             }
         }

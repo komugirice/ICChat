@@ -90,7 +90,8 @@ object ICChatUtil {
      */
     @JvmStatic
     @BindingAdapter("setRoomName")
-    fun TextView.setRoomName(room: Room) {
+    fun TextView.setRoomName(room: Room?) {
+        if(room == null) return
         // ルーム名を設定する
         var text: String
         // シングルルームの場合はルーム名をユーザ名にする
@@ -115,7 +116,9 @@ object ICChatUtil {
      */
     @JvmStatic
     @BindingAdapter("roomIconImageUrl")
-    fun ImageView.loadRoomIconImage(room: Room) {
+    fun ImageView.loadRoomIconImage(room: Room?) {
+        if(room == null) return
+
         this.setImageDrawable(null)
 
         // シングルルームとグループルームで分岐

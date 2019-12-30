@@ -260,16 +260,10 @@ class FriendsView : RecyclerView {
                 VIEW_TYPE_TITLE_INVITE -> {
                     val size = items.filter {it.viewType == VIEW_TYPE_ITEM_INVITE}.size
                     holder.binding.title = context.getString(R.string.title_invite_group) + " ${size}"
-                    // 招待中0件の場合、非表示
-                    if(size == 0) holder.binding.root.visibility = View.GONE
-
                 }
                 VIEW_TYPE_TITLE_DENY -> {
                     val size = items.filter {it.viewType == VIEW_TYPE_ITEM_DENY}.size
                     holder.binding.title = context.getString(R.string.title_deny_group)
-                    // 拒否0件の場合、非表示
-                    if(size == 0) holder.binding.root.visibility = View.GONE
-
                 }
                 else -> return
             }
