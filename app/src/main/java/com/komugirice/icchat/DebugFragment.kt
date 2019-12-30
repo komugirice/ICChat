@@ -62,10 +62,13 @@ class DebugFragment : Fragment() {
         buttonAddDebugFriend.setOnClickListener {
             val friendId: String = SpinnerAddUsers.selectedItem.toString()
             var rooms: MutableList<Room> = mutableListOf()
-            UserStore.addFriend(context, friendId)
+            UserStore.addFriend(context, friendId){
+                Toast.makeText(
+                    context,
+                    "友だち登録が完了しました。",
+                    Toast.LENGTH_LONG
+                ).show()
 
-            RoomStore.getLoginUserRooms() {
-                RoomStore.registerSingleUserRooms(it, friendId)
             }
         }
 

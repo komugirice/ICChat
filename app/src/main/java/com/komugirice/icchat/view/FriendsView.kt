@@ -149,7 +149,7 @@ class FriendsView : RecyclerView {
                         }).show()
                     return@setOnClickListener
                 }
-                // 拒否グループの場合
+                // 拒否グルØープの場合
                 if(data.viewType == VIEW_TYPE_ITEM_DENY) {
                     AlertDialog.Builder(context)
                         .setMessage("グループの拒否を取り消しますか？")

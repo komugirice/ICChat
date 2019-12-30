@@ -5,9 +5,11 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.proto.MutationQueueOrBuilder
+import com.google.gson.Gson
 import com.komugirice.icchat.firestore.model.Room
 import com.komugirice.icchat.firestore.model.User
 import com.komugirice.icchat.firestore.manager.UserManager
+import timber.log.Timber
 import java.util.*
 
 class RoomStore {
@@ -45,26 +47,26 @@ class RoomStore {
         }
 
         /**
-         * ログインユーザと友だちのサシのチャットの重複チェックを行い、存在しなかったら登録する。
-         * @param rooms: MutableList<Room>      ログインユーザのルームリスト
+         * ログインユーザと友だちのシングルルームの重複チェックを行い、存在しなかったら登録する。
          * @param targetUserId: String    対象ユーザID
-         *
+         * @param onSuccess
          *
          */
-        fun registerSingleUserRooms(rooms: List<Room>?, targetUserId: String){
+        fun registerSingleRoom(targetUserId: String, onSuccess: (Task<Void>) -> Unit){
             val loginUserId = UserManager.myUserId
             val サシリスト = mutableListOf(loginUserId, targetUserId)
-            var updFlg = true
 
-            // 全てのroomでサシチャットの重複対象チェック
-            rooms?.forEach {
-                if(it.userIdList.size == サシリスト.size
-                    && it.userIdList.toList().containsAll(サシリスト)) {
-                    // 重複
-                    updFlg = false
+            getLoginUserRooms(){
+                // 全てのroomでサシチャットの重複対象チェック
+                it?.forEach {
+                    if(it.userIdList.size == サシリスト.size
+                        && it.userIdList.toList().containsAll(サシリスト)) {
+                        // 重複
+                        Timber.d("registerSingleRoom 重複エラー ${Gson().toJson(it.userIdList)}")
+                        // TODO 今のところ重複の場合のエラーメッセージ表示方法がない
+                        return@getLoginUserRooms
+                    }
                 }
-            }
-            if(updFlg) {
                 // 重複しない場合、新規登録
                 val room = Room().apply {
                     //name = targetUser.name
@@ -75,7 +77,13 @@ class RoomStore {
                     .collection("rooms")
                     .document(room.documentId)
                     .set(room)
+                    .addOnCompleteListener {
+                        if(it.isSuccessful) {
+                            onSuccess.invoke(it)
+                        }
+                    }
             }
+
 
         }
 

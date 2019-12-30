@@ -51,7 +51,7 @@ class UserStore {
          * 追加していない友だちしか呼び出せない設計
          *
          */
-        fun addFriend(context: Context?, friendId: String) {
+        fun addFriend(context: Context?, friendId: String, onSuccess: (Task<Void>) -> Unit) {
             if(UserManager.myUser.friendIdList.contains(friendId)) {
                 Toast.makeText(
                     context,
@@ -61,7 +61,6 @@ class UserStore {
                 return
             }
 
-
             UserManager.addMyFriends(friendId)
 
             // ログインユーザ側登録
@@ -70,30 +69,33 @@ class UserStore {
                 .document(UserManager.myUser.userId)
                 .update("friendIdList", UserManager.myUser.friendIdList)
 
+            // UserManager.myFriendsが更新されていない不具合対応
+            UserManager.initUserManager {
 
-            val friend = UserManager.myFriends.filter {
-                it.userId.equals(friendId)
-            }.first()
+                val friend = UserManager.myFriends.filter {
+                    it.userId.equals(friendId)
+                }.first()
 
-            if(!friend.friendIdList.contains(UserManager.myUserId)) {
-                friend.friendIdList.add(UserManager.myUserId)
+                if(!friend.friendIdList.contains(UserManager.myUserId)) {
+                    friend.friendIdList.add(UserManager.myUserId)
 
-                // 友だち側登録
-                FirebaseFirestore.getInstance()
-                    .collection("users")
-                    .document(friend.userId)
-                    .update("friendIdList", friend.friendIdList)
-                    .addOnCompleteListener {
+                    // 友だち側登録
+                    FirebaseFirestore.getInstance()
+                        .collection("users")
+                        .document(friend.userId)
+                        .update("friendIdList", friend.friendIdList)
+                        .addOnCompleteListener {
 
-                    if (it.isSuccessful) {
-                        Toast.makeText(
-                            context,
-                            "友だち追加が完了しました。",
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
+                            if (it.isSuccessful) {
+                                // Room登録
+                                RoomStore.registerSingleRoom(friend.userId){
+                                    onSuccess.invoke(it)
+                                }
+                            }
+                        }
                 }
             }
+
         }
 
         /**
@@ -183,6 +185,7 @@ class UserStore {
                 .collection("users")
                 .document(userId)
                 .get()
+                // エラーになることはまずない
                 .addOnCompleteListener {
                     if (it.isSuccessful) {
                         it.result?.toObject(User::class.java)?.also {
