@@ -21,6 +21,7 @@ import com.komugirice.icchat.databinding.FriendCellBinding
 import com.komugirice.icchat.databinding.TitleCellBinding
 import com.komugirice.icchat.firestore.manager.UserManager
 import com.komugirice.icchat.firestore.model.Room
+import com.komugirice.icchat.firestore.store.RequestStore
 import com.komugirice.icchat.firestore.store.RoomStore
 import com.komugirice.icchat.util.FireStorageUtil
 
@@ -84,7 +85,7 @@ class FriendsView : RecyclerView {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
 
-            if(viewType <= VIEW_TYPE_ITEM_DENY) {
+            if(viewType <= VIEW_TYPE_ITEM_DENY_GROUP) {
                 return FriendCellViewHolder(
                         FriendCellBinding.inflate(
                             LayoutInflater.from(context),
@@ -117,7 +118,7 @@ class FriendsView : RecyclerView {
 
             holder.binding.root.setOnClickListener {
                 // 招待中のグループの場合
-                if(data.viewType == VIEW_TYPE_ITEM_INVITE) {
+                if(data.viewType == VIEW_TYPE_ITEM_REQUEST_GROUP) {
                     AlertDialog.Builder(context)
                         .setMessage("招待中のグループを承認しますか？")
                         .setPositiveButton("承認", object: DialogInterface.OnClickListener {
@@ -133,7 +134,7 @@ class FriendsView : RecyclerView {
                         })
                         .setNegativeButton("拒否", object: DialogInterface.OnClickListener {
                             override fun onClick(dialog: DialogInterface?, which: Int) {
-                                RoomStore.denyGroup(data.room, UserManager.myUserId){
+                                RequestStore.denyGroupRequest(data.room.documentId, UserManager.myUserId){
                                     Toast.makeText(
                                         context,
                                         "拒否しました",
@@ -150,12 +151,12 @@ class FriendsView : RecyclerView {
                     return@setOnClickListener
                 }
                 // 拒否グルØープの場合
-                if(data.viewType == VIEW_TYPE_ITEM_DENY) {
+                if(data.viewType == VIEW_TYPE_ITEM_DENY_GROUP) {
                     AlertDialog.Builder(context)
                         .setMessage("グループの拒否を取り消しますか？")
                         .setPositiveButton("OK", object: DialogInterface.OnClickListener {
                             override fun onClick(dialog: DialogInterface?, which: Int) {
-                                RoomStore.cancelDenyGroup(data.room, UserManager.myUserId){
+                                RequestStore.cancelDenyGroupRequest(data.room.documentId, UserManager.myUserId){
                                     Toast.makeText(
                                         context,
                                         "拒否を取り消しました",
@@ -257,12 +258,12 @@ class FriendsView : RecyclerView {
                     val size = items.filter {it.viewType == VIEW_TYPE_ITEM_FRIEND}.size
                     holder.binding.title = context.getString(R.string.title_friend) + " ${size}"
                 }
-                VIEW_TYPE_TITLE_INVITE -> {
-                    val size = items.filter {it.viewType == VIEW_TYPE_ITEM_INVITE}.size
+                VIEW_TYPE_TITLE_REQUEST_GROUP -> {
+                    val size = items.filter {it.viewType == VIEW_TYPE_ITEM_REQUEST_GROUP}.size
                     holder.binding.title = context.getString(R.string.title_invite_group) + " ${size}"
                 }
-                VIEW_TYPE_TITLE_DENY -> {
-                    val size = items.filter {it.viewType == VIEW_TYPE_ITEM_DENY}.size
+                VIEW_TYPE_TITLE_DENY_GROUP -> {
+                    val size = items.filter {it.viewType == VIEW_TYPE_ITEM_DENY_GROUP}.size
                     holder.binding.title = context.getString(R.string.title_deny_group)
                 }
                 else -> return
@@ -291,11 +292,11 @@ class FriendsView : RecyclerView {
     companion object {
         const val VIEW_TYPE_ITEM_GROUP = 0
         const val VIEW_TYPE_ITEM_FRIEND = 1
-        const val VIEW_TYPE_ITEM_INVITE = 2
-        const val VIEW_TYPE_ITEM_DENY = 3
+        const val VIEW_TYPE_ITEM_REQUEST_GROUP = 2
+        const val VIEW_TYPE_ITEM_DENY_GROUP = 3
         const val VIEW_TYPE_TITLE_GROUP = 4
         const val VIEW_TYPE_TITLE_FRIEND = 5
-        const val VIEW_TYPE_TITLE_INVITE = 6
-        const val VIEW_TYPE_TITLE_DENY = 7
+        const val VIEW_TYPE_TITLE_REQUEST_GROUP = 6
+        const val VIEW_TYPE_TITLE_DENY_GROUP = 7
     }
 }

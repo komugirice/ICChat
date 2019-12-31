@@ -57,7 +57,7 @@ object UserManager {
                     // TODO 非同期大丈夫？
                     UserStore.getAllUsers(){
                         it.result?.toObjects(User::class.java)?.also {
-                            UserManager.allUsers = it
+                            allUsers = it
                         }
                         onSuccess.invoke()
                     }

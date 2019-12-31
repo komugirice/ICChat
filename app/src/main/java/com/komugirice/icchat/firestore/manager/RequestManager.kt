@@ -1,40 +1,61 @@
 package com.komugirice.icchat.firestore.manager
 
+import com.komugirice.icchat.firestore.model.GroupRequests
 import com.komugirice.icchat.firestore.model.Request
+import com.komugirice.icchat.firestore.model.Room
 import com.komugirice.icchat.firestore.store.RequestStore
 
 object RequestManager {
-    var myUserRequest = Request()
-        set(value) {
-            field = value
-        }
+    var myUserRequests = listOf<Request>()
 
-    var myUserGroupsRequest = listOf<Request>()
+    var myGroupsRequests = listOf<GroupRequests>()
+
+    var usersRequestToMe = listOf<Request>()
+
+
+    var groupsRequestToMe = listOf<GroupRequests>()    // 中のrequestは必ず1件
 
     fun initRequestManager(onSuccess: () -> Unit) {
-        initMyUserRequest(){
-            initMyUserGroupRequest(){
-                onSuccess()
+        initMyUserRequests(){
+            initMyGroupsRequests(){
+                initUsersRequestToMe(){
+                    initGroupsRequestToMe(){
+                        onSuccess()
+                    }
+                }
             }
         }
     }
 
-    fun initMyUserRequest(onSuccess: () -> Unit) {
-        RequestStore.getLoginUserRequest({
-            myUserRequest = Request().apply {
-                isGroup = false
-                documentId = UserManager.myUserId
-            }
+
+
+    fun initMyUserRequests(onSuccess: () -> Unit) {
+        RequestStore.getLoginUserRequests({
             onSuccess.invoke()
         }){
-            myUserRequest = it
+            myUserRequests = it
             onSuccess.invoke()
         }
     }
-    fun initMyUserGroupRequest(onSuccess: () -> Unit) {
-        RequestStore.getLoginUserGroupsRequest {
-            myUserGroupsRequest = it
+    fun initMyGroupsRequests(onSuccess: () -> Unit) {
+        RequestStore.getLoginUserGroupsRequests {
+            myGroupsRequests = it
             onSuccess.invoke()
         }
     }
+
+    fun initUsersRequestToMe(onSuccess: () -> Unit) {
+        RequestStore.getUsersRequestToMe {
+            usersRequestToMe = it
+            onSuccess.invoke()
+        }
+    }
+
+    fun initGroupsRequestToMe(onSuccess: () -> Unit) {
+        RequestStore.getGroupsRequestToMe {
+            groupsRequestToMe = it
+            onSuccess.invoke()
+        }
+    }
+
 }

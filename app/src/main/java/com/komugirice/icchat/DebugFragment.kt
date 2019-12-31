@@ -80,7 +80,7 @@ class DebugFragment : Fragment() {
             UserStore.delFriend(friendId) {
 
                 // Room削除
-                RoomStore.getLoginUserAllRooms() {
+                RoomStore.getLoginUserRooms() {
                     RoomStore.delSingleUserRooms(it, friendId)
                     Toast.makeText(
                         context,

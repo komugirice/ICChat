@@ -26,11 +26,16 @@ import com.google.firebase.storage.UploadTask
 import com.komugirice.icchat.databinding.ActivityCreateUserBinding
 import com.komugirice.icchat.databinding.ActivityGroupSettingBinding
 import com.komugirice.icchat.enum.ActivityEnum
+import com.komugirice.icchat.enum.RequestStatus
 import com.komugirice.icchat.extension.afterTextChanged
 import com.komugirice.icchat.extension.setRoundedImageView
+import com.komugirice.icchat.firestore.manager.RequestManager
 import com.komugirice.icchat.firestore.manager.RoomManager
 import com.komugirice.icchat.firestore.manager.UserManager
+import com.komugirice.icchat.firestore.model.GroupRequests
+import com.komugirice.icchat.firestore.model.Request
 import com.komugirice.icchat.firestore.model.Room
+import com.komugirice.icchat.firestore.store.RequestStore
 import com.komugirice.icchat.firestore.store.RoomStore
 import com.komugirice.icchat.firestore.store.UserStore
 import com.komugirice.icchat.ui.createUser.CreateUserViewModel
@@ -50,6 +55,7 @@ import kotlinx.android.synthetic.main.activity_profile_setting.*
 import timber.log.Timber
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.security.acl.Group
 import java.util.*
 
 class GroupSettingActivity : BaseActivity() {
@@ -58,6 +64,8 @@ class GroupSettingActivity : BaseActivity() {
     private lateinit var viewModel: GroupSettingViewModel
 
     private lateinit var room: Room
+
+    private var groupRequests: GroupRequests? = null
 
     private var uCropSrcUri: Uri? = null
 
@@ -99,6 +107,7 @@ class GroupSettingActivity : BaseActivity() {
             room.observe(this@GroupSettingActivity, Observer {
                 this@GroupSettingActivity.room = it
                 name.postValue(it.name)
+                initGroupRequests(it)
                 initGroupIcon()
                 initCheckBox()
             })
@@ -137,6 +146,12 @@ class GroupSettingActivity : BaseActivity() {
             finish()
     }
 
+    private fun initGroupRequests(room: Room) {
+        groupRequests = RequestManager.myGroupsRequests
+            .filter{ it.room.documentId == room.documentId}.firstOrNull()
+
+    }
+
     /**
      * グループ画像初期化
      *
@@ -149,6 +164,8 @@ class GroupSettingActivity : BaseActivity() {
         }
 
     }
+
+
 
 
     /**
@@ -206,21 +223,23 @@ class GroupSettingActivity : BaseActivity() {
             checkBox.textSize = 16f
 
             if(displayFlg == DISPLAY_FLAG_UPDATE){
+                val beRequesteds = groupRequests?.requests?.filter{it.status == RequestStatus.REQUEST.id}?.map{it.beRequestedId}
+                val beDenyeds = groupRequests?.requests?.filter{it.status == RequestStatus.DENY.id}?.map{it.beRequestedId}
                 // 加入済み
                 if(room.userIdList.contains(it.userId)) {
                     checkBox.isChecked = true
-                    viewModel._inviteUser.add(it)
+                    viewModel._requestUser.add(it)
                 }
                 // 未加入、招待中
-                if(room.inviteIdList.contains(it.userId)) {
+                if(beRequesteds?.contains(it.userId) ?: false) {
                     checkBox.isChecked = true
                     checkBox.text =  "(招待中) " + it.name
                     // とりあえず申請中も変更できるようにしよう
                     //checkBox.isEnabled = false
-                    viewModel._inviteUser.add(it)
+                    viewModel._requestUser.add(it)
                 }
                 // 拒否
-                if(room.denyIdList.contains(it.userId)) {
+                if(beDenyeds?.contains(it.userId) ?: false) {
                     checkBox.text = "(拒否) " + it.name
                     checkBox.isEnabled = false
                 }
@@ -229,17 +248,17 @@ class GroupSettingActivity : BaseActivity() {
             checkBox.setOnCheckedChangeListener { v, isChecked ->
                 viewModel.apply {
                     if(isChecked) {
-                        _inviteUser.add(it)
+                        _requestUser.add(it)
                     } else {
-                        _inviteUser.remove(it)
+                        _requestUser.remove(it)
                     }
-                    inviteUser.postValue(_inviteUser)
+                    requestUser.postValue(_requestUser)
                 }
             }
             inviteCheckBoxContainer.addView(checkBox)
         }
         if(displayFlg ==DISPLAY_FLAG_UPDATE)
-            viewModel.inviteUser.postValue(viewModel._inviteUser)
+            viewModel.requestUser.postValue(viewModel._requestUser)
 
     }
 
@@ -367,68 +386,126 @@ class GroupSettingActivity : BaseActivity() {
      */
     private fun createGroup() {
         var tmpRoom: Room = Room()
+        var tmpGroupRequest: GroupRequests? = null
+        var deleteRequest = mutableListOf<String>()
+
         // Room作成
         if(displayFlg == DISPLAY_FLAG_INSERT) {
             tmpRoom.apply {
                 documentId =  UUID.randomUUID().toString()
                 name = groupNameEditText.text.toString()
                 userIdList.add(UserManager.myUserId)
-                viewModel._inviteUser.forEach {
-                    inviteIdList.add(it.userId)
-                }
                 isGroup = true
                 ownerId = UserManager.myUserId
             }
+            val tmpRequests = mutableListOf<Request>()
+            viewModel._requestUser.forEach {
+                tmpRequests.add(Request().apply{
+                    documentId = it.userId
+                    requestId = UserManager.myUserId
+                    beRequestedId = it.userId
+                    status = RequestStatus.REQUEST.id
+                })
+            }
+            if(tmpRequests.isNotEmpty())
+                tmpGroupRequest = GroupRequests().apply {
+                    room = tmpRoom
+                    requests = tmpRequests
+                }
         } else {
+            // 更新
             this.room.name = groupNameEditText.text.toString()
 
-            var inviteIdList = mutableListOf<String>()
+            var currentRequestIdList = this.groupRequests?.requests?.map{it.beRequestedId}
+            var requestIdList = mutableListOf<String>()
             var userIdList = mutableListOf<String>().apply {
                 add(UserManager.myUserId)
             }
 
-            viewModel._inviteUser.map{it.userId}.forEach {
+            // チェックボックスリスト
+            viewModel._requestUser.map{it.userId}.forEach {
 
                 if(this.room.userIdList.contains(it)) {
                     // 前：userIdListにいる 後：チェック有り
                     userIdList.add(it)
-                } else if(this.room.inviteIdList.contains(it)){
-                    // 前：userIdListにいない、inviteIdListにいる 後：チェック有り
-                    inviteIdList.add(it)
+                } else if(currentRequestIdList?.contains(it) ?: false){
+                    // 前：userIdListにいない、requestIdListにいる 後：チェック有り
+                    requestIdList.add(it)
                 } else {
-                    // 前：userIdListにいない、inviteIdListにいない 後：チェック有り
-                    inviteIdList.add(it)
+                    // 前：userIdListにいない、requestIdListにいない 後：チェック有り
+                    requestIdList.add(it)
                 }
-                // 前：userIdListにいるorinviteIdListにいる 後：チェック無しは両方から外す
             }
+
+            // Room設定
             this.room.userIdList = userIdList
-            this.room.inviteIdList = inviteIdList
-
-            this.room.isGroup = true
-
+            this.room.isGroup = true    // 一応
             tmpRoom = this.room
+
+            // 作成したrequestIdListからtmpRequests作成
+            if(requestIdList.isNotEmpty()) {
+                val tmpRequests = mutableListOf<Request>()
+                requestIdList.forEach { targetId ->
+                    val request = groupRequests?.requests?.filter{it.beRequestedId == targetId}?.firstOrNull()
+                    // 既に有り→有り
+                    if(request != null){
+                        tmpRequests.add(request)
+                        // なし→有り
+                    } else {
+                        // Request生成
+                        tmpRequests.add(
+                            Request().apply{
+                                documentId = targetId
+                                requestId = UserManager.myUserId
+                                beRequestedId = targetId
+                                status = RequestStatus.REQUEST.id
+                            }
+                        )
+                    }
+
+                }
+
+                // GroupRequest設定
+                tmpGroupRequest = GroupRequests()
+                tmpGroupRequest.room = tmpRoom
+                tmpGroupRequest.requests = tmpRequests
+                this.groupRequests = tmpGroupRequest
+            }
+
+            // 削除リクエストリスト作成
+            deleteRequest = currentRequestIdList?.toMutableList() ?: mutableListOf()
+            deleteRequest?.removeAll(viewModel._requestUser.map{it.userId})
+
         }
         // Room登録
         RoomStore.registerGroupRoom(tmpRoom) {
             if(it.isSuccessful) {
-
-                if(deleteImageFlg == true) {
-                    // 前画像削除
-                    if (prevSettingUri.isNotEmpty())
-                        FirebaseStorage.getInstance().getReferenceFromUrl(prevSettingUri).delete()
-                } else {
-                    // 画像登録
-                    upload(tmpRoom) {
+                //Request登録
+                RequestStore.registerGroupRequest(tmpGroupRequest){
+                    // チェックを外したRequest削除
+                    RequestStore.deleteGroupRequest(tmpRoom.documentId, deleteRequest){
+                        if(deleteImageFlg == true) {
+                            // 前画像削除
+                            if (prevSettingUri.isNotEmpty())
+                                FirebaseStorage.getInstance().getReferenceFromUrl(prevSettingUri).delete()
+                        } else {
+                            // 画像登録
+                            upload(tmpRoom) {
+                            }
+                        }
+                        // RoomManager更新
+                        RoomManager.initRoomManager {
+                            // RequestManager更新
+                            RequestManager.initMyGroupsRequests {
+                                Toast.makeText(this, "グループを登録しました", Toast.LENGTH_SHORT).show()
+                                Timber.tag(TAG)
+                                Timber.d("グループ登録成功：${tmpRoom.documentId}")
+                                setResult(Activity.RESULT_OK, intent)
+                                // 画面終了
+                                finish()
+                            }
+                        }
                     }
-                }
-                // RoomManager更新
-                RoomManager.initRoomManager {
-                    Toast.makeText(this, "グループを登録しました", Toast.LENGTH_SHORT).show()
-                    Timber.tag(TAG)
-                    Timber.d("グループ登録成功：${tmpRoom.documentId}")
-                    setResult(Activity.RESULT_OK, intent)
-                    // 画面終了
-                    finish()
                 }
             } else {
                 Toast.makeText(this, "グループ登録に失敗しました", Toast.LENGTH_SHORT).show()

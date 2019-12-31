@@ -16,12 +16,12 @@ class RoomStore {
     companion object {
 
         /**
-         * getLoginUserAllRoomsメソッド
+         * getLoginUserRoomsメソッド
          *
-         * @param pRooms ログインユーザのRoomペアオブジェクトを設定します。
+         * @param pRooms ログインユーザのRoomリストオブジェクトを設定します。
          *
          */
-        fun getLoginUserAllRooms(onSuccess: (List<Room>) -> Unit) {
+        fun getLoginUserRooms(onSuccess: (List<Room>) -> Unit) {
             var rooms = mutableListOf<Room>()
             // rooms取得
             FirebaseFirestore.getInstance()
@@ -32,15 +32,38 @@ class RoomStore {
                         it.result?.toObjects(Room::class.java)?.also {
                             // roomsに紐づくfriends取得
                             it.forEach {
-                                if (it.userIdList.contains( UserManager.myUserId)
-                                    || it.inviteIdList.contains(UserManager.myUserId)
-                                    || it.denyIdList.contains(UserManager.myUserId))
+                                if (it.userIdList.contains( UserManager.myUserId))
                                     rooms.add(it)
                             }
 
                         }
                         rooms.sortBy { it.name }
                         onSuccess.invoke(rooms)
+                    }
+
+                }
+        }
+
+        /**
+         * getAllGroupRoomsメソッド
+         *
+         * @param onSuccess: (List<Room>)
+         *
+         */
+        fun getAllGroupRooms(onSuccess: (List<Room>) -> Unit) {
+            var rooms = mutableListOf<Room>()
+            // rooms取得
+            FirebaseFirestore.getInstance()
+                .collection("rooms")
+                .whereEqualTo("group", true)
+                .get()
+                .addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        it.result?.toObjects(Room::class.java)?.also {
+                            rooms = it
+                            rooms.sortBy { it.name }
+                            onSuccess.invoke(rooms)
+                        }
                     }
 
                 }
@@ -56,7 +79,7 @@ class RoomStore {
             val loginUserId = UserManager.myUserId
             val サシリスト = mutableListOf(loginUserId, targetUserId)
 
-            getLoginUserAllRooms(){
+            getLoginUserRooms(){
                 // 全てのroomでサシチャットの重複対象チェック
                 it?.forEach {
                     if(it.userIdList.size == サシリスト.size
@@ -64,7 +87,7 @@ class RoomStore {
                         // 重複
                         Timber.d("registerSingleRoom 重複エラー ${Gson().toJson(it.userIdList)}")
                         // TODO 今のところ重複の場合のエラーメッセージ表示方法がない
-                        return@getLoginUserAllRooms
+                        return@getLoginUserRooms
                     }
                 }
                 // 重複しない場合、新規登録
@@ -236,7 +259,6 @@ class RoomStore {
         fun acceptGroupMember(room: Room, userId: String, onComplete: (Task<Void>) -> Unit) {
             if(room.isGroup == false) return
 
-            room.inviteIdList.remove(userId)
             room.userIdList.add(userId)
 
             registerGroupRoom(room) {
@@ -245,24 +267,6 @@ class RoomStore {
 
         }
 
-        /**
-         * 拒否リストに追加する
-         *
-         * @param roomId 対象のルーム
-         * @param userId 対象のユーザ
-         * @param onComplete
-         */
-        fun denyGroup(room: Room, userId: String, onComplete: (Task<Void>) -> Unit) {
-            if(room.isGroup == false) return
-
-            room.inviteIdList.remove(userId)
-            room.denyIdList.add(userId)
-
-            registerGroupRoom(room) {
-                onComplete.invoke(it)
-            }
-
-        }
         /**
          * グループメンバーから外す
          *
@@ -274,24 +278,6 @@ class RoomStore {
             if(room.isGroup == false) return
 
             room.userIdList.remove(userId)
-
-            registerGroupRoom(room) {
-                onComplete.invoke(it)
-            }
-
-        }
-
-        /**
-         * 拒否リストから削除する
-         *
-         * @param roomId 対象のルーム
-         * @param userId 対象のユーザ
-         * @param onComplete
-         */
-        fun cancelDenyGroup(room: Room, userId: String, onComplete: (Task<Void>) -> Unit) {
-            if(room.isGroup == false) return
-
-            room.denyIdList.remove(userId)
 
             registerGroupRoom(room) {
                 onComplete.invoke(it)

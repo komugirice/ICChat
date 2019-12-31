@@ -19,12 +19,12 @@ class GroupSettingViewModel  : ViewModel() {
     val groupSettingFormState: LiveData<GroupSettingFormState> = _groupSettingForm
 
     val name = MutableLiveData<String>()
-    val _inviteUser = mutableListOf<User>()
-    val inviteUser = MutableLiveData<List<User>>()
+    val _requestUser = mutableListOf<User>()
+    val requestUser = MutableLiveData<List<User>>()
 
     val canSubmit = MediatorLiveData<Boolean>().also { result->
         result.addSource(name) {result.value = canSubmit()}
-        result.addSource(inviteUser) {result.value = canSubmit()}
+        result.addSource(requestUser) {result.value = canSubmit()}
     }
 
     fun initRoom(intent: Intent): Boolean {
@@ -45,7 +45,7 @@ class GroupSettingViewModel  : ViewModel() {
         } else if (!isGroupNameLengthValid(name.value)) {
             _groupSettingForm.value = GroupSettingFormState(groupNameError = R.string.invalid_length_groupName)
             return false
-        } else if (!hasTwoInviteUser(inviteUser.value)) {
+        } else if (!hasTwoInviteUser(requestUser.value)) {
             return false
         }
         _groupSettingForm.value = GroupSettingFormState(isDataValid = true)
@@ -62,9 +62,9 @@ class GroupSettingViewModel  : ViewModel() {
         return string.length <= 20
     }
 
-    private fun hasTwoInviteUser(inviteUser: List<User>?): Boolean {
-        if (inviteUser == null) return false
-        return inviteUser.size > 1
+    private fun hasTwoInviteUser(requestUser: List<User>?): Boolean {
+        if (requestUser == null) return false
+        return requestUser.size > 1
     }
 
 }

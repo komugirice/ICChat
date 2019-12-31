@@ -10,7 +10,9 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.komugirice.icchat.databinding.ActivityGroupInfoBinding
 import com.komugirice.icchat.enum.ActivityEnum
+import com.komugirice.icchat.firestore.manager.RequestManager
 import com.komugirice.icchat.firestore.manager.UserManager
+import com.komugirice.icchat.firestore.model.GroupRequests
 import com.komugirice.icchat.firestore.model.Room
 import com.komugirice.icchat.firestore.model.User
 import com.komugirice.icchat.firestore.store.UserStore
@@ -22,6 +24,7 @@ class GroupInfoActivity : BaseActivity() {
     private lateinit var binding: ActivityGroupInfoBinding
     private lateinit var viewModel: GroupInfoViewModel
     private lateinit var room: Room
+    private var groupRequests: GroupRequests? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,6 +57,7 @@ class GroupInfoActivity : BaseActivity() {
                     room = it
                 }
                 this@GroupInfoActivity.room = it
+                initGroupRequests(it)
                 initGroupMemberRecyclerView()
                 initInviteUserRecyclerView()
             })
@@ -64,6 +68,13 @@ class GroupInfoActivity : BaseActivity() {
         if(!viewModel.initRoom(intent))
             finish()
     }
+
+    private fun initGroupRequests(room: Room) {
+        groupRequests = RequestManager.myGroupsRequests
+            .filter{ it.room.documentId == room.documentId}.firstOrNull()
+
+    }
+
 
     /**
      * initClickメソッド
@@ -84,17 +95,14 @@ class GroupInfoActivity : BaseActivity() {
     private fun initGroupMemberRecyclerView() {
 
         val userList = mutableListOf<User>()
-        val memberList = room.userIdList.filter{ it != UserManager.myUserId }
+        val memberList = room.userIdList
 
-        // グループメンバーが必ずしもログインユーザの友だちとは限らない
-        memberList.forEach {
-            UserStore.getTargetUser(it){
-                userList.add(it)
-
-                if(userList.size == memberList.size)
-                    groupMemberRecyclerView.customAdapter.refresh(userList)
-            }
+        memberList.forEach { memberId ->
+            val user = UserManager.allUsers.filter{it.userId == memberId}.firstOrNull()
+            if(user != null) userList.add(user)
         }
+
+        groupMemberRecyclerView.customAdapter.refresh(userList)
     }
 
     /**
@@ -104,14 +112,12 @@ class GroupInfoActivity : BaseActivity() {
     private fun initInviteUserRecyclerView() {
         val userList = mutableListOf<User>()
 
-        room.inviteIdList.forEach {
-            UserStore.getTargetUser(it) {
-                userList.add(it)
-                if(userList.size == room.inviteIdList.size)
-                    inviteUserRecyclerView.customAdapter.refresh(userList)
-
-            }
+        groupRequests?.requests?.forEach { request ->
+            val user = UserManager.allUsers.filter { it.userId == request.beRequestedId }.firstOrNull()
+            if (user != null) userList.add(user)
         }
+        inviteUserRecyclerView.customAdapter.refresh(userList)
+
     }
 
     companion object {
