@@ -28,6 +28,7 @@ import com.komugirice.icchat.firestore.model.Room
 import com.komugirice.icchat.firestore.store.RequestStore
 import com.komugirice.icchat.firestore.store.RoomStore
 import com.komugirice.icchat.util.FireStorageUtil
+import com.komugirice.icchat.util.FriendViewDialogUtil
 
 class FriendsView : RecyclerView {
 
@@ -89,6 +90,7 @@ class FriendsView : RecyclerView {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
 
+            // databindingにRoomを使うタイプ
             if(viewType <= VIEW_TYPE_ITEM_DENY_GROUP) {
                 return FriendCellViewHolder(
                     FriendCellBinding.inflate(
@@ -97,7 +99,10 @@ class FriendsView : RecyclerView {
                         false
                     )
                 )
-            } else if ( viewType <= VIEW_TYPE_ITEM_DENY_FRIEND) {
+
+            }
+            // databindingにRequestを使うタイプ
+            if ( viewType <= VIEW_TYPE_ITEM_DENY_FRIEND) {
                 return RequestCellViewHolder(
                     FriendRequestCellBinding.inflate(
                         LayoutInflater.from(context),
@@ -105,15 +110,15 @@ class FriendsView : RecyclerView {
                         false
                     )
                 )
-            } else {
-                return TitleCellViewHolder(
-                    TitleCellBinding.inflate(
-                        LayoutInflater.from(context),
-                        parent,
-                        false
-                    )
-                )
             }
+            // タイトル
+            return TitleCellViewHolder(
+                TitleCellBinding.inflate(
+                    LayoutInflater.from(context),
+                    parent,
+                    false
+                )
+            )
         }
 
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -126,72 +131,27 @@ class FriendsView : RecyclerView {
 
         }
 
+        /**
+         * databindingにRoomを使うタイプ
+         * 友だち、グループ、招待グループ、拒否グループ
+         * @param holder
+         * @param position
+         *
+         */
         private fun onBindViewHolder(holder: FriendCellViewHolder, position: Int) {
             val data = items[position]
             holder.binding.room = data.room
 
+            // タップ
             holder.binding.root.setOnClickListener {
                 // 招待中のグループの場合
                 if(data.viewType == VIEW_TYPE_ITEM_REQUEST_GROUP) {
-                    AlertDialog.Builder(context)
-                        .setMessage("招待中のグループを承認しますか？")
-                        .setPositiveButton("承認", object: DialogInterface.OnClickListener {
-                            override fun onClick(dialog: DialogInterface?, which: Int) {
-                                RoomStore.acceptGroupMember(data.room, UserManager.myUserId){
-                                    RequestStore.acceptGroupRequest(data.room.documentId, UserManager.myUserId){
-                                        RoomManager.initRoomManager {
-                                            RequestManager.initGroupsRequestToMe {
-                                                Toast.makeText(
-                                                    context,
-                                                    "承認しました",
-                                                    Toast.LENGTH_LONG
-                                                ).show()
-                                            }
-                                        }
-                                    }
-
-                                }
-                            }
-                        })
-                        .setNegativeButton("拒否", object: DialogInterface.OnClickListener {
-                            override fun onClick(dialog: DialogInterface?, which: Int) {
-                                RequestStore.denyGroupRequest(data.room.documentId, UserManager.myUserId){
-                                    RequestManager.initGroupsRequestToMe {
-                                        Toast.makeText(
-                                            context,
-                                            "拒否しました",
-                                            Toast.LENGTH_LONG
-                                        ).show()
-                                    }
-                                }
-                            }
-                        })
-                        .setNeutralButton("キャンセル", object: DialogInterface.OnClickListener {
-                            override fun onClick(dialog: DialogInterface?, which: Int) {
-
-                            }
-                        }).show()
+                    FriendViewDialogUtil.confirmGroupRequestDialog(context, data.room)
                     return@setOnClickListener
                 }
                 // 拒否グループの場合
                 if(data.viewType == VIEW_TYPE_ITEM_DENY_GROUP) {
-                    AlertDialog.Builder(context)
-                        .setMessage("グループの拒否を取り消しますか？")
-                        .setPositiveButton("OK", object: DialogInterface.OnClickListener {
-                            override fun onClick(dialog: DialogInterface?, which: Int) {
-                                RequestStore.cancelDenyGroupRequest(data.room.documentId, UserManager.myUserId){
-                                    RequestManager.initGroupsRequestToMe {
-                                        Toast.makeText(
-                                            context,
-                                            "拒否を取り消しました",
-                                            Toast.LENGTH_LONG
-                                        ).show()
-                                    }
-                                }
-                            }
-                        })
-                        .setNegativeButton("キャンセル", null)
-                        .show()
+                    FriendViewDialogUtil.cancelGroupDenyDialog(context, data.room)
                     return@setOnClickListener
                 }
                 // それ以外
@@ -199,6 +159,7 @@ class FriendsView : RecyclerView {
 
             }
 
+            // 長押し
             holder.binding.root.setOnLongClickListener(object: View.OnLongClickListener {
                 override fun onLongClick(v: View?): Boolean {
 
@@ -226,31 +187,17 @@ class FriendsView : RecyclerView {
                                         GroupSettingActivity.update(context, data.room)
                                     }
                                     menuList.get(2).first -> {
-                                        AlertDialog.Builder(context)
-                                            .setMessage(context.getString(R.string.confirm_group_delete))
-                                            .setPositiveButton("OK", object: DialogInterface.OnClickListener {
-                                                override fun onClick(dialog: DialogInterface?, which: Int) {
-                                                    RoomStore.deleteRoom(data.room.documentId) {
-                                                        FireStorageUtil.deleteGroupIconImage(data.room.documentId) {
-                                                            Toast.makeText(
-                                                                context,
-                                                                context.getString(R.string.success_group_delete),
-                                                                Toast.LENGTH_LONG
-                                                            ).show()
-                                                        }
-                                                    }
-                                                }
-                                            })
-                                            .setNegativeButton("キャンセル", null)
-                                            .show()
+                                        FriendViewDialogUtil.confirmDeleteGroupDialog(context, data.room)
                                     }
                                     else -> return@listItems
                                 }
 
                             })
                         }.show()
-                    } else if( data.viewType == VIEW_TYPE_ITEM_FRIEND || data.viewType == VIEW_TYPE_ITEM_GROUP) {
-                        // グループだが管理者ではないor友だち
+                    }
+                    // 管理者ではないグループor友だち
+                    if( data.viewType == VIEW_TYPE_ITEM_FRIEND || data.viewType == VIEW_TYPE_ITEM_GROUP) {
+
                         MaterialDialog(context).apply {
                             listItems(items = listOf(
                                 context.getString(menuList.get(0).second)
@@ -266,16 +213,78 @@ class FriendsView : RecyclerView {
                             )
                         }.show()
                     }
+                    // 招待中のグループの場合
+                    if(data.viewType == VIEW_TYPE_ITEM_REQUEST_GROUP) {
+                        FriendViewDialogUtil.confirmGroupRequestDialog(context, data.room)
+                    }
+                    // 拒否グループの場合
+                    if(data.viewType == VIEW_TYPE_ITEM_DENY_GROUP) {
+                        FriendViewDialogUtil.cancelGroupDenyDialog(context, data.room)
+                    }
                     return true
                 }
             })
         }
 
+        /**
+         * databindingにRequestを使うタイプ
+         * 申請ユーザ、拒否ユーザ
+         *
+         * @param holder
+         * @param position
+         *
+         */
         private fun onBindViewHolder(holder: RequestCellViewHolder, position: Int) {
             val data = items[position]
             holder.binding.request = data.request
+
+            // タップ
+            holder.binding.root.setOnClickListener {
+                // 友だち申請を受けているユーザの場合
+                if (data.viewType == VIEW_TYPE_ITEM_REQUEST_FRIEND) {
+                    FriendViewDialogUtil.confirmUserRequestDialog(
+                        context,
+                        data.request ?: Request()
+                    )
+                }
+                // 友だち申請を拒否したユーザの場合
+                if (data.viewType == VIEW_TYPE_ITEM_DENY_FRIEND) {
+                    FriendViewDialogUtil.cancelUserDenyDialog(
+                        context,
+                        data.request ?: Request()
+                    )
+                }
+            }
+
+            // 長押し
+            holder.binding.root.setOnLongClickListener(object: View.OnLongClickListener {
+                override fun onLongClick(v: View?): Boolean {
+                    // 友だち申請を受けているユーザの場合
+                    if (data.viewType == VIEW_TYPE_ITEM_REQUEST_FRIEND) {
+                        FriendViewDialogUtil.confirmUserRequestDialog(
+                            context,
+                            data.request ?: Request()
+                        )
+                    }
+                    // 友だち申請を拒否したユーザの場合
+                    if (data.viewType == VIEW_TYPE_ITEM_DENY_FRIEND) {
+                        FriendViewDialogUtil.cancelUserDenyDialog(
+                            context,
+                            data.request ?: Request()
+                        )
+                    }
+                    return true
+                }
+            })
         }
 
+        /**
+         * タイトル
+         *
+         * @param holder
+         * @param position
+         *
+         */
         private fun onBindViewHolder(holder: TitleCellViewHolder, position: Int) {
             val data = items[position]
             when(data.viewType ) {
@@ -288,22 +297,20 @@ class FriendsView : RecyclerView {
                     holder.binding.title = context.getString(R.string.title_friend) + " ${size}"
                 }
                 VIEW_TYPE_TITLE_REQUEST_GROUP -> {
-                    val size = items.filter {it.viewType == VIEW_TYPE_ITEM_REQUEST_GROUP}.size
-                    holder.binding.title = context.getString(R.string.title_invite_group) + " ${size}"
+                    holder.binding.title = context.getString(R.string.title_invite_group)
                 }
                 VIEW_TYPE_TITLE_DENY_GROUP -> {
-                    val size = items.filter {it.viewType == VIEW_TYPE_ITEM_DENY_GROUP}.size
                     holder.binding.title = context.getString(R.string.title_deny_group)
                 }
                 VIEW_TYPE_TITLE_REQUEST_FRIEND -> {
-                    val size = items.filter {it.viewType == VIEW_TYPE_ITEM_REQUEST_FRIEND}.size
                     holder.binding.title = context.getString(R.string.title_request_friend)
+                }
+                VIEW_TYPE_TITLE_DENY_FRIEND -> {
+                    holder.binding.title = context.getString(R.string.title_deny_friend)
                 }
                 else -> return
             }
-
         }
-
     }
 
     class FriendCellViewHolder(val binding: FriendCellBinding) :

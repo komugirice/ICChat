@@ -57,7 +57,20 @@ class FriendViewModel: ViewModel() {
                 list.add(FriendsView.FriendsViewData(req, FriendsView.VIEW_TYPE_ITEM_REQUEST_FRIEND))
             }
 
-            // ④招待されているグループ
+            // ④友だち拒否したユーザ
+            val friendDenys = RequestManager.usersRequestToMe
+                .filter{it.status == RequestStatus.DENY.id}
+            // 拒否ユーザ1件以上の場合、タイトル表示
+            if(friendDenys.size > 0)
+            // 拒否ユーザタイトル
+                list.add(FriendsView.FriendsViewData(FriendsView.VIEW_TYPE_TITLE_DENY_FRIEND))
+
+            // ⑥拒否グループアイテム
+            friendDenys.forEach {
+                list.add(FriendsView.FriendsViewData(it, FriendsView.VIEW_TYPE_ITEM_DENY_FRIEND))
+            }
+
+            // ⑤招待されているグループ
             val groupRequests = RequestManager.groupsRequestToMe
                 .filter{it.requests.first().status == RequestStatus.REQUEST.id}
             // 招待中1件以上の場合、タイトル表示
@@ -69,7 +82,7 @@ class FriendViewModel: ViewModel() {
                 list.add(FriendsView.FriendsViewData(it.room, FriendsView.VIEW_TYPE_ITEM_REQUEST_GROUP))
             }
 
-            // ⑤拒否グループ
+            // ⑥拒否したグループ
             val groupDenys = RequestManager.groupsRequestToMe
                 .filter{it.requests.first().status == RequestStatus.DENY.id}
             // 拒否1件以上の場合、タイトル表示

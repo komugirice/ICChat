@@ -54,7 +54,6 @@ object UserManager {
                 it?.also {
                     myUserId = it.userId
                     myUser = it
-                    // TODO 非同期大丈夫？
                     UserStore.getAllUsers(){
                         it.result?.toObjects(User::class.java)?.also {
                             allUsers = it

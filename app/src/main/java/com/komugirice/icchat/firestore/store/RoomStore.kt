@@ -2,6 +2,7 @@ package com.komugirice.icchat.firestore.store
 
 import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.proto.MutationQueueOrBuilder
@@ -22,6 +23,7 @@ class RoomStore {
          *
          */
         fun getLoginUserRooms(onSuccess: (List<Room>) -> Unit) {
+            val myUserId = FirebaseAuth.getInstance().currentUser?.uid.toString()
             var rooms = mutableListOf<Room>()
             // rooms取得
             FirebaseFirestore.getInstance()
@@ -32,7 +34,7 @@ class RoomStore {
                         it.result?.toObjects(Room::class.java)?.also {
                             // roomsに紐づくfriends取得
                             it.forEach {
-                                if (it.userIdList.contains( UserManager.myUserId))
+                                if (it.userIdList.contains(myUserId))
                                     rooms.add(it)
                             }
 

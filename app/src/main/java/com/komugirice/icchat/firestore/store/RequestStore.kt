@@ -196,5 +196,39 @@ class RequestStore {
                     onComplete.invoke()
                 }
         }
+
+        fun acceptUserRequest(requesterId: String, onComplete: () -> Unit) {
+            FirebaseFirestore.getInstance()
+                .collection("users/${requesterId}/requests")
+                .document(UserManager.myUserId)
+                .update("status", RequestStatus.ACCEPT.id)
+                // データがなければ失敗する可能性もある
+                .addOnCompleteListener {
+                    onComplete.invoke()
+                }
+        }
+
+        fun denyUserRequest(requesterId: String, onComplete: () -> Unit) {
+            FirebaseFirestore.getInstance()
+                .collection("users/${requesterId}/requests")
+                .document(UserManager.myUserId)
+                .update("status", RequestStatus.DENY.id)
+                // データがなければ失敗する可能性もある
+                .addOnCompleteListener {
+                    onComplete.invoke()
+                }
+        }
+
+
+        fun cancelDenyUserRequest(requesterId: String, onComplete: () -> Unit) {
+            FirebaseFirestore.getInstance()
+                .collection("users/${requesterId}/requests")
+                .document(UserManager.myUserId)
+                .delete()
+                // データがなければ失敗する可能性もある
+                .addOnCompleteListener {
+                    onComplete.invoke()
+                }
+        }
     }
 }
