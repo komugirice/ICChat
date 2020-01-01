@@ -1,6 +1,7 @@
 package com.komugirice.icchat.firestore.manager
 
 import androidx.databinding.library.BuildConfig
+import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.FirebaseAuth
 import com.komugirice.icchat.firestore.model.User
 import com.komugirice.icchat.firestore.store.UserStore
@@ -8,6 +9,9 @@ import com.komugirice.icchat.firestore.store.UserStore
 object UserManager {
 
     var myUserId = "" // ここにSharedPreferencesから取得する
+        set(value) {
+            field = value
+        }
 
     var myUser = User()
         set(value) {
@@ -67,5 +71,12 @@ object UserManager {
             }
 
         }
+    }
+
+    fun clear() {
+        myUserId = ""
+        myUser = User()
+        allUsers = listOf<User>()
+        myFriends = listOf<User>()
     }
 }

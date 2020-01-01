@@ -1,5 +1,6 @@
 package com.komugirice.icchat.firestore.manager
 
+import androidx.lifecycle.MutableLiveData
 import com.komugirice.icchat.firestore.model.Room
 import com.komugirice.icchat.firestore.store.RoomStore
 
@@ -8,8 +9,7 @@ object RoomManager {
     /** マイルーム（シングル、グループ） */
     var myRooms = listOf<Room>()
         set(value) {
-            if (value.isEmpty())
-                return
+            // 0件の時も初期化するため
             field = value
             mySingleRooms = value.filter { it.isGroup == false }
             myGroupRooms = value.filter { it.isGroup == true }
@@ -36,4 +36,11 @@ object RoomManager {
     fun getTargetRoom(roomId: String): Room? {
         return myRooms.filter{ it.documentId == roomId}.firstOrNull()
     }
+
+    fun clear() {
+        myRooms = listOf<Room>()
+        mySingleRooms = listOf<Room>()
+        myGroupRooms = listOf<Room>()
+    }
+
 }

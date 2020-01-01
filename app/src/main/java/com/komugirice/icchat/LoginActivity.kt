@@ -348,10 +348,11 @@ class LoginActivity : BaseActivity() {
             activity.startActivity(Intent(activity, LoginActivity::class.java))
         }
 
-        fun signOut(activity: Activity) {
+        fun signOut(activity: BaseActivity) {
             FirebaseAuth.getInstance().signOut()
             LoginManager.getInstance().logOut()
             activity.apply {
+                clearManager()
                 finishAffinity()
                 activity.startActivity(Intent(activity, LoginActivity::class.java))
             }

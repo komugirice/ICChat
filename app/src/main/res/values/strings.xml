@@ -46,6 +46,7 @@
     <string name="chat_activity">チャット画面表示</string>
     <string name="group_setting">グループ情報設定</string>
     <string name="group_delete">グループ削除</string>
+    <string name="friend_delete">友だち解除</string>
     <string name="group_withdraw">グループ退会</string>
     <string name="user_info">ユーザ情報</string>
     <string name="group_info">グループ情報</string>
@@ -58,7 +59,9 @@
     <string name="title_request_friend">友だち申請</string>
     <string name="title_deny_friend">申請を拒否したユーザ</string>
     <string name="confirm_group_delete">グループを削除してよろしいですか？</string>
+    <string name="confirm_user_delete">友だちを解除してよろしいですか？</string>
     <string name="success_group_delete">グループを削除しました</string>
+    <string name="success_user_delete">友だちを解除しました</string>
 
     <!-- デバッグFragment -->
     <string name="buttonAddDebugUser">ユーザ情報登録</string>

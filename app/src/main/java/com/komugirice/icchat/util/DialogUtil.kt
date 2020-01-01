@@ -15,7 +15,7 @@ import com.komugirice.icchat.firestore.store.RoomStore
 import com.komugirice.icchat.firestore.store.UserStore
 import com.komugirice.icchat.view.FriendsView
 
-class FriendViewDialogUtil {
+class DialogUtil {
     companion object {
 
         /**
@@ -85,6 +85,32 @@ class FriendViewDialogUtil {
                                     "拒否を取り消しました",
                                     Toast.LENGTH_LONG
                                 ).show()
+                            }
+                        }
+                    }
+                })
+                .setNegativeButton("キャンセル", null)
+                .show()
+        }
+
+        fun confirmDeleteUserDialog(context: Context, room: Room) {
+            AlertDialog.Builder(context)
+                .setMessage(context.getString(R.string.confirm_user_delete))
+                .setPositiveButton("OK", object: DialogInterface.OnClickListener {
+                    override fun onClick(dialog: DialogInterface?, which: Int) {
+                        val friendId = room.userIdList.filter{!it.equals(UserManager.myUserId)}.first()
+                        // User削除
+                        UserStore.delFriend(friendId) {
+                            // Room削除
+                            RoomStore.deleteRoom(room.documentId){
+                                RoomManager.initRoomManager {
+                                    Toast.makeText(
+                                        context,
+                                        context.getString(R.string.success_user_delete),
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
+
                             }
                         }
                     }
@@ -174,6 +200,34 @@ class FriendViewDialogUtil {
                     }
                 })
                 .setNegativeButton("キャンセル", null)
+                .show()
+        }
+
+        fun withdrawGroupDialog(context: Context, room: Room, onSuccess: () ->Unit) {
+            AlertDialog.Builder(context)
+                .setMessage(context.getString(R.string.confirm_group_withdraw))
+                .setNegativeButton("キャンセル", null)
+                .setPositiveButton("OK", object: DialogInterface.OnClickListener {
+                    override fun onClick(dialog: DialogInterface?, which: Int) {
+
+                        RoomStore.removeGroupMember(room, UserManager.myUserId) {
+                            // グループを退会しました
+                            AlertDialog.Builder(context)
+                                .setMessage(context.getString(R.string.success_group_withdraw))
+                                .setPositiveButton("OK", object: DialogInterface.OnClickListener {
+                                    override fun onClick(dialog: DialogInterface?, which: Int) {
+                                        onSuccess.invoke()
+                                    }
+                                })
+                                .setOnDismissListener (object: DialogInterface.OnDismissListener {
+                                    override fun onDismiss(dialog: DialogInterface?) {
+                                        onSuccess.invoke()
+                                    }
+                                })
+                                .show()
+                        }
+                    }
+                })
                 .show()
         }
 

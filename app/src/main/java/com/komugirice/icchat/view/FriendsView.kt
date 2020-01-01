@@ -1,34 +1,24 @@
 package com.komugirice.icchat.view
 
-import android.app.AlertDialog
 import android.content.Context
-import android.content.DialogInterface
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItems
-import com.google.firebase.storage.FirebaseStorage
 import com.komugirice.icchat.ChatActivity
 import com.komugirice.icchat.GroupSettingActivity
-import com.komugirice.icchat.LoginActivity
 import com.komugirice.icchat.R
 import com.komugirice.icchat.databinding.FriendCellBinding
 import com.komugirice.icchat.databinding.FriendRequestCellBinding
 import com.komugirice.icchat.databinding.TitleCellBinding
-import com.komugirice.icchat.firestore.manager.RequestManager
-import com.komugirice.icchat.firestore.manager.RoomManager
 import com.komugirice.icchat.firestore.manager.UserManager
 import com.komugirice.icchat.firestore.model.Request
 import com.komugirice.icchat.firestore.model.Room
-import com.komugirice.icchat.firestore.store.RequestStore
-import com.komugirice.icchat.firestore.store.RoomStore
-import com.komugirice.icchat.util.FireStorageUtil
-import com.komugirice.icchat.util.FriendViewDialogUtil
+import com.komugirice.icchat.util.DialogUtil
 
 class FriendsView : RecyclerView {
 
@@ -146,12 +136,12 @@ class FriendsView : RecyclerView {
             holder.binding.root.setOnClickListener {
                 // 招待中のグループの場合
                 if(data.viewType == VIEW_TYPE_ITEM_REQUEST_GROUP) {
-                    FriendViewDialogUtil.confirmGroupRequestDialog(context, data.room)
+                    DialogUtil.confirmGroupRequestDialog(context, data.room)
                     return@setOnClickListener
                 }
                 // 拒否グループの場合
                 if(data.viewType == VIEW_TYPE_ITEM_DENY_GROUP) {
-                    FriendViewDialogUtil.cancelGroupDenyDialog(context, data.room)
+                    DialogUtil.cancelGroupDenyDialog(context, data.room)
                     return@setOnClickListener
                 }
                 // それ以外
@@ -166,7 +156,8 @@ class FriendsView : RecyclerView {
                     val menuList = listOf(
                         Pair(0, R.string.chat_activity),
                         Pair(1, R.string.group_setting),
-                        Pair(2, R.string.group_delete)
+                        Pair(2, R.string.group_delete),
+                        Pair(3, R.string.friend_delete)
                     )
 
 
@@ -187,7 +178,7 @@ class FriendsView : RecyclerView {
                                         GroupSettingActivity.update(context, data.room)
                                     }
                                     menuList.get(2).first -> {
-                                        FriendViewDialogUtil.confirmDeleteGroupDialog(context, data.room)
+                                        DialogUtil.confirmDeleteGroupDialog(context, data.room)
                                     }
                                     else -> return@listItems
                                 }
@@ -195,8 +186,8 @@ class FriendsView : RecyclerView {
                             })
                         }.show()
                     }
-                    // 管理者ではないグループor友だち
-                    if( data.viewType == VIEW_TYPE_ITEM_FRIEND || data.viewType == VIEW_TYPE_ITEM_GROUP) {
+                    // 管理者ではないグループ
+                    if(data.viewType == VIEW_TYPE_ITEM_GROUP) {
 
                         MaterialDialog(context).apply {
                             listItems(items = listOf(
@@ -213,13 +204,34 @@ class FriendsView : RecyclerView {
                             )
                         }.show()
                     }
+                    // 友だち
+                    if(data.viewType == VIEW_TYPE_ITEM_FRIEND){
+                        MaterialDialog(context).apply {
+                            listItems(items = listOf(
+                                context.getString(menuList.get(0).second),
+                                context.getString(menuList.get(3).second)
+                            ),
+                                selection = { dialog, index, text ->
+                                    when (index) {
+                                        menuList.get(0).first -> {
+                                            ChatActivity.start(context, data.room)
+                                        }
+                                        menuList.get(1).first -> {
+                                            DialogUtil.confirmDeleteUserDialog(context, data.room)
+                                        }
+                                        else -> return@listItems
+                                    }
+                                }
+                            )
+                        }.show()
+                    }
                     // 招待中のグループの場合
                     if(data.viewType == VIEW_TYPE_ITEM_REQUEST_GROUP) {
-                        FriendViewDialogUtil.confirmGroupRequestDialog(context, data.room)
+                        DialogUtil.confirmGroupRequestDialog(context, data.room)
                     }
                     // 拒否グループの場合
                     if(data.viewType == VIEW_TYPE_ITEM_DENY_GROUP) {
-                        FriendViewDialogUtil.cancelGroupDenyDialog(context, data.room)
+                        DialogUtil.cancelGroupDenyDialog(context, data.room)
                     }
                     return true
                 }
@@ -242,14 +254,14 @@ class FriendsView : RecyclerView {
             holder.binding.root.setOnClickListener {
                 // 友だち申請を受けているユーザの場合
                 if (data.viewType == VIEW_TYPE_ITEM_REQUEST_FRIEND) {
-                    FriendViewDialogUtil.confirmUserRequestDialog(
+                    DialogUtil.confirmUserRequestDialog(
                         context,
                         data.request ?: Request()
                     )
                 }
                 // 友だち申請を拒否したユーザの場合
                 if (data.viewType == VIEW_TYPE_ITEM_DENY_FRIEND) {
-                    FriendViewDialogUtil.cancelUserDenyDialog(
+                    DialogUtil.cancelUserDenyDialog(
                         context,
                         data.request ?: Request()
                     )
@@ -261,14 +273,14 @@ class FriendsView : RecyclerView {
                 override fun onLongClick(v: View?): Boolean {
                     // 友だち申請を受けているユーザの場合
                     if (data.viewType == VIEW_TYPE_ITEM_REQUEST_FRIEND) {
-                        FriendViewDialogUtil.confirmUserRequestDialog(
+                        DialogUtil.confirmUserRequestDialog(
                             context,
                             data.request ?: Request()
                         )
                     }
                     // 友だち申請を拒否したユーザの場合
                     if (data.viewType == VIEW_TYPE_ITEM_DENY_FRIEND) {
-                        FriendViewDialogUtil.cancelUserDenyDialog(
+                        DialogUtil.cancelUserDenyDialog(
                             context,
                             data.request ?: Request()
                         )

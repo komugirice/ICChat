@@ -24,8 +24,12 @@ class RoomViewModel: ViewModel() {
      */
     fun update() {
         var list = mutableListOf<Pair<Room, Message?>>()
+        if(RoomManager.myRooms.isEmpty()) {
+            items.postValue(list)
+            return
+        }
         RoomManager.myRooms.forEach { room ->
-            // とりあえずroom to ダミー
+            // とりあえずroom設定
             var pair : Pair<Room, Message?> = (room to null)
             MessageStore.getLastMessage(room.documentId) {
                 if (it.isSuccessful) {
@@ -39,7 +43,6 @@ class RoomViewModel: ViewModel() {
                     list.sortByDescending { it.second?.createdAt }
                     items.postValue(list)
                 }
-
             }
         }
 

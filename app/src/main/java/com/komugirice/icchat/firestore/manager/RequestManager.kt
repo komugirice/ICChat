@@ -58,4 +58,11 @@ object RequestManager {
         }
     }
 
+    fun clear() {
+        myUserRequests = listOf<Request>()
+        myGroupsRequests = listOf<GroupRequests>()
+        usersRequestToMe = listOf<Request>()
+        groupsRequestToMe = listOf<GroupRequests>()
+    }
+
 }

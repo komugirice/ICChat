@@ -23,7 +23,7 @@ class RoomStore {
          *
          */
         fun getLoginUserRooms(onSuccess: (List<Room>) -> Unit) {
-            val myUserId = FirebaseAuth.getInstance().currentUser?.uid.toString()
+            val myUserId = UserManager.myUserId
             var rooms = mutableListOf<Room>()
             // rooms取得
             FirebaseFirestore.getInstance()
@@ -32,15 +32,24 @@ class RoomStore {
                 .addOnCompleteListener {
                     if (it.isSuccessful) {
                         it.result?.toObjects(Room::class.java)?.also {
-                            // roomsに紐づくfriends取得
-                            it.forEach {
-                                if (it.userIdList.contains(myUserId))
-                                    rooms.add(it)
+                            if(it.isEmpty()) {
+                                onSuccess.invoke(rooms)
+                                return@addOnCompleteListener
                             }
+                            // roomsに紐づくfriends取得
+                            var index = 0
+                            it.forEach { room->
+                                index++
+                                if (room.userIdList.contains(myUserId))
+                                    rooms.add(room)
 
+                                if(index == it.size) {
+                                    rooms.sortBy { it.name }
+                                    onSuccess.invoke(rooms)
+                                }
+                            }
                         }
-                        rooms.sortBy { it.name }
-                        onSuccess.invoke(rooms)
+
                     }
 
                 }

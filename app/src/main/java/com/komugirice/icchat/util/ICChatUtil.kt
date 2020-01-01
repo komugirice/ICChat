@@ -8,12 +8,14 @@ import androidx.databinding.BindingAdapter
 import com.example.qiitaapplication.extension.HHmmToString
 import com.example.qiitaapplication.extension.compareDate
 import com.example.qiitaapplication.extension.yyyyMMddHHmmToString
+import com.google.gson.Gson
 import com.komugirice.icchat.extension.setRoundedImageView
 import com.komugirice.icchat.firestore.manager.UserManager
 import com.komugirice.icchat.firestore.model.Request
 import com.komugirice.icchat.firestore.model.Room
 import com.komugirice.icchat.util.ICChatUtil.loadUserIconImage
 import com.squareup.picasso.Picasso
+import timber.log.Timber
 import java.util.*
 
 
@@ -98,6 +100,7 @@ object ICChatUtil {
         // シングルルームの場合はルーム名をユーザ名にする
         if(room.isGroup == false) {
             // シングルルームの場合
+            Timber.d(Gson().toJson(room))
             val friendId  = room.userIdList.filter{ !it.equals(UserManager.myUserId) }.first()
             val friend = UserManager.myFriends.filter{ it.userId.equals(friendId)}.first()
             // ルーム名をユーザ名にする

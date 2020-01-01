@@ -7,6 +7,7 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
+import com.komugirice.icchat.firestore.manager.RoomManager
 import com.komugirice.icchat.firestore.model.User
 import com.komugirice.icchat.firestore.manager.UserManager
 
@@ -116,18 +117,20 @@ class UserStore {
                 .collection("users")
                 .document(UserManager.myUser.userId)
                 .update("friendIdList", UserManager.myUser.friendIdList)
+                .addOnCompleteListener {
 
-            // フレンドユーザ側更新
-            friend.apply{
-                friend.friendIdList.remove(UserManager.myUserId)
-                FirebaseFirestore.getInstance()
-                    .collection("users")
-                    .document(friend.userId)
-                    .update("friendIdList", friend.friendIdList)
-                    .addOnCompleteListener {
-                        onComplete.invoke(it)
+                    // フレンドユーザ側更新
+                    friend.apply {
+                        friend.friendIdList.remove(UserManager.myUserId)
+                        FirebaseFirestore.getInstance()
+                            .collection("users")
+                            .document(friend.userId)
+                            .update("friendIdList", friend.friendIdList)
+                            .addOnCompleteListener {
+                                onComplete.invoke(it)
+                            }
                     }
-            }
+                }
         }
 
         /**

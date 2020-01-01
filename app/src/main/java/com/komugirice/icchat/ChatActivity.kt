@@ -20,6 +20,7 @@ import com.komugirice.icchat.firestore.manager.UserManager
 import com.komugirice.icchat.firestore.model.Room
 import com.komugirice.icchat.firestore.store.MessageStore
 import com.komugirice.icchat.firestore.store.RoomStore
+import com.komugirice.icchat.util.DialogUtil
 import com.komugirice.icchat.viewModel.ChatViewModel
 import kotlinx.android.synthetic.main.activity_chat.*
 import timber.log.Timber
@@ -78,8 +79,6 @@ class ChatActivity : BaseActivity() {
     private fun initRoom(){
         if (!viewModel.initRoom(intent))
             onBackPressed()
-
-
     }
 
     /**
@@ -238,31 +237,9 @@ class ChatActivity : BaseActivity() {
                     }
                     R.id.group_withdraw -> {
                         // グループを退会しますか？
-                        AlertDialog.Builder(this@ChatActivity)
-                            .setMessage(getString(R.string.confirm_group_withdraw))
-                            .setNegativeButton("キャンセル", null)
-                            .setPositiveButton("OK", object: DialogInterface.OnClickListener {
-                                override fun onClick(dialog: DialogInterface?, which: Int) {
-
-                                    RoomStore.removeGroupMember(room, UserManager.myUserId) {
-                                        // グループを退会しました
-                                        AlertDialog.Builder(this@ChatActivity)
-                                            .setMessage(getString(R.string.success_group_withdraw))
-                                            .setPositiveButton("OK", object: DialogInterface.OnClickListener {
-                                                override fun onClick(dialog: DialogInterface?, which: Int) {
-                                                    finish()
-                                                }
-                                            })
-                                            .setOnDismissListener (object: DialogInterface.OnDismissListener {
-                                                override fun onDismiss(dialog: DialogInterface?) {
-                                                    finish()
-                                                }
-                                            })
-                                            .show()
-                                    }
-                                }
-                            })
-                            .show()
+                        DialogUtil.withdrawGroupDialog(this@ChatActivity, room){
+                            finish()
+                        }
                         return true
                     }
                     else -> return false
