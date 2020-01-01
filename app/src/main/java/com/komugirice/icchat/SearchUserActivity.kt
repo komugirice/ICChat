@@ -75,23 +75,32 @@ class SearchUserActivity : BaseActivity() {
             this.setOnFocusChangeListener { v, hasFocus ->
                 if(!hasFocus && v is EditText) {
                     val inputText = v.text.toString()
-                    UserStore.searchNotFriendUserName(inputText, { initCheckBox(null) }) {
-                        initCheckBox(it)
-                    }
+                    searchName(inputText)
                 }
             }
             // キーボードEnter
             this.setOnEditorActionListener { v, actionId, event ->
                 if (actionId == EditorInfo.IME_ACTION_DONE && v is EditText) {
                     val inputText = v.text.toString()
-                    UserStore.searchNotFriendUserName(inputText, { initCheckBox(null) }) {
-                        initCheckBox(it)
-                    }
+                    searchName(inputText)
                     true
                 }
                 false
             }
 
+        }
+    }
+
+    /**
+     * ユーザ名検索
+     *
+     */
+    fun searchName(inputText: String){
+        UserStore.searchNotFriendUserName(inputText, { initCheckBox(null) }) {
+            // 対象外にRequest 0:申請中, 1:承認, 2:拒否の全てを含める（承認も結局User.friendListに含まれるため）
+            val requestIds = RequestManager.myUserRequests.map{it.beRequestedId}
+            val notRequestUsers = it.filterNot { requestIds.contains(it.userId) }
+            initCheckBox(notRequestUsers)
         }
     }
 
@@ -160,21 +169,28 @@ class SearchUserActivity : BaseActivity() {
     }
 
     fun requestFriend() {
+        var index = 0
         viewModel._requestUser.forEach {
+            index++
             RequestStore.requestFriend(it.userId){
-                AlertDialog.Builder(this)
-                    .setMessage("友だち申請しました")
-                    .setPositiveButton("OK", object : DialogInterface.OnClickListener {
-                        override fun onClick(dialog: DialogInterface?, which: Int) {
-                            finish()
-                        }
-                    })
-                    .setOnDismissListener(object : DialogInterface.OnDismissListener {
-                        override fun onDismiss(dialog: DialogInterface?) {
-                            finish()
-                        }
-                    })
-                    .show()
+                if(viewModel._requestUser.size == index) {
+                    // 再設定
+                    RequestManager.initMyUserRequests {
+                        AlertDialog.Builder(this)
+                            .setMessage("友だち申請しました")
+                            .setPositiveButton("OK", object : DialogInterface.OnClickListener {
+                                override fun onClick(dialog: DialogInterface?, which: Int) {
+                                    finish()
+                                }
+                            })
+                            .setOnDismissListener(object : DialogInterface.OnDismissListener {
+                                override fun onDismiss(dialog: DialogInterface?) {
+                                    finish()
+                                }
+                            })
+                            .show()
+                    }
+                }
             }
         }
 
