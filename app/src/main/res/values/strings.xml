@@ -55,6 +55,7 @@
     <string name="title_group">グループ</string>
     <string name="title_invite_group">招待されているグループ</string>
     <string name="title_deny_group">拒否グループ</string>
+    <string name="title_request_friend">友だち申請されたユーザ</string>
     <string name="confirm_group_delete">グループを削除してよろしいですか？</string>
     <string name="success_group_delete">グループを削除しました</string>
 

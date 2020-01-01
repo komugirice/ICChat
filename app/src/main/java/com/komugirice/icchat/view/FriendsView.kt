@@ -18,8 +18,12 @@ import com.komugirice.icchat.GroupSettingActivity
 import com.komugirice.icchat.LoginActivity
 import com.komugirice.icchat.R
 import com.komugirice.icchat.databinding.FriendCellBinding
+import com.komugirice.icchat.databinding.FriendRequestCellBinding
 import com.komugirice.icchat.databinding.TitleCellBinding
+import com.komugirice.icchat.firestore.manager.RequestManager
+import com.komugirice.icchat.firestore.manager.RoomManager
 import com.komugirice.icchat.firestore.manager.UserManager
+import com.komugirice.icchat.firestore.model.Request
 import com.komugirice.icchat.firestore.model.Room
 import com.komugirice.icchat.firestore.store.RequestStore
 import com.komugirice.icchat.firestore.store.RoomStore
@@ -87,10 +91,18 @@ class FriendsView : RecyclerView {
 
             if(viewType <= VIEW_TYPE_ITEM_DENY_GROUP) {
                 return FriendCellViewHolder(
-                        FriendCellBinding.inflate(
-                            LayoutInflater.from(context),
-                            parent,
-                            false
+                    FriendCellBinding.inflate(
+                        LayoutInflater.from(context),
+                        parent,
+                        false
+                    )
+                )
+            } else if ( viewType <= VIEW_TYPE_ITEM_DENY_FRIEND) {
+                return RequestCellViewHolder(
+                    FriendRequestCellBinding.inflate(
+                        LayoutInflater.from(context),
+                        parent,
+                        false
                     )
                 )
             } else {
@@ -106,6 +118,8 @@ class FriendsView : RecyclerView {
 
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
             if (holder is FriendCellViewHolder)
+                onBindViewHolder(holder, position)
+            else if(holder is RequestCellViewHolder)
                 onBindViewHolder(holder, position)
             else if(holder is TitleCellViewHolder)
                 onBindViewHolder(holder, position)
@@ -124,22 +138,31 @@ class FriendsView : RecyclerView {
                         .setPositiveButton("承認", object: DialogInterface.OnClickListener {
                             override fun onClick(dialog: DialogInterface?, which: Int) {
                                 RoomStore.acceptGroupMember(data.room, UserManager.myUserId){
-                                    Toast.makeText(
-                                        context,
-                                        "承認しました",
-                                        Toast.LENGTH_LONG
-                                    ).show()
+                                    RequestStore.acceptGroupRequest(data.room.documentId, UserManager.myUserId){
+                                        RoomManager.initRoomManager {
+                                            RequestManager.initGroupsRequestToMe {
+                                                Toast.makeText(
+                                                    context,
+                                                    "承認しました",
+                                                    Toast.LENGTH_LONG
+                                                ).show()
+                                            }
+                                        }
+                                    }
+
                                 }
                             }
                         })
                         .setNegativeButton("拒否", object: DialogInterface.OnClickListener {
                             override fun onClick(dialog: DialogInterface?, which: Int) {
                                 RequestStore.denyGroupRequest(data.room.documentId, UserManager.myUserId){
-                                    Toast.makeText(
-                                        context,
-                                        "拒否しました",
-                                        Toast.LENGTH_LONG
-                                    ).show()
+                                    RequestManager.initGroupsRequestToMe {
+                                        Toast.makeText(
+                                            context,
+                                            "拒否しました",
+                                            Toast.LENGTH_LONG
+                                        ).show()
+                                    }
                                 }
                             }
                         })
@@ -150,18 +173,20 @@ class FriendsView : RecyclerView {
                         }).show()
                     return@setOnClickListener
                 }
-                // 拒否グルØープの場合
+                // 拒否グループの場合
                 if(data.viewType == VIEW_TYPE_ITEM_DENY_GROUP) {
                     AlertDialog.Builder(context)
                         .setMessage("グループの拒否を取り消しますか？")
                         .setPositiveButton("OK", object: DialogInterface.OnClickListener {
                             override fun onClick(dialog: DialogInterface?, which: Int) {
                                 RequestStore.cancelDenyGroupRequest(data.room.documentId, UserManager.myUserId){
-                                    Toast.makeText(
-                                        context,
-                                        "拒否を取り消しました",
-                                        Toast.LENGTH_LONG
-                                    ).show()
+                                    RequestManager.initGroupsRequestToMe {
+                                        Toast.makeText(
+                                            context,
+                                            "拒否を取り消しました",
+                                            Toast.LENGTH_LONG
+                                        ).show()
+                                    }
                                 }
                             }
                         })
@@ -246,6 +271,10 @@ class FriendsView : RecyclerView {
             })
         }
 
+        private fun onBindViewHolder(holder: RequestCellViewHolder, position: Int) {
+            val data = items[position]
+            holder.binding.request = data.request
+        }
 
         private fun onBindViewHolder(holder: TitleCellViewHolder, position: Int) {
             val data = items[position]
@@ -266,6 +295,10 @@ class FriendsView : RecyclerView {
                     val size = items.filter {it.viewType == VIEW_TYPE_ITEM_DENY_GROUP}.size
                     holder.binding.title = context.getString(R.string.title_deny_group)
                 }
+                VIEW_TYPE_TITLE_REQUEST_FRIEND -> {
+                    val size = items.filter {it.viewType == VIEW_TYPE_ITEM_REQUEST_FRIEND}.size
+                    holder.binding.title = context.getString(R.string.title_request_friend)
+                }
                 else -> return
             }
 
@@ -276,15 +309,26 @@ class FriendsView : RecyclerView {
     class FriendCellViewHolder(val binding: FriendCellBinding) :
         RecyclerView.ViewHolder(binding.root)
 
+    class RequestCellViewHolder(val binding: FriendRequestCellBinding) :
+        RecyclerView.ViewHolder(binding.root)
+
     class TitleCellViewHolder(val binding: TitleCellBinding) :
         RecyclerView.ViewHolder(binding.root)
 
     class FriendsViewData {
-        var room: Room
+        var room: Room = Room()
+        var request: Request? = null
         var viewType: Int
 
         constructor(room: Room, viewType: Int) {
             this.room = room
+            this.viewType = viewType
+        }
+        constructor(request: Request, viewType: Int) {
+            this.request = request
+            this.viewType = viewType
+        }
+        constructor(viewType: Int) {
             this.viewType = viewType
         }
     }
@@ -294,9 +338,14 @@ class FriendsView : RecyclerView {
         const val VIEW_TYPE_ITEM_FRIEND = 1
         const val VIEW_TYPE_ITEM_REQUEST_GROUP = 2
         const val VIEW_TYPE_ITEM_DENY_GROUP = 3
-        const val VIEW_TYPE_TITLE_GROUP = 4
-        const val VIEW_TYPE_TITLE_FRIEND = 5
-        const val VIEW_TYPE_TITLE_REQUEST_GROUP = 6
-        const val VIEW_TYPE_TITLE_DENY_GROUP = 7
+        const val VIEW_TYPE_ITEM_REQUEST_FRIEND = 4
+        const val VIEW_TYPE_ITEM_DENY_FRIEND = 5
+        const val VIEW_TYPE_TITLE_GROUP = 6
+        const val VIEW_TYPE_TITLE_FRIEND = 7
+        const val VIEW_TYPE_TITLE_REQUEST_GROUP = 8
+        const val VIEW_TYPE_TITLE_DENY_GROUP = 9
+        const val VIEW_TYPE_TITLE_REQUEST_FRIEND = 10
+        const val VIEW_TYPE_TITLE_DENY_FRIEND = 11
+
     }
 }

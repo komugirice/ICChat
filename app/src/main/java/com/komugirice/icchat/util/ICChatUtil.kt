@@ -10,6 +10,7 @@ import com.example.qiitaapplication.extension.compareDate
 import com.example.qiitaapplication.extension.yyyyMMddHHmmToString
 import com.komugirice.icchat.extension.setRoundedImageView
 import com.komugirice.icchat.firestore.manager.UserManager
+import com.komugirice.icchat.firestore.model.Request
 import com.komugirice.icchat.firestore.model.Room
 import com.komugirice.icchat.util.ICChatUtil.loadUserIconImage
 import com.squareup.picasso.Picasso
@@ -71,7 +72,7 @@ object ICChatUtil {
     /**
      * ユーザアイコンを設定する
      *
-     * @param url
+     * @param userId
      *
      */
     @JvmStatic
@@ -85,7 +86,7 @@ object ICChatUtil {
     /**
      * RoomFragmentにnameを設定する
      *
-     * @param url
+     * @param room
      *
      */
     @JvmStatic
@@ -106,6 +107,21 @@ object ICChatUtil {
 
         }
         this.text = text
+    }
+
+    /**
+     * Requestインスタンスからnameを設定する
+     *
+     * @param url
+     *
+     */
+    @JvmStatic
+    @BindingAdapter("setRequestName")
+    fun TextView.setRequestName(request: Request) {
+        if(request == null) return
+        // リクエスト名を設定する
+        val requester = UserManager.allUsers.filter{ it.userId.equals(request.requestId)}.first()
+        this.text = requester.name
     }
 
     /**

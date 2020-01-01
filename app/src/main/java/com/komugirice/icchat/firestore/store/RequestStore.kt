@@ -32,6 +32,10 @@ class RequestStore {
         fun getLoginUserGroupsRequests(onSuccess: (List<GroupRequests>) -> Unit) {
             val groupsRequests = mutableListOf<GroupRequests>()
             var index = 0
+            if(RoomManager.myRooms.isEmpty()) {
+                onSuccess.invoke(groupsRequests)
+                return
+            }
             RoomManager.myRooms.forEach { room ->
                 FirebaseFirestore.getInstance()
                     .collection("rooms/${room.documentId}/requests")
@@ -176,6 +180,17 @@ class RequestStore {
                 .collection("rooms/${roomId}/requests")
                 .document(userId)
                 .delete()
+                // データがなければ失敗する可能性もある
+                .addOnCompleteListener {
+                    onComplete.invoke()
+                }
+        }
+
+        fun acceptGroupRequest(roomId: String, userId: String, onComplete: () -> Unit) {
+            FirebaseFirestore.getInstance()
+                .collection("rooms/${roomId}/requests")
+                .document(userId)
+                .update("status", RequestStatus.ACCEPT.id)
                 // データがなければ失敗する可能性もある
                 .addOnCompleteListener {
                     onComplete.invoke()
