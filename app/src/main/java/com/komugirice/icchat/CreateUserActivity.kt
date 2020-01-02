@@ -45,7 +45,6 @@ class CreateUserActivity : BaseActivity() {
         initBinding()
         initViewModel()
 
-
         errorMsg.observe(this, Observer{
             showDialog("エラー", it)
         })
@@ -238,15 +237,16 @@ class CreateUserActivity : BaseActivity() {
                     }
                 }
             }
-
     }
 
     private fun createUserFireStore() {
         val userName = userNameEditText.text.toString().trim()
+        val email = emailEditText.text.toString().trim()
         val birthDay = birthDayEditText.text.toString().toDate()
 
         val user = User().apply {
             this.name = userName
+            this.email = email
             this.birthDay = birthDay
             this.userId = FireStoreUtil.createLoginUserId()
             this.uids.add(FirebaseAuth.getInstance().currentUser?.uid.toString())
@@ -254,7 +254,7 @@ class CreateUserActivity : BaseActivity() {
 
         UserStore.registerUser(user){
             // ユーザ登録完了画面に遷移
-                CreateUserCompleteActivity.start(this)
+            CreateUserCompleteActivity.start(this)
         }
     }
 
@@ -264,7 +264,6 @@ class CreateUserActivity : BaseActivity() {
             .setMessage(msg)
             .show();
     }
-
 
     companion object {
         fun start(activity: Activity?) =

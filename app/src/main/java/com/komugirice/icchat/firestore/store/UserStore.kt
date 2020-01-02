@@ -200,6 +200,30 @@ class UserStore {
                 }
         }
 
+        fun searchNotFriendUserEmail(email: String, onFailuer:()->Unit, onSuccess: (List<User>) -> Unit) {
+            if (email.isEmpty()) return
+            FirebaseFirestore.getInstance()
+                .collection("users")
+                .get()
+                .addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        it.result?.toObjects(User::class.java)?.also {
+                            val ret = it.filter {
+                                !UserManager.myUserId.equals(it.userId) &&
+                                        !UserManager.myUser.friendIdList.contains(it.userId) &&
+                                        email.removeAllSpace().equals(it.email.removeAllSpace())
+                            }
+                            if(ret.size > 0)
+                                onSuccess.invoke(ret)
+                            else
+                                onFailuer.invoke()
+                        }
+                    } else {
+                        onFailuer.invoke()
+                    }
+                }
+        }
+
         fun searchNotFriendUserName(name: String, onFailuer:()->Unit, onSuccess: (List<User>) -> Unit) {
             if (name.isEmpty()) return
             FirebaseFirestore.getInstance()

@@ -78,7 +78,7 @@ class ProfileSettingActivity : AppCompatActivity() {
 
     private fun initLayout() {
         val myUser = UserManager.myUser
-        email.text = FirebaseAuth.getInstance().currentUser?.email
+        email.text = myUser.email
         userName.text = if(myUser.name.isNotEmpty()) myUser.name else "設定なし"
         birthDay.text = myUser.birthDay?.getDateToString() ?: "設定なし"
     }

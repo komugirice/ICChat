@@ -75,19 +75,41 @@ class SearchUserActivity : BaseActivity() {
             this.setOnFocusChangeListener { v, hasFocus ->
                 if(!hasFocus && v is EditText) {
                     val inputText = v.text.toString()
-                    searchName(inputText)
+                    search()
                 }
             }
             // キーボードEnter
             this.setOnEditorActionListener { v, actionId, event ->
                 if (actionId == EditorInfo.IME_ACTION_DONE && v is EditText) {
                     val inputText = v.text.toString()
-                    searchName(inputText)
+                    search()
                     true
                 }
                 false
             }
 
+        }
+    }
+
+    fun search() {
+        val inputText = searchEditText.text.toString()
+        if(mailRadioButton.isChecked == true) {
+            searchEmail(inputText)
+        } else {
+            searchName(inputText)
+        }
+    }
+
+    /**
+     * EMail検索
+     *
+     */
+    fun searchEmail(inputText: String){
+        UserStore.searchNotFriendUserEmail(inputText, { initCheckBox(null) }) {
+            // 対象外にRequest 0:申請中, 1:承認, 2:拒否の全てを含める（承認も結局User.friendListに含まれるため）
+            val requestIds = RequestManager.myUserRequests.map{it.beRequestedId}
+            val notRequestUsers = it.filterNot { requestIds.contains(it.userId) }
+            initCheckBox(notRequestUsers)
         }
     }
 
@@ -104,7 +126,6 @@ class SearchUserActivity : BaseActivity() {
         }
     }
 
-
     fun initClick() {
         // <ボタン
         backImageView.setOnClickListener {
@@ -120,24 +141,6 @@ class SearchUserActivity : BaseActivity() {
         }
         container.setOnClickListener {
             hideKeybord(it)
-        }
-    }
-
-    fun search() {
-        val inputText = searchEditText.text.toString()
-        if(mailRadioButton.isChecked == true) {
-        } else {
-            val onFailure:()->Unit =
-                {
-                    AlertDialog.Builder(this)
-                        .setMessage(getString(R.string.invalid_search_result))
-                        .setPositiveButton("OK", null)
-                        .show()
-                }
-
-            UserStore.searchNotFriendUserName(inputText, onFailure){
-                initCheckBox(it)
-            }
         }
     }
 
