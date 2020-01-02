@@ -7,6 +7,7 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
+import com.komugirice.icchat.firestore.manager.RequestManager
 import com.komugirice.icchat.firestore.manager.RoomManager
 import com.komugirice.icchat.firestore.model.User
 import com.komugirice.icchat.firestore.manager.UserManager
@@ -209,8 +210,8 @@ class UserStore {
                     if (it.isSuccessful) {
                         it.result?.toObjects(User::class.java)?.also {
                             val ret = it.filter {
-                                !UserManager.myUserId.equals(it.userId) &&
-                                        !UserManager.myUser.friendIdList.contains(it.userId) &&
+                                !UserManager.myUserId.equals(it.userId) &&  // 自分は対象外
+                                        !UserManager.myUser.friendIdList.contains(it.userId) && //　friendIdListは対象外
                                         email.removeAllSpace().equals(it.email.removeAllSpace())
                             }
                             if(ret.size > 0)

@@ -230,5 +230,16 @@ class RequestStore {
                     onComplete.invoke()
                 }
         }
+
+        fun deleteUsersRequest(requesterId: String, beRequestedId: String, onComplete: () -> Unit) {
+            FirebaseFirestore.getInstance()
+                .collection("users/${requesterId}/requests")
+                .document(beRequestedId)
+                .delete()
+                // データがなければ失敗する可能性もある
+                .addOnCompleteListener {
+                    onComplete.invoke()
+                }
+        }
     }
 }

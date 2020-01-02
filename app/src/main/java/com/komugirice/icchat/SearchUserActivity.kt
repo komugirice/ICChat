@@ -106,10 +106,7 @@ class SearchUserActivity : BaseActivity() {
      */
     fun searchEmail(inputText: String){
         UserStore.searchNotFriendUserEmail(inputText, { initCheckBox(null) }) {
-            // 対象外にRequest 0:申請中, 1:承認, 2:拒否の全てを含める（承認も結局User.friendListに含まれるため）
-            val requestIds = RequestManager.myUserRequests.map{it.beRequestedId}
-            val notRequestUsers = it.filterNot { requestIds.contains(it.userId) }
-            initCheckBox(notRequestUsers)
+            initCheckBox(it)
         }
     }
 
@@ -119,10 +116,7 @@ class SearchUserActivity : BaseActivity() {
      */
     fun searchName(inputText: String){
         UserStore.searchNotFriendUserName(inputText, { initCheckBox(null) }) {
-            // 対象外にRequest 0:申請中, 1:承認, 2:拒否の全てを含める（承認も結局User.friendListに含まれるため）
-            val requestIds = RequestManager.myUserRequests.map{it.beRequestedId}
-            val notRequestUsers = it.filterNot { requestIds.contains(it.userId) }
-            initCheckBox(notRequestUsers)
+            initCheckBox(it)
         }
     }
 
@@ -151,6 +145,13 @@ class SearchUserActivity : BaseActivity() {
                 val checkBox = CheckBox(this)
                 checkBox.text = it.name
                 checkBox.textSize = 16f
+
+                // 対象"外"にRequest 0:申請中, 1:承認, 2:拒否の全てを含める（承認も結局User.friendListに含まれるため）
+                val requestIds = RequestManager.myUserRequests.map{it.beRequestedId}
+                    .plus(RequestManager.usersRequestToMe.map{it.requestId})
+                if(requestIds.contains(it.userId)) {
+                    checkBox.isEnabled = false
+                }
 
                 checkBox.setOnCheckedChangeListener { _v, isChecked ->
                     viewModel.apply {
