@@ -43,6 +43,7 @@ class FriendsView : RecyclerView {
     }
 
     class Adapter(val context: Context) : RecyclerView.Adapter<ViewHolder>() {
+        lateinit var onClickCallBack: () -> Unit
         private val items = mutableListOf<FriendsViewData>()
 
         fun refresh(list: List<FriendsViewData>) {
@@ -136,12 +137,16 @@ class FriendsView : RecyclerView {
             holder.binding.root.setOnClickListener {
                 // 招待中のグループの場合
                 if(data.viewType == VIEW_TYPE_ITEM_REQUEST_GROUP) {
-                    DialogUtil.confirmGroupRequestDialog(context, data.room)
+                    DialogUtil.confirmGroupRequestDialog(context, data.room){
+                        onClickCallBack.invoke()
+                    }
                     return@setOnClickListener
                 }
                 // 拒否グループの場合
                 if(data.viewType == VIEW_TYPE_ITEM_DENY_GROUP) {
-                    DialogUtil.cancelGroupDenyDialog(context, data.room)
+                    DialogUtil.cancelGroupDenyDialog(context, data.room){
+                        onClickCallBack.invoke()
+                    }
                     return@setOnClickListener
                 }
                 // それ以外
@@ -178,7 +183,9 @@ class FriendsView : RecyclerView {
                                         GroupSettingActivity.update(context, data.room)
                                     }
                                     menuList.get(2).first -> {
-                                        DialogUtil.confirmDeleteGroupDialog(context, data.room)
+                                        DialogUtil.confirmDeleteGroupDialog(context, data.room){
+                                            onClickCallBack.invoke()
+                                        }
                                     }
                                     else -> return@listItems
                                 }
@@ -217,7 +224,9 @@ class FriendsView : RecyclerView {
                                             ChatActivity.start(context, data.room)
                                         }
                                         menuList.get(1).first -> {
-                                            DialogUtil.confirmDeleteUserDialog(context, data.room)
+                                            DialogUtil.confirmDeleteUserDialog(context, data.room){
+                                                onClickCallBack.invoke()
+                                            }
                                         }
                                         else -> return@listItems
                                     }
@@ -227,11 +236,15 @@ class FriendsView : RecyclerView {
                     }
                     // 招待中のグループの場合
                     if(data.viewType == VIEW_TYPE_ITEM_REQUEST_GROUP) {
-                        DialogUtil.confirmGroupRequestDialog(context, data.room)
+                        DialogUtil.confirmGroupRequestDialog(context, data.room){
+                            onClickCallBack.invoke()
+                        }
                     }
                     // 拒否グループの場合
                     if(data.viewType == VIEW_TYPE_ITEM_DENY_GROUP) {
-                        DialogUtil.cancelGroupDenyDialog(context, data.room)
+                        DialogUtil.cancelGroupDenyDialog(context, data.room){
+                            onClickCallBack.invoke()
+                        }
                     }
                     return true
                 }
@@ -257,14 +270,18 @@ class FriendsView : RecyclerView {
                     DialogUtil.confirmUserRequestDialog(
                         context,
                         data.request ?: Request()
-                    )
+                    ){
+                        onClickCallBack.invoke()
+                    }
                 }
                 // 友だち申請を拒否したユーザの場合
                 if (data.viewType == VIEW_TYPE_ITEM_DENY_FRIEND) {
                     DialogUtil.cancelUserDenyDialog(
                         context,
                         data.request ?: Request()
-                    )
+                    ){
+                        onClickCallBack.invoke()
+                    }
                 }
             }
 
@@ -276,14 +293,18 @@ class FriendsView : RecyclerView {
                         DialogUtil.confirmUserRequestDialog(
                             context,
                             data.request ?: Request()
-                        )
+                        ){
+                            onClickCallBack.invoke()
+                        }
                     }
                     // 友だち申請を拒否したユーザの場合
                     if (data.viewType == VIEW_TYPE_ITEM_DENY_FRIEND) {
                         DialogUtil.cancelUserDenyDialog(
                             context,
                             data.request ?: Request()
-                        )
+                        ){
+                            onClickCallBack.invoke()
+                        }
                     }
                     return true
                 }

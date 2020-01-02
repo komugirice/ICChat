@@ -24,7 +24,7 @@ class DialogUtil {
          * @param request
          *
          */
-        fun confirmUserRequestDialog(context: Context, request: Request) {
+        fun confirmUserRequestDialog(context: Context, request: Request, onSuccess: () -> Unit) {
             AlertDialog.Builder(context)
                 .setMessage("友だち申請を承認しますか？")
                 .setPositiveButton("承認", object : DialogInterface.OnClickListener {
@@ -40,6 +40,7 @@ class DialogUtil {
                                             "承認しました",
                                             Toast.LENGTH_LONG
                                         ).show()
+                                        onSuccess.invoke()
                                     }
                                 }
                             }
@@ -56,6 +57,7 @@ class DialogUtil {
                                     "拒否しました",
                                     Toast.LENGTH_LONG
                                 ).show()
+                                onSuccess.invoke()
                             }
                         }
                     }
@@ -73,7 +75,7 @@ class DialogUtil {
          * @param request
          *
          */
-        fun cancelUserDenyDialog(context: Context, request: Request) {
+        fun cancelUserDenyDialog(context: Context, request: Request, onSuccess: () -> Unit) {
             AlertDialog.Builder(context)
                 .setMessage("友だち申請の拒否を取り消しますか？")
                 .setPositiveButton("OK", object: DialogInterface.OnClickListener {
@@ -85,6 +87,7 @@ class DialogUtil {
                                     "拒否を取り消しました",
                                     Toast.LENGTH_LONG
                                 ).show()
+                                onSuccess.invoke()
                             }
                         }
                     }
@@ -93,7 +96,7 @@ class DialogUtil {
                 .show()
         }
 
-        fun confirmDeleteUserDialog(context: Context, room: Room) {
+        fun confirmDeleteUserDialog(context: Context, room: Room, onSuccess: () -> Unit) {
             AlertDialog.Builder(context)
                 .setMessage(context.getString(R.string.confirm_user_delete))
                 .setPositiveButton("OK", object: DialogInterface.OnClickListener {
@@ -109,6 +112,7 @@ class DialogUtil {
                                         context.getString(R.string.success_user_delete),
                                         Toast.LENGTH_LONG
                                     ).show()
+                                    onSuccess.invoke()
                                 }
 
                             }
@@ -119,7 +123,7 @@ class DialogUtil {
                 .show()
         }
 
-        fun confirmGroupRequestDialog(context: Context, room: Room) {
+        fun confirmGroupRequestDialog(context: Context, room: Room, onSuccess: () -> Unit) {
             AlertDialog.Builder(context)
                 .setMessage("招待中のグループを承認しますか？")
                 .setPositiveButton("承認", object : DialogInterface.OnClickListener {
@@ -136,6 +140,7 @@ class DialogUtil {
                                             "承認しました",
                                             Toast.LENGTH_LONG
                                         ).show()
+                                        onSuccess.invoke()
                                     }
                                 }
                             }
@@ -163,7 +168,7 @@ class DialogUtil {
                 }).show()
         }
 
-        fun cancelGroupDenyDialog(context: Context, room: Room) {
+        fun cancelGroupDenyDialog(context: Context, room: Room, onSuccess: () -> Unit) {
             AlertDialog.Builder(context)
                 .setMessage("グループの拒否を取り消しますか？")
                 .setPositiveButton("OK", object: DialogInterface.OnClickListener {
@@ -175,6 +180,7 @@ class DialogUtil {
                                     "拒否を取り消しました",
                                     Toast.LENGTH_LONG
                                 ).show()
+                                onSuccess.invoke()
                             }
                         }
                     }
@@ -183,7 +189,7 @@ class DialogUtil {
                 .show()
         }
 
-        fun confirmDeleteGroupDialog(context: Context, room: Room) {
+        fun confirmDeleteGroupDialog(context: Context, room: Room, onSuccess: () -> Unit) {
             AlertDialog.Builder(context)
                 .setMessage(context.getString(R.string.confirm_group_delete))
                 .setPositiveButton("OK", object: DialogInterface.OnClickListener {
@@ -195,6 +201,7 @@ class DialogUtil {
                                     context.getString(R.string.success_group_delete),
                                     Toast.LENGTH_LONG
                                 ).show()
+                                onSuccess.invoke()
                             }
                         }
                     }

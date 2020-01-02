@@ -31,6 +31,11 @@ class FriendFragment : Fragment() {
         binding = FragmentFriendBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = this
 
+        // initFriendView
+        binding.FriendsView.customAdapter.onClickCallBack = {
+            friendsViewModel.initData(this@FriendFragment)
+        }
+
         friendsViewModel = ViewModelProviders.of(this).get(FriendViewModel::class.java).apply {
             // friends情報更新
             items.observe(this@FriendFragment, Observer {
@@ -60,6 +65,10 @@ class FriendFragment : Fragment() {
 
     private fun initClick() {
 
+    }
+
+    private val onClickCallBack: () ->Unit = {
+        friendsViewModel.initData(this@FriendFragment)
     }
 
     private fun initSwipeRefreshLayout() {
