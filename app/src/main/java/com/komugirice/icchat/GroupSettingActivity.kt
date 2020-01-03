@@ -227,6 +227,7 @@ class GroupSettingActivity : BaseActivity() {
                 val beDenyeds = groupRequests?.requests?.filter{it.status == RequestStatus.DENY.id}?.map{it.beRequestedId}
                 // 加入済み
                 if(room.userIdList.contains(it.userId)) {
+                    checkBox.isEnabled = false
                     checkBox.isChecked = true
                     viewModel._requestUser.add(it)
                 }

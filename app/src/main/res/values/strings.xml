@@ -80,6 +80,7 @@
     <string name="user_name_label">ユーザ名</string>
     <string name="email_label">メールアドレス</string>
     <string name="birthday_label">誕生日</string>
+    <string name="friend_request_label">友だち申請中リスト</string>
     <string name="image_select_button">写真を選択する</string>
     <string name="image_upload_button">アップロードする</string>
     <string name="u_crop_button">写真を加工する</string>
@@ -102,7 +103,7 @@
     <string name="group_invite_label">グループに招待するユーザ</string>
     <string name="invalid_groupName">グループ名を入力して下さい</string>
     <string name="invalid_length_groupName">グループ名は20文字以内で入力して下さい</string>
-    <string name="invite_description">※２人以上選択して下さい</string>
+    <string name="invite_description">※1人以上選択して下さい</string>
 
     <!-- GroupInfoActivity -->
     <string name="group_member_label">メンバー</string>

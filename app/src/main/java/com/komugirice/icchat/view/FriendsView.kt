@@ -189,7 +189,6 @@ class FriendsView : RecyclerView {
                                     }
                                     else -> return@listItems
                                 }
-
                             })
                         }.show()
                     }

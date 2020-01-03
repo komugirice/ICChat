@@ -64,7 +64,7 @@ class GroupSettingViewModel  : ViewModel() {
 
     private fun hasTwoInviteUser(requestUser: List<User>?): Boolean {
         if (requestUser == null) return false
-        return requestUser.size > 1
+        return requestUser.size > 0
     }
 
 }

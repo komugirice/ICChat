@@ -8,11 +8,13 @@ import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.util.Log
 import android.widget.DatePicker
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
+import androidx.lifecycle.ViewModelProviders
 import com.example.qiitaapplication.extension.getDateToString
 import com.facebook.AccessToken
 import com.facebook.CallbackManager
@@ -35,6 +37,7 @@ import com.komugirice.icchat.extension.setRoundedImageView
 import com.komugirice.icchat.firestore.manager.UserManager
 import com.komugirice.icchat.firestore.store.UserStore
 import com.komugirice.icchat.util.FireStorageUtil
+import com.komugirice.icchat.viewModel.ProfileSettingViewModel
 import com.makeramen.roundedimageview.RoundedDrawable
 import com.makeramen.roundedimageview.RoundedImageView
 import com.yalantis.ucrop.UCrop
@@ -45,6 +48,8 @@ import java.io.File
 import java.util.*
 
 class ProfileSettingActivity : AppCompatActivity() {
+
+    private lateinit var viewModel: ProfileSettingViewModel
 
     private lateinit var googleSignInClient: GoogleSignInClient
 
@@ -69,11 +74,22 @@ class ProfileSettingActivity : AppCompatActivity() {
     }
 
     private fun initialize() {
+        initViewModel()
         initFacebook()
         initGoogle()
         initLayout()
+        initUserRequestView()
         initUserIcon()
         initClick()
+    }
+
+    private fun initViewModel() {
+        viewModel = ViewModelProviders.of(this).get(ProfileSettingViewModel::class.java).apply {
+            //
+            items_request.observe(this@ProfileSettingActivity,  androidx.lifecycle.Observer{
+                userRequestView.customAdapter.refresh_request(it)
+            })
+        }
     }
 
     private fun initLayout() {
@@ -81,6 +97,20 @@ class ProfileSettingActivity : AppCompatActivity() {
         email.text = myUser.email
         userName.text = if(myUser.name.isNotEmpty()) myUser.name else "設定なし"
         birthDay.text = myUser.birthDay?.getDateToString() ?: "設定なし"
+    }
+
+    fun initUserRequestView() {
+        viewModel.update()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        userRequestView.customAdapter.onSaveInstanceState(outState)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
+        super.onRestoreInstanceState(savedInstanceState)
+        userRequestView.customAdapter.onRestoreInstanceState(savedInstanceState)
     }
 
     /**
@@ -140,6 +170,7 @@ class ProfileSettingActivity : AppCompatActivity() {
         birthDay.setOnClickListener {
             showDateDialog()
         }
+
 
         facebookConnectButton.setOnClickListener {
             LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile", "user_friends"));
