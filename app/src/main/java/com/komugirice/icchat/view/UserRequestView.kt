@@ -8,14 +8,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation.RELATIVE_TO_SELF
 import android.view.animation.RotateAnimation
-import android.widget.ExpandableListView
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import com.komugirice.icchat.R
-import com.komugirice.icchat.databinding.FriendRequestCellBinding
+import com.komugirice.icchat.databinding.FriendRequestedCellBinding
 import com.komugirice.icchat.firestore.model.Request
 import com.thoughtbot.expandablerecyclerview.ExpandableRecyclerViewAdapter
 import com.thoughtbot.expandablerecyclerview.listeners.GroupExpandCollapseListener
@@ -83,7 +80,7 @@ class UserRequestView  : RecyclerView {
 
         override fun onCreateChildViewHolder(parent: ViewGroup?, viewType: Int): RequestCellViewHolder {
             return RequestCellViewHolder(
-                FriendRequestCellBinding.inflate(
+                FriendRequestedCellBinding.inflate(
                     LayoutInflater.from(context),
                     parent,
                     false
@@ -107,7 +104,7 @@ class UserRequestView  : RecyclerView {
         ) {
             val request = (group as ExpandableRequest).items.get(childIndex)
             holder?.binding?.request = request.getRequest()
-            Timber.d(Gson().toJson(request.getRequest()))
+            // Timber.d(Gson().toJson(request.getRequest()))
         }
 
         fun refresh_request(list: List<com.komugirice.icchat.firestore.model.Request>) {
@@ -187,7 +184,7 @@ class UserRequestView  : RecyclerView {
         }
     }
 
-    class RequestCellViewHolder(val binding: FriendRequestCellBinding) : com.thoughtbot.expandablerecyclerview.viewholders.ChildViewHolder(binding.root)
+    class RequestCellViewHolder(val binding: FriendRequestedCellBinding) : com.thoughtbot.expandablerecyclerview.viewholders.ChildViewHolder(binding.root)
 
     class ExpandableRequest(title: String, items: MutableList<PRequest>): ExpandableGroup<PRequest>(title, items)
 

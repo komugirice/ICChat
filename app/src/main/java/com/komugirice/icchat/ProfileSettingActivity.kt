@@ -99,15 +99,24 @@ class ProfileSettingActivity : AppCompatActivity() {
         birthDay.text = myUser.birthDay?.getDateToString() ?: "設定なし"
     }
 
+    /**
+     * expandable-recycler-view
+     */
     fun initUserRequestView() {
         viewModel.update()
     }
 
+    /**
+     * expandable-recycler-viewで使う
+     */
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         userRequestView.customAdapter.onSaveInstanceState(outState)
     }
 
+    /**
+     * expandable-recycler-viewで使う
+     */
     override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
         super.onRestoreInstanceState(savedInstanceState)
         userRequestView.customAdapter.onRestoreInstanceState(savedInstanceState)

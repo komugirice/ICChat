@@ -113,18 +113,33 @@ object ICChatUtil {
     }
 
     /**
-     * Requestインスタンスからnameを設定する
+     * Requestインスタンスからリクエストしたユーザ名を設定する
      *
      * @param url
      *
      */
     @JvmStatic
-    @BindingAdapter("setRequestName")
-    fun TextView.setRequestName(request: Request) {
+    @BindingAdapter("setRequesterName")
+    fun TextView.setRequesterName(request: Request) {
         if(request == null) return
         // リクエスト名を設定する
         val requester = UserManager.allUsers.filter{ it.userId.equals(request.requestId)}.first()
         this.text = requester.name
+    }
+
+    /**
+     * Requestインスタンスからリクエストされたユーザ名を設定する
+     *
+     * @param url
+     *
+     */
+    @JvmStatic
+    @BindingAdapter("setBeRequestedName")
+    fun TextView.setBeRequestedName(request: Request) {
+        if(request == null) return
+        // リクエスト名を設定する
+        val requested = UserManager.allUsers.filter{ it.userId.equals(request.beRequestedId)}.first()
+        this.text = requested.name
     }
 
     /**
