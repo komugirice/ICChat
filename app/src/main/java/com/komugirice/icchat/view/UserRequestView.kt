@@ -13,6 +13,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.gson.Gson
 import com.komugirice.icchat.R
 import com.komugirice.icchat.databinding.FriendRequestCellBinding
 import com.komugirice.icchat.firestore.model.Request
@@ -22,6 +23,7 @@ import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup
 import com.thoughtbot.expandablerecyclerview.viewholders.GroupViewHolder
 import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.list_user_request.view.*
+import timber.log.Timber
 import java.util.*
 
 
@@ -105,6 +107,7 @@ class UserRequestView  : RecyclerView {
         ) {
             val request = (group as ExpandableRequest).items.get(childIndex)
             holder?.binding?.request = request.getRequest()
+            Timber.d(Gson().toJson(request.getRequest()))
         }
 
         fun refresh_request(list: List<com.komugirice.icchat.firestore.model.Request>) {
@@ -194,11 +197,11 @@ class UserRequestView  : RecyclerView {
 
         fun getRequest(): com.komugirice.icchat.firestore.model.Request {
             return Request().apply{
-                this.documentId = documentId
-                this.requestId = requestId
-                this.beRequestedId = beRequestedId
-                this.status = status
-                this.createdAt = createdAt
+                this.documentId = this@PRequest.documentId
+                this.requestId = this@PRequest.requestId
+                this.beRequestedId = this@PRequest.beRequestedId
+                this.status = this@PRequest.status
+                this.createdAt = this@PRequest.createdAt
             }
         }
     }
