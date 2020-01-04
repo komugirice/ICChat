@@ -14,9 +14,11 @@ import com.google.gson.Gson
 import com.komugirice.icchat.R
 import com.komugirice.icchat.databinding.FriendRequestedCellBinding
 import com.komugirice.icchat.firestore.model.Request
+import com.thoughtbot.expandablerecyclerview.ExpandCollapseController
 import com.thoughtbot.expandablerecyclerview.ExpandableRecyclerViewAdapter
 import com.thoughtbot.expandablerecyclerview.listeners.GroupExpandCollapseListener
 import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup
+import com.thoughtbot.expandablerecyclerview.models.ExpandableList
 import com.thoughtbot.expandablerecyclerview.viewholders.GroupViewHolder
 import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.list_user_request.view.*
@@ -94,6 +96,7 @@ class UserRequestView  : RecyclerView {
             group: ExpandableGroup<*>?
         ) {
             holder?.setListTitle(group)
+            onGroupClick(flatPosition)
         }
 
         override fun onBindChildViewHolder(
