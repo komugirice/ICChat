@@ -13,6 +13,7 @@ import com.komugirice.icchat.firestore.store.RoomStore
 
 class RoomViewModel: ViewModel() {
     val items = MutableLiveData<List<Pair<Room, Message?>>>()
+    var initFlg = false
 
     fun initData(@NonNull owner: LifecycleOwner) {
         update()
@@ -23,6 +24,7 @@ class RoomViewModel: ViewModel() {
      *
      */
     fun update() {
+        initFlg = true
         var list = mutableListOf<Pair<Room, Message?>>()
         if(RoomManager.myRooms.isEmpty()) {
             items.postValue(list)

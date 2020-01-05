@@ -20,12 +20,14 @@ class FriendViewModel: ViewModel() {
 
     val items = MutableLiveData<List<FriendsView.FriendsViewData>>()
     val isException = MutableLiveData<Throwable>()
+    var initFlg = false
 
     fun initData(@NonNull owner: LifecycleOwner) {
         update()
     }
 
     fun update() {
+        initFlg = true
         RoomManager.initRoomManager {
             val list = mutableListOf<FriendsView.FriendsViewData>()
 

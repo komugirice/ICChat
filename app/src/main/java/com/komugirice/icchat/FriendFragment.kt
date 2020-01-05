@@ -53,9 +53,15 @@ class FriendFragment : Fragment() {
         initialize()
     }
 
+    override fun onResume() {
+        super.onResume()
+        if(friendsViewModel.initFlg == false)
+            friendsViewModel.initData(this@FriendFragment)
+    }
+
     private fun initialize() {
         initLayout()
-        friendsViewModel.initData(this@FriendFragment)
+
     }
 
     private fun initLayout() {

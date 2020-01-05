@@ -169,7 +169,7 @@ class ChatActivity : BaseActivity() {
      *
      */
     private fun initEditText() {
-        // 検索実行
+        // キーボードEnter実行
         inputEditText.setOnEditorActionListener { textView, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 // EditTextに値がある場合

@@ -48,9 +48,14 @@ class RoomFragment : Fragment() {
         initialize()
     }
 
+    override fun onResume() {
+        super.onResume()
+        if(viewModel.initFlg == false)
+            viewModel.initData(this)
+    }
+
     private fun initialize() {
         initLayout()
-        viewModel.initData(this)
     }
 
     private fun initLayout() {
