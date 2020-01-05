@@ -193,7 +193,7 @@ class FriendsView : RecyclerView {
                         }.show()
                     }
                     // 管理者ではないグループ
-                    if(data.viewType == VIEW_TYPE_ITEM_GROUP) {
+                    if(data.viewType == VIEW_TYPE_ITEM_GROUP && !data.room.ownerId.equals(UserManager.myUserId)) {
 
                         MaterialDialog(context).apply {
                             listItems(items = listOf(

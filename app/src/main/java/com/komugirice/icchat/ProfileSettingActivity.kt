@@ -10,12 +10,15 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
 import android.widget.DatePicker
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModelProviders
 import com.example.qiitaapplication.extension.getDateToString
+import com.example.qiitaapplication.extension.toggle
 import com.facebook.AccessToken
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
@@ -33,8 +36,10 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import com.komugirice.icchat.databinding.FriendRequestedCellBinding
 import com.komugirice.icchat.extension.setRoundedImageView
 import com.komugirice.icchat.firestore.manager.UserManager
+import com.komugirice.icchat.firestore.model.Request
 import com.komugirice.icchat.firestore.store.UserStore
 import com.komugirice.icchat.util.FireStorageUtil
 import com.komugirice.icchat.viewModel.ProfileSettingViewModel
@@ -78,7 +83,7 @@ class ProfileSettingActivity : AppCompatActivity() {
         initFacebook()
         initGoogle()
         initLayout()
-        initUserRequestView()
+        initData()
         initUserIcon()
         initClick()
     }
@@ -87,7 +92,7 @@ class ProfileSettingActivity : AppCompatActivity() {
         viewModel = ViewModelProviders.of(this).get(ProfileSettingViewModel::class.java).apply {
             //
             items_request.observe(this@ProfileSettingActivity,  androidx.lifecycle.Observer{
-                userRequestView.customAdapter.refresh_request(it)
+                updateRequestFriend(it)
             })
         }
     }
@@ -99,28 +104,10 @@ class ProfileSettingActivity : AppCompatActivity() {
         birthDay.text = myUser.birthDay?.getDateToString() ?: "設定なし"
     }
 
-    /**
-     * expandable-recycler-view
-     */
-    fun initUserRequestView() {
+    private fun initData(){
         viewModel.update()
     }
 
-    /**
-     * expandable-recycler-viewで使う
-     */
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        userRequestView.customAdapter.onSaveInstanceState(outState)
-    }
-
-    /**
-     * expandable-recycler-viewで使う
-     */
-    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
-        super.onRestoreInstanceState(savedInstanceState)
-        userRequestView.customAdapter.onRestoreInstanceState(savedInstanceState)
-    }
 
     /**
      * プロフィール画像初期化
@@ -186,6 +173,12 @@ class ProfileSettingActivity : AppCompatActivity() {
         }
         googleConnectButton.setOnClickListener{
             googleSignIn()
+        }
+
+        expandLabelView.setOnClickListener {
+            val willVisible = requestFriendsParentView.visibility != View.VISIBLE
+            requestFriendsParentView.toggle(willVisible)
+            expandableImageView.rotation = if (willVisible) 180F else 0F
         }
 
 
@@ -508,6 +501,17 @@ class ProfileSettingActivity : AppCompatActivity() {
         uCropSrcUri = null
         Toast.makeText(this, "プロフィール画像を削除しました", Toast.LENGTH_SHORT).show()
 
+    }
+
+    private fun updateRequestFriend(list : List<Request>) {
+        requestFriendsParentView.removeAllViews()
+        list.forEach {
+            val cellBindable =
+                FriendRequestedCellBinding.inflate(LayoutInflater.from(this), null, false)
+            cellBindable.request = it
+            requestFriendsParentView.addView(cellBindable.root)
+        }
+        if(list.isEmpty()) expandableImageView.visibility = View.GONE
     }
 
     companion object {
