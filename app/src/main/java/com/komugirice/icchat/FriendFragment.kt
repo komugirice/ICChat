@@ -51,12 +51,14 @@ class FriendFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initialize()
+        friendsViewModel.initData(this@FriendFragment)
     }
 
     override fun onResume() {
         super.onResume()
-        if(friendsViewModel.initFlg == false)
-            friendsViewModel.initData(this@FriendFragment)
+//        TODO 別Activityから戻ってきた時は実行したい
+//        if(friendsViewModel.initFlg == false)
+//            friendsViewModel.initData(this@FriendFragment)
     }
 
     private fun initialize() {
@@ -71,10 +73,6 @@ class FriendFragment : Fragment() {
 
     private fun initClick() {
 
-    }
-
-    private val onClickCallBack: () ->Unit = {
-        friendsViewModel.initData(this@FriendFragment)
     }
 
     private fun initSwipeRefreshLayout() {

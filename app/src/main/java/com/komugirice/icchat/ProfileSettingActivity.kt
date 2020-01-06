@@ -92,7 +92,7 @@ class ProfileSettingActivity : AppCompatActivity() {
         viewModel = ViewModelProviders.of(this).get(ProfileSettingViewModel::class.java).apply {
             //
             items_request.observe(this@ProfileSettingActivity,  androidx.lifecycle.Observer{
-                updateRequestFriend(it)
+                displayRequestFriend(it)
             })
         }
     }
@@ -503,7 +503,7 @@ class ProfileSettingActivity : AppCompatActivity() {
 
     }
 
-    private fun updateRequestFriend(list : List<Request>) {
+    private fun displayRequestFriend(list : List<Request>) {
         requestFriendsParentView.removeAllViews()
         list.forEach {
             val cellBindable =

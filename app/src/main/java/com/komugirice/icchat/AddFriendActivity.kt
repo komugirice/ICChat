@@ -26,6 +26,7 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
 import com.google.zxing.qrcode.encoder.Encoder
 import com.google.zxing.qrcode.encoder.QRCode
 import com.komugirice.icchat.ICChatApplication.Companion.applicationContext
+import com.komugirice.icchat.firestore.firebaseFacade
 import com.komugirice.icchat.firestore.manager.UserManager
 import com.komugirice.icchat.firestore.store.RequestStore
 import com.komugirice.icchat.firestore.store.RoomStore
@@ -62,18 +63,20 @@ class AddFriendActivity : BaseActivity() {
                             .setMessage("ユーザを友だち登録しますか？")
                             .setPositiveButton("OK", object : DialogInterface.OnClickListener {
                                 override fun onClick(dialog: DialogInterface?, which: Int) {
+
+                                    val onFailed = {
+                                        Toast.makeText(
+                                            this@AddFriendActivity,
+                                            "既に登録済みです。",
+                                            Toast.LENGTH_LONG
+                                        ).show()
+                                    }
                                     // Users更新
-                                    UserStore.addFriend(this@AddFriendActivity, targetUserId) {
-                                        // Request 自分→target 削除
-                                        RequestStore.deleteUsersRequest(UserManager.myUserId, targetUserId){
-                                            // Request target→自分 削除
-                                            RequestStore.deleteUsersRequest(targetUserId, UserManager.myUserId){
-                                                AlertDialog.Builder(this@AddFriendActivity)
-                                                    .setMessage("友だち登録が完了しました")
-                                                    .setPositiveButton("OK", null)
-                                                    .show()
-                                            }
-                                        }
+                                    firebaseFacade.addFriend(targetUserId, onFailed) {
+                                        AlertDialog.Builder(this@AddFriendActivity)
+                                            .setMessage("友だち登録が完了しました")
+                                            .setPositiveButton("OK", null)
+                                            .show()
                                     }
                                 }
                             })

@@ -18,6 +18,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.gson.Gson
 import com.komugirice.icchat.databinding.ActivitySearchUserBinding
 import com.komugirice.icchat.extension.afterTextChanged
+import com.komugirice.icchat.firestore.firebaseFacade
 import com.komugirice.icchat.firestore.manager.RequestManager
 import com.komugirice.icchat.firestore.model.User
 import com.komugirice.icchat.firestore.store.RequestStore
@@ -147,9 +148,9 @@ class SearchUserActivity : BaseActivity() {
                 checkBox.textSize = 16f
 
                 // 対象"外"にRequest 0:申請中, 1:承認, 2:拒否の全てを含める（承認も結局User.friendListに含まれるため）
-                val requestIds = RequestManager.myUserRequests.map{it.beRequestedId}
-                    .plus(RequestManager.usersRequestToMe.map{it.requestId})
-                if(requestIds.contains(it.userId)) {
+                val requesterIds = RequestManager.myUserRequests.map{it.beRequestedId}
+                    .plus(RequestManager.usersRequestToMe.map{it.requesterId})
+                if(requesterIds.contains(it.userId)) {
                     checkBox.isEnabled = false
                 }
 
@@ -173,31 +174,21 @@ class SearchUserActivity : BaseActivity() {
     }
 
     fun requestFriend() {
-        var index = 0
-        viewModel._requestUser.forEach {
-            index++
-            RequestStore.requestFriend(it.userId){
-                if(viewModel._requestUser.size == index) {
-                    // 再設定
-                    RequestManager.initMyUserRequests {
-                        AlertDialog.Builder(this)
-                            .setMessage("友だち申請しました")
-                            .setPositiveButton("OK", object : DialogInterface.OnClickListener {
-                                override fun onClick(dialog: DialogInterface?, which: Int) {
-                                    finish()
-                                }
-                            })
-                            .setOnDismissListener(object : DialogInterface.OnDismissListener {
-                                override fun onDismiss(dialog: DialogInterface?) {
-                                    finish()
-                                }
-                            })
-                            .show()
+        firebaseFacade.requestFriend(viewModel._requestUser) {
+            AlertDialog.Builder(this)
+                .setMessage("友だち申請しました")
+                .setPositiveButton("OK", object : DialogInterface.OnClickListener {
+                    override fun onClick(dialog: DialogInterface?, which: Int) {
+                        finish()
                     }
-                }
-            }
+                })
+                .setOnDismissListener(object : DialogInterface.OnDismissListener {
+                    override fun onDismiss(dialog: DialogInterface?) {
+                        finish()
+                    }
+                })
+                .show()
         }
-
     }
 
     companion object {

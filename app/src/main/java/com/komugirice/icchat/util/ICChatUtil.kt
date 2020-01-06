@@ -123,7 +123,7 @@ object ICChatUtil {
     fun TextView.setRequesterName(request: Request) {
         if(request == null) return
         // リクエスト名を設定する
-        val requester = UserManager.allUsers.filter{ it.userId.equals(request.requestId)}.first()
+        val requester = UserManager.allUsers.filter{ it.userId.equals(request.requesterId)}.first()
         this.text = requester.name
     }
 

@@ -65,9 +65,10 @@ class FireStorageUtil {
          * @param onSuccess
          *
          */
-        fun deleteGroupIconImage(roomId: String, onSuccess: (Task<Void>) -> Unit) {
+        fun deleteGroupIconImage(roomId: String, onSuccess: () -> Unit) {
             val url = "${ROOM_PATH}/${roomId}/${ROOM_ICON_PATH}"
             FirebaseStorage.getInstance().getReference(url).list(1)
+                // 画像が未登録の場合、入らない
                 .addOnCompleteListener {
                     if (it.isSuccessful) {
                         it.result?.items?.firstOrNull()?.downloadUrl.apply {
@@ -78,7 +79,6 @@ class FireStorageUtil {
                                     .addOnCompleteListener {
                                         if (it.isSuccessful) {
                                             Timber.d("グループアイコン削除: ${this?.result.toString()}")
-                                            onSuccess.invoke(it)
                                         } else {
                                             Timber.d(it.exception)
                                             Timber.d(this?.result.toString())
@@ -93,6 +93,8 @@ class FireStorageUtil {
                         Timber.d("deleteGroupIconImage get Failed")
                     }
                 }
+            // 画像が未登録の場合の不具合対応
+            onSuccess.invoke()
         }
     }
 }

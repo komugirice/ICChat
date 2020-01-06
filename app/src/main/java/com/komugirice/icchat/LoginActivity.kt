@@ -32,6 +32,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.komugirice.icchat.extension.afterTextChanged
 import com.komugirice.icchat.extension.loggingSize
+import com.komugirice.icchat.firestore.firebaseFacade
 import com.komugirice.icchat.firestore.manager.RequestManager
 import com.komugirice.icchat.firestore.manager.RoomManager
 import com.komugirice.icchat.firestore.manager.UserManager
@@ -303,7 +304,7 @@ class LoginActivity : BaseActivity() {
         // TODO : initiate successful logged in experience
 
         // UserManager初期設定
-        initManager() {
+        firebaseFacade.initManager() {
             val displayName = UserManager.myUser.name
 
             Toast.makeText(
@@ -352,7 +353,6 @@ class LoginActivity : BaseActivity() {
             FirebaseAuth.getInstance().signOut()
             LoginManager.getInstance().logOut()
             activity.apply {
-                clearManager()
                 finishAffinity()
                 activity.startActivity(Intent(activity, LoginActivity::class.java))
             }

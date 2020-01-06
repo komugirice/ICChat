@@ -6,56 +6,37 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
-import android.opengl.Visibility
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.CheckBox
 import android.widget.Toast
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.net.toUri
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import com.example.qiitaapplication.extension.getDateToString
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.tasks.Task
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.UploadTask
-import com.komugirice.icchat.databinding.ActivityCreateUserBinding
 import com.komugirice.icchat.databinding.ActivityGroupSettingBinding
 import com.komugirice.icchat.enum.ActivityEnum
 import com.komugirice.icchat.enum.RequestStatus
 import com.komugirice.icchat.extension.afterTextChanged
 import com.komugirice.icchat.extension.setRoundedImageView
+import com.komugirice.icchat.firestore.firebaseFacade
 import com.komugirice.icchat.firestore.manager.RequestManager
-import com.komugirice.icchat.firestore.manager.RoomManager
 import com.komugirice.icchat.firestore.manager.UserManager
 import com.komugirice.icchat.firestore.model.GroupRequests
 import com.komugirice.icchat.firestore.model.Request
 import com.komugirice.icchat.firestore.model.Room
-import com.komugirice.icchat.firestore.store.RequestStore
-import com.komugirice.icchat.firestore.store.RoomStore
-import com.komugirice.icchat.firestore.store.UserStore
-import com.komugirice.icchat.ui.createUser.CreateUserViewModel
 import com.komugirice.icchat.ui.groupSetting.GroupSettingViewModel
 import com.komugirice.icchat.util.FireStorageUtil
 import com.makeramen.roundedimageview.RoundedDrawable
 import com.makeramen.roundedimageview.RoundedImageView
 import com.yalantis.ucrop.UCrop
-import kotlinx.android.synthetic.main.activity_chat.*
-import kotlinx.android.synthetic.main.activity_create_user.*
 import kotlinx.android.synthetic.main.activity_group_setting.*
-import kotlinx.android.synthetic.main.activity_group_setting.backImageView
-import kotlinx.android.synthetic.main.activity_group_setting.container
-import kotlinx.android.synthetic.main.activity_group_setting.saveButton
-import kotlinx.android.synthetic.main.activity_login.*
-import kotlinx.android.synthetic.main.activity_profile_setting.*
 import timber.log.Timber
 import java.io.ByteArrayOutputStream
 import java.io.File
-import java.security.acl.Group
 import java.util.*
 
 class GroupSettingActivity : BaseActivity() {
@@ -342,14 +323,14 @@ class GroupSettingActivity : BaseActivity() {
      */
     private fun upload(room: Room, onSuccess: (UploadTask.TaskSnapshot) -> Unit) {
 
-
         val imageUrl = "${System.currentTimeMillis()}.jpg"
         val ref = FirebaseStorage.getInstance().reference.child("${FireStorageUtil.ROOM_PATH}/${room.documentId}/${FireStorageUtil.ROOM_ICON_PATH}/${imageUrl}")
 
         // RoundedImageViewの不具合修正
         val bitmap = when (groupIconImageView) {
             is RoundedImageView -> (groupIconImageView.drawable as RoundedDrawable).toBitmap()
-            else -> (groupIconImageView.drawable as BitmapDrawable).bitmap
+            is AppCompatImageView -> (groupIconImageView.drawable as BitmapDrawable).bitmap
+            else -> return  // 画像未設定なので終了
         }
         val baos = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos)
@@ -403,7 +384,7 @@ class GroupSettingActivity : BaseActivity() {
             viewModel._requestUser.forEach {
                 tmpRequests.add(Request().apply{
                     documentId = it.userId
-                    requestId = UserManager.myUserId
+                    requesterId = UserManager.myUserId
                     beRequestedId = it.userId
                     status = RequestStatus.REQUEST.id
                 })
@@ -417,8 +398,8 @@ class GroupSettingActivity : BaseActivity() {
             // 更新
             this.room.name = groupNameEditText.text.toString()
 
-            var currentRequestIdList = this.groupRequests?.requests?.map{it.beRequestedId}
-            var requestIdList = mutableListOf<String>()
+            var currentrequesterIdList = this.groupRequests?.requests?.map{it.beRequestedId}
+            var requesterIdList = mutableListOf<String>()
             var userIdList = mutableListOf<String>().apply {
                 add(UserManager.myUserId)
             }
@@ -429,12 +410,12 @@ class GroupSettingActivity : BaseActivity() {
                 if(this.room.userIdList.contains(it)) {
                     // 前：userIdListにいる 後：チェック有り
                     userIdList.add(it)
-                } else if(currentRequestIdList?.contains(it) ?: false){
-                    // 前：userIdListにいない、requestIdListにいる 後：チェック有り
-                    requestIdList.add(it)
+                } else if(currentrequesterIdList?.contains(it) ?: false){
+                    // 前：userIdListにいない、requesterIdListにいる 後：チェック有り
+                    requesterIdList.add(it)
                 } else {
-                    // 前：userIdListにいない、requestIdListにいない 後：チェック有り
-                    requestIdList.add(it)
+                    // 前：userIdListにいない、requesterIdListにいない 後：チェック有り
+                    requesterIdList.add(it)
                 }
             }
 
@@ -443,10 +424,10 @@ class GroupSettingActivity : BaseActivity() {
             this.room.isGroup = true    // 一応
             tmpRoom = this.room
 
-            // 作成したrequestIdListからtmpRequests作成
-            if(requestIdList.isNotEmpty()) {
+            // 作成したrequesterIdListからtmpRequests作成
+            if(requesterIdList.isNotEmpty()) {
                 val tmpRequests = mutableListOf<Request>()
-                requestIdList.forEach { targetId ->
+                requesterIdList.forEach { targetId ->
                     val request = groupRequests?.requests?.filter{it.beRequestedId == targetId}?.firstOrNull()
                     // 既に有り→有り
                     if(request != null){
@@ -457,7 +438,7 @@ class GroupSettingActivity : BaseActivity() {
                         tmpRequests.add(
                             Request().apply{
                                 documentId = targetId
-                                requestId = UserManager.myUserId
+                                requesterId = UserManager.myUserId
                                 beRequestedId = targetId
                                 status = RequestStatus.REQUEST.id
                             }
@@ -474,43 +455,29 @@ class GroupSettingActivity : BaseActivity() {
             }
 
             // 削除リクエストリスト作成
-            deleteRequest = currentRequestIdList?.toMutableList() ?: mutableListOf()
+            deleteRequest = currentrequesterIdList?.toMutableList() ?: mutableListOf()
             deleteRequest?.removeAll(viewModel._requestUser.map{it.userId})
 
         }
-        // Room登録
-        RoomStore.registerGroupRoom(tmpRoom) {
-            if(it.isSuccessful) {
-                //Request登録
-                RequestStore.registerGroupRequest(tmpGroupRequest){
-                    // チェックを外したRequest削除
-                    RequestStore.deleteGroupRequest(tmpRoom.documentId, deleteRequest){
-                        if(deleteImageFlg == true) {
-                            // 前画像削除
-                            if (prevSettingUri.isNotEmpty())
-                                FirebaseStorage.getInstance().getReferenceFromUrl(prevSettingUri).delete()
-                        } else {
-                            // 画像登録
-                            upload(tmpRoom) {
-                            }
-                        }
-                        // RoomManager更新
-                        RoomManager.initRoomManager {
-                            // RequestManager更新
-                            RequestManager.initMyGroupsRequests {
-                                Toast.makeText(this, "グループを登録しました", Toast.LENGTH_SHORT).show()
-                                Timber.tag(TAG)
-                                Timber.d("グループ登録成功：${tmpRoom.documentId}")
-                                setResult(Activity.RESULT_OK, intent)
-                                // 画面終了
-                                finish()
-                            }
-                        }
-                    }
-                }
+        val onFailed = {Toast.makeText(this, "グループ登録に失敗しました", Toast.LENGTH_SHORT).show()}
+        // グループ登録
+        firebaseFacade.registerGroupRoom(tmpRoom, tmpGroupRequest, deleteRequest, onFailed){
+            // 画像削除／登録
+            if(deleteImageFlg == true) {
+                // 前画像削除
+                if (prevSettingUri.isNotEmpty())
+                    FirebaseStorage.getInstance().getReferenceFromUrl(prevSettingUri).delete()
             } else {
-                Toast.makeText(this, "グループ登録に失敗しました", Toast.LENGTH_SHORT).show()
+                // 画像登録
+                upload(tmpRoom) {
+                }
             }
+            Toast.makeText(this, "グループを登録しました", Toast.LENGTH_SHORT).show()
+            Timber.tag(TAG)
+            Timber.d("グループ登録成功：${tmpRoom.documentId}")
+            setResult(Activity.RESULT_OK, intent)
+            // 画面終了
+            finish()
         }
 
     }

@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.DialogInterface
 import android.widget.Toast
 import com.komugirice.icchat.R
+import com.komugirice.icchat.firestore.firebaseFacade
 import com.komugirice.icchat.firestore.manager.RequestManager
 import com.komugirice.icchat.firestore.manager.RoomManager
 import com.komugirice.icchat.firestore.manager.UserManager
@@ -29,28 +30,23 @@ class DialogUtil {
                 .setMessage("友だち申請を承認しますか？")
                 .setPositiveButton("承認", object : DialogInterface.OnClickListener {
                     override fun onClick(dialog: DialogInterface?, which: Int) {
-                        UserStore.addFriend(context, request.requestId) {
-                            RequestStore.acceptUserRequest(
-                                request.requestId
-                            ) {
-                                RoomManager.initRoomManager {
-                                    RequestManager.initUsersRequestToMe {
-                                        Toast.makeText(
-                                            context,
-                                            "承認しました",
-                                            Toast.LENGTH_LONG
-                                        ).show()
-                                        onSuccess.invoke()
-                                    }
-                                }
-                            }
 
+                        firebaseFacade.addFriend(request.requesterId,
+                            { Toast.makeText(context, "既に登録済みです。", Toast.LENGTH_LONG).show()}
+                        ) {
+                            Toast.makeText(
+                                context,
+                                "承認しました",
+                                Toast.LENGTH_LONG
+                            ).show()
+                            onSuccess.invoke()
                         }
+
                     }
                 })
                 .setNegativeButton("拒否", object : DialogInterface.OnClickListener {
                     override fun onClick(dialog: DialogInterface?, which: Int) {
-                        RequestStore.denyUserRequest(request.requestId) {
+                        RequestStore.denyUserRequest(request.requesterId) {
                             RequestManager.initUsersRequestToMe {
                                 Toast.makeText(
                                     context,
@@ -80,15 +76,14 @@ class DialogUtil {
                 .setMessage("友だち申請の拒否を取り消しますか？")
                 .setPositiveButton("OK", object: DialogInterface.OnClickListener {
                     override fun onClick(dialog: DialogInterface?, which: Int) {
-                        RequestStore.cancelDenyUserRequest(request.requestId){
-                            RequestManager.initUsersRequestToMe {
-                                Toast.makeText(
-                                    context,
-                                    "拒否を取り消しました",
-                                    Toast.LENGTH_LONG
-                                ).show()
-                                onSuccess.invoke()
-                            }
+                        // 友だち申請の拒否をキャンセル
+                        firebaseFacade.cancelDenyUserRequest(request.requesterId){
+                            Toast.makeText(
+                                context,
+                                "拒否を取り消しました",
+                                Toast.LENGTH_LONG
+                            ).show()
+                            onSuccess.invoke()
                         }
                     }
                 })
@@ -102,20 +97,14 @@ class DialogUtil {
                 .setPositiveButton("OK", object: DialogInterface.OnClickListener {
                     override fun onClick(dialog: DialogInterface?, which: Int) {
                         val friendId = room.userIdList.filter{!it.equals(UserManager.myUserId)}.first()
-                        // User削除
-                        UserStore.delFriend(friendId) {
-                            // Room削除
-                            RoomStore.deleteRoom(room.documentId){
-                                RoomManager.initRoomManager {
-                                    Toast.makeText(
-                                        context,
-                                        context.getString(R.string.success_user_delete),
-                                        Toast.LENGTH_LONG
-                                    ).show()
-                                    onSuccess.invoke()
-                                }
-
-                            }
+                        // 友だちを解除
+                        firebaseFacade.deleteFriend(friendId, room.documentId) {
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.success_user_delete),
+                                Toast.LENGTH_LONG
+                            ).show()
+                            onSuccess.invoke()
                         }
                     }
                 })
@@ -157,6 +146,7 @@ class DialogUtil {
                                     "拒否しました",
                                     Toast.LENGTH_LONG
                                 ).show()
+                                onSuccess.invoke()
                             }
                         }
                     }
@@ -173,15 +163,13 @@ class DialogUtil {
                 .setMessage("グループの拒否を取り消しますか？")
                 .setPositiveButton("OK", object: DialogInterface.OnClickListener {
                     override fun onClick(dialog: DialogInterface?, which: Int) {
-                        RequestStore.cancelDenyGroupRequest(room.documentId, UserManager.myUserId){
-                            RequestManager.initGroupsRequestToMe {
-                                Toast.makeText(
-                                    context,
-                                    "拒否を取り消しました",
-                                    Toast.LENGTH_LONG
-                                ).show()
-                                onSuccess.invoke()
-                            }
+                        firebaseFacade.cancelDenyGroupRequest(room.documentId, UserManager.myUserId){
+                            Toast.makeText(
+                                context,
+                                "拒否を取り消しました",
+                                Toast.LENGTH_LONG
+                            ).show()
+                            onSuccess.invoke()
                         }
                     }
                 })
@@ -194,15 +182,13 @@ class DialogUtil {
                 .setMessage(context.getString(R.string.confirm_group_delete))
                 .setPositiveButton("OK", object: DialogInterface.OnClickListener {
                     override fun onClick(dialog: DialogInterface?, which: Int) {
-                        RoomStore.deleteRoom(room.documentId) {
-                            FireStorageUtil.deleteGroupIconImage(room.documentId) {
-                                Toast.makeText(
-                                    context,
-                                    context.getString(R.string.success_group_delete),
-                                    Toast.LENGTH_LONG
-                                ).show()
-                                onSuccess.invoke()
-                            }
+                        firebaseFacade.deleteRoom(room.documentId) {
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.success_group_delete),
+                                Toast.LENGTH_LONG
+                            ).show()
+                            onSuccess.invoke()
                         }
                     }
                 })
@@ -217,7 +203,7 @@ class DialogUtil {
                 .setPositiveButton("OK", object: DialogInterface.OnClickListener {
                     override fun onClick(dialog: DialogInterface?, which: Int) {
 
-                        RoomStore.removeGroupMember(room, UserManager.myUserId) {
+                        firebaseFacade.removeGroupMember(room, UserManager.myUserId) {
                             // グループを退会しました
                             AlertDialog.Builder(context)
                                 .setMessage(context.getString(R.string.success_group_withdraw))

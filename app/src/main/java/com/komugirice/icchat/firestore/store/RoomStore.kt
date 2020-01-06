@@ -86,7 +86,7 @@ class RoomStore {
          * @param onSuccess
          *
          */
-        fun registerSingleRoom(targetUserId: String, onSuccess: (Task<Void>) -> Unit){
+        fun registerSingleRoom(targetUserId: String, onFailed: () -> Unit, onSuccess: (Task<Void>) -> Unit){
             val loginUserId = UserManager.myUserId
             val サシリスト = mutableListOf(loginUserId, targetUserId)
 
@@ -97,8 +97,7 @@ class RoomStore {
                         && it.userIdList.toList().containsAll(サシリスト)) {
                         // 重複
                         Timber.d("registerSingleRoom 重複エラー ${Gson().toJson(it.userIdList)}")
-                        // TODO 今のところ重複の場合のエラーメッセージ表示方法がない
-                        return@getLoginUserRooms
+                        onFailed.invoke()
                     }
                 }
                 // 重複しない場合、新規登録

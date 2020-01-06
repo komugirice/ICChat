@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
+import com.komugirice.icchat.firestore.firebaseFacade
 import com.komugirice.icchat.firestore.manager.UserManager
 import com.komugirice.icchat.firestore.model.Room
 import com.komugirice.icchat.firestore.model.User
@@ -62,7 +63,7 @@ class DebugFragment : Fragment() {
         buttonAddDebugFriend.setOnClickListener {
             val friendId: String = SpinnerAddUsers.selectedItem.toString()
             var rooms: MutableList<Room> = mutableListOf()
-            UserStore.addFriend(context, friendId){
+            firebaseFacade.addFriend(friendId,{}){
                 Toast.makeText(
                     context,
                     "友だち登録が完了しました。",

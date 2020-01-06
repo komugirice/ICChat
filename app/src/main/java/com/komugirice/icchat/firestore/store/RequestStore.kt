@@ -108,7 +108,7 @@ class RequestStore {
         fun requestFriend(userId: String, onSuccess: () -> Unit) {
             val request = Request().apply {
                 documentId = userId
-                requestId = UserManager.myUserId
+                requesterId = UserManager.myUserId
                 beRequestedId = userId
                 status = RequestStatus.REQUEST.id
                 createdAt = Date()
@@ -231,15 +231,11 @@ class RequestStore {
                 }
         }
 
-        fun deleteUsersRequest(requesterId: String, beRequestedId: String, onComplete: () -> Unit) {
+        fun deleteUsersRequest(requesterId: String, beRequestedId: String) {
             FirebaseFirestore.getInstance()
                 .collection("users/${requesterId}/requests")
                 .document(beRequestedId)
                 .delete()
-                // データがなければ失敗する可能性もある
-                .addOnCompleteListener {
-                    onComplete.invoke()
-                }
         }
     }
 }

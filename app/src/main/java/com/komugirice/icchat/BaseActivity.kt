@@ -25,24 +25,4 @@ abstract class BaseActivity : AppCompatActivity() {
         )
     }
 
-    protected fun initManager(onSuccess: () -> Unit) {
-
-        UserManager.initUserManager() {
-
-            RoomManager.initRoomManager() {
-
-                RequestManager.initRequestManager() {
-
-                    onSuccess.invoke()
-
-                }
-            }
-        }
-    }
-
-    fun clearManager() {
-        UserManager.clear()
-        RoomManager.clear()
-        RequestManager.clear()
-    }
 }

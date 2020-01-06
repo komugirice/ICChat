@@ -54,13 +54,9 @@ class UserStore {
          * 追加していない友だちしか呼び出せない設計
          *
          */
-        fun addFriend(context: Context?, friendId: String, onSuccess: (Task<Void>) -> Unit) {
+        fun addFriend(friendId: String, onFailed: () -> Unit, onSuccess: (Task<Void>) -> Unit) {
             if(UserManager.myUser.friendIdList.contains(friendId)) {
-                Toast.makeText(
-                    context,
-                    "既に登録済みです。",
-                    Toast.LENGTH_LONG
-                ).show()
+                onFailed.invoke()
                 return
             }
 
@@ -90,10 +86,7 @@ class UserStore {
                         .addOnCompleteListener {
 
                             if (it.isSuccessful) {
-                                // Room登録
-                                RoomStore.registerSingleRoom(friend.userId){
-                                    onSuccess.invoke(it)
-                                }
+                                onSuccess.invoke(it)
                             }
                         }
                 }
