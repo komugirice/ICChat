@@ -71,18 +71,16 @@ class SearchUserActivity : BaseActivity() {
     }
     fun initEditText() {
         // 検索キーワード
-        this@SearchUserActivity.searchEditText.apply{
+        binding.searchEditText.apply{
             // フォーカスアウト
             this.setOnFocusChangeListener { v, hasFocus ->
                 if(!hasFocus && v is EditText) {
-                    val inputText = v.text.toString()
                     search()
                 }
             }
             // キーボードEnter
             this.setOnEditorActionListener { v, actionId, event ->
                 if (actionId == EditorInfo.IME_ACTION_DONE && v is EditText) {
-                    val inputText = v.text.toString()
                     search()
                     true
                 }
