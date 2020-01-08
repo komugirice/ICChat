@@ -1,5 +1,6 @@
 package com.komugirice.icchat.firebase.fcm
 
+import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import com.squareup.okhttp.ResponseBody
 import retrofit2.*
@@ -25,18 +26,18 @@ object FcmApi {
             "Content-Type:application/json"
         )
         @POST("fcm/send")
-        fun sendNotification(@Body requestNotificaton: RequestNotificaton): Call<ResponseBody?>?
+        fun sendNotification(@Body requestNotificaton: RequestData): Call<ResponseBody?>?
     }
 
-    class RequestNotificaton {
+    class RequestData {
         @SerializedName("token") //  "to" changed to token
         var token: String? = null
-        @SerializedName("notification")
-        var sendNotificationModel: FcmRequest? = null
+        @SerializedName("data")
+        var sendDataModel: FcmRequest? = null
 
         constructor(token: String?, request: FcmRequest?){
             this.token = token
-            this.sendNotificationModel = request
+            this.sendDataModel = request
         }
 
     }
@@ -46,12 +47,14 @@ object FcmApi {
             this.message = message ?: ""
             this.type = type
         }
-        val requestNotification = RequestNotificaton(token, fcmRequest)
+        val requestNotification = RequestData(token, fcmRequest)
         requestNotification.token = token
         val responseBodyCall = fcmIF.sendNotification(requestNotification)
         responseBodyCall?.enqueue(object: Callback<ResponseBody?>{
             override fun onResponse(call: Call<ResponseBody?>, response: Response<ResponseBody?>) {
-                Timber.e("FCMメッセージ送信成功")
+                Timber.d("FCMメッセージ送信成功")
+                Timber.d(response.message())
+                Timber.d(response.code().toString())
             }
 
             override fun onFailure(call: Call<ResponseBody?>, t: Throwable) {
