@@ -1,4 +1,4 @@
-package com.komugirice.icchat.firestore.store
+package com.komugirice.icchat.firebase.firestore.store
 
 import android.content.Context
 import android.widget.Toast
@@ -7,10 +7,8 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
-import com.komugirice.icchat.firestore.manager.RequestManager
-import com.komugirice.icchat.firestore.manager.RoomManager
-import com.komugirice.icchat.firestore.model.User
-import com.komugirice.icchat.firestore.manager.UserManager
+import com.komugirice.icchat.firebase.firestore.model.User
+import com.komugirice.icchat.firebase.firestore.manager.UserManager
 
 class UserStore {
     companion object {
@@ -239,6 +237,23 @@ class UserStore {
                     } else {
                         onFailuer.invoke()
                     }
+                }
+        }
+
+        /**
+         * FCMトークンの更新
+         *
+         * @param token
+         * @param onSuccess
+         *
+         */
+        fun updateFcmToken(token: String?, onSuccess: () -> Unit) {
+            FirebaseFirestore.getInstance()
+                .collection("users")
+                .document(UserManager.myUser.userId)
+                .update("fcmToken", token)
+                .addOnSuccessListener {
+                    onSuccess.invoke()
                 }
         }
 

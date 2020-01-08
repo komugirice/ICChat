@@ -4,7 +4,7 @@ import android.content.Intent
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.komugirice.icchat.GroupInfoActivity
-import com.komugirice.icchat.firestore.model.Room
+import com.komugirice.icchat.firebase.firestore.model.Room
 
 class GroupInfoViewModel  : ViewModel() {
     val room = MutableLiveData<Room>()

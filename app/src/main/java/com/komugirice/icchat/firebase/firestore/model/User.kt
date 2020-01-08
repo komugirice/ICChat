@@ -1,6 +1,5 @@
-package com.komugirice.icchat.firestore.model
+package com.komugirice.icchat.firebase.firestore.model
 
-import com.google.firebase.auth.FirebaseAuth
 import java.io.Serializable
 import java.util.*
 
@@ -12,4 +11,5 @@ class User: Serializable {
     var createdAt: Date = Date()
     var uids = mutableListOf<String>()
     var friendIdList = mutableListOf<String>()
+    var fcmToken: String? = null
 }

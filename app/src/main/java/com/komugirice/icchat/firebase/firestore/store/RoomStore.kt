@@ -1,15 +1,11 @@
-package com.komugirice.icchat.firestore.store
+package com.komugirice.icchat.firebase.firestore.store
 
-import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.tasks.Task
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.QuerySnapshot
-import com.google.firebase.firestore.proto.MutationQueueOrBuilder
 import com.google.gson.Gson
-import com.komugirice.icchat.firestore.model.Room
-import com.komugirice.icchat.firestore.model.User
-import com.komugirice.icchat.firestore.manager.UserManager
+import com.komugirice.icchat.firebase.firestore.model.Room
+import com.komugirice.icchat.firebase.firestore.model.User
+import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import timber.log.Timber
 import java.util.*
 

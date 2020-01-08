@@ -8,7 +8,6 @@ import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -38,9 +37,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.komugirice.icchat.databinding.FriendRequestedCellBinding
 import com.komugirice.icchat.extension.setRoundedImageView
-import com.komugirice.icchat.firestore.manager.UserManager
-import com.komugirice.icchat.firestore.model.Request
-import com.komugirice.icchat.firestore.store.UserStore
+import com.komugirice.icchat.firebase.firestore.manager.UserManager
+import com.komugirice.icchat.firebase.firestore.model.Request
+import com.komugirice.icchat.firebase.firestore.store.UserStore
 import com.komugirice.icchat.util.FireStorageUtil
 import com.komugirice.icchat.viewModel.ProfileSettingViewModel
 import com.makeramen.roundedimageview.RoundedDrawable

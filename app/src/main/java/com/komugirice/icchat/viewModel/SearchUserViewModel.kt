@@ -3,7 +3,7 @@ package com.komugirice.icchat.viewModel
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.komugirice.icchat.firestore.model.User
+import com.komugirice.icchat.firebase.firestore.model.User
 
 class SearchUserViewModel  : ViewModel() {
 
