@@ -30,7 +30,7 @@ object FcmApi {
     }
 
     class RequestData {
-        @SerializedName("token") //  "to" changed to token
+        @SerializedName("to") //  "to" changed to token
         var token: String? = null
         @SerializedName("data")
         var sendDataModel: FcmRequest? = null
