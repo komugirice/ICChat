@@ -133,7 +133,7 @@ class DialogUtil {
                 .setPositiveButton(R.string.accept, object : DialogInterface.OnClickListener {
                     override fun onClick(dialog: DialogInterface?, which: Int) {
                         // 招待されているグループを承認する
-                        firebaseFacade.acceptGroup(context, room) {
+                        firebaseFacade.acceptGroup(room) {
 
                              Toast.makeText(
                                  context,
@@ -232,7 +232,7 @@ class DialogUtil {
                 .setPositiveButton(R.string.ok, object: DialogInterface.OnClickListener {
                     override fun onClick(dialog: DialogInterface?, which: Int) {
 
-                        firebaseFacade.withdrawGroupMember(context, room, UserManager.myUserId) {
+                        firebaseFacade.withdrawGroupMember(room, UserManager.myUserId) {
                             // グループを退会しました
                             AlertDialog.Builder(context)
                                 .setMessage(context.getString(R.string.success_group_withdraw))

@@ -2,6 +2,7 @@ package com.komugirice.icchat.firebase
 
 import android.content.Context
 import android.widget.Toast
+import com.komugirice.icchat.ICChatApplication.Companion.applicationContext
 import com.komugirice.icchat.R
 import com.komugirice.icchat.enum.MessageType
 import com.komugirice.icchat.firebase.fcm.FcmStore
@@ -238,11 +239,11 @@ object firebaseFacade {
      * @param onSuccess
      *
      */
-    fun withdrawGroupMember(context: Context, room: Room, userId: String, onSuccess: () -> Unit) {
+    fun withdrawGroupMember(room: Room, userId: String, onSuccess: () -> Unit) {
         RoomStore.removeGroupMember(room, userId) {
             // Messageに「〜さんが退会しました。」を登録
             MessageStore.registerMessage(room.documentId, UserManager.myUserId,
-                context.getString(R.string.message_group_withdraw, UserManager.myUser.name),
+                applicationContext.getString(R.string.message_group_withdraw, UserManager.myUser.name),
                 MessageType.SYSTEM.id) {
 
                 RoomManager.initRoomManager {
@@ -270,7 +271,7 @@ object firebaseFacade {
      *
      *
      */
-    fun acceptGroup(context: Context, room: Room, onSuccess: () -> Unit) {
+    fun acceptGroup(room: Room, onSuccess: () -> Unit) {
         // Room更新
         RoomStore.acceptGroupMember(room, UserManager.myUserId) {
             // Request更新
@@ -280,7 +281,7 @@ object firebaseFacade {
             ) {
                 // Messageに「〜さんが参加しました。」を登録
                 MessageStore.registerMessage(room.documentId, UserManager.myUserId,
-                    context.getString(R.string.message_group_accept, UserManager.myUser.name),
+                    applicationContext.getString(R.string.message_group_accept, UserManager.myUser.name),
                     MessageType.SYSTEM.id){
 
                     RoomManager.initRoomManager {

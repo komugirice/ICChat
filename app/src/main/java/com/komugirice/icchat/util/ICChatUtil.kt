@@ -1,6 +1,5 @@
 package com.komugirice.icchat.util
 
-import com.komugirice.icchat.R
 import android.text.Html
 import android.widget.ImageView
 import android.widget.TextView
@@ -9,6 +8,7 @@ import com.example.qiitaapplication.extension.HHmmToString
 import com.example.qiitaapplication.extension.compareDate
 import com.example.qiitaapplication.extension.yyyyMMddHHmmToString
 import com.google.gson.Gson
+import com.komugirice.icchat.R
 import com.komugirice.icchat.extension.setRoundedImageView
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.firebase.firestore.model.Request
