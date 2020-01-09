@@ -84,6 +84,7 @@
     <string name="inputMessageHint">メッセージを入力</string>
     <string name="confirm_group_withdraw">グループを退会しますか？</string>
     <string name="success_group_withdraw">グループを退会しました</string>
+    <string name="unknown">unknown</string>
 
     <!-- ProfileSettingActivity -->
     <string name="title_profile_setting">プロフィール設定</string>

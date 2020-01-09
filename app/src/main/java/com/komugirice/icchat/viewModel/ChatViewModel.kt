@@ -13,9 +13,7 @@ import com.komugirice.icchat.ChatActivity
 import com.komugirice.icchat.firebase.firestore.manager.RoomManager
 import com.komugirice.icchat.firebase.firestore.model.Message
 import com.komugirice.icchat.firebase.firestore.model.Room
-import com.komugirice.icchat.firebase.firestore.model.User
 import com.komugirice.icchat.firebase.firestore.store.MessageStore
-import com.komugirice.icchat.firebase.firestore.store.RoomStore
 import timber.log.Timber
 import java.util.*
 

@@ -78,7 +78,8 @@ object ICChatUtil {
      */
     @JvmStatic
     @BindingAdapter("userIconImageUrl")
-    fun ImageView.loadUserIconImage(userId: String) {
+    fun ImageView.loadUserIconImage(userId: String?) {
+        if(userId == null) return
         FireStorageUtil.getUserIconImage(userId) {
             this.setRoundedImageView(it)
         }
