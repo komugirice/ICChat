@@ -1,4 +1,15 @@
 <resources>
+    <!-- 共通 -->
+    <string name="close_button">閉じる</string>
+    <string name="save_button">保存</string>
+    <string name="create_button">登録</string>
+    <string name="buttonRefresh">更新</string>
+    <string name="search_button">検索</string>
+    <string name="failed_regist">登録に失敗しました</string>
+    <string name="ok">OK</string>
+    <string name="cancel">キャンセル</string>
+    <string name="error">エラー</string>
+
     <!-- ログイン画面 -->
     <string name="app_name">ICChat</string>
     <string name="title_activity_login">ログイン</string>
@@ -17,7 +28,6 @@
     <string name="title_activity_create_user">ユーザ登録</string>
     <string name="password_label">パスワード</string>
     <string name="password_confirm_label">パスワード（確認用）</string>
-    <string name="create_button">登録</string>
     <string name="required_mark">*</string>
     <string name="invalid_userName">ユーザ名を入力して下さい</string>
     <string name="invalid_birthDay">日付を入力して下さい</string>
@@ -38,30 +48,105 @@
     <string name="tab_debug">デバッグ</string>
 
     <!-- Menu -->
-    <string name="profile_settings">プロフィール設定</string>
-    <string name="logout_settings">ログアウト</string>
+    <string name="profile_setting">プロフィール設定</string>
+    <string name="logout_setting">ログアウト</string>
+    <string name="add_friends">友だち追加</string>
+    <string name="create_group">グループ作成</string>
+    <string name="confirm_logout">ログアウトしてよろしいですか？</string>
+    <string name="chat_activity">チャット画面表示</string>
+    <string name="group_setting">グループ情報設定</string>
+    <string name="group_delete">グループ削除</string>
+    <string name="friend_delete">友だち解除</string>
+    <string name="group_withdraw">グループ退会</string>
+    <string name="user_info">ユーザ情報</string>
+    <string name="group_info">グループ情報</string>
+
+    <!-- FriendFragment -->
+    <string name="title_friend">友だち</string>
+    <string name="title_group">グループ</string>
+    <string name="title_invite_group">グループ招待</string>
+    <string name="title_deny_group">招待を拒否したグループ</string>
+    <string name="title_request_friend">友だち申請</string>
+    <string name="title_deny_friend">申請を拒否したユーザ</string>
+    <string name="confirm_group_delete">グループを削除してよろしいですか？</string>
+    <string name="confirm_user_delete">友だちを解除してよろしいですか？</string>
+    <string name="success_group_delete">グループを削除しました</string>
+    <string name="success_user_delete">友だちを解除しました</string>
 
     <!-- デバッグFragment -->
     <string name="buttonAddDebugUser">ユーザ情報登録</string>
     <string name="buttonAddDebugFriend">友だち追加</string>
     <string name="buttonDelDebugFriend">友だち削除</string>
-    <string name="buttonRefresh">更新</string>
+
 
     <!-- ChatActivity -->
     <string name="inputMessageHint">メッセージを入力</string>
+    <string name="confirm_group_withdraw">グループを退会しますか？</string>
+    <string name="success_group_withdraw">グループを退会しました</string>
 
     <!-- ProfileSettingActivity -->
     <string name="title_profile_setting">プロフィール設定</string>
-    <string name="user_name_label">名前</string>
+    <string name="user_image_label">プロフィール画像</string>
+    <string name="user_name_label">ユーザ名</string>
     <string name="email_label">メールアドレス</string>
     <string name="birthday_label">誕生日</string>
+    <string name="friend_request_label">友だち申請中リスト</string>
+    <string name="image_select_button">写真を選択する</string>
+    <string name="image_upload_button">アップロードする</string>
+    <string name="u_crop_button">写真を加工する</string>
+    <string name="image_delete_button">写真を削除する</string>
+    <string name="facebook_connect_button">Facebookと連携</string>
+    <string name="google_connect_button">Googleと連携</string>
+    <string name="alert_already_connect">既に連携済みです</string>
+    <string name="alert_no_profile_image">プロフィール画像が設定されていません</string>
 
     <!-- UserNameActivity -->
-    <string name="save_button">保存</string>
-    <string name="title_user_name">名前</string>
+    <string name="title_user_name">ユーザ名</string>
 
     <!-- Facebookログイン-->
     <string name="facebook_app_id">646620032538120</string>
     <string name="fb_login_protocol_scheme">fb646620032538120</string>
 
+    <!-- GroupSettingActivity -->
+    <string name="title_create_group">グループ作成</string>
+    <string name="group_image_label">グループ画像</string>
+    <string name="group_name_label">グループ名</string>
+    <string name="group_invite_label">グループに招待するユーザ</string>
+    <string name="invalid_groupName">グループ名を入力して下さい</string>
+    <string name="invalid_length_groupName">グループ名は20文字以内で入力して下さい</string>
+    <string name="invite_description">※1人以上選択して下さい</string>
+    <string name="failed_group_regist">グループ登録に失敗しました</string>
+    <string name="success_group_regist">グループを登録しました</string>
+
+    <!-- GroupInfoActivity -->
+    <string name="group_member_label">メンバー</string>
+    <string name="invite_user_label">招待中</string>
+
+    <!-- AddFriendActivity -->
+    <string name="read_qrcode_button">友だちのQRコードを読み取る</string>
+    <string name="display_qrcode_button">自分のQRコードを表示する</string>
+    <string name="user_search_activity_button">ユーザを検索する</string>
+
+
+    <!-- SearchUserActivity -->
+    <string name="user_search_title">ユーザ検索</string>
+    <string name="friend_request_button">友だち申請する</string>
+    <string name="invalid_search_result">該当ユーザは存在しません</string>
+    <string name="success_user_request">友だち申請しました</string>
+
+    <!-- ダイアログ関係 -->
+    <string name="confirm_add_friend">ユーザを友だち登録しますか？</string>
+    <string name="alert_success_add_friend">友だち登録が完了しました</string>
+    <string name="alert_failed_qr_read">QRコードの読み取りに失敗しました？</string>
+    <string name="already_exist">既に登録済みです。</string>
+    <string name="confirm_user_request">友だち申請を承認しますか？</string>
+    <string name="accept">承認</string>
+    <string name="deny">拒否</string>
+    <string name="alert_already_accept">既に登録済みです</string>
+    <string name="alert_accept">承認しました</string>
+    <string name="alert_deny">拒否しました</string>
+    <string name="confirm_cancel_user_deny">友だち申請の拒否を取り消しますか？</string>
+    <string name="alert_cancel_deny">拒否を取り消しました</string>
+    <string name="confirm_group_request">招待中のグループを承認しますか？</string>
+    <string name="confirm_cancel_group_deny">グループの拒否を取り消しますか？</string>
 </resources>

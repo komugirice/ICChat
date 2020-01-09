@@ -5,55 +5,101 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.FirebaseFirestore
+import com.komugirice.icchat.enum.RequestStatus
+import com.komugirice.icchat.firestore.firebaseFacade
+import com.komugirice.icchat.firestore.manager.RequestManager
+import com.komugirice.icchat.firestore.manager.RoomManager
+import com.komugirice.icchat.firestore.manager.UserManager
+import com.komugirice.icchat.firestore.model.Room
 import com.komugirice.icchat.firestore.model.User
+import com.komugirice.icchat.firestore.store.RoomStore
 import com.komugirice.icchat.util.FireStoreUtil
+import com.komugirice.icchat.view.FriendsView
 
 
 class FriendViewModel: ViewModel() {
 
-    val items = MutableLiveData<List<User>>()
+    val items = MutableLiveData<List<FriendsView.FriendsViewData>>()
     val isException = MutableLiveData<Throwable>()
+    var initFlg = false
 
-
-//    fun initData(friendList: MutableLiveData<MutableList<String>>) {
-//        updateFriends(friendList)
-//    }
     fun initData(@NonNull owner: LifecycleOwner) {
-        val friendList = MutableLiveData<MutableList<String>>()
-            FireStoreUtil.getFriends(friendList)
-            friendList.observe(owner, androidx.lifecycle.Observer {
-                updateFriends(friendList)
-            })
+        update()
     }
 
-    fun updateFriends(friendList: MutableLiveData<MutableList<String>>) {
-            var userList: MutableList<User> = mutableListOf()
+    fun update() {
+        initFlg = true
+        firebaseFacade.initManager {
+            val list = mutableListOf<FriendsView.FriendsViewData>()
 
-            // ユーザ情報取得
-            friendList.value?.also {
-                it.forEach {
-                    FirebaseFirestore.getInstance()
-                        .collection("users")
-                        .whereEqualTo("userId", it)
-                        .get()
-                        .addOnCompleteListener {
-                            // IOスレッドなので、レイアウト関係を扱えないことを注意
-                            if (!it.isSuccessful)
-                                return@addOnCompleteListener
-                            // TODO 取得は複数件しか扱えないのか
-                            it.result?.toObjects(User::class.java)?.also { users ->
-                                if(users.isNotEmpty()) {
-                                    userList.add(users[0])
-                                    items.postValue(userList)
-                                }
-                            }
-                        }
-                }
-                // 0件の場合もpostValueするように
-                if(it.isEmpty())
-                    items.postValue(userList)
-
-
+            // ①グループ
+            // グループタイトル
+            list.add(FriendsView.FriendsViewData(FriendsView.VIEW_TYPE_TITLE_GROUP))
+            // グループアイテム
+            RoomManager.myGroupRooms.forEach {
+                list.add(FriendsView.FriendsViewData(it, FriendsView.VIEW_TYPE_ITEM_GROUP))
             }
+
+            // ②友だち
+            // 友だちタイトル
+            list.add(FriendsView.FriendsViewData(FriendsView.VIEW_TYPE_TITLE_FRIEND))
+            // 友だちアイテム
+            RoomManager.mySingleRooms.forEach {
+                list.add(FriendsView.FriendsViewData(it, FriendsView.VIEW_TYPE_ITEM_FRIEND))
+            }
+
+            // ③招待されている友だち
+            val friendRequests = RequestManager.usersRequestToMe
+                .filter{it.status == RequestStatus.REQUEST.id}
+            // 招待中1件以上の場合、タイトル表示
+            if(friendRequests.size > 0)
+            // 招待されている友だちタイトル
+                list.add(FriendsView.FriendsViewData(FriendsView.VIEW_TYPE_TITLE_REQUEST_FRIEND))
+            // 招待されている友だちアイテム
+            friendRequests.forEach {req ->
+                list.add(FriendsView.FriendsViewData(req, FriendsView.VIEW_TYPE_ITEM_REQUEST_FRIEND))
+            }
+
+            // ④友だち拒否したユーザ
+            val friendDenys = RequestManager.usersRequestToMe
+                .filter{it.status == RequestStatus.DENY.id}
+            // 拒否ユーザ1件以上の場合、タイトル表示
+            if(friendDenys.size > 0)
+            // 拒否ユーザタイトル
+                list.add(FriendsView.FriendsViewData(FriendsView.VIEW_TYPE_TITLE_DENY_FRIEND))
+
+            // ⑥拒否グループアイテム
+            friendDenys.forEach {
+                list.add(FriendsView.FriendsViewData(it, FriendsView.VIEW_TYPE_ITEM_DENY_FRIEND))
+            }
+
+            // ⑤招待されているグループ
+            val groupRequests = RequestManager.groupsRequestToMe
+                .filter{it.requests.first().status == RequestStatus.REQUEST.id}
+            // 招待中1件以上の場合、タイトル表示
+            if(groupRequests.size > 0)
+                // 招待グループタイトル
+                list.add(FriendsView.FriendsViewData(FriendsView.VIEW_TYPE_TITLE_REQUEST_GROUP))
+            // 招待グループアイテム
+            groupRequests.forEach {
+                list.add(FriendsView.FriendsViewData(it.room, FriendsView.VIEW_TYPE_ITEM_REQUEST_GROUP))
+            }
+
+            // ⑥拒否したグループ
+            val groupDenys = RequestManager.groupsRequestToMe
+                .filter{it.requests.first().status == RequestStatus.DENY.id}
+            // 拒否1件以上の場合、タイトル表示
+            if(groupDenys.size > 0)
+                // 拒否グループタイトル
+                list.add(FriendsView.FriendsViewData(FriendsView.VIEW_TYPE_TITLE_DENY_GROUP))
+
+            // ⑥拒否グループアイテム
+            groupDenys.forEach {
+                list.add(FriendsView.FriendsViewData(it.room, FriendsView.VIEW_TYPE_ITEM_DENY_GROUP))
+            }
+
+            items.postValue(list)
+        }
     }
+
 }

@@ -2,10 +2,14 @@ package com.komugirice.icchat.firestore.store
 
 import android.content.Context
 import android.widget.Toast
+import com.example.qiitaapplication.extension.removeAllSpace
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
+import com.komugirice.icchat.R
+import com.komugirice.icchat.firestore.manager.RequestManager
+import com.komugirice.icchat.firestore.manager.RoomManager
 import com.komugirice.icchat.firestore.model.User
 import com.komugirice.icchat.firestore.manager.UserManager
 
@@ -51,16 +55,11 @@ class UserStore {
          * 追加していない友だちしか呼び出せない設計
          *
          */
-        fun addFriend(context: Context?, friendId: String) {
+        fun addFriend(friendId: String, onFailed: () -> Unit, onSuccess: (Task<Void>) -> Unit) {
             if(UserManager.myUser.friendIdList.contains(friendId)) {
-                Toast.makeText(
-                    context,
-                    "既に登録済みです。",
-                    Toast.LENGTH_LONG
-                ).show()
+                onFailed.invoke()
                 return
             }
-
 
             UserManager.addMyFriends(friendId)
 
@@ -70,30 +69,30 @@ class UserStore {
                 .document(UserManager.myUser.userId)
                 .update("friendIdList", UserManager.myUser.friendIdList)
 
+            // UserManager.myFriendsが更新されていない不具合対応
+            UserManager.initUserManager {
 
-            val friend = UserManager.myFriends.filter {
-                it.userId.equals(friendId)
-            }.first()
+                val friend = UserManager.myFriends.filter {
+                    it.userId.equals(friendId)
+                }.first()
 
-            if(!friend.friendIdList.contains(UserManager.myUserId)) {
-                friend.friendIdList.add(UserManager.myUserId)
+                if(!friend.friendIdList.contains(UserManager.myUserId)) {
+                    friend.friendIdList.add(UserManager.myUserId)
 
-                // 友だち側登録
-                FirebaseFirestore.getInstance()
-                    .collection("users")
-                    .document(friend.userId)
-                    .update("friendIdList", friend.friendIdList)
-                    .addOnCompleteListener {
+                    // 友だち側登録
+                    FirebaseFirestore.getInstance()
+                        .collection("users")
+                        .document(friend.userId)
+                        .update("friendIdList", friend.friendIdList)
+                        .addOnCompleteListener {
 
-                    if (it.isSuccessful) {
-                        Toast.makeText(
-                            context,
-                            "友だち追加が完了しました。",
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
+                            if (it.isSuccessful) {
+                                onSuccess.invoke(it)
+                            }
+                        }
                 }
             }
+
         }
 
         /**
@@ -113,18 +112,20 @@ class UserStore {
                 .collection("users")
                 .document(UserManager.myUser.userId)
                 .update("friendIdList", UserManager.myUser.friendIdList)
+                .addOnCompleteListener {
 
-            // フレンドユーザ側更新
-            friend.apply{
-                friend.friendIdList.remove(UserManager.myUserId)
-                FirebaseFirestore.getInstance()
-                    .collection("users")
-                    .document(friend.userId)
-                    .update("friendIdList", friend.friendIdList)
-                    .addOnCompleteListener {
-                        onComplete.invoke(it)
+                    // フレンドユーザ側更新
+                    friend.apply {
+                        friend.friendIdList.remove(UserManager.myUserId)
+                        FirebaseFirestore.getInstance()
+                            .collection("users")
+                            .document(friend.userId)
+                            .update("friendIdList", friend.friendIdList)
+                            .addOnCompleteListener {
+                                onComplete.invoke(it)
+                            }
                     }
-            }
+                }
         }
 
         /**
@@ -142,37 +143,105 @@ class UserStore {
                         onSuccess.invoke(it)
                     }
                 }
-
         }
 
         /**
          * uid追加
          *
          */
-        fun addUid(context: Context?) {
+        fun addUid(context: Context?, onSuccess: (Void) -> Unit) {
             val uid = FirebaseAuth.getInstance().currentUser?.uid.toString()
             if (UserManager.myUser.uids.contains(uid)) {
                 Toast.makeText(
                     context,
-                    "既に連携済みです。",
+                    R.string.alert_already_connect,
                     Toast.LENGTH_LONG
                 ).show()
                 return
-            } else {
-                UserManager.myUser.uids.add(uid)
             }
 
+            UserManager.myUser.uids.add(uid)
 
             // ログインユーザ側登録
             FirebaseFirestore.getInstance()
                 .collection("users")
                 .document(UserManager.myUser.userId)
                 .update("uids", UserManager.myUser.uids)
-
-            Toast.makeText(
-                context,
-                "Facebookに連携しました",
-                Toast.LENGTH_LONG).show()
+                .addOnSuccessListener {
+                    onSuccess.invoke(it)
+                }
         }
+
+        /**
+         * ターゲットユーザのUserオブジェクト取得
+         *
+         * @param userID
+         * @param onSuccess
+         *
+         */
+        fun getTargetUser(userId: String, onSuccess: (User) -> Unit) {
+            FirebaseFirestore.getInstance()
+                .collection("users")
+                .document(userId)
+                .get()
+                // エラーになることはまずない
+                .addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        it.result?.toObject(User::class.java)?.also {
+                            onSuccess.invoke(it)
+                        }
+
+                    }
+                }
+        }
+
+        fun searchNotFriendUserEmail(email: String, onFailuer:()->Unit, onSuccess: (List<User>) -> Unit) {
+            if (email.isEmpty()) return
+            FirebaseFirestore.getInstance()
+                .collection("users")
+                .get()
+                .addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        it.result?.toObjects(User::class.java)?.also {
+                            val ret = it.filter {
+                                !UserManager.myUserId.equals(it.userId) &&  // 自分は対象外
+                                        !UserManager.myUser.friendIdList.contains(it.userId) && //　friendIdListは対象外
+                                        email.removeAllSpace().equals(it.email.removeAllSpace())
+                            }
+                            if(ret.size > 0)
+                                onSuccess.invoke(ret)
+                            else
+                                onFailuer.invoke()
+                        }
+                    } else {
+                        onFailuer.invoke()
+                    }
+                }
+        }
+
+        fun searchNotFriendUserName(name: String, onFailuer:()->Unit, onSuccess: (List<User>) -> Unit) {
+            if (name.isEmpty()) return
+            FirebaseFirestore.getInstance()
+                .collection("users")
+                .get()
+                .addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        it.result?.toObjects(User::class.java)?.also {
+                            val ret = it.filter {
+                                !UserManager.myUserId.equals(it.userId) &&
+                                !UserManager.myUser.friendIdList.contains(it.userId) &&
+                                Regex(name.removeAllSpace()).containsMatchIn(it.name.removeAllSpace())
+                            }
+                            if(ret.size > 0)
+                                onSuccess.invoke(ret)
+                            else
+                                onFailuer.invoke()
+                        }
+                    } else {
+                        onFailuer.invoke()
+                    }
+                }
+        }
+
     }
 }

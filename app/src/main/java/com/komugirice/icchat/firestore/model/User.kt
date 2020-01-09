@@ -6,7 +6,8 @@ import java.util.*
 
 class User: Serializable {
     var userId: String = ""
-    var name: String =""
+    var name: String = ""
+    var email: String = ""
     var birthDay: Date? = null
     var createdAt: Date = Date()
     var uids = mutableListOf<String>()

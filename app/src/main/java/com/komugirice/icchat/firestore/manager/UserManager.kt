@@ -1,6 +1,7 @@
 package com.komugirice.icchat.firestore.manager
 
 import androidx.databinding.library.BuildConfig
+import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.FirebaseAuth
 import com.komugirice.icchat.firestore.model.User
 import com.komugirice.icchat.firestore.store.UserStore
@@ -8,6 +9,9 @@ import com.komugirice.icchat.firestore.store.UserStore
 object UserManager {
 
     var myUserId = "" // ここにSharedPreferencesから取得する
+        set(value) {
+            field = value
+        }
 
     var myUser = User()
         set(value) {
@@ -34,6 +38,10 @@ object UserManager {
         myFriends = allUsers.filter { myUser.friendIdList.contains(it.userId) }
     }
 
+    fun getMyFriend (friendId: String): User?{
+        return myFriends.filter { it.userId.equals(friendId) }.firstOrNull()
+    }
+
     fun removeMyFriends (friendId: String) {
         myUser.friendIdList.remove(friendId)
         myFriends = allUsers.filter { myUser.friendIdList.contains(it.userId) }
@@ -42,20 +50,19 @@ object UserManager {
     /**
      * UserManager初期化
      * FirebaseAuthのcurrentUserが取得出来る前提
-     * @param user: User
+     * @param onSuccess: () -> Unit
      */
-    fun initUserManager(onComplete: () -> Unit) {
+    fun initUserManager(onSuccess: () -> Unit) {
         UserStore.getLoginUser {
             it.result?.toObjects(User::class.java)?.firstOrNull().also {
                 it?.also {
                     myUserId = it.userId
                     myUser = it
-                    // TODO 非同期大丈夫？
                     UserStore.getAllUsers(){
                         it.result?.toObjects(User::class.java)?.also {
-                            UserManager.allUsers = it
+                            allUsers = it
                         }
-                        onComplete.invoke()
+                        onSuccess.invoke()
                     }
                 }
             } ?: run {
@@ -64,5 +71,12 @@ object UserManager {
             }
 
         }
+    }
+
+    fun clear() {
+        myUserId = ""
+        myUser = User()
+        allUsers = listOf<User>()
+        myFriends = listOf<User>()
     }
 }

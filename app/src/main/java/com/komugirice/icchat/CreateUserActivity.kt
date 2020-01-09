@@ -33,12 +33,37 @@ class CreateUserActivity : BaseActivity() {
     private var errorMsg = MutableLiveData<String>()
 
     var tmpYear: Int = 2000
-    var tmpMonth: Int = 1
+    var tmpMonth: Int = 0
     var tmpDayOfMonth: Int = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // bindingしてるといらない
+        //setContentView(R.layout.activity_create_user)
+
+        initBinding()
+        initViewModel()
+
+        errorMsg.observe(this, Observer{
+            showDialog("エラー", it)
+        })
+
+        initLayout()
+    }
+
+    /**
+     * MVVMのBinding
+     *
+     */
+    private fun initBinding() {
+        binding = DataBindingUtil.setContentView(this,
+            R.layout.activity_create_user
+        )
+        binding.lifecycleOwner = this
+    }
+
+    private fun initViewModel() {
         viewModel = ViewModelProviders.of(this).get(CreateUserViewModel::class.java).apply {
             this.createUserFormState.observe(this@CreateUserActivity, Observer {
                 val formState = it ?: return@Observer
@@ -65,26 +90,16 @@ class CreateUserActivity : BaseActivity() {
                     passwordConfirmEditText.error = getString(formState.passwordConfirmError)
                 }
             })
+            canSubmit.observe(this@CreateUserActivity, Observer {
+                binding.canSubmit = it
+            })
+            binding.name = this.name
+            binding.email = this.email
+            binding.birthDay = this.birthDay
+            binding.password = this.password
+            binding.passwordConfirm = this.passwordConfirm
+
         }
-
-        errorMsg.observe(this, Observer{
-            showDialog("エラー", it)
-        })
-
-        setContentView(R.layout.activity_create_user)
-        initBinding()
-        initLayout()
-    }
-
-    /**
-     * MVVMのBinding
-     *
-     */
-    private fun initBinding() {
-        binding = DataBindingUtil.setContentView(this,
-            R.layout.activity_create_user
-        )
-        binding.lifecycleOwner = this
     }
 
     /**
@@ -96,7 +111,7 @@ class CreateUserActivity : BaseActivity() {
         userNameLength.text = "${userNameEditText.length()}/20"
 
         initClick()
-        initTextChange()
+        //initTextChange()
     }
 
     /**
@@ -112,11 +127,11 @@ class CreateUserActivity : BaseActivity() {
             hideKeybord(it)
         }
 
-        calendarImageView.setOnClickListener {
+        birthDayClickView.setOnClickListener {
             showDateDialog() {
                 birthDayEditText.setText(it.getDateToString())
                 // birthDayEditText.afterTextChangedに検知されないので無理やり変える
-                birthDayEditText.error = null
+                //birthDayEditText.error = null
             }
         }
 
@@ -125,62 +140,63 @@ class CreateUserActivity : BaseActivity() {
         }
     }
 
-    private fun initTextChange() {
-        userNameEditText.afterTextChanged {
-            viewModel.createUserDataChanged(
-                userNameEditText.text.toString(),
-                emailEditText.text.toString(),
-                birthDayEditText.text.toString(),
-                passwordEditText.text.toString(),
-                passwordConfirmEditText.text.toString()
-            )
-        }
-
-        emailEditText.afterTextChanged {
-            viewModel.createUserDataChanged(
-                userNameEditText.text.toString(),
-                emailEditText.text.toString(),
-                birthDayEditText.text.toString(),
-                passwordEditText.text.toString(),
-                passwordConfirmEditText.text.toString()
-            )
-        }
-
-        birthDayEditText.afterTextChanged {
-            viewModel.createUserDataChanged(
-                userNameEditText.text.toString(),
-                emailEditText.text.toString(),
-                birthDayEditText.text.toString(),
-                passwordEditText.text.toString(),
-                passwordConfirmEditText.text.toString()
-            )
-        }
-
-        passwordEditText.afterTextChanged {
-            viewModel.createUserDataChanged(
-                userNameEditText.text.toString(),
-                emailEditText.text.toString(),
-                birthDayEditText.text.toString(),
-                passwordEditText.text.toString(),
-                passwordConfirmEditText.text.toString()
-            )
-        }
-
-        passwordConfirmEditText.afterTextChanged {
-            viewModel.createUserDataChanged(
-                userNameEditText.text.toString(),
-                emailEditText.text.toString(),
-                birthDayEditText.text.toString(),
-                passwordEditText.text.toString(),
-                passwordConfirmEditText.text.toString()
-            )
-        }
-
-        // ユーザ名の文字数表示
-        userNameEditText.afterTextChanged {
-            userNameLength.text = "${userNameEditText.length()}/20"
-        }
-    }
+    // MediatorLiveDataを使うと不要になる
+//    private fun initTextChange() {
+//        userNameEditText.afterTextChanged {
+//            viewModel.createUserDataChanged(
+//                userNameEditText.text.toString(),
+//                emailEditText.text.toString(),
+//                birthDayEditText.text.toString(),
+//                passwordEditText.text.toString(),
+//                passwordConfirmEditText.text.toString()
+//            )
+//        }
+//
+//        emailEditText.afterTextChanged {
+//            viewModel.createUserDataChanged(
+//                userNameEditText.text.toString(),
+//                emailEditText.text.toString(),
+//                birthDayEditText.text.toString(),
+//                passwordEditText.text.toString(),
+//                passwordConfirmEditText.text.toString()
+//            )
+//        }
+//
+//        birthDayEditText.afterTextChanged {
+//            viewModel.createUserDataChanged(
+//                userNameEditText.text.toString(),
+//                emailEditText.text.toString(),
+//                birthDayEditText.text.toString(),
+//                passwordEditText.text.toString(),
+//                passwordConfirmEditText.text.toString()
+//            )
+//        }
+//
+//        passwordEditText.afterTextChanged {
+//            viewModel.createUserDataChanged(
+//                userNameEditText.text.toString(),
+//                emailEditText.text.toString(),
+//                birthDayEditText.text.toString(),
+//                passwordEditText.text.toString(),
+//                passwordConfirmEditText.text.toString()
+//            )
+//        }
+//
+//        passwordConfirmEditText.afterTextChanged {
+//            viewModel.createUserDataChanged(
+//                userNameEditText.text.toString(),
+//                emailEditText.text.toString(),
+//                birthDayEditText.text.toString(),
+//                passwordEditText.text.toString(),
+//                passwordConfirmEditText.text.toString()
+//            )
+//        }
+//
+//        // ユーザ名の文字数表示
+//        userNameEditText.afterTextChanged {
+//            userNameLength.text = "${userNameEditText.length()}/20"
+//        }
+//    }
 
     private fun showDateDialog(onComplete: (Date) -> Unit) {
         val dialog = DatePickerDialog(this, object: DatePickerDialog.OnDateSetListener{
@@ -221,15 +237,16 @@ class CreateUserActivity : BaseActivity() {
                     }
                 }
             }
-
     }
 
     private fun createUserFireStore() {
         val userName = userNameEditText.text.toString().trim()
+        val email = emailEditText.text.toString().trim()
         val birthDay = birthDayEditText.text.toString().toDate()
 
         val user = User().apply {
             this.name = userName
+            this.email = email
             this.birthDay = birthDay
             this.userId = FireStoreUtil.createLoginUserId()
             this.uids.add(FirebaseAuth.getInstance().currentUser?.uid.toString())
@@ -237,7 +254,7 @@ class CreateUserActivity : BaseActivity() {
 
         UserStore.registerUser(user){
             // ユーザ登録完了画面に遷移
-                CreateUserCompleteActivity.start(this)
+            CreateUserCompleteActivity.start(this)
         }
     }
 
@@ -247,7 +264,6 @@ class CreateUserActivity : BaseActivity() {
             .setMessage(msg)
             .show();
     }
-
 
     companion object {
         fun start(activity: Activity?) =

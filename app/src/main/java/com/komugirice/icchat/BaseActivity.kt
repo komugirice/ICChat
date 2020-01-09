@@ -4,6 +4,12 @@ import android.content.Context
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
+import com.komugirice.icchat.firestore.manager.RequestManager
+import com.komugirice.icchat.firestore.manager.RoomManager
+import com.komugirice.icchat.firestore.manager.UserManager
+import com.komugirice.icchat.firestore.model.Room
 import kotlinx.android.synthetic.main.activity_chat.*
 
 abstract class BaseActivity : AppCompatActivity() {
@@ -18,4 +24,5 @@ abstract class BaseActivity : AppCompatActivity() {
             InputMethodManager.HIDE_NOT_ALWAYS
         )
     }
+
 }

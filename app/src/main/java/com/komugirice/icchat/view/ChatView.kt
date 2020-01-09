@@ -135,7 +135,7 @@ class ChatView  : RecyclerView {
         private fun onBindOtherUserViewHolder(holder: ChatMessageOtheruserCellViewHolder, position: Int) {
             val data = items[position]
             holder.binding.message = data
-            // TODO UserManagerのfriendsから取得
+            // UserManagerのfriends以外から取得する可能性がある
             holder.binding.user = usersMap[data.userId]
         }
 

@@ -1,7 +1,9 @@
 package com.komugirice.icchat
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
@@ -12,6 +14,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.fragment.app.FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT
 import androidx.viewpager.widget.ViewPager
+import com.komugirice.icchat.enum.ActivityEnum
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : BaseActivity() {
@@ -27,6 +30,16 @@ class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        initialize()
+    }
+
+    /**
+     * 各Activityから戻った時にRoomが更新されていないバグ対応
+     * かといってタブ切り替えでは更新したくない
+     *
+     */
+    override fun onRestart() {
+        super.onRestart()
         initialize()
     }
 
@@ -54,7 +67,11 @@ class MainActivity : BaseActivity() {
      */
     private fun initClick() {
         settingImageView.setOnClickListener {
-            showMenu(it)
+            showSettingMenu(it)
+        }
+
+        addFriendsImageView.setOnClickListener {
+            showAddFriendsMenu(it)
         }
     }
 
@@ -117,24 +134,60 @@ class MainActivity : BaseActivity() {
 
     /**
      * 設定アイコンのオプションメニュー
-     * @param menu: Menu
+     * @param v: View
      * @return Boolean
      *
      */
-    fun showMenu(v: View) {
+    fun showSettingMenu(v: View) {
         val popup = PopupMenu(this, v)
-        popup.inflate(R.menu.setting)
+        popup.inflate(R.menu.main_setting)
         popup.setOnMenuItemClickListener ( object: PopupMenu.OnMenuItemClickListener {
 
             override fun onMenuItemClick(item: MenuItem?): Boolean {
                 when (item?.itemId) {
-                    R.id.profile_settings -> {
+                    R.id.profile_setting -> {
                         ProfileSettingActivity.start(this@MainActivity)
                         return true
                     }
-                    R.id.logout_settings -> {
-                        // TODO 確認ダイアログ表示
-                        LoginActivity.signOut(this@MainActivity)
+                    R.id.logout_setting -> {
+                        AlertDialog.Builder(this@MainActivity)
+                            .setMessage(getString(R.string.confirm_logout))
+                            .setPositiveButton(R.string.ok, object: DialogInterface.OnClickListener {
+                                override fun onClick(dialog: DialogInterface?, which: Int) {
+                                    LoginActivity.signOut(this@MainActivity)
+                                }
+                            })
+                            .setNegativeButton(R.string.cancel, null)
+                            .show()
+                        return true
+                    }
+                    else -> return false
+
+                }
+            }
+        })
+        popup.show()
+    }
+
+    /**
+     * 友だち追加アイコンのオプションメニュー
+     * @param v: View
+     * @return Boolean
+     *
+     */
+    fun showAddFriendsMenu(v: View) {
+        val popup = PopupMenu(this, v)
+        popup.inflate(R.menu.add_friends)
+        popup.setOnMenuItemClickListener ( object: PopupMenu.OnMenuItemClickListener {
+
+            override fun onMenuItemClick(item: MenuItem?): Boolean {
+                when (item?.itemId) {
+                    R.id.addFriends -> {
+                        AddFriendActivity.start(this@MainActivity)
+                        return true
+                    }
+                    R.id.groupSetting -> {
+                        GroupSettingActivity.start(this@MainActivity)
                         return true
                     }
                     else -> return false
