@@ -175,7 +175,7 @@ class SearchUserActivity : BaseActivity() {
         firebaseFacade.requestFriend(viewModel._requestUser) {
             AlertDialog.Builder(this)
                 .setMessage("友だち申請しました")
-                .setPositiveButton("OK", object : DialogInterface.OnClickListener {
+                .setPositiveButton(R.string.ok, object : DialogInterface.OnClickListener {
                     override fun onClick(dialog: DialogInterface?, which: Int) {
                         finish()
                     }

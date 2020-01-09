@@ -120,4 +120,12 @@
     <string name="user_search_button">検索</string>
     <string name="friend_request_button">友だち申請する</string>
     <string name="invalid_search_result">該当ユーザは存在しません</string>
+
+    <!-- ダイアログ関係 -->
+    <string name="confirm_add_friend">ユーザを友だち登録しますか？</string>
+    <string name="alert_success_add_friend">友だち登録が完了しました</string>
+    <string name="alert_failed_qr_read">QRコードの読み取りに失敗しました？</string>
+    <string name="already_exist">既に登録済みです。</string>
+    <string name="ok">OK</string>
+    <string name="cancel">キャンセル</string>
 </resources>

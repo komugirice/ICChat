@@ -91,6 +91,13 @@ class DialogUtil {
                 .show()
         }
 
+        /**
+         * ユーザ削除確認ダイアログ
+         * @param context
+         * @param room
+         * @param onSuccess
+         *
+         */
         fun confirmDeleteUserDialog(context: Context, room: Room, onSuccess: () -> Unit) {
             AlertDialog.Builder(context)
                 .setMessage(context.getString(R.string.confirm_user_delete))
@@ -112,6 +119,13 @@ class DialogUtil {
                 .show()
         }
 
+        /**
+         * グループ招待の承認ダイアログ
+         * @param context
+         * @param room
+         * @param onSuccess
+         *
+         */
         fun confirmGroupRequestDialog(context: Context, room: Room, onSuccess: () -> Unit) {
             AlertDialog.Builder(context)
                 .setMessage("招待中のグループを承認しますか？")
@@ -158,6 +172,13 @@ class DialogUtil {
                 }).show()
         }
 
+        /**
+         * 拒否したグループ招待の取消確認ダイアログ
+         * @param context
+         * @param room
+         * @param onSuccess
+         *
+         */
         fun cancelGroupDenyDialog(context: Context, room: Room, onSuccess: () -> Unit) {
             AlertDialog.Builder(context)
                 .setMessage("グループの拒否を取り消しますか？")
@@ -177,6 +198,13 @@ class DialogUtil {
                 .show()
         }
 
+        /**
+         * グループ削除確認ダイアログ
+         * @param context
+         * @param room
+         * @param onSuccess
+         *
+         */
         fun confirmDeleteGroupDialog(context: Context, room: Room, onSuccess: () -> Unit) {
             AlertDialog.Builder(context)
                 .setMessage(context.getString(R.string.confirm_group_delete))
@@ -196,6 +224,13 @@ class DialogUtil {
                 .show()
         }
 
+        /**
+         * グループ退会確認ダイアログ
+         * @param context
+         * @param room
+         * @param onSuccess
+         *
+         */
         fun withdrawGroupDialog(context: Context, room: Room, onSuccess: () ->Unit) {
             AlertDialog.Builder(context)
                 .setMessage(context.getString(R.string.confirm_group_withdraw))
@@ -222,6 +257,42 @@ class DialogUtil {
                     }
                 })
                 .show()
+        }
+
+        /**
+         * 友だち追加確認ダイアログ
+         * @param context
+         * @param room
+         * @param onSuccess
+         *
+         */
+        fun addFriendDialog(context: Context, targetUserId: String) {
+            UserStore.getTargetUser(targetUserId) {
+                AlertDialog.Builder(context)
+                    .setTitle("${it.name}")
+                    .setMessage(R.string.confirm_add_friend)
+                    .setPositiveButton(R.string.ok, object : DialogInterface.OnClickListener {
+                        override fun onClick(dialog: DialogInterface?, which: Int) {
+
+                            val onFailed = {
+                                Toast.makeText(
+                                    context,
+                                    R.string.already_exist,
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
+                            // Users更新
+                            firebaseFacade.addFriend(targetUserId, onFailed) {
+                                AlertDialog.Builder(context)
+                                    .setMessage(R.string.alert_success_add_friend)
+                                    .setPositiveButton(R.string.ok, null)
+                                    .show()
+                            }
+                        }
+                    })
+                    .setNegativeButton(R.string.cancel, null)
+                    .show()
+            }
         }
 
     }

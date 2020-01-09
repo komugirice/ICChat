@@ -31,6 +31,7 @@ import com.komugirice.icchat.firestore.manager.UserManager
 import com.komugirice.icchat.firestore.store.RequestStore
 import com.komugirice.icchat.firestore.store.RoomStore
 import com.komugirice.icchat.firestore.store.UserStore
+import com.komugirice.icchat.util.DialogUtil
 import timber.log.Timber
 
 
@@ -50,39 +51,14 @@ class AddFriendActivity : BaseActivity() {
                 // 必須チェック
                 if(targetUserId.isEmpty()) {
                     AlertDialog.Builder(this@AddFriendActivity)
-                        .setMessage("QRコードの読み取りに失敗しました")
-                        .setPositiveButton("OK", null)
+                        .setMessage(R.string.alert_failed_qr_read)
+                        .setPositiveButton(R.string.ok, null)
                         .show()
                     return
                 }
                 Timber.d("onReceiveByQr:${targetUserId}")
-                    UserStore.getTargetUser(targetUserId) {
-
-                        AlertDialog.Builder(this)
-                            .setTitle("${it.name}")
-                            .setMessage("ユーザを友だち登録しますか？")
-                            .setPositiveButton("OK", object : DialogInterface.OnClickListener {
-                                override fun onClick(dialog: DialogInterface?, which: Int) {
-
-                                    val onFailed = {
-                                        Toast.makeText(
-                                            this@AddFriendActivity,
-                                            "既に登録済みです。",
-                                            Toast.LENGTH_LONG
-                                        ).show()
-                                    }
-                                    // Users更新
-                                    firebaseFacade.addFriend(targetUserId, onFailed) {
-                                        AlertDialog.Builder(this@AddFriendActivity)
-                                            .setMessage("友だち登録が完了しました")
-                                            .setPositiveButton("OK", null)
-                                            .show()
-                                    }
-                                }
-                            })
-                            .setNegativeButton("キャンセル", null)
-                            .show()
-                    }
+                // 友だち追加確認ダイアログ
+                DialogUtil.addFriendDialog(this, targetUserId)
             }
         }
     }
