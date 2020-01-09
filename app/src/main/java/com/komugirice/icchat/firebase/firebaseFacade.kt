@@ -39,13 +39,13 @@ object firebaseFacade {
                 RequestManager.initRequestManager() {
 
                     // fcmトークン更新処理
-                    if(UserManager.myUser.fcmToken == null) {
-                       FcmStore.getLoginUserToken {
-                           UserStore.updateFcmToken(it){
-                               UserManager.myUser.fcmToken = it
-                               onSuccess.invoke()
-                           }
-                       }
+                    if (UserManager.myUser.fcmToken == null) {
+                        FcmStore.getLoginUserToken {
+                            UserStore.updateFcmToken(it) {
+                                UserManager.myUser.fcmToken = it
+                                onSuccess.invoke()
+                            }
+                        }
                     } else {
                         onSuccess.invoke()
                     }
@@ -122,11 +122,13 @@ object firebaseFacade {
      * @param onSuccess
      *
      */
-    fun registerGroupRoom(room: Room
-                          , groupRequest: GroupRequests? // チェックボックスにチェック有り
-                          , delRequests: List<String>   // チェックあり→チェックなし
-                          , onFailed: () -> Unit
-                          , onSuccess: () -> Unit) {
+    fun registerGroupRoom(
+        room: Room
+        , groupRequest: GroupRequests? // チェックボックスにチェック有り
+        , delRequests: List<String>   // チェックあり→チェックなし
+        , onFailed: () -> Unit
+        , onSuccess: () -> Unit
+    ) {
 
         // Room登録
         RoomStore.registerGroupRoom(room) {
@@ -174,7 +176,7 @@ object firebaseFacade {
      * @param onSuccess
      *
      */
-    fun deleteFriend(friendId: String, roomId: String, onSuccess: () -> Unit){
+    fun deleteFriend(friendId: String, roomId: String, onSuccess: () -> Unit) {
         // User削除(中でUserManagerも更新している)
         UserStore.delFriend(friendId) {
             // Room削除
@@ -216,11 +218,12 @@ object firebaseFacade {
             // Roomアイコン削除
             FireStorageUtil.deleteGroupIconImage(roomId) {
                 // Room内Request削除
-                val list = RequestManager.myGroupsRequests.filter{it.room.documentId == roomId}.map{it.requests}
-                    .firstOrNull()?.map{it.documentId}?.toList()
-                RequestStore.deleteGroupRequest(roomId, list ?: listOf()){
+                val list = RequestManager.myGroupsRequests.filter { it.room.documentId == roomId }
+                    .map { it.requests }
+                    .firstOrNull()?.map { it.documentId }?.toList()
+                RequestStore.deleteGroupRequest(roomId, list ?: listOf()) {
                     RoomManager.initRoomManager {
-                        RequestManager.initMyGroupsRequests(){
+                        RequestManager.initMyGroupsRequests() {
                             onSuccess.invoke()
                         }
 
@@ -241,14 +244,21 @@ object firebaseFacade {
      */
     fun withdrawGroupMember(room: Room, userId: String, onSuccess: () -> Unit) {
         RoomStore.removeGroupMember(room, userId) {
-            // Messageに「〜さんが退会しました。」を登録
-            MessageStore.registerMessage(room.documentId, UserManager.myUserId,
-                applicationContext.getString(R.string.message_group_withdraw, UserManager.myUser.name),
-                MessageType.SYSTEM.id) {
+            RequestStore.deleteGroupRequest(room.documentId, listOf(userId)) {
+                // Messageに「〜さんが退会しました。」を登録
+                MessageStore.registerMessage(
+                    room.documentId, userId,
+                    applicationContext.getString(
+                        R.string.message_group_withdraw,
+                        UserManager.myUser.name
+                    ),
+                    MessageType.SYSTEM.id
+                ) {
 
-                RoomManager.initRoomManager {
-                    onSuccess.invoke()
+                    RoomManager.initRoomManager {
+                        onSuccess.invoke()
 
+                    }
                 }
             }
         }
@@ -260,8 +270,8 @@ object firebaseFacade {
      * @param token
      *
      */
-    fun updateFcmToken(token: String){
-        UserStore.updateFcmToken(token){
+    fun updateFcmToken(token: String) {
+        UserStore.updateFcmToken(token) {
             UserManager.myUser.fcmToken = token
         }
     }
@@ -280,9 +290,14 @@ object firebaseFacade {
                 UserManager.myUserId
             ) {
                 // Messageに「〜さんが参加しました。」を登録
-                MessageStore.registerMessage(room.documentId, UserManager.myUserId,
-                    applicationContext.getString(R.string.message_group_accept, UserManager.myUser.name),
-                    MessageType.SYSTEM.id){
+                MessageStore.registerMessage(
+                    room.documentId, UserManager.myUserId,
+                    applicationContext.getString(
+                        R.string.message_group_accept,
+                        UserManager.myUser.name
+                    ),
+                    MessageType.SYSTEM.id
+                ) {
 
                     RoomManager.initRoomManager {
                         RequestManager.initGroupsRequestToMe {
