@@ -187,4 +187,6 @@
     <color name="Nanko_port_town_Line_Cerulean_Blue">#00a0de</color>
     <!---->
     <color name="facebook">#1877f2</color>
+    <color name="skype_blue">#dcf4fd</color>
+    <color name="message_gray">#f2f6f9</color>
 </resources>
