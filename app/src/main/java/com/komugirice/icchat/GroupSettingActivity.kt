@@ -323,14 +323,16 @@ class GroupSettingActivity : BaseActivity() {
      */
     private fun upload(room: Room, onSuccess: (UploadTask.TaskSnapshot) -> Unit) {
 
+        // 画像未設定の場合は終了
+        if(groupIconImageView.drawable == null) return
+
         val imageUrl = "${System.currentTimeMillis()}.jpg"
         val ref = FirebaseStorage.getInstance().reference.child("${FireStorageUtil.ROOM_PATH}/${room.documentId}/${FireStorageUtil.ROOM_ICON_PATH}/${imageUrl}")
 
         // RoundedImageViewの不具合修正
         val bitmap = when (groupIconImageView) {
             is RoundedImageView -> (groupIconImageView.drawable as RoundedDrawable).toBitmap()
-            is AppCompatImageView -> (groupIconImageView.drawable as BitmapDrawable).bitmap
-            else -> return  // 画像未設定なので終了
+            else -> (groupIconImageView.drawable as BitmapDrawable).bitmap
         }
         val baos = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos)
