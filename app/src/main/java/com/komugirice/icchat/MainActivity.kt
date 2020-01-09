@@ -152,12 +152,12 @@ class MainActivity : BaseActivity() {
                     R.id.logout_setting -> {
                         AlertDialog.Builder(this@MainActivity)
                             .setMessage(getString(R.string.confirm_logout))
-                            .setPositiveButton("OK", object: DialogInterface.OnClickListener {
+                            .setPositiveButton(R.string.ok, object: DialogInterface.OnClickListener {
                                 override fun onClick(dialog: DialogInterface?, which: Int) {
                                     LoginActivity.signOut(this@MainActivity)
                                 }
                             })
-                            .setNegativeButton("キャンセル", null)
+                            .setNegativeButton(R.string.cancel, null)
                             .show()
                         return true
                     }

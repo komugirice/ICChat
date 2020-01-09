@@ -136,7 +136,7 @@ class ProfileSettingActivity : AppCompatActivity() {
 
         uCropButton.setOnClickListener {
             if (uCropSrcUri == null) {
-                Toast.makeText(this, "プロフィール画像が設定されていません", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, R.string.alert_no_profile_image, Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             startUCrop()
@@ -144,7 +144,7 @@ class ProfileSettingActivity : AppCompatActivity() {
 
         usrIconUploadButton.setOnClickListener {
             if (uCropSrcUri == null) {
-                Toast.makeText(this, "プロフィール画像が設定されていません", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, R.string.alert_no_profile_image, Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             upload()
@@ -153,7 +153,7 @@ class ProfileSettingActivity : AppCompatActivity() {
         usrIconDeleteButton.setOnClickListener {
             // 元画像削除
             if(prevSettingUri.isEmpty()) {
-                Toast.makeText(this, "プロフィール画像が設定されていません", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, R.string.alert_no_profile_image, Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             delete()
@@ -217,8 +217,8 @@ class ProfileSettingActivity : AppCompatActivity() {
                     initLayout()
                 } else {
                     AlertDialog.Builder(this)
-                        .setTitle("エラー")
-                        .setMessage("登録に失敗しました。")
+                        .setTitle(R.string.error)
+                        .setMessage(R.string.failed_regist)
                         .setPositiveButton("OK", null)
                         .show();
                 }

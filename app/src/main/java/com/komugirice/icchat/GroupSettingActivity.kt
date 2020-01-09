@@ -337,7 +337,7 @@ class GroupSettingActivity : BaseActivity() {
         val data = baos.toByteArray()
         ref.putBytes(data)
             .addOnFailureListener {
-                Toast.makeText(this, "グループ登録に失敗しました", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, R.string.failed_group_regist, Toast.LENGTH_SHORT).show()
                 Timber.tag(TAG)
                 Timber.d("画像のUploadに失敗しました")
                 Timber.e(it)
@@ -459,7 +459,7 @@ class GroupSettingActivity : BaseActivity() {
             deleteRequest?.removeAll(viewModel._requestUser.map{it.userId})
 
         }
-        val onFailed = {Toast.makeText(this, "グループ登録に失敗しました", Toast.LENGTH_SHORT).show()}
+        val onFailed = {Toast.makeText(this, R.string.failed_group_regist, Toast.LENGTH_SHORT).show()}
         // グループ登録
         firebaseFacade.registerGroupRoom(tmpRoom, tmpGroupRequest, deleteRequest, onFailed){
             // 画像削除／登録
@@ -472,7 +472,7 @@ class GroupSettingActivity : BaseActivity() {
                 upload(tmpRoom) {
                 }
             }
-            Toast.makeText(this, "グループを登録しました", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, R.string.success_group_regist, Toast.LENGTH_SHORT).show()
             Timber.tag(TAG)
             Timber.d("グループ登録成功：${tmpRoom.documentId}")
             setResult(Activity.RESULT_OK, intent)
