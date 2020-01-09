@@ -41,7 +41,7 @@ class ChatView : RecyclerView {
 
     class Adapter(val context: Context) : RecyclerView.Adapter<ViewHolder>() {
         private val items = mutableListOf<Message>()
-        private val usersMap = mutableMapOf<String, User>()
+        // private val usersMap = mutableMapOf<String, User>()
 
         fun refresh(list: List<Message>) {
             items.apply {
@@ -51,14 +51,14 @@ class ChatView : RecyclerView {
             notifyDataSetChanged()
         }
 
-        fun setUsers(list: List<User>) {
-            val map = list.map { it.userId to it }.toMap()
-            usersMap.apply {
-                clear()
-                putAll(map)
-            }
-            notifyDataSetChanged()
-        }
+//        fun setUsers(list: List<User>) {
+//            val map = list.map { it.userId to it }.toMap()
+//            usersMap.apply {
+//                clear()
+//                putAll(map)
+//            }
+//            notifyDataSetChanged()
+//        }
 
         override fun getItemCount(): Int = items.size
 
@@ -162,7 +162,9 @@ class ChatView : RecyclerView {
             val data = items[position]
             holder.binding.message = data
             // UserManagerのfriends以外から取得する可能性がある
-            holder.binding.user = usersMap[data.userId]
+            // 退会したらgroup.userListから消えるのでusresMapが使えないバグ対応
+            // holder.binding.user = usersMap[data.userId]
+            holder.binding.user = UserManager.getTargetUser(data.userId)
         }
 
         /**

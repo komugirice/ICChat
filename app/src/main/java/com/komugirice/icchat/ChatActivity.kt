@@ -113,11 +113,11 @@ class ChatActivity : BaseActivity() {
                     swipeRefreshLayout.isRefreshing = false
                 }
             })
-            users.observe(this@ChatActivity, Observer {
-                binding.apply {
-                    chatView.customAdapter.setUsers(it)
-                }
-            })
+//            users.observe(this@ChatActivity, Observer {
+//                binding.apply {
+//                    chatView.customAdapter.setUsers(it)
+//                }
+//            })
         }
     }
 

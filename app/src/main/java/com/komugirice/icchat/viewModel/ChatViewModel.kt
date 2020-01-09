@@ -25,14 +25,15 @@ class ChatViewModel: ViewModel() {
     val items = MutableLiveData<List<Message>>()
     val isException = MutableLiveData<Throwable>()
     private var messageListener: ListenerRegistration? = null
-    val users = MutableLiveData<List<User>>()
+    // groupのusers不要論
+    //val users = MutableLiveData<List<User>>()
     val room = MutableLiveData<Room>()
 
 
     fun initData(@NonNull owner: LifecycleOwner, roomId: String) {
         // ユーザ情報保持
-        RoomStore.getTargetRoomUsers(roomId){
-            users.postValue(it)
+        //RoomStore.getTargetRoomUsers(roomId){
+            //users.postValue(it)
 
             // message情報
             MessageStore.getMessages(roomId, items)
@@ -41,7 +42,7 @@ class ChatViewModel: ViewModel() {
                 val lastCreatedAt = it.map{ it.createdAt }.max() ?: Date()
                 initSubscribe(roomId, lastCreatedAt)
             })
-        }
+        //}
     }
 
     fun initRoom(intent: Intent): Boolean {

@@ -47,6 +47,13 @@ object UserManager {
     }
 
     /**
+     * グループのメンバー画像取得処理で必要になった
+     */
+    fun getTargetUser (userId: String): User?{
+        return allUsers.filter { it.userId.equals(userId) }.firstOrNull()
+    }
+
+    /**
      * UserManager初期化
      * FirebaseAuthのcurrentUserが取得出来る前提
      * @param onSuccess: () -> Unit
