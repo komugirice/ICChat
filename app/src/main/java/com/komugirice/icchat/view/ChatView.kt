@@ -13,9 +13,11 @@ import com.komugirice.icchat.firebase.firestore.model.User
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.databinding.ChatMessageCellBinding
 import com.komugirice.icchat.databinding.ChatMessageOtheruserCellBinding
+import com.komugirice.icchat.databinding.ChatMessageSystemCellBinding
+import com.komugirice.icchat.enum.MessageType
 
 
-class ChatView  : RecyclerView {
+class ChatView : RecyclerView {
 
     constructor(ctx: Context) : super(ctx)
     constructor(ctx: Context, attrs: AttributeSet?) : super(ctx, attrs)
@@ -50,7 +52,7 @@ class ChatView  : RecyclerView {
         }
 
         fun setUsers(list: List<User>) {
-            val map = list.map{ it.userId to it}.toMap()
+            val map = list.map { it.userId to it }.toMap()
             usersMap.apply {
                 clear()
                 putAll(map)
@@ -68,51 +70,72 @@ class ChatView  : RecyclerView {
          */
 
         override fun getItemViewType(position: Int): Int {
-            return if (items[position].userId.equals(UserManager.myUserId) )
-                        VIEW_TYPE_LOGIN_USER
-                    else
-                        VIEW_TYPE_OTHER_USER
+            val item = items[position]
+            return if (item.type == MessageType.SYSTEM.id)
+                VIEW_TYPE_SYSTEM
+            else if (item.userId.equals(UserManager.myUserId))
+                VIEW_TYPE_LOGIN_USER
+            else
+                VIEW_TYPE_OTHER_USER
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-            val holder: RecyclerView.ViewHolder
-            if(viewType == VIEW_TYPE_LOGIN_USER) {
-                holder = ChatMessageCellViewHolder(
-                    ChatMessageCellBinding.inflate(
-                        LayoutInflater.from(
-                            context
-                        ), parent, false
+            val holder: RecyclerView.ViewHolder?
+            when(viewType) {
+                VIEW_TYPE_LOGIN_USER -> {
+                    holder = ChatMessageCellViewHolder(
+                        ChatMessageCellBinding.inflate(
+                            LayoutInflater.from(
+                                context
+                            ), parent, false
+                        )
                     )
-                )
-                holder.binding.root.setOnClickListener(object: View.OnClickListener{
-                    override fun onClick(v: View?) {
-                        hideKeyboard(v)
-                    }
-                })
-            } else {
-                holder = ChatMessageOtheruserCellViewHolder(
-                    ChatMessageOtheruserCellBinding.inflate(
-                        LayoutInflater.from(context),
-                        parent,
-                        false
+                    holder.binding.root.setOnClickListener(object : View.OnClickListener {
+                        override fun onClick(v: View?) {
+                            hideKeyboard(v)
+                        }
+                    })
+                }
+                VIEW_TYPE_OTHER_USER -> {
+                    holder = ChatMessageOtheruserCellViewHolder(
+                        ChatMessageOtheruserCellBinding.inflate(
+                            LayoutInflater.from(context),
+                            parent,
+                            false
+                        )
                     )
-                )
-                holder.binding.root.setOnClickListener(object: View.OnClickListener{
-                    override fun onClick(v: View?) {
-                        hideKeyboard(v)
-                    }
-                })
+                    holder.binding.root.setOnClickListener(object : View.OnClickListener {
+                        override fun onClick(v: View?) {
+                            hideKeyboard(v)
+                        }
+                    })
+                }
+                // VIEW_TYPE_SYSTEM
+                else -> {
+                    holder = ChatMessageSystemCellViewHolder(
+                        ChatMessageSystemCellBinding.inflate(
+                            LayoutInflater.from(context),
+                            parent,
+                            false
+                        )
+                    )
+                    holder.binding.root.setOnClickListener(object : View.OnClickListener {
+                        override fun onClick(v: View?) {
+                            hideKeyboard(v)
+                        }
+                    })
+                }
             }
-
             return holder
         }
 
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
             if (holder is ChatMessageCellViewHolder)
                 onBindLoginUserViewHolder(holder, position)
-
             else if (holder is ChatMessageOtheruserCellViewHolder)
                 onBindOtherUserViewHolder(holder, position)
+            else if (holder is ChatMessageSystemCellViewHolder)
+                onBindSystemViewHolder(holder, position)
         }
 
         /**
@@ -132,11 +155,25 @@ class ChatView  : RecyclerView {
          * @param holder
          * @param position
          */
-        private fun onBindOtherUserViewHolder(holder: ChatMessageOtheruserCellViewHolder, position: Int) {
+        private fun onBindOtherUserViewHolder(
+            holder: ChatMessageOtheruserCellViewHolder,
+            position: Int
+        ) {
             val data = items[position]
             holder.binding.message = data
             // UserManagerのfriends以外から取得する可能性がある
             holder.binding.user = usersMap[data.userId]
+        }
+
+        /**
+         * システム用
+         *
+         * @param holder
+         * @param position
+         */
+        private fun onBindSystemViewHolder(holder: ChatMessageSystemCellViewHolder, position: Int) {
+            val data = items[position]
+            holder.binding.message = data
         }
 
         /**
@@ -152,14 +189,20 @@ class ChatView  : RecyclerView {
         }
 
     }
-    class ChatMessageCellViewHolder(val binding: ChatMessageCellBinding) : RecyclerView.ViewHolder(binding.root)
 
-    class ChatMessageOtheruserCellViewHolder(val binding: ChatMessageOtheruserCellBinding) : RecyclerView.ViewHolder(binding.root)
+    class ChatMessageCellViewHolder(val binding: ChatMessageCellBinding) :
+        RecyclerView.ViewHolder(binding.root)
 
+    class ChatMessageOtheruserCellViewHolder(val binding: ChatMessageOtheruserCellBinding) :
+        RecyclerView.ViewHolder(binding.root)
+
+    class ChatMessageSystemCellViewHolder(val binding: ChatMessageSystemCellBinding) :
+        RecyclerView.ViewHolder(binding.root)
 
     companion object {
         private const val VIEW_TYPE_LOGIN_USER = 0
         private const val VIEW_TYPE_OTHER_USER = 1
+        private const val VIEW_TYPE_SYSTEM = 2
 
     }
 }

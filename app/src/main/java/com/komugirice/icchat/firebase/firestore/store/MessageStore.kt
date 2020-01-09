@@ -12,7 +12,7 @@ import java.util.*
 
 class MessageStore {
     companion object {
-        fun registerMessage(roomId: String, message: String) {
+        fun registerMyMessage(roomId: String, message: String) {
             val msgObj = Message().apply {
                 this.documentId = UUID.randomUUID().toString()
                 this.roomId = roomId
@@ -25,6 +25,25 @@ class MessageStore {
                 .collection("rooms/$roomId/messages")
                 .document(msgObj.documentId)
                 .set(msgObj)
+        }
+
+        fun registerMessage(roomId: String, userId: String, message: String, type: Int
+                            , onSuccess: () -> Unit) {
+            val msgObj = Message().apply {
+                this.documentId = UUID.randomUUID().toString()
+                this.roomId = roomId
+                this.userId = userId
+                this.message = message
+                this.type = type
+            }
+
+            FirebaseFirestore.getInstance()
+                .collection("rooms/$roomId/messages")
+                .document(msgObj.documentId)
+                .set(msgObj)
+                .addOnSuccessListener {
+                    onSuccess.invoke()
+                }
         }
 
         fun getMessages(roomId: String, liveMsgList: MutableLiveData<List<Message>>) {

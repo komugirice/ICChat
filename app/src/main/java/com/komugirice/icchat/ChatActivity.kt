@@ -146,7 +146,7 @@ class ChatActivity : BaseActivity() {
         // 送信ボタン
         sendImageView.setOnClickListener {
             if(inputEditText.text.isNotEmpty()) {
-                MessageStore.registerMessage(room.documentId, inputEditText.text.toString())
+                MessageStore.registerMyMessage(room.documentId, inputEditText.text.toString())
                 hideKeybord(it)
                 inputEditText.text.clear()
             }
@@ -170,7 +170,7 @@ class ChatActivity : BaseActivity() {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 // EditTextに値がある場合
                 if(textView.text.toString().isNotEmpty()) {
-                    MessageStore.registerMessage(room.documentId, textView.text.toString())
+                    MessageStore.registerMyMessage(room.documentId, textView.text.toString())
                 }
                 //true
             }

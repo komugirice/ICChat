@@ -1,5 +1,9 @@
 package com.komugirice.icchat.firebase
 
+import android.content.Context
+import android.widget.Toast
+import com.komugirice.icchat.R
+import com.komugirice.icchat.enum.MessageType
 import com.komugirice.icchat.firebase.fcm.FcmStore
 import com.komugirice.icchat.firebase.firestore.manager.RequestManager
 import com.komugirice.icchat.firebase.firestore.manager.RoomManager
@@ -7,6 +11,7 @@ import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.firebase.firestore.model.GroupRequests
 import com.komugirice.icchat.firebase.firestore.model.Room
 import com.komugirice.icchat.firebase.firestore.model.User
+import com.komugirice.icchat.firebase.firestore.store.MessageStore
 import com.komugirice.icchat.firebase.firestore.store.RequestStore
 import com.komugirice.icchat.firebase.firestore.store.RoomStore
 import com.komugirice.icchat.firebase.firestore.store.UserStore
@@ -56,7 +61,7 @@ object firebaseFacade {
     }
 
     /**
-     * Users.friendListを更新、Requestの友だち申請を削除
+     * 友だち追加　Users.friendListを更新、Requestの友だち申請を削除
      *
      * @param targetUserId
      * @param onFailed
@@ -226,24 +231,67 @@ object firebaseFacade {
     }
 
     /**
-     * グループメンバーから除外する
+     * グループメンバーから退会する
      *
      * @param room
      * @parak userId
      * @param onSuccess
      *
      */
-    fun removeGroupMember(room: Room, userId: String, onSuccess: () -> Unit) {
+    fun withdrawGroupMember(context: Context, room: Room, userId: String, onSuccess: () -> Unit) {
         RoomStore.removeGroupMember(room, userId) {
-            RoomManager.initRoomManager {
-                onSuccess.invoke()
+            // Messageに「〜さんが退会しました。」を登録
+            MessageStore.registerMessage(room.documentId, UserManager.myUserId,
+                context.getString(R.string.message_group_withdraw, UserManager.myUser.name),
+                MessageType.SYSTEM.id) {
+
+                RoomManager.initRoomManager {
+                    onSuccess.invoke()
+
+                }
             }
         }
     }
 
+    /**
+     * FCMトークンの更新
+     *
+     * @param token
+     *
+     */
     fun updateFcmToken(token: String){
         UserStore.updateFcmToken(token){
             UserManager.myUser.fcmToken = token
+        }
+    }
+
+    /**
+     * 招待されているグループを承認する
+     *
+     *
+     */
+    fun acceptGroup(context: Context, room: Room, onSuccess: () -> Unit) {
+        // Room更新
+        RoomStore.acceptGroupMember(room, UserManager.myUserId) {
+            // Request更新
+            RequestStore.acceptGroupRequest(
+                room.documentId,
+                UserManager.myUserId
+            ) {
+                // Messageに「〜さんが参加しました。」を登録
+                MessageStore.registerMessage(room.documentId, UserManager.myUserId,
+                    context.getString(R.string.message_group_accept, UserManager.myUser.name),
+                    MessageType.SYSTEM.id){
+
+                    RoomManager.initRoomManager {
+                        RequestManager.initGroupsRequestToMe {
+                            onSuccess.invoke()
+                        }
+                    }
+                }
+
+            }
+
         }
     }
 

@@ -5,12 +5,14 @@ import android.content.Context
 import android.content.DialogInterface
 import android.widget.Toast
 import com.komugirice.icchat.R
+import com.komugirice.icchat.enum.MessageType
 import com.komugirice.icchat.firebase.firebaseFacade
 import com.komugirice.icchat.firebase.firestore.manager.RequestManager
 import com.komugirice.icchat.firebase.firestore.manager.RoomManager
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.firebase.firestore.model.Request
 import com.komugirice.icchat.firebase.firestore.model.Room
+import com.komugirice.icchat.firebase.firestore.store.MessageStore
 import com.komugirice.icchat.firebase.firestore.store.RequestStore
 import com.komugirice.icchat.firebase.firestore.store.RoomStore
 import com.komugirice.icchat.firebase.firestore.store.UserStore
@@ -130,24 +132,17 @@ class DialogUtil {
                 .setMessage(R.string.confirm_group_request)
                 .setPositiveButton(R.string.accept, object : DialogInterface.OnClickListener {
                     override fun onClick(dialog: DialogInterface?, which: Int) {
-                        RoomStore.acceptGroupMember(room, UserManager.myUserId) {
-                            RequestStore.acceptGroupRequest(
-                                room.documentId,
-                                UserManager.myUserId
-                            ) {
-                                RoomManager.initRoomManager {
-                                    RequestManager.initGroupsRequestToMe {
-                                        Toast.makeText(
-                                            context,
-                                            R.string.alert_accept,
-                                            Toast.LENGTH_LONG
-                                        ).show()
-                                        onSuccess.invoke()
-                                    }
-                                }
-                            }
+                        // 招待されているグループを承認する
+                        firebaseFacade.acceptGroup(context, room) {
 
-                        }
+                             Toast.makeText(
+                                 context,
+                                 R.string.alert_accept,
+                                 Toast.LENGTH_LONG
+                             ).show()
+                             onSuccess.invoke()
+
+                         }
                     }
                 })
                 .setNegativeButton(R.string.deny, object : DialogInterface.OnClickListener {
@@ -237,7 +232,7 @@ class DialogUtil {
                 .setPositiveButton(R.string.ok, object: DialogInterface.OnClickListener {
                     override fun onClick(dialog: DialogInterface?, which: Int) {
 
-                        firebaseFacade.removeGroupMember(room, UserManager.myUserId) {
+                        firebaseFacade.withdrawGroupMember(context, room, UserManager.myUserId) {
                             // グループを退会しました
                             AlertDialog.Builder(context)
                                 .setMessage(context.getString(R.string.success_group_withdraw))

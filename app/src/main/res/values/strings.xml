@@ -152,9 +152,13 @@
     <string name="confirm_cancel_group_deny">グループの拒否を取り消しますか？</string>
 
     <!-- FCM -->
-    <string name="fcm_friend_request">%1$sから友だち申請がありました。</string>
+    <string name="fcm_friend_request">%1$sさんから友だち申請がありました。</string>
     <string name="fcm_group_request">グループ：%1$sから招待されました。</string>
-    <string name="fcm_friend_request_accept">%1$sが友だち申請を承認しました。</string>
-    <string name="fcm_friend_request_deny">%1$sが友だち申請を拒否しました。</string>
+    <string name="fcm_friend_request_accept">%1$sさんが友だち申請を承認しました。</string>
+    <string name="fcm_friend_request_deny">%1$sがさん友だち申請を拒否しました。</string>
     <string name="default_notification_channel_id">ICChat_Notification</string>
+
+    <!-- Message -->
+    <string name="message_group_accept">%1$sさんが参加しました。</string>
+    <string name="message_group_withdraw">%1$sさんが退会しました。</string>
 </resources>
