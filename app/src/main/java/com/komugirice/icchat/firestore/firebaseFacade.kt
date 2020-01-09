@@ -194,11 +194,22 @@ object firebaseFacade {
      *
      */
     fun deleteRoom(roomId: String, onSuccess: () -> Unit) {
+        // Room削除
         RoomStore.deleteRoom(roomId) {
+            // Roomアイコン削除
             FireStorageUtil.deleteGroupIconImage(roomId) {
-                RoomManager.initRoomManager {
-                    onSuccess.invoke()
+                // Room内Request削除
+                val list = RequestManager.myGroupsRequests.filter{it.room.documentId == roomId}.map{it.requests}
+                    .firstOrNull()?.map{it.documentId}?.toList()
+                RequestStore.deleteGroupRequest(roomId, list ?: listOf()){
+                    RoomManager.initRoomManager {
+                        RequestManager.initMyGroupsRequests(){
+                            onSuccess.invoke()
+                        }
+
+                    }
                 }
+
             }
         }
     }
