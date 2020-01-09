@@ -1,8 +1,6 @@
 package com.komugirice.icchat
 
-import android.app.AlertDialog
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -15,11 +13,9 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.komugirice.icchat.databinding.ActivityChatBinding
 import com.komugirice.icchat.enum.ActivityEnum
-import com.komugirice.icchat.firestore.manager.RoomManager
-import com.komugirice.icchat.firestore.manager.UserManager
-import com.komugirice.icchat.firestore.model.Room
-import com.komugirice.icchat.firestore.store.MessageStore
-import com.komugirice.icchat.firestore.store.RoomStore
+import com.komugirice.icchat.firebase.firestore.manager.UserManager
+import com.komugirice.icchat.firebase.firestore.model.Room
+import com.komugirice.icchat.firebase.firestore.store.MessageStore
 import com.komugirice.icchat.util.DialogUtil
 import com.komugirice.icchat.viewModel.ChatViewModel
 import kotlinx.android.synthetic.main.activity_chat.*

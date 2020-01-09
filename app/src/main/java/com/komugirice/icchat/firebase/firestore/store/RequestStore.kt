@@ -1,13 +1,11 @@
-package com.komugirice.icchat.firestore.store
+package com.komugirice.icchat.firebase.firestore.store
 
 import com.google.firebase.firestore.FirebaseFirestore
 import com.komugirice.icchat.enum.RequestStatus
-import com.komugirice.icchat.firestore.manager.RequestManager
-import com.komugirice.icchat.firestore.manager.RoomManager
-import com.komugirice.icchat.firestore.manager.UserManager
-import com.komugirice.icchat.firestore.model.GroupRequests
-import com.komugirice.icchat.firestore.model.Request
-import com.komugirice.icchat.firestore.model.Room
+import com.komugirice.icchat.firebase.firestore.manager.RoomManager
+import com.komugirice.icchat.firebase.firestore.manager.UserManager
+import com.komugirice.icchat.firebase.firestore.model.GroupRequests
+import com.komugirice.icchat.firebase.firestore.model.Request
 import java.util.*
 
 class RequestStore {

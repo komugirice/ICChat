@@ -1,14 +1,15 @@
-package com.komugirice.icchat.firestore
+package com.komugirice.icchat.firebase
 
-import com.komugirice.icchat.firestore.manager.RequestManager
-import com.komugirice.icchat.firestore.manager.RoomManager
-import com.komugirice.icchat.firestore.manager.UserManager
-import com.komugirice.icchat.firestore.model.GroupRequests
-import com.komugirice.icchat.firestore.model.Room
-import com.komugirice.icchat.firestore.model.User
-import com.komugirice.icchat.firestore.store.RequestStore
-import com.komugirice.icchat.firestore.store.RoomStore
-import com.komugirice.icchat.firestore.store.UserStore
+import com.komugirice.icchat.firebase.fcm.FcmStore
+import com.komugirice.icchat.firebase.firestore.manager.RequestManager
+import com.komugirice.icchat.firebase.firestore.manager.RoomManager
+import com.komugirice.icchat.firebase.firestore.manager.UserManager
+import com.komugirice.icchat.firebase.firestore.model.GroupRequests
+import com.komugirice.icchat.firebase.firestore.model.Room
+import com.komugirice.icchat.firebase.firestore.model.User
+import com.komugirice.icchat.firebase.firestore.store.RequestStore
+import com.komugirice.icchat.firebase.firestore.store.RoomStore
+import com.komugirice.icchat.firebase.firestore.store.UserStore
 import com.komugirice.icchat.util.FireStorageUtil
 
 /**
@@ -31,7 +32,17 @@ object firebaseFacade {
 
                 RequestManager.initRequestManager() {
 
-                    onSuccess.invoke()
+                    // fcmトークン更新処理
+                    if(UserManager.myUser.fcmToken == null) {
+                       FcmStore.getLoginUserToken {
+                           UserStore.updateFcmToken(it){
+                               UserManager.myUser.fcmToken = it
+                               onSuccess.invoke()
+                           }
+                       }
+                    } else {
+                        onSuccess.invoke()
+                    }
 
                 }
             }
@@ -227,6 +238,12 @@ object firebaseFacade {
             RoomManager.initRoomManager {
                 onSuccess.invoke()
             }
+        }
+    }
+
+    fun updateFcmToken(token: String){
+        UserStore.updateFcmToken(token){
+            UserManager.myUser.fcmToken = token
         }
     }
 

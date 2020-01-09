@@ -1,11 +1,9 @@
 package com.komugirice.icchat
 
-import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.inputmethod.EditorInfo
 import android.widget.CheckBox
@@ -14,25 +12,14 @@ import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import com.google.firebase.auth.FirebaseAuth
-import com.google.gson.Gson
 import com.komugirice.icchat.databinding.ActivitySearchUserBinding
-import com.komugirice.icchat.extension.afterTextChanged
-import com.komugirice.icchat.firestore.firebaseFacade
-import com.komugirice.icchat.firestore.manager.RequestManager
-import com.komugirice.icchat.firestore.model.User
-import com.komugirice.icchat.firestore.store.RequestStore
-import com.komugirice.icchat.firestore.store.UserStore
-import com.komugirice.icchat.ui.groupSetting.GroupSettingViewModel
+import com.komugirice.icchat.firebase.firebaseFacade
+import com.komugirice.icchat.firebase.firestore.manager.RequestManager
+import com.komugirice.icchat.firebase.firestore.model.User
+import com.komugirice.icchat.firebase.firestore.store.UserStore
 import com.komugirice.icchat.viewModel.SearchUserViewModel
-import kotlinx.android.synthetic.*
-import kotlinx.android.synthetic.main.activity_chat.*
 import kotlinx.android.synthetic.main.activity_chat.backImageView
-import kotlinx.android.synthetic.main.activity_group_setting.*
 import kotlinx.android.synthetic.main.activity_search_user.*
-import kotlinx.android.synthetic.main.activity_search_user.container
-import timber.log.Timber
-import java.net.URLEncoder
 
 class SearchUserActivity : BaseActivity() {
 

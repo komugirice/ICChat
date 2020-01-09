@@ -1,12 +1,8 @@
 package com.komugirice.icchat.util
 
-import androidx.lifecycle.MutableLiveData
 import com.example.qiitaapplication.extension.getIdFromEmail
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 import com.komugirice.icchat.BuildConfig
-import com.komugirice.icchat.firestore.model.User
-import com.komugirice.icchat.firestore.manager.UserManager
 import java.util.*
 
 class FireStoreUtil {

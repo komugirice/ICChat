@@ -1,10 +1,9 @@
-package com.komugirice.icchat.firestore.manager
+package com.komugirice.icchat.firebase.firestore.manager
 
 import androidx.databinding.library.BuildConfig
-import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.FirebaseAuth
-import com.komugirice.icchat.firestore.model.User
-import com.komugirice.icchat.firestore.store.UserStore
+import com.komugirice.icchat.firebase.firestore.model.User
+import com.komugirice.icchat.firebase.firestore.store.UserStore
 
 object UserManager {
 

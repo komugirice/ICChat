@@ -10,12 +10,12 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 import com.komugirice.icchat.ChatActivity
-import com.komugirice.icchat.firestore.manager.RoomManager
-import com.komugirice.icchat.firestore.model.Message
-import com.komugirice.icchat.firestore.model.Room
-import com.komugirice.icchat.firestore.model.User
-import com.komugirice.icchat.firestore.store.MessageStore
-import com.komugirice.icchat.firestore.store.RoomStore
+import com.komugirice.icchat.firebase.firestore.manager.RoomManager
+import com.komugirice.icchat.firebase.firestore.model.Message
+import com.komugirice.icchat.firebase.firestore.model.Room
+import com.komugirice.icchat.firebase.firestore.model.User
+import com.komugirice.icchat.firebase.firestore.store.MessageStore
+import com.komugirice.icchat.firebase.firestore.store.RoomStore
 import timber.log.Timber
 import java.util.*
 

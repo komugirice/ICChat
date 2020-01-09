@@ -4,12 +4,10 @@ import androidx.annotation.NonNull
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.komugirice.icchat.firestore.manager.RoomManager
-import com.komugirice.icchat.firestore.manager.UserManager
-import com.komugirice.icchat.firestore.model.Message
-import com.komugirice.icchat.firestore.model.Room
-import com.komugirice.icchat.firestore.store.MessageStore
-import com.komugirice.icchat.firestore.store.RoomStore
+import com.komugirice.icchat.firebase.firestore.manager.RoomManager
+import com.komugirice.icchat.firebase.firestore.model.Message
+import com.komugirice.icchat.firebase.firestore.model.Room
+import com.komugirice.icchat.firebase.firestore.store.MessageStore
 
 class RoomViewModel: ViewModel() {
     val items = MutableLiveData<List<Pair<Room, Message?>>>()

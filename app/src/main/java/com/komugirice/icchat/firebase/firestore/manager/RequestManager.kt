@@ -1,9 +1,8 @@
-package com.komugirice.icchat.firestore.manager
+package com.komugirice.icchat.firebase.firestore.manager
 
-import com.komugirice.icchat.firestore.model.GroupRequests
-import com.komugirice.icchat.firestore.model.Request
-import com.komugirice.icchat.firestore.model.Room
-import com.komugirice.icchat.firestore.store.RequestStore
+import com.komugirice.icchat.firebase.firestore.model.GroupRequests
+import com.komugirice.icchat.firebase.firestore.model.Request
+import com.komugirice.icchat.firebase.firestore.store.RequestStore
 
 object RequestManager {
     var myUserRequests = listOf<Request>()

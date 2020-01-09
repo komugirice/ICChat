@@ -32,10 +32,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.komugirice.icchat.extension.afterTextChanged
 import com.komugirice.icchat.extension.loggingSize
-import com.komugirice.icchat.firestore.firebaseFacade
-import com.komugirice.icchat.firestore.manager.RequestManager
-import com.komugirice.icchat.firestore.manager.RoomManager
-import com.komugirice.icchat.firestore.manager.UserManager
+import com.komugirice.icchat.firebase.firebaseFacade
+import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.ui.login.LoginViewModel
 import com.komugirice.icchat.ui.login.LoginViewModelFactory
 import kotlinx.android.synthetic.main.activity_create_user.*
