@@ -8,6 +8,11 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.list.listItems
+import com.komugirice.icchat.ChatActivity
+import com.komugirice.icchat.GroupSettingActivity
+import com.komugirice.icchat.R
 import com.komugirice.icchat.firebase.firestore.model.Message
 import com.komugirice.icchat.firebase.firestore.model.User
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
@@ -15,6 +20,8 @@ import com.komugirice.icchat.databinding.ChatMessageCellBinding
 import com.komugirice.icchat.databinding.ChatMessageOtheruserCellBinding
 import com.komugirice.icchat.databinding.ChatMessageSystemCellBinding
 import com.komugirice.icchat.enum.MessageType
+import com.komugirice.icchat.firebase.firestore.store.MessageStore
+import com.komugirice.icchat.util.DialogUtil
 
 
 class ChatView : RecyclerView {
@@ -40,6 +47,7 @@ class ChatView : RecyclerView {
     }
 
     class Adapter(val context: Context) : RecyclerView.Adapter<ViewHolder>() {
+        lateinit var onClickCallBack: () -> Unit
         private val items = mutableListOf<Message>()
         // private val usersMap = mutableMapOf<String, User>()
 
@@ -81,7 +89,7 @@ class ChatView : RecyclerView {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
             val holder: RecyclerView.ViewHolder?
-            when(viewType) {
+            when (viewType) {
                 VIEW_TYPE_LOGIN_USER -> {
                     holder = ChatMessageCellViewHolder(
                         ChatMessageCellBinding.inflate(
@@ -147,6 +155,41 @@ class ChatView : RecyclerView {
         private fun onBindLoginUserViewHolder(holder: ChatMessageCellViewHolder, position: Int) {
             val data = items[position]
             holder.binding.message = data
+
+            // 長押し
+            holder.binding.root.setOnLongClickListener(object : View.OnLongClickListener {
+                override fun onLongClick(v: View?): Boolean {
+                    val menuList = listOf(
+                        Pair(0, R.string.quote_message),
+                        Pair(1, R.string.delete_message)
+                    )
+                    MaterialDialog(context).apply {
+                        listItems(
+                            items = listOf(
+                                context.getString(menuList.get(0).second),
+                                context.getString(menuList.get(1).second)
+                            ),
+                            selection = { dialog, index, text ->
+                                when (index) {
+                                    menuList.get(0).first -> {
+                                        // メッセージ引用
+                                    }
+                                    menuList.get(1).first -> {
+                                        // メッセージ削除
+                                        MessageStore.deleteMessage(data){
+                                            onClickCallBack.invoke()
+                                        }
+
+
+                                    }
+                                    else -> return@listItems
+                                }
+                            }
+                        )
+                    }.show()
+                    return true
+                }
+            })
         }
 
         /**

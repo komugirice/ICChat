@@ -70,5 +70,15 @@ class MessageStore {
                     onComplete.invoke(it)
                 }
         }
+
+        fun deleteMessage(message: Message, onComplete: () -> Unit) {
+            FirebaseFirestore.getInstance()
+                .collection("rooms/${message.roomId}/messages")
+                .document(message.documentId)
+                .delete()
+                .addOnCompleteListener {
+                    onComplete.invoke()
+                }
+        }
     }
 }

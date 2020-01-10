@@ -85,8 +85,12 @@ class ChatActivity : BaseActivity() {
         binding = DataBindingUtil.setContentView(this,
             R.layout.activity_chat
         )
-        //binding.room = Room()
         binding.lifecycleOwner = this
+
+        // 削除処理の後
+        binding.chatView.customAdapter.onClickCallBack = {
+            initData()
+        }
     }
 
     /**
