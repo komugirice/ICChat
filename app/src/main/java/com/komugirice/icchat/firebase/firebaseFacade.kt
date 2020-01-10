@@ -153,6 +153,22 @@ object firebaseFacade {
     }
 
     /**
+     * 友だち申請を拒否する
+     *
+     * @param requesterId
+     * @param onSuccess
+     *
+     */
+    fun denyUserRequest(requesterId: String, onSuccess: () -> Unit) {
+        // Request更新
+        RequestStore.denyUserRequest(requesterId) {
+            RequestManager.initUsersRequestToMe {
+                onSuccess.invoke()
+            }
+        }
+    }
+
+    /**
      * 友だち申請の拒否をキャンセルする
      *
      * @param requesterId
@@ -189,7 +205,24 @@ object firebaseFacade {
     }
 
     /**
-     * 友だちを解除
+     * グループ招待を拒否
+     *
+     * @param roomId
+     * @param userId
+     * @param onSuccess
+     *
+     */
+    fun denyGroupRequest(roomId: String, userId: String, onSuccess: () -> Unit) {
+        // Request更新
+        RequestStore.denyGroupRequest(roomId, userId) {
+            RequestManager.initGroupsRequestToMe {
+                onSuccess.invoke()
+            }
+        }
+    }
+
+    /**
+     * グループ招待の拒否を解除
      *
      * @param roomId
      * @param userId

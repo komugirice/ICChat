@@ -47,15 +47,13 @@ class DialogUtil {
                 })
                 .setNegativeButton(R.string.deny, object : DialogInterface.OnClickListener {
                     override fun onClick(dialog: DialogInterface?, which: Int) {
-                        RequestStore.denyUserRequest(request.requesterId) {
-                            RequestManager.initUsersRequestToMe {
-                                Toast.makeText(
-                                    context,
-                                    R.string.alert_deny,
-                                    Toast.LENGTH_LONG
-                                ).show()
-                                onSuccess.invoke()
-                            }
+                        firebaseFacade.denyUserRequest(request.requesterId) {
+                            Toast.makeText(
+                                context,
+                                R.string.alert_deny,
+                                Toast.LENGTH_LONG
+                            ).show()
+                            onSuccess.invoke()
                         }
                     }
                 })
@@ -147,15 +145,13 @@ class DialogUtil {
                 })
                 .setNegativeButton(R.string.deny, object : DialogInterface.OnClickListener {
                     override fun onClick(dialog: DialogInterface?, which: Int) {
-                        RequestStore.denyGroupRequest(room.documentId, UserManager.myUserId) {
-                            RequestManager.initGroupsRequestToMe {
-                                Toast.makeText(
-                                    context,
-                                    R.string.alert_deny,
-                                    Toast.LENGTH_LONG
-                                ).show()
-                                onSuccess.invoke()
-                            }
+                        firebaseFacade.denyGroupRequest(room.documentId, UserManager.myUserId) {
+                            Toast.makeText(
+                                context,
+                                R.string.alert_deny,
+                                Toast.LENGTH_LONG
+                            ).show()
+                            onSuccess.invoke()
                         }
                     }
                 })

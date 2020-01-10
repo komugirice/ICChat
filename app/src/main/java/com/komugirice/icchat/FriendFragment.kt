@@ -10,6 +10,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.komugirice.icchat.interfaces.Update
 import com.komugirice.icchat.databinding.FragmentFriendBinding
+import com.komugirice.icchat.firebase.firebaseFacade
 import com.komugirice.icchat.viewModel.FriendViewModel
 import kotlinx.android.synthetic.main.fragment_friend.*
 
@@ -78,7 +79,9 @@ class FriendFragment : Fragment(), Update {
      * 遷移先のActivityから戻ってきた場合にリロードする
      */
     override fun update() {
-        friendsViewModel.initData(this@FriendFragment)
+        firebaseFacade.initManager {
+            friendsViewModel.initData(this@FriendFragment)
+        }
     }
 
 

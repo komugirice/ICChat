@@ -21,7 +21,7 @@ class FriendViewModel: ViewModel() {
     }
 
     fun update() {
-        firebaseFacade.initManager {
+        //firebaseFacade.initManager {
             val list = mutableListOf<FriendsView.FriendsViewData>()
 
             // ①グループ
@@ -91,7 +91,7 @@ class FriendViewModel: ViewModel() {
             }
 
             items.postValue(list)
-        }
+        //}
     }
 
 }

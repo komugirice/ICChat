@@ -45,6 +45,7 @@ class RoomFragment : Fragment(), Update {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initialize()
+        viewModel.initData(this)
     }
 
     private fun initialize() {
