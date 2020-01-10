@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import com.komugirice.icchat.interfaces.Update
 import com.komugirice.icchat.databinding.FragmentFriendBinding
 import com.komugirice.icchat.viewModel.FriendViewModel
 import kotlinx.android.synthetic.main.fragment_friend.*
@@ -15,7 +16,7 @@ import kotlinx.android.synthetic.main.fragment_friend.*
 /**
  * A simple [Fragment] subclass.
  */
-class FriendFragment : Fragment() {
+class FriendFragment : Fragment(), Update {
 
     private lateinit var binding: FragmentFriendBinding
     private lateinit var friendsViewModel: FriendViewModel
@@ -54,16 +55,8 @@ class FriendFragment : Fragment() {
         friendsViewModel.initData(this@FriendFragment)
     }
 
-    override fun onResume() {
-        super.onResume()
-//        TODO 別Activityから戻ってきた時は実行したい
-//        if(friendsViewModel.initFlg == false)
-//            friendsViewModel.initData(this@FriendFragment)
-    }
-
     private fun initialize() {
         initLayout()
-
     }
 
     private fun initLayout() {
@@ -79,6 +72,13 @@ class FriendFragment : Fragment() {
         swipeRefreshLayout.setOnRefreshListener {
             friendsViewModel.initData(this@FriendFragment)
         }
+    }
+
+    /**
+     * 遷移先のActivityから戻ってきた場合にリロードする
+     */
+    override fun update() {
+        friendsViewModel.initData(this@FriendFragment)
     }
 
 

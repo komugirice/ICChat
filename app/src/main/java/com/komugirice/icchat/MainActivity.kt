@@ -14,6 +14,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.fragment.app.FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT
 import androidx.viewpager.widget.ViewPager
+import com.komugirice.icchat.interfaces.Update
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : BaseActivity() {
@@ -34,12 +35,16 @@ class MainActivity : BaseActivity() {
 
     /**
      * 各Activityから戻った時にRoomが更新されていないバグ対応
-     * かといってタブ切り替えでは更新したくない
+     * かといってタブ切り替えでは更新したくないのでonRestart
      *
      */
     override fun onRestart() {
         super.onRestart()
-        initialize()
+        customAdapter.fragments.forEach {
+            if(it.fragment is Update)
+                it.fragment.update()
+        }
+
     }
 
     /**
@@ -113,7 +118,7 @@ class MainActivity : BaseActivity() {
      *
      */
     class CustomAdapter(private val context: Context, fragmentManager: FragmentManager, behavor: Int) :
-        FragmentPagerAdapter(fragmentManager, behavor) {
+        FragmentPagerAdapter(fragmentManager, behavor){
 
         inner class Item(val fragment: Fragment, val title:Int)
 
