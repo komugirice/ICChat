@@ -17,6 +17,7 @@ import com.komugirice.icchat.firebase.firestore.model.Message
 import com.komugirice.icchat.firebase.firestore.model.User
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.databinding.ChatMessageCellBinding
+import com.komugirice.icchat.databinding.ChatMessageImageCellBinding
 import com.komugirice.icchat.databinding.ChatMessageOtheruserCellBinding
 import com.komugirice.icchat.databinding.ChatMessageSystemCellBinding
 import com.komugirice.icchat.enum.MessageType
@@ -79,11 +80,17 @@ class ChatView : RecyclerView {
 
         override fun getItemViewType(position: Int): Int {
             val item = items[position]
-            return if (item.type == MessageType.SYSTEM.id)
+            return if (item.type == MessageType.SYSTEM.id) {
                 VIEW_TYPE_SYSTEM
-            else if (item.userId.equals(UserManager.myUserId))
-                VIEW_TYPE_LOGIN_USER
-            else
+            } else if (item.userId.equals(UserManager.myUserId)) {
+                if (item.type == MessageType.IMAGE.id) {
+                    VIEW_TYPE_IMAGE
+                }
+                else {
+                    VIEW_TYPE_LOGIN_USER
+                }
+
+            } else
                 VIEW_TYPE_OTHER_USER
         }
 
@@ -107,6 +114,20 @@ class ChatView : RecyclerView {
                 VIEW_TYPE_OTHER_USER -> {
                     holder = ChatMessageOtheruserCellViewHolder(
                         ChatMessageOtheruserCellBinding.inflate(
+                            LayoutInflater.from(context),
+                            parent,
+                            false
+                        )
+                    )
+                    holder.binding.root.setOnClickListener(object : View.OnClickListener {
+                        override fun onClick(v: View?) {
+                            hideKeyboard(v)
+                        }
+                    })
+                }
+                VIEW_TYPE_IMAGE -> {
+                    holder = ChatMessageImageCellViewHolder(
+                        ChatMessageImageCellBinding.inflate(
                             LayoutInflater.from(context),
                             parent,
                             false
@@ -143,6 +164,8 @@ class ChatView : RecyclerView {
             else if (holder is ChatMessageOtheruserCellViewHolder)
                 onBindOtherUserViewHolder(holder, position)
             else if (holder is ChatMessageSystemCellViewHolder)
+                onBindSystemViewHolder(holder, position)
+            else if (holder is ChatMessageImageCellViewHolder)
                 onBindSystemViewHolder(holder, position)
         }
 
@@ -222,6 +245,17 @@ class ChatView : RecyclerView {
         }
 
         /**
+         * 画像用
+         *
+         * @param holder
+         * @param position
+         */
+        private fun onBindSystemViewHolder(holder: ChatMessageImageCellViewHolder, position: Int) {
+            val data = items[position]
+            holder.binding.message = data
+        }
+
+        /**
          * hideKeyboard
          *
          * @param v: View?
@@ -244,10 +278,13 @@ class ChatView : RecyclerView {
     class ChatMessageSystemCellViewHolder(val binding: ChatMessageSystemCellBinding) :
         RecyclerView.ViewHolder(binding.root)
 
+    class ChatMessageImageCellViewHolder(val binding: ChatMessageImageCellBinding) :
+        RecyclerView.ViewHolder(binding.root)
+
     companion object {
         private const val VIEW_TYPE_LOGIN_USER = 0
         private const val VIEW_TYPE_OTHER_USER = 1
         private const val VIEW_TYPE_SYSTEM = 2
-
+        private const val VIEW_TYPE_IMAGE = 3
     }
 }

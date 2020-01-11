@@ -108,14 +108,14 @@ class FireStorageUtil {
          * @param onSuccess
          *
          */
-        fun registRoomMessageImage(roomId: String, uri: Uri, onComplete: () -> Unit) {
+        fun registRoomMessageImage(roomId: String, uri: Uri, onComplete: (String) -> Unit) {
             val fileName = uri.lastPathSegment ?: ""
             val extension = fileName.getSuffix()
             val uploadUrl = "${System.currentTimeMillis()}.${extension}"
             FirebaseStorage.getInstance().reference.child("${ROOM_PATH}/${roomId}/${IMAGE_PATH}/${uploadUrl}")
                 .putFile(uri)
                 .addOnCompleteListener{
-                    onComplete.invoke()
+                    onComplete.invoke(uploadUrl)
                 }
 
         }

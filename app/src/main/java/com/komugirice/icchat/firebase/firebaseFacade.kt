@@ -1,6 +1,7 @@
 package com.komugirice.icchat.firebase
 
 import android.content.Context
+import android.net.Uri
 import android.widget.Toast
 import com.komugirice.icchat.ICChatApplication.Companion.applicationContext
 import com.komugirice.icchat.R
@@ -339,6 +340,16 @@ object firebaseFacade {
                     }
                 }
 
+            }
+
+        }
+    }
+
+    fun registChatMessageImage(roomId: String, uri: Uri, onSuccess: () -> Unit){
+
+        FireStorageUtil.registRoomMessageImage(roomId, uri){
+            MessageStore.registerMessage(roomId, UserManager.myUserId, it, MessageType.IMAGE.id){
+                onSuccess.invoke()
             }
 
         }

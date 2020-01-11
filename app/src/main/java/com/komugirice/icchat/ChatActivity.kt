@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelProviders
 import com.example.qiitaapplication.extension.getSuffix
 import com.komugirice.icchat.databinding.ActivityChatBinding
 import com.komugirice.icchat.enum.ActivityEnum
+import com.komugirice.icchat.firebase.firebaseFacade
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.firebase.firestore.model.Room
 import com.komugirice.icchat.firebase.firestore.store.MessageStore
@@ -78,7 +79,7 @@ class ChatActivity : BaseActivity() {
                 data.data?.also {
                     // 画像登録
                     Timber.d(it.toString())
-                    FireStorageUtil.registRoomMessageImage(room.documentId, it){
+                    firebaseFacade.registChatMessageImage(room.documentId, it){
                         Timber.d("画像アップロード成功")
                     }
                 }
