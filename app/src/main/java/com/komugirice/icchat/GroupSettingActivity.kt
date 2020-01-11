@@ -326,6 +326,10 @@ class GroupSettingActivity : BaseActivity() {
         // 画像未設定の場合は終了
         if(groupIconImageView.drawable == null) return
 
+        // 前画像削除
+        if(prevSettingUri.isNotEmpty())
+            FirebaseStorage.getInstance().getReferenceFromUrl(prevSettingUri).delete()
+
         val imageUrl = "${System.currentTimeMillis()}.jpg"
         val ref = FirebaseStorage.getInstance().reference.child("${FireStorageUtil.ROOM_PATH}/${room.documentId}/${FireStorageUtil.ROOM_ICON_PATH}/${imageUrl}")
 
