@@ -1,8 +1,10 @@
 package com.komugirice.icchat.util
 
 import android.net.Uri
+import com.example.qiitaapplication.extension.getSuffix
 import com.google.android.gms.tasks.Task
 import com.google.firebase.storage.FirebaseStorage
+import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import timber.log.Timber
 
 class FireStorageUtil {
@@ -10,6 +12,8 @@ class FireStorageUtil {
         val USER_ICON_PATH = "userIcon"
         val ROOM_PATH = "room"
         val ROOM_ICON_PATH = "roomIcon"
+        val FILE_PATH = "file"
+        val IMAGE_PATH = "image"
 
         /**
          * ユーザアイコン取得
@@ -95,6 +99,25 @@ class FireStorageUtil {
                 }
             // 画像が未登録の場合の不具合対応
             onSuccess.invoke()
+        }
+
+        /**
+         * チャット画面から画像投稿
+         * @param roomId: String
+         * @param uri: Uri
+         * @param onSuccess
+         *
+         */
+        fun registRoomMessageImage(roomId: String, uri: Uri, onComplete: () -> Unit) {
+            val fileName = uri.lastPathSegment ?: ""
+            val extension = fileName.getSuffix()
+            val uploadUrl = "${System.currentTimeMillis()}.${extension}"
+            FirebaseStorage.getInstance().reference.child("${ROOM_PATH}/${roomId}/${IMAGE_PATH}/${uploadUrl}")
+                .putFile(uri)
+                .addOnCompleteListener{
+                    onComplete.invoke()
+                }
+
         }
     }
 }

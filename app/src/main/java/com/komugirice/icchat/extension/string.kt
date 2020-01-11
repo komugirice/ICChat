@@ -416,3 +416,17 @@ fun String.removeAllSpace(): String {
      val str = Pattern.compile("[ 　]+").matcher(this).replaceAll("")
      return str
 }
+
+/**
+ * ファイル名から拡張子を取得する
+ * 単純に一番最後の.以降を取得しているだけ。
+ * @param fileName ファイル名
+ * @return ファイルの拡張子。拡張子がない場合はnull
+ */
+fun String.getSuffix(): String {
+     if (this == null) return ""
+     val point = this.lastIndexOf(".")
+     return if (point != -1) {
+          this.substring(point + 1)
+     } else ""
+}

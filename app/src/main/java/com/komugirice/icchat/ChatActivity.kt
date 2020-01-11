@@ -1,5 +1,6 @@
 package com.komugirice.icchat
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -8,15 +9,19 @@ import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.PopupMenu
+import androidx.core.net.toFile
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import com.example.qiitaapplication.extension.getSuffix
 import com.komugirice.icchat.databinding.ActivityChatBinding
 import com.komugirice.icchat.enum.ActivityEnum
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.firebase.firestore.model.Room
 import com.komugirice.icchat.firebase.firestore.store.MessageStore
 import com.komugirice.icchat.util.DialogUtil
+import com.komugirice.icchat.util.FireStorageUtil
+import com.komugirice.icchat.util.FireStoreUtil
 import com.komugirice.icchat.viewModel.ChatViewModel
 import kotlinx.android.synthetic.main.activity_chat.*
 import timber.log.Timber
@@ -60,11 +65,24 @@ class ChatActivity : BaseActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode != Activity.RESULT_OK || data == null)
+            return
         when(requestCode) {
             ActivityEnum.GroupSettingActivity.id -> {
                 // GroupSettingActivityの更新内容をRoomに反映
                 if (!viewModel.initRoom(this.room))
                     onBackPressed()
+            }
+            RC_CHOOSE_IMAGE -> {
+
+                data.data?.also {
+                    // 画像登録
+                    Timber.d(it.toString())
+                    FireStorageUtil.registRoomMessageImage(room.documentId, it){
+                        Timber.d("画像アップロード成功")
+                    }
+                }
+
             }
             else -> {
             }
@@ -104,6 +122,7 @@ class ChatActivity : BaseActivity() {
                     room = it
                 }
                 this@ChatActivity.room = it
+                // ここに置かないとroom設定前でヌルポする
                 initLayout()
                 initData()
             })
@@ -147,6 +166,10 @@ class ChatActivity : BaseActivity() {
         backImageView.setOnClickListener {
             this.onBackPressed()
         }
+        // 設定アイコン
+        settingImageView.setOnClickListener {
+            showGroupSettingMenu(it)
+        }
         // 送信ボタン
         sendImageView.setOnClickListener {
             if(inputEditText.text.isNotEmpty()) {
@@ -154,12 +177,10 @@ class ChatActivity : BaseActivity() {
                 hideKeybord(it)
                 inputEditText.text.clear()
             }
-
-
         }
-        // 設定アイコン
-        settingImageView.setOnClickListener {
-            showGroupSettingMenu(it)
+        // 画像ボタン
+        imageImageView.setOnClickListener {
+            selectImage()
         }
 
     }
@@ -250,7 +271,20 @@ class ChatActivity : BaseActivity() {
         popup.show()
     }
 
+    /**
+     * 画像選択
+     *
+     */
+    private fun selectImage() {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
+            .addCategory(Intent.CATEGORY_OPENABLE)
+            .setType("image/*")
+        startActivityForResult(intent, RC_CHOOSE_IMAGE)
+    }
+
+
     companion object {
+        private const val RC_CHOOSE_IMAGE = 1000
         const val KEY_ROOM = "key_room"
         fun start(context: Context?, room: Room) =
             context?.startActivity(
