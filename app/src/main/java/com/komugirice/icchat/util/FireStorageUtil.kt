@@ -6,6 +6,7 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.storage.FirebaseStorage
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import timber.log.Timber
+import java.io.File
 
 class FireStorageUtil {
     companion object {
@@ -116,6 +117,22 @@ class FireStorageUtil {
                 .putFile(uri)
                 .addOnCompleteListener{
                     onComplete.invoke(uploadUrl)
+                }
+
+        }
+
+        /**
+         * チャット画面の画像投稿を取得
+         * @param roomId: String
+         * @param uri: Uri
+         * @param onSuccess
+         *
+         */
+        fun getRoomMessageImage(roomId: String, srcFileName: String, destFile: File, onComplete: () -> Unit) {
+            FirebaseStorage.getInstance().reference.child("${ROOM_PATH}/${roomId}/${IMAGE_PATH}/${srcFileName}")
+                .getFile(destFile)
+                .addOnCompleteListener{
+                    onComplete.invoke()
                 }
 
         }

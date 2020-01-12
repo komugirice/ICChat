@@ -1,6 +1,8 @@
 package com.komugirice.icchat.view
 
+import android.app.DownloadManager
 import android.content.Context
+import android.os.Environment
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
@@ -23,6 +25,9 @@ import com.komugirice.icchat.databinding.ChatMessageSystemCellBinding
 import com.komugirice.icchat.enum.MessageType
 import com.komugirice.icchat.firebase.firestore.store.MessageStore
 import com.komugirice.icchat.util.DialogUtil
+import com.komugirice.icchat.util.FireStorageUtil
+import timber.log.Timber
+import java.io.File
 
 
 class ChatView : RecyclerView {
@@ -166,7 +171,7 @@ class ChatView : RecyclerView {
             else if (holder is ChatMessageSystemCellViewHolder)
                 onBindSystemViewHolder(holder, position)
             else if (holder is ChatMessageImageCellViewHolder)
-                onBindSystemViewHolder(holder, position)
+                onBindImageViewHolder(holder, position)
         }
 
         /**
@@ -250,9 +255,22 @@ class ChatView : RecyclerView {
          * @param holder
          * @param position
          */
-        private fun onBindSystemViewHolder(holder: ChatMessageImageCellViewHolder, position: Int) {
+        private fun onBindImageViewHolder(holder: ChatMessageImageCellViewHolder, position: Int) {
             val data = items[position]
             holder.binding.message = data
+
+            // ダウンロードクリック
+            holder.binding.downloadTextView.setOnClickListener {
+                download(it, data)
+            }
+        }
+
+        private fun download(v: View?, message: Message) {
+            var fileName = message.message
+            var destFile = File("${context.getExternalFilesDirs(Environment.DIRECTORY_DOWNLOADS)}/${fileName}")
+            FireStorageUtil.getRoomMessageImage(message.roomId, fileName, destFile){
+                Timber.d("ダウンロード成功:${destFile}")
+            }
         }
 
         /**
