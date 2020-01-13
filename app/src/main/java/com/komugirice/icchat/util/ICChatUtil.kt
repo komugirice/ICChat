@@ -9,8 +9,10 @@ import com.example.qiitaapplication.extension.compareDate
 import com.example.qiitaapplication.extension.yyyyMMddHHmmToString
 import com.google.gson.Gson
 import com.komugirice.icchat.R
+import com.komugirice.icchat.enums.MessageType
 import com.komugirice.icchat.extension.setRoundedImageView
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
+import com.komugirice.icchat.firebase.firestore.model.Message
 import com.komugirice.icchat.firebase.firestore.model.Request
 import com.komugirice.icchat.firebase.firestore.model.Room
 import com.squareup.picasso.Picasso
@@ -167,6 +169,23 @@ object ICChatUtil {
             FireStorageUtil.getGroupIconImage(room.documentId) {
                 this.setRoundedImageView(it)
             }
+        }
+    }
+
+    /**
+     * メッセージの画像を設定する
+     *
+     * @param url
+     *
+     */
+    @JvmStatic
+    @BindingAdapter("messageImageUrl")
+    fun ImageView.loadMessageImage(message: Message) {
+        // 画像タイプ判定
+        if(!MessageType.getValue(message.type).isImage) return
+
+        FireStorageUtil.getRoomMessageImage(message){
+            Picasso.get().load(it).into(this)
         }
     }
 

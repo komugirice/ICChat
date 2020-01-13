@@ -243,7 +243,7 @@ class ChatView : RecyclerView {
         private fun download(v: View?, message: Message) {
             var fileName = message.message
             var destFile = File("${context.getExternalFilesDirs(Environment.DIRECTORY_DOWNLOADS)}/${fileName}")
-            FireStorageUtil.getRoomMessageImage(message.roomId, fileName, destFile){
+            FireStorageUtil.downloadRoomMessageImage(message.roomId, fileName, destFile){
                 Timber.d("ダウンロード成功:${destFile}")
             }
         }

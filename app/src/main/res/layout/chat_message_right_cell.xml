@@ -40,7 +40,7 @@
                 android:visibility="@{type.isImage? View.VISIBLE : View.GONE}"
                 android:id="@+id/imageCell"
                 layout="@layout/chat_type_image_cell"
-                app:message="@{message.message}"
+                app:message="@{message}"
                 app:isOther="@{false}"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>

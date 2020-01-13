@@ -5,6 +5,7 @@ import com.example.qiitaapplication.extension.getSuffix
 import com.google.android.gms.tasks.Task
 import com.google.firebase.storage.FirebaseStorage
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
+import com.komugirice.icchat.firebase.firestore.model.Message
 import timber.log.Timber
 import java.io.File
 
@@ -122,17 +123,41 @@ class FireStorageUtil {
         }
 
         /**
-         * チャット画面の画像投稿を取得
+         * チャット画面の画像投稿をダウンロード
          * @param roomId: String
          * @param uri: Uri
          * @param onSuccess
          *
          */
-        fun getRoomMessageImage(roomId: String, srcFileName: String, destFile: File, onComplete: () -> Unit) {
+        fun downloadRoomMessageImage(roomId: String, srcFileName: String, destFile: File, onComplete: () -> Unit) {
             FirebaseStorage.getInstance().reference.child("${ROOM_PATH}/${roomId}/${IMAGE_PATH}/${srcFileName}")
                 .getFile(destFile)
                 .addOnCompleteListener{
                     onComplete.invoke()
+                }
+
+        }
+
+
+        /**
+         * チャット画面の画像投稿を取得
+         * @param roomId: String
+         * @param message: Message
+         * @param onSuccess
+         *
+         */
+        fun getRoomMessageImage(message: Message, onSuccess: (Uri) -> Unit) {
+            FirebaseStorage.getInstance().reference.child("${ROOM_PATH}/${message.roomId}/${IMAGE_PATH}/${message.message}")
+                .downloadUrl
+                .addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        it.result?.apply {
+                            onSuccess.invoke(this)
+                        }
+                    } else {
+                        Timber.e(it.exception)
+                        Timber.d("getRoomMessageImage Failed")
+                    }
                 }
 
         }
