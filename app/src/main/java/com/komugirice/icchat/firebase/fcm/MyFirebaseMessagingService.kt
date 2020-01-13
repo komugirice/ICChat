@@ -93,7 +93,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
                 .setSmallIcon(R.drawable.ic_arrow_down)
-                .setContentTitle(getString(R.string.app_name))
+                .setContentTitle(getString(R.string.app_name) + ":${UserManager.myUser.name}さん")
                 .setContentText(messageBody)
                 .setAutoCancel(true)
                 //.setSound(defaultSoundUri)

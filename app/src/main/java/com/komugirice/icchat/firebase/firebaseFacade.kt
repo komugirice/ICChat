@@ -10,6 +10,7 @@ import com.komugirice.icchat.firebase.firestore.model.User
 import com.komugirice.icchat.firebase.firestore.store.RequestStore
 import com.komugirice.icchat.firebase.firestore.store.RoomStore
 import com.komugirice.icchat.firebase.firestore.store.UserStore
+import com.komugirice.icchat.util.FcmUtil
 import com.komugirice.icchat.util.FireStorageUtil
 
 /**
@@ -49,12 +50,6 @@ object firebaseFacade {
         }
     }
 
-    fun clearManager() {
-        UserManager.clear()
-        RoomManager.clear()
-        RequestManager.clear()
-    }
-
     /**
      * Users.friendListを更新、Requestの友だち申請を削除
      *
@@ -72,7 +67,8 @@ object firebaseFacade {
                 RequestStore.deleteUsersRequest(UserManager.myUserId, targetUserId)
                 // Request target→自分 削除
                 RequestStore.deleteUsersRequest(targetUserId, UserManager.myUserId)
-
+                // FCM通知
+                FcmUtil.sendAcceptFriendFcm(targetUserId)
                 initManager {
 
                     onSuccess.invoke()
@@ -96,6 +92,8 @@ object firebaseFacade {
         list.forEach {
             index++
             RequestStore.requestFriend(it.userId) {
+                // FCM通知
+                FcmUtil.sendRequestFriendFcm(it.userId)
                 if (list.size == index) {
                     // 再設定
                     RequestManager.initMyUserRequests {
@@ -127,6 +125,10 @@ object firebaseFacade {
             if (it.isSuccessful) {
                 //チェックありのRequest登録
                 RequestStore.registerGroupRequest(groupRequest) {
+                    // Request登録へのFCM通知
+                    groupRequest?.requests?.forEach {
+                        FcmUtil.sendRequestGroupFcm(it.beRequestedId, room.name)
+                    }
                     // チェックを外したRequest削除
                     RequestStore.deleteGroupRequest(room.documentId, delRequests) {
                         // RoomManager更新
@@ -140,6 +142,24 @@ object firebaseFacade {
                 }
             } else {
                 onFailed.invoke()
+            }
+        }
+    }
+
+    /**
+     * 友だち申請を拒否する
+     *
+     * @param requesterId
+     * @param onSuccess
+     *
+     */
+    fun denyUserRequest(requesterId: String, onSuccess: () -> Unit) {
+        // Request更新
+        RequestStore.denyUserRequest(requesterId) {
+            // FCM通知
+            FcmUtil.sendDenyFriendFcm(requesterId)
+            RequestManager.initUsersRequestToMe {
+                onSuccess.invoke()
             }
         }
     }

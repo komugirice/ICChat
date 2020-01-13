@@ -44,15 +44,13 @@ class DialogUtil {
                 })
                 .setNegativeButton("拒否", object : DialogInterface.OnClickListener {
                     override fun onClick(dialog: DialogInterface?, which: Int) {
-                        RequestStore.denyUserRequest(request.requesterId) {
-                            RequestManager.initUsersRequestToMe {
-                                Toast.makeText(
-                                    context,
-                                    "拒否しました",
-                                    Toast.LENGTH_LONG
-                                ).show()
-                                onSuccess.invoke()
-                            }
+                        firebaseFacade.denyUserRequest(request.requesterId) {
+                            Toast.makeText(
+                                context,
+                                "拒否しました",
+                                Toast.LENGTH_LONG
+                            ).show()
+                            onSuccess.invoke()
                         }
                     }
                 })
