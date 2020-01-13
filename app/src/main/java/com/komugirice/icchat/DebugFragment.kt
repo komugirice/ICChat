@@ -156,7 +156,7 @@ class DebugFragment : Fragment() {
             val message = getString(R.string.fcm_friend_request, friend.name)
             val token = friend.fcmToken
             val type = "0"
-            FcmApi.sendMessage(token, message, type)
+            FcmApi.sendMessageOkHttp(token, message, type)
         } ?: run{
             Toast.makeText(
                 context,

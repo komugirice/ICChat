@@ -123,9 +123,9 @@
     <string name="invalid_search_result">該当ユーザは存在しません</string>
 
     <!-- FCM -->
-    <string name="fcm_friend_request">%1$sから友だち申請がありました。</string>
+    <string name="fcm_friend_request">%1$sさんから友だち申請がありました。</string>
     <string name="fcm_group_request">グループ：%1$sから招待されました。</string>
-    <string name="fcm_friend_request_accept">%1$sが友だち申請を承認しました。</string>
-    <string name="fcm_friend_request_deny">%1$sが友だち申請を拒否しました。</string>
+    <string name="fcm_friend_request_accept">%1$sさんが友だち申請を承認しました。</string>
+    <string name="fcm_friend_request_deny">%1$sさんが友だち申請を拒否しました。</string>
     <string name="default_notification_channel_id">ICChat_Notification</string>
 </resources>
