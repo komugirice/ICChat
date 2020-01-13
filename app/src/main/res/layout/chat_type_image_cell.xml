@@ -3,27 +3,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-
+        <import type="android.view.Gravity"/>
         <variable
             name="message"
-            type="com.komugirice.icchat.firebase.firestore.model.Message" />
-    </data>
+            type="String"/>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/rootView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingStart="40dp"
-        android:paddingTop="16dp"
-        android:paddingEnd="16dp"
-        android:paddingBottom="16dp">
+        <variable
+            name="isOther"
+            type="Boolean" />
+    </data>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/imageContentView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:background="@drawable/background_chat_right_message"
+            android:background="@{isOther == true ? @drawable/background_chat_left_message : @drawable/background_chat_right_message}"
             android:paddingStart="12dp"
             android:paddingTop="5dp"
             android:paddingEnd="12dp"
@@ -35,8 +29,9 @@
                 android:id="@+id/fileNameTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{message.message}"
-                android:textColor="@android:color/black"
+                android:text="@{message}"
+                android:gravity="@{isOther == true ? Gravity.LEFT : Gravity.RIGHT}"
+                android:textColor="@{false == true ? @android:color/white : @android:color/black}"
                 android:textSize="12sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -46,7 +41,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
-                android:textColor="@drawable/text_link_color"
+                android:textColor="@drawable/text_link_color_black"
                 android:paddingTop="5dp"
                 android:paddingBottom="5dp"
                 android:text="@string/download"
@@ -56,16 +51,4 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <TextView
-            android:id="@+id/dateTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:textColor="@android:color/black"
-            android:textSize="10sp"
-            app:dateTime="@{message.createdAt}"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/imageContentView" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

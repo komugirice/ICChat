@@ -16,15 +16,15 @@ enum class MessageType(val id: Int) {
     val isText: Boolean
     get() = this == TEXT
 
-    val isIMAGE: Boolean
+    val isImage: Boolean
     get() = this == IMAGE
 
-    val isFILE: Boolean
+    val isFile: Boolean
     get() = this == FILE
 
-    val isQUOTE: Boolean
+    val isQuote: Boolean
     get() = this == QUOTE
 
-    val isSYSTEM: Boolean
+    val isSystem: Boolean
     get() = this == SYSTEM
 }

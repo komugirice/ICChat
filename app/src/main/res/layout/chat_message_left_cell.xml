@@ -3,7 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-        <import type="android.view.View"/>
+
+        <import type="android.view.View" />
+
         <variable
             name="message"
             type="com.komugirice.icchat.firebase.firestore.model.Message" />
@@ -59,12 +61,28 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/userImage">
 
-            <include
-                android:id="@+id/textCell"
-                layout="@layout/chat_type_text_cell"
-                android:visibility="@{type.isText? View.VISIBLE : View.GONE}"
-                app:isOther="@{true}"
-                app:message="@{message.message}"/>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/wrapMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <include
+                    android:id="@+id/textCell"
+                    layout="@layout/chat_type_text_cell"
+                    android:visibility="@{type.isText? View.VISIBLE : View.GONE}"
+                    app:isOther="@{true}"
+                    app:message="@{message.message}" />
+
+                <include
+                    android:id="@+id/imageCell"
+                    layout="@layout/chat_type_image_cell"
+                    android:visibility="@{type.isImage? View.VISIBLE : View.GONE}"
+                    app:isOther="@{true}"
+                    app:message="@{message.message}" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
                 android:id="@+id/dateTextView"
@@ -76,11 +94,10 @@
                 android:textSize="10sp"
                 app:dateTime="@{message.createdAt}"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/textCell" />
+                app:layout_constraintTop_toBottomOf="@id/wrapMessage" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-
-</androidx.constraintlayout.widget.ConstraintLayout>
-    </layout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

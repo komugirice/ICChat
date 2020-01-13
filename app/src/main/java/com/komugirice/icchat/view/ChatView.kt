@@ -3,7 +3,6 @@ package com.komugirice.icchat.view
 import android.content.Context
 import android.os.Environment
 import android.util.AttributeSet
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItems
 import com.komugirice.icchat.R
-import com.komugirice.icchat.databinding.ChatMessageImageCellBinding
 import com.komugirice.icchat.databinding.ChatMessageLeftCellBinding
 import com.komugirice.icchat.databinding.ChatMessageRightCellBinding
 import com.komugirice.icchat.databinding.ChatMessageSystemCellBinding
@@ -84,13 +82,7 @@ class ChatView : RecyclerView {
             return if (item.type == MessageType.SYSTEM.id) {
                 VIEW_TYPE_SYSTEM
             } else if (item.userId.equals(UserManager.myUserId)) {
-                if (item.type == MessageType.IMAGE.id) {
-                    VIEW_TYPE_IMAGE
-                }
-                else {
-                    VIEW_TYPE_LOGIN_USER
-                }
-
+                VIEW_TYPE_LOGIN_USER
             } else
                 VIEW_TYPE_OTHER_USER
         }
@@ -115,20 +107,6 @@ class ChatView : RecyclerView {
                 VIEW_TYPE_OTHER_USER -> {
                     holder = ChatMessageOtheruserCellViewHolder(
                         ChatMessageLeftCellBinding.inflate(
-                            LayoutInflater.from(context),
-                            parent,
-                            false
-                        )
-                    )
-                    holder.binding.root.setOnClickListener(object : View.OnClickListener {
-                        override fun onClick(v: View?) {
-                            hideKeyboard(v)
-                        }
-                    })
-                }
-                VIEW_TYPE_IMAGE -> {
-                    holder = ChatMessageImageCellViewHolder(
-                        ChatMessageImageCellBinding.inflate(
                             LayoutInflater.from(context),
                             parent,
                             false
@@ -166,8 +144,6 @@ class ChatView : RecyclerView {
                 onBindOtherUserViewHolder(holder, position)
             else if (holder is ChatMessageSystemCellViewHolder)
                 onBindSystemViewHolder(holder, position)
-            else if (holder is ChatMessageImageCellViewHolder)
-                onBindImageViewHolder(holder, position)
         }
 
         /**
@@ -191,7 +167,7 @@ class ChatView : RecyclerView {
                     MaterialDialog(context).apply {
                         listItems(
                             items = listOf(
-                                context.getString(menuList.get(0).second),
+                                //context.getString(menuList.get(0).second),
                                 context.getString(menuList.get(1).second)
                             ),
                             selection = { dialog, index, text ->
@@ -215,6 +191,10 @@ class ChatView : RecyclerView {
                     return true
                 }
             })
+            // 画像タイプ ダウンロードクリック
+            holder.binding.imageCell.downloadTextView.setOnClickListener {
+                download(it, data)
+            }
         }
 
         /**
@@ -235,6 +215,11 @@ class ChatView : RecyclerView {
             // 退会したらgroup.userListから消えるのでusresMapが使えないバグの対応
             // holder.binding.user = usersMap[data.userId]
             holder.binding.user = UserManager.getTargetUser(data.userId)
+
+            // 画像タイプ ダウンロードクリック
+            holder.binding.imageCell.downloadTextView.setOnClickListener {
+                download(it, data)
+            }
         }
 
         /**
@@ -248,22 +233,13 @@ class ChatView : RecyclerView {
             holder.binding.message = data
         }
 
+
         /**
-         * 画像用
+         * 画像タイプ ダウンロード
          *
          * @param holder
          * @param position
          */
-        private fun onBindImageViewHolder(holder: ChatMessageImageCellViewHolder, position: Int) {
-            val data = items[position]
-            holder.binding.message = data
-
-            // ダウンロードクリック
-            holder.binding.downloadTextView.setOnClickListener {
-                download(it, data)
-            }
-        }
-
         private fun download(v: View?, message: Message) {
             var fileName = message.message
             var destFile = File("${context.getExternalFilesDirs(Environment.DIRECTORY_DOWNLOADS)}/${fileName}")
@@ -295,13 +271,10 @@ class ChatView : RecyclerView {
     class ChatMessageSystemCellViewHolder(val binding: ChatMessageSystemCellBinding) :
         RecyclerView.ViewHolder(binding.root)
 
-    class ChatMessageImageCellViewHolder(val binding: ChatMessageImageCellBinding) :
-        RecyclerView.ViewHolder(binding.root)
 
     companion object {
         private const val VIEW_TYPE_LOGIN_USER = 0
         private const val VIEW_TYPE_OTHER_USER = 1
         private const val VIEW_TYPE_SYSTEM = 2
-        private const val VIEW_TYPE_IMAGE = 3
     }
 }
