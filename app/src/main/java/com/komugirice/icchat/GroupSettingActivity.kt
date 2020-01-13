@@ -10,7 +10,6 @@ import android.os.Bundle
 import android.view.View
 import android.widget.CheckBox
 import android.widget.Toast
-import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.net.toUri
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -18,8 +17,8 @@ import androidx.lifecycle.ViewModelProviders
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.UploadTask
 import com.komugirice.icchat.databinding.ActivityGroupSettingBinding
-import com.komugirice.icchat.enum.ActivityEnum
-import com.komugirice.icchat.enum.RequestStatus
+import com.komugirice.icchat.enums.ActivityEnum
+import com.komugirice.icchat.enums.RequestStatus
 import com.komugirice.icchat.extension.afterTextChanged
 import com.komugirice.icchat.extension.setRoundedImageView
 import com.komugirice.icchat.firebase.firebaseFacade

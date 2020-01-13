@@ -1,4 +1,4 @@
-package com.komugirice.icchat.enum
+package com.komugirice.icchat.enums
 
 enum class ActivityEnum(val id: Int) {
     ChatActivity(1001),

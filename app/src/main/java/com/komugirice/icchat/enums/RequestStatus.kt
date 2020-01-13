@@ -1,4 +1,4 @@
-package com.komugirice.icchat.enum
+package com.komugirice.icchat.enums
 
 enum class RequestStatus(val id: Int) {
     REQUEST(0),

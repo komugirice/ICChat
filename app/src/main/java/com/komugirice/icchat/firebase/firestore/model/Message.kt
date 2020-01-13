@@ -1,6 +1,6 @@
 package com.komugirice.icchat.firebase.firestore.model
 
-import com.komugirice.icchat.enum.MessageType
+import com.komugirice.icchat.enums.MessageType
 import java.io.Serializable
 import java.util.*
 

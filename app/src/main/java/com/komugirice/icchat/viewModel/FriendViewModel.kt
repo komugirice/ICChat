@@ -4,8 +4,7 @@ import androidx.annotation.NonNull
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.komugirice.icchat.enum.RequestStatus
-import com.komugirice.icchat.firebase.firebaseFacade
+import com.komugirice.icchat.enums.RequestStatus
 import com.komugirice.icchat.firebase.firestore.manager.RequestManager
 import com.komugirice.icchat.firebase.firestore.manager.RoomManager
 import com.komugirice.icchat.view.FriendsView

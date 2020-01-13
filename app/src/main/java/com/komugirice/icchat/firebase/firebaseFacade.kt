@@ -1,11 +1,9 @@
 package com.komugirice.icchat.firebase
 
-import android.content.Context
 import android.net.Uri
-import android.widget.Toast
 import com.komugirice.icchat.ICChatApplication.Companion.applicationContext
 import com.komugirice.icchat.R
-import com.komugirice.icchat.enum.MessageType
+import com.komugirice.icchat.enums.MessageType
 import com.komugirice.icchat.firebase.fcm.FcmStore
 import com.komugirice.icchat.firebase.firestore.manager.RequestManager
 import com.komugirice.icchat.firebase.firestore.manager.RoomManager

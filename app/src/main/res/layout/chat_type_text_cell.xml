@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <import type="android.view.Gravity"/>
+        <variable
+            name="message"
+            type="String"/>
+
+        <variable
+            name="isOther"
+            type="Boolean" />
+    </data>
+
+    <TextView
+        android:id="@+id/messageTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="@{isOther == true ? Gravity.LEFT : Gravity.RIGHT}"
+        android:background="@{isOther == true ? @drawable/background_chat_left_message : @drawable/background_chat_right_message}"
+        android:paddingStart="12dp"
+        android:paddingTop="5dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="5dp"
+        android:text="@{message}"
+        android:textColor="@{isOther == true ? @android:color/white : @android:color/black}"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</layout>

@@ -1,7 +1,7 @@
 package com.komugirice.icchat.firebase.firestore.store
 
 import com.google.firebase.firestore.FirebaseFirestore
-import com.komugirice.icchat.enum.RequestStatus
+import com.komugirice.icchat.enums.RequestStatus
 import com.komugirice.icchat.firebase.firestore.manager.RoomManager
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.firebase.firestore.model.GroupRequests

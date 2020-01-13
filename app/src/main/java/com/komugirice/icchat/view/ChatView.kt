@@ -1,9 +1,9 @@
 package com.komugirice.icchat.view
 
-import android.app.DownloadManager
 import android.content.Context
 import android.os.Environment
 import android.util.AttributeSet
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,19 +12,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItems
-import com.komugirice.icchat.ChatActivity
-import com.komugirice.icchat.GroupSettingActivity
 import com.komugirice.icchat.R
-import com.komugirice.icchat.firebase.firestore.model.Message
-import com.komugirice.icchat.firebase.firestore.model.User
-import com.komugirice.icchat.firebase.firestore.manager.UserManager
-import com.komugirice.icchat.databinding.ChatMessageCellBinding
 import com.komugirice.icchat.databinding.ChatMessageImageCellBinding
-import com.komugirice.icchat.databinding.ChatMessageOtheruserCellBinding
+import com.komugirice.icchat.databinding.ChatMessageLeftCellBinding
+import com.komugirice.icchat.databinding.ChatMessageRightCellBinding
 import com.komugirice.icchat.databinding.ChatMessageSystemCellBinding
-import com.komugirice.icchat.enum.MessageType
+import com.komugirice.icchat.enums.MessageType
+import com.komugirice.icchat.firebase.firestore.manager.UserManager
+import com.komugirice.icchat.firebase.firestore.model.Message
 import com.komugirice.icchat.firebase.firestore.store.MessageStore
-import com.komugirice.icchat.util.DialogUtil
 import com.komugirice.icchat.util.FireStorageUtil
 import timber.log.Timber
 import java.io.File
@@ -104,7 +100,7 @@ class ChatView : RecyclerView {
             when (viewType) {
                 VIEW_TYPE_LOGIN_USER -> {
                     holder = ChatMessageCellViewHolder(
-                        ChatMessageCellBinding.inflate(
+                        ChatMessageRightCellBinding.inflate(
                             LayoutInflater.from(
                                 context
                             ), parent, false
@@ -118,7 +114,7 @@ class ChatView : RecyclerView {
                 }
                 VIEW_TYPE_OTHER_USER -> {
                     holder = ChatMessageOtheruserCellViewHolder(
-                        ChatMessageOtheruserCellBinding.inflate(
+                        ChatMessageLeftCellBinding.inflate(
                             LayoutInflater.from(context),
                             parent,
                             false
@@ -183,6 +179,7 @@ class ChatView : RecyclerView {
         private fun onBindLoginUserViewHolder(holder: ChatMessageCellViewHolder, position: Int) {
             val data = items[position]
             holder.binding.message = data
+            holder.binding.type = MessageType.getValue(data.type)
 
             // 長押し
             holder.binding.root.setOnLongClickListener(object : View.OnLongClickListener {
@@ -287,10 +284,10 @@ class ChatView : RecyclerView {
 
     }
 
-    class ChatMessageCellViewHolder(val binding: ChatMessageCellBinding) :
+    class ChatMessageCellViewHolder(val binding: ChatMessageRightCellBinding) :
         RecyclerView.ViewHolder(binding.root)
 
-    class ChatMessageOtheruserCellViewHolder(val binding: ChatMessageOtheruserCellBinding) :
+    class ChatMessageOtheruserCellViewHolder(val binding: ChatMessageLeftCellBinding) :
         RecyclerView.ViewHolder(binding.root)
 
     class ChatMessageSystemCellViewHolder(val binding: ChatMessageSystemCellBinding) :
