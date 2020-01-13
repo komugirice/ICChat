@@ -3,10 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-
+        <import type="android.view.View"/>
         <variable
             name="message"
             type="com.komugirice.icchat.firebase.firestore.model.Message" />
+
+        <variable
+            name="type"
+            type="com.komugirice.icchat.enums.MessageType" />
 
         <variable
             name="user"
@@ -48,28 +52,19 @@
             app:layout_constraintTop_toTopOf="@+id/userImage" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/wrapMessage"
+            android:id="@+id/messageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="4dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/userImage">
 
-            <TextView
-                android:id="@+id/messageTextView"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start"
-                android:background="@drawable/background_chat_left_message"
-                android:paddingStart="12dp"
-                android:paddingTop="5dp"
-                android:paddingEnd="12dp"
-                android:paddingBottom="5dp"
-                android:text="@{message.message}"
-                android:textColor="@android:color/white"
-                android:textSize="12sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+            <include
+                android:id="@+id/textCell"
+                layout="@layout/chat_type_text_cell"
+                android:visibility="@{type.isText? View.VISIBLE : View.GONE}"
+                app:isOther="@{true}"
+                app:message="@{message.message}"/>
 
             <TextView
                 android:id="@+id/dateTextView"
@@ -81,9 +76,11 @@
                 android:textSize="10sp"
                 app:dateTime="@{message.createdAt}"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/messageTextView" />
+                app:layout_constraintTop_toBottomOf="@id/textCell" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</layout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+    </layout>

@@ -229,8 +229,10 @@ class ChatView : RecyclerView {
         ) {
             val data = items[position]
             holder.binding.message = data
+            holder.binding.type = MessageType.getValue(data.type)
+
             // UserManagerのfriends以外から取得する可能性がある
-            // 退会したらgroup.userListから消えるのでusresMapが使えないバグ対応
+            // 退会したらgroup.userListから消えるのでusresMapが使えないバグの対応
             // holder.binding.user = usersMap[data.userId]
             holder.binding.user = UserManager.getTargetUser(data.userId)
         }
