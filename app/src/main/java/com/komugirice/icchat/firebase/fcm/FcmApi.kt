@@ -19,6 +19,8 @@ import timber.log.Timber
 object FcmApi {
 
     const val BASE_URL = "https://fcm.googleapis.com/"
+    const val API_NAME = "fcm/send"
+    const val AUTHORIZATION_KEY = "AAAA-rWMj7c:APA91bG5mSVkbyZAGBK4k20gruc8-weNrGXnXhE9GNT2WdxSk60ofZbW0vgmaYO-KA4a1fe2mCdaBdHoZ8qV9XghE362_kh74rpaRXBBySXvy17asn0HMSavJ9PkjYAjZBrLcxj34a31"
     val fcmIF: FCMApiInterface by lazy {getClient().create(FCMApiInterface::class.java)}
 
     fun getClient(): Retrofit =
@@ -28,10 +30,10 @@ object FcmApi {
             .build()
 
     interface FCMApiInterface {
-        @Headers("Authorization: key=AAAA-rWMj7c:APA91bG5mSVkbyZAGBK4k20gruc8-weNrGXnXhE9GNT2WdxSk60ofZbW0vgmaYO-KA4a1fe2mCdaBdHoZ8qV9XghE362_kh74rpaRXBBySXvy17asn0HMSavJ9PkjYAjZBrLcxj34a31",
+        @Headers("Authorization: key=$AUTHORIZATION_KEY",
             "Content-Type:application/json"
         )
-        @POST("fcm/send")
+        @POST(API_NAME)
         fun sendNotification(@Body requestJson: String): Call<ResponseBody?>?
     }
 
@@ -48,6 +50,9 @@ object FcmApi {
 
     }
 
+    /**
+     * fcm送信はOkHttpを使う
+     */
     fun sendMessageOkHttp(token: String?, message: String?, type: String){
         Timber.d("token:$token message:$message type:$type")
 
@@ -58,36 +63,31 @@ object FcmApi {
         val data = RequestData(token, fcmRequest)
         data.token = token
 
-        val url = "https://fcm.googleapis.com/fcm/send"
+        val url = BASE_URL + API_NAME
         val client: OkHttpClient = OkHttpClient.Builder()
             .build()
 
         // post
-//        val postBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), StringBuilder()
-//            .append("{\"data\":{\"message\" :\"$message\",\"age\" : \"20\",\"address\" : \"Tokyo\"},\"to\" : \"$token\"}")
-//            .toString())
         val sendJson = Gson().toJson(data)
         Timber.d("fcmBody:\n$sendJson")
         val postBody = create(MediaType.parse("application/json; charset=utf-8"), sendJson)
         val request: Request = Request.Builder().url(url).post(postBody)
-            .addHeader("Authorization", "key=AAAA-rWMj7c:APA91bG5mSVkbyZAGBK4k20gruc8-weNrGXnXhE9GNT2WdxSk60ofZbW0vgmaYO-KA4a1fe2mCdaBdHoZ8qV9XghE362_kh74rpaRXBBySXvy17asn0HMSavJ9PkjYAjZBrLcxj34a31")
+            .addHeader("Authorization", "key=$AUTHORIZATION_KEY")
             .addHeader("Content-Type", "application/json")
             .build()
         client.newCall(request).enqueue(object: Callback {
             override fun onFailure(call: okhttp3.Call, e: IOException) {
-                Timber.d("えらー")
+                Timber.e(e, "FCMメッセージ送信エラー")
                 e.printStackTrace()
             }
 
             override fun onResponse(call: okhttp3.Call, response: Response) {
-                Timber.d("成功")
+                Timber.d("FCMメッセージ送信成功")
                 Timber.d("response:${response.body()?.string()}")
                 Timber.d(response.code().toString())
             }
 
         })
-//        val response = client.newCall(request).execute()
-
     }
 
     /**
