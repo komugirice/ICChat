@@ -21,7 +21,6 @@
         android:id="@+id/overWrap"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@color/yellow"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -29,19 +28,20 @@
         <Space
             android:id="@+id/spaceLeft"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            app:layout_constraintHorizontal_chainStyle="spread"
             android:visibility="@{isOther == true ? View.GONE : View.VISIBLE}"
-            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintHorizontal_weight="1"
             app:layout_constraintEnd_toStartOf="@+id/wrapLayout"
-            app:layout_constraintStart_toStartOGONEf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/wrapLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/purple"
-            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintHorizontal_weight="1"
             app:layout_constraintEnd_toStartOf="@+id/spaceRight"
             app:layout_constraintStart_toEndOf="@+id/spaceLeft"
             app:layout_constraintTop_toTopOf="parent">
@@ -111,14 +111,27 @@
                 app:layout_constraintTop_toBottomOf="@+id/imageInfoView"
                 app:messageImageUrl="@{message}" />
 
+            <TextView
+                android:id="@+id/dateTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:gravity="end"
+                android:textColor="@android:color/black"
+                android:textSize="10sp"
+                app:dateTime="@{message.createdAt}"
+                app:layout_constraintEnd_toEndOf="@id/image"
+                app:layout_constraintTop_toBottomOf="@id/image" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <Space
             android:id="@+id/spaceRight"
             android:layout_width="0dp"
-            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            android:layout_height="0dp"
             android:visibility="@{isOther == true ? View.VISIBLE : View.GONE}"
-            android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/wrapLayout"
             app:layout_constraintTop_toTopOf="parent" />
