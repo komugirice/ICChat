@@ -47,7 +47,8 @@ class ChatView : RecyclerView {
     }
 
     class Adapter(val context: Context) : RecyclerView.Adapter<ViewHolder>() {
-        lateinit var onClickCallBack: () -> Unit
+        lateinit var onClickRefreshCallBack: () -> Unit
+        lateinit var onClickDownloadCallBack: (message: Message) -> Unit
         private val items = mutableListOf<Message>()
         // private val usersMap = mutableMapOf<String, User>()
 
@@ -178,7 +179,7 @@ class ChatView : RecyclerView {
                                     menuList.get(1).first -> {
                                         // メッセージ削除
                                         MessageStore.deleteMessage(data){
-                                            onClickCallBack.invoke()
+                                            onClickRefreshCallBack.invoke()
                                         }
 
 
@@ -193,7 +194,7 @@ class ChatView : RecyclerView {
             })
             // 画像タイプ ダウンロードクリック
             holder.binding.imageCell.downloadTextView.setOnClickListener {
-                download(it, data)
+                onClickDownloadCallBack.invoke(data)
             }
         }
 
@@ -218,7 +219,7 @@ class ChatView : RecyclerView {
 
             // 画像タイプ ダウンロードクリック
             holder.binding.imageCell.downloadTextView.setOnClickListener {
-                download(it, data)
+                onClickDownloadCallBack.invoke(data)
             }
         }
 
@@ -231,21 +232,6 @@ class ChatView : RecyclerView {
         private fun onBindSystemViewHolder(holder: ChatMessageSystemCellViewHolder, position: Int) {
             val data = items[position]
             holder.binding.message = data
-        }
-
-
-        /**
-         * 画像タイプ ダウンロード
-         *
-         * @param holder
-         * @param position
-         */
-        private fun download(v: View?, message: Message) {
-            var fileName = message.message
-            var destFile = File("${context.getExternalFilesDirs(Environment.DIRECTORY_DOWNLOADS)}/${fileName}")
-            FireStorageUtil.downloadRoomMessageImage(message.roomId, fileName, destFile){
-                Timber.d("ダウンロード成功:${destFile}")
-            }
         }
 
         /**

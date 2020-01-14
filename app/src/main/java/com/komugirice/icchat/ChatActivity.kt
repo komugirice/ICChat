@@ -3,25 +3,38 @@ package com.komugirice.icchat
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.PopupMenu
+import android.widget.Toast
+import androidx.core.net.toFile
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import com.example.qiitaapplication.extension.getSuffix
+import com.google.firebase.firestore.util.FileUtil
 import com.komugirice.icchat.databinding.ActivityChatBinding
 import com.komugirice.icchat.enums.ActivityEnum
+import com.komugirice.icchat.enums.MessageType
 import com.komugirice.icchat.firebase.firebaseFacade
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
+import com.komugirice.icchat.firebase.firestore.model.Message
 import com.komugirice.icchat.firebase.firestore.model.Room
 import com.komugirice.icchat.firebase.firestore.store.MessageStore
 import com.komugirice.icchat.util.DialogUtil
+import com.komugirice.icchat.util.FIleUtil
+import com.komugirice.icchat.util.FireStorageUtil
+import com.komugirice.icchat.util.ICChatUtil
 import com.komugirice.icchat.viewModel.ChatViewModel
 import kotlinx.android.synthetic.main.activity_chat.*
 import timber.log.Timber
+import java.io.File
+import java.io.InputStream
+
 
 class ChatActivity : BaseActivity() {
 
@@ -29,6 +42,7 @@ class ChatActivity : BaseActivity() {
     private lateinit var viewModel: ChatViewModel
     private val handler = Handler()
     private lateinit var room: Room
+    private lateinit var messageForDownload: Message
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,33 +74,6 @@ class ChatActivity : BaseActivity() {
 //        initData()
 //    }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode != Activity.RESULT_OK || data == null)
-            return
-        when(requestCode) {
-            ActivityEnum.GroupSettingActivity.id -> {
-                // GroupSettingActivityの更新内容をRoomに反映
-                if (!viewModel.initRoom(this.room))
-                    onBackPressed()
-            }
-            RC_CHOOSE_IMAGE -> {
-
-                data.data?.also {
-                    // 画像登録
-                    Timber.d(it.toString())
-                    firebaseFacade.registChatMessageImage(room.documentId, it){
-                        Timber.d("画像アップロード成功")
-                    }
-                }
-
-            }
-            else -> {
-            }
-
-        }
-    }
-
     private fun initRoom(){
         if (!viewModel.initRoom(intent))
             onBackPressed()
@@ -103,8 +90,13 @@ class ChatActivity : BaseActivity() {
         binding.lifecycleOwner = this
 
         // 削除処理の後
-        binding.chatView.customAdapter.onClickCallBack = {
+        binding.chatView.customAdapter.onClickRefreshCallBack = {
             initData()
+        }
+        binding.chatView.customAdapter.onClickDownloadCallBack = {
+            // intentに設定できないので仕方なく
+            messageForDownload = it
+            createFile(it)
         }
     }
 
@@ -268,6 +260,46 @@ class ChatActivity : BaseActivity() {
         popup.show()
     }
 
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode != Activity.RESULT_OK || data == null)
+            return
+        when(requestCode) {
+            ActivityEnum.GroupSettingActivity.id -> {
+                // GroupSettingActivityの更新内容をRoomに反映
+                if (!viewModel.initRoom(this.room))
+                    onBackPressed()
+            }
+            RC_CHOOSE_IMAGE -> {
+
+                data.data?.also {
+                    // 画像登録
+                    Timber.d(it.toString())
+                    firebaseFacade.registChatMessageImage(room.documentId, it){
+                        Timber.d("画像アップロード成功")
+                    }
+                }
+
+            }
+            RC_WRITE_FILE -> {
+
+                data.data?.also {
+                    Timber.d("ダウンロード先URL：$it")
+                    val takeFlags: Int = intent.flags and
+                            (Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+                    // Check for the freshest data.
+                    contentResolver.takePersistableUriPermission(it, takeFlags)
+                    downloadImage(it)
+
+                }
+            }
+            else -> {
+            }
+
+        }
+    }
+
     /**
      * 画像選択
      *
@@ -279,10 +311,56 @@ class ChatActivity : BaseActivity() {
         startActivityForResult(intent, RC_CHOOSE_IMAGE)
     }
 
+    /**
+     * ファイル作成
+     * mimeType: image/jpg等
+     * fileName: Uri設定
+     *
+     */
+    private fun createFile(message: Message) {
+        val fileName = message.message
+        var mimeType = ""
+        when(message.type) {
+            MessageType.IMAGE.id -> mimeType = "image/${message.message.getSuffix()}"
+            else-> mimeType = ""
+        }
+
+        val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+            // Filter to only show results that can be "opened", such as
+            // a file (as opposed to a list of contacts or timezones).
+            addCategory(Intent.CATEGORY_OPENABLE)
+
+            // Create a file with the requested MIME type.
+            type = mimeType
+            putExtra(Intent.EXTRA_TITLE, fileName)
+        }
+
+        startActivityForResult(intent, RC_WRITE_FILE)
+    }
+
+    /**
+     * 画像タイプ ダウンロード
+     *
+     * @param uri
+     */
+    private fun downloadImage(uri: Uri) {
+        var fileName = messageForDownload.message
+        FireStorageUtil.downloadRoomMessageImage(messageForDownload.roomId, fileName, uri){
+//            val file = File(FIleUtil.getPathFromUri(this, uri))
+//            File(it?.path)?.copyTo(file)
+            Toast.makeText(
+                this,
+                "alert_complete_download",
+                Toast.LENGTH_LONG).show()
+        }
+    }
+
 
     companion object {
         private const val RC_CHOOSE_IMAGE = 1000
+        private const val RC_WRITE_FILE: Int = 1001
         const val KEY_ROOM = "key_room"
+        const val KEY_MESSAGE = "key_message"
         fun start(context: Context?, room: Room) =
             context?.startActivity(
                 Intent(context, ChatActivity::class.java)

@@ -123,17 +123,35 @@ class FireStorageUtil {
         }
 
         /**
+         * チャット画面の画像投稿をダウンロードして対象のUriに設定
+         * @param roomId: storageから取得対象のroomId
+         * @param srcFileName: storageから取得するファイル名
+         * @param destUri: ファイルのコピー先Uri
+         * @param onSuccess
+         *
+         */
+        fun downloadRoomMessageImage(roomId: String, srcFileName: String, destUri: Uri, onComplete: () -> Unit) {
+            FirebaseStorage.getInstance().reference.child("${ROOM_PATH}/${roomId}/${IMAGE_PATH}/${srcFileName}")
+                .putFile(destUri)
+                .addOnCompleteListener{
+                    onComplete.invoke()
+                }
+
+        }
+
+        /**
          * チャット画面の画像投稿をダウンロード
          * @param roomId: String
          * @param uri: Uri
          * @param onSuccess
          *
          */
-        fun downloadRoomMessageImage(roomId: String, srcFileName: String, destFile: File, onComplete: () -> Unit) {
+        fun downloadRoomMessageImageUri(roomId: String, srcFileName: String, onComplete: (Uri?) -> Unit) {
             FirebaseStorage.getInstance().reference.child("${ROOM_PATH}/${roomId}/${IMAGE_PATH}/${srcFileName}")
-                .getFile(destFile)
+                .downloadUrl
                 .addOnCompleteListener{
-                    onComplete.invoke()
+                    if(it.isSuccessful)
+                    onComplete.invoke(it.result)
                 }
 
         }
