@@ -1,7 +1,6 @@
 package com.komugirice.icchat.view
 
 import android.content.Context
-import android.os.Environment
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
@@ -18,12 +17,8 @@ import com.komugirice.icchat.databinding.ChatMessageSystemCellBinding
 import com.komugirice.icchat.enums.MessageType
 import com.komugirice.icchat.firebase.FirebaseFacade
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
+import com.komugirice.icchat.firebase.firestore.model.File
 import com.komugirice.icchat.firebase.firestore.model.Message
-import com.komugirice.icchat.firebase.firestore.store.FileStore
-import com.komugirice.icchat.firebase.firestore.store.MessageStore
-import com.komugirice.icchat.util.FireStorageUtil
-import timber.log.Timber
-import java.io.File
 
 
 class ChatView : RecyclerView {
@@ -51,10 +46,10 @@ class ChatView : RecyclerView {
     class Adapter(val context: Context) : RecyclerView.Adapter<ViewHolder>() {
         lateinit var onClickRefreshCallBack: () -> Unit
         lateinit var onClickDownloadCallBack: (message: Message) -> Unit
-        private val items = mutableListOf<Message>()
+        private val items = mutableListOf<Pair<Message, File?>>()
         // private val usersMap = mutableMapOf<String, User>()
 
-        fun refresh(list: List<Message>) {
+        fun refresh(list: List<Pair<Message, File?>>) {
             items.apply {
                 clear()
                 addAll(list)
@@ -81,10 +76,11 @@ class ChatView : RecyclerView {
          */
 
         override fun getItemViewType(position: Int): Int {
-            val item = items[position]
-            return if (item.type == MessageType.SYSTEM.id) {
+            val message = items[position].first
+            val file = items[position].second
+            return if (message.type == MessageType.SYSTEM.id) {
                 VIEW_TYPE_SYSTEM
-            } else if (item.userId.equals(UserManager.myUserId)) {
+            } else if (message.userId.equals(UserManager.myUserId)) {
                 VIEW_TYPE_LOGIN_USER
             } else
                 VIEW_TYPE_OTHER_USER
@@ -156,9 +152,11 @@ class ChatView : RecyclerView {
          * @param position
          */
         private fun onBindLoginUserViewHolder(holder: ChatMessageCellViewHolder, position: Int) {
-            val data = items[position]
-            holder.binding.message = data
-            holder.binding.type = MessageType.getValue(data.type)
+            val message = items[position].first
+            val file = items[position].second
+            holder.binding.message = message
+            holder.binding.file = file
+            holder.binding.type = MessageType.getValue(message.type)
 
             // 長押し
             holder.binding.root.setOnLongClickListener(object : View.OnLongClickListener {
@@ -180,7 +178,7 @@ class ChatView : RecyclerView {
 //                                    }
                                     menuList.get(0).first -> {
                                         // メッセージ削除
-                                        FirebaseFacade.deleteMessage(data, null){
+                                        FirebaseFacade.deleteMessage(message, null){
                                             onClickRefreshCallBack.invoke()
                                         }
                                     }
@@ -194,7 +192,7 @@ class ChatView : RecyclerView {
             })
             // 画像タイプ ダウンロードクリック
             holder.binding.imageCell.downloadTextView.setOnClickListener {
-                onClickDownloadCallBack.invoke(data)
+                onClickDownloadCallBack.invoke(message)
             }
         }
 
@@ -208,18 +206,20 @@ class ChatView : RecyclerView {
             holder: ChatMessageOtheruserCellViewHolder,
             position: Int
         ) {
-            val data = items[position]
-            holder.binding.message = data
-            holder.binding.type = MessageType.getValue(data.type)
+            val message = items[position].first
+            val file = items[position].second
+            holder.binding.message = message
+            holder.binding.file = file
+            holder.binding.type = MessageType.getValue(message.type)
 
             // UserManagerのfriends以外から取得する可能性がある
             // 退会したらgroup.userListから消えるのでusresMapが使えないバグの対応
             // holder.binding.user = usersMap[data.userId]
-            holder.binding.user = UserManager.getTargetUser(data.userId)
+            holder.binding.user = UserManager.getTargetUser(message.userId)
 
             // 画像タイプ ダウンロードクリック
             holder.binding.imageCell.downloadTextViewOther.setOnClickListener {
-                onClickDownloadCallBack.invoke(data)
+                onClickDownloadCallBack.invoke(message)
             }
         }
 
@@ -230,8 +230,8 @@ class ChatView : RecyclerView {
          * @param position
          */
         private fun onBindSystemViewHolder(holder: ChatMessageSystemCellViewHolder, position: Int) {
-            val data = items[position]
-            holder.binding.message = data
+            val message = items[position].first
+            holder.binding.message = message
         }
 
         /**

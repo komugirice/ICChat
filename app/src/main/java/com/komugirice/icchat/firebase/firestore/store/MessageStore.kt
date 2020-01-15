@@ -46,7 +46,7 @@ class MessageStore {
                 }
         }
 
-        fun getMessages(roomId: String, liveMsgList: MutableLiveData<List<Message>>) {
+        fun getMessages(roomId: String, onSuccess: (List<Message>) -> Unit) {
 
             FirebaseFirestore.getInstance()
                 .collection("rooms/$roomId/messages")
@@ -55,8 +55,7 @@ class MessageStore {
                 // 必ず成功する。messagesが作られて無くても成功する。
                 .addOnSuccessListener {
                     val messages = it.toObjects(Message::class.java)
-                    //val messages: List<Message> = it.data.map{ it.value }.toList()
-                    liveMsgList.postValue(messages)
+                    onSuccess.invoke(messages)
                 }
         }
 

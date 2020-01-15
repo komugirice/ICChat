@@ -10,9 +10,12 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 import com.komugirice.icchat.ChatActivity
+import com.komugirice.icchat.enums.MessageType
 import com.komugirice.icchat.firebase.firestore.manager.RoomManager
+import com.komugirice.icchat.firebase.firestore.model.File
 import com.komugirice.icchat.firebase.firestore.model.Message
 import com.komugirice.icchat.firebase.firestore.model.Room
+import com.komugirice.icchat.firebase.firestore.store.FileStore
 import com.komugirice.icchat.firebase.firestore.store.MessageStore
 import timber.log.Timber
 import java.util.*
@@ -20,7 +23,7 @@ import java.util.*
 
 class ChatViewModel: ViewModel() {
 
-    val items = MutableLiveData<List<Message>>()
+    val items = MutableLiveData<List<Pair<Message, File?>>>()
     val isException = MutableLiveData<Throwable>()
     private var messageListener: ListenerRegistration? = null
     // groupのusers不要論
@@ -33,16 +36,35 @@ class ChatViewModel: ViewModel() {
         //RoomStore.getTargetRoomUsers(roomId){
             //users.postValue(it)
 
+        var list = mutableListOf<Pair<Message, File?>>()
+
             // message情報
-            MessageStore.getMessages(roomId, items)
-            items.observe(owner, Observer {
-                // 監視
-                val lastCreatedAt = it.map{ it.createdAt }.max() ?: Date()
-                initSubscribe(roomId, lastCreatedAt)
-            })
+            MessageStore.getMessages(roomId){getMessages->
+                getMessages.forEach {
+
+                    FileStore.getFile(it.roomId, it.message, it.type){file->
+                        list.add(Pair(it, file))
+
+                        if(getMessages.size == list.size) {
+                            // 表示順序がおかしいバグ
+                            list.sortBy { it.first.createdAt }
+                            items.postValue(list)
+                            // 監視
+                            val lastCreatedAt = getMessages.map{ it.createdAt }.max() ?: Date()
+                            initSubscribe(roomId, lastCreatedAt)
+                        }
+
+                    }
+                }
+
+
+            }
         //}
     }
 
+    /**
+     * intent用（他画面遷移）
+     */
     fun initRoom(intent: Intent): Boolean {
         intent.getSerializableExtra(ChatActivity.KEY_ROOM).also {
             if (it is Room && it.documentId.isNotEmpty()) {
@@ -54,6 +76,9 @@ class ChatViewModel: ViewModel() {
 
     }
 
+    /**
+     * intentを使用しない場合（次画面のリロード）
+     */
     fun initRoom(room: Room): Boolean {
         RoomManager.getTargetRoom(room.documentId)?.also {
             this.room.postValue(it)
@@ -82,9 +107,13 @@ class ChatViewModel: ViewModel() {
                     return@addSnapshotListener
                 }
                 snapshot?.toObjects(Message::class.java)?.firstOrNull()?.also {
-                    val tmp: MutableList<Message>? = items.value?.toMutableList()
-                    tmp?.add(it)
-                    items.postValue(tmp)
+
+                    FileStore.getFile(it.roomId, it.message, it.type){file->
+                        val tmp: MutableList<Pair<Message, File?>>? = items.value?.toMutableList()
+                        tmp?.add(Pair(it, file))
+                        items.postValue(tmp)
+                    }
+
                 }
             }
     }

@@ -1,6 +1,7 @@
 package com.komugirice.icchat.firebase.firestore.store
 
 import com.google.firebase.firestore.FirebaseFirestore
+import com.komugirice.icchat.enums.MessageType
 import com.komugirice.icchat.firebase.firestore.model.File
 import java.util.*
 
@@ -38,8 +39,11 @@ class FileStore {
          * @param onSuccess: (File?)
          *
          */
-        fun getFile(roomId: String, convertName: String, onSuccess: (File?) -> Unit) {
-
+        fun getFile(roomId: String, convertName: String, type: Int, onSuccess: (File?) -> Unit) {
+            if(!(type == MessageType.IMAGE.id || type == MessageType.FILE.id)) {
+                onSuccess.invoke(null)
+                return
+            }
             FirebaseFirestore.getInstance()
                 .collection("rooms/$roomId/files")
                 .whereEqualTo("convertName", convertName)
