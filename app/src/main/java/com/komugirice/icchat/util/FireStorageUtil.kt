@@ -3,6 +3,7 @@ package com.komugirice.icchat.util
 import android.net.Uri
 import com.example.qiitaapplication.extension.getSuffix
 import com.google.android.gms.tasks.Task
+import com.google.firebase.firestore.util.FileUtil
 import com.google.firebase.storage.FirebaseStorage
 import com.komugirice.icchat.enums.MessageType
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
@@ -111,14 +112,12 @@ class FireStorageUtil {
          * @param onSuccess
          *
          */
-        fun registRoomMessageImage(roomId: String, uri: Uri, onComplete: (String) -> Unit) {
-            val fileName = uri.lastPathSegment ?: ""
-            val extension = fileName.getSuffix()
-            val uploadUrl = "${System.currentTimeMillis()}.${extension}"
-            FirebaseStorage.getInstance().reference.child("${ROOM_PATH}/${roomId}/${IMAGE_PATH}/${uploadUrl}")
+        fun registRoomMessageImage(roomId: String, uri: Uri, convertName: String, onComplete: () -> Unit) {
+
+            FirebaseStorage.getInstance().reference.child("${ROOM_PATH}/${roomId}/${IMAGE_PATH}/${convertName}")
                 .putFile(uri)
                 .addOnCompleteListener{
-                    onComplete.invoke(uploadUrl)
+                    onComplete.invoke()
                 }
 
         }
@@ -137,7 +136,6 @@ class FireStorageUtil {
                     if(it.isSuccessful)
                     onComplete.invoke(it.result)
                 }
-
         }
 
 

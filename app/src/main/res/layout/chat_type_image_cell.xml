@@ -13,6 +13,10 @@
             type="com.komugirice.icchat.firebase.firestore.model.Message" />
 
         <variable
+            name="file"
+            type="com.komugirice.icchat.firebase.firestore.model.File" />
+
+        <variable
             name="isOther"
             type="Boolean" />
     </data>
@@ -64,7 +68,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="@{isOther == true ? Gravity.LEFT : Gravity.RIGHT}"
-                    android:text="@{message.message}"
+                    android:text="@{file.name}"
                     android:textColor="@{isOther == true ? @android:color/white : @android:color/black}"
                     android:textSize="12sp"
                     app:layout_constraintStart_toStartOf="parent"

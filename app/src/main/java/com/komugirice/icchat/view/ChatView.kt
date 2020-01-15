@@ -19,6 +19,7 @@ import com.komugirice.icchat.enums.MessageType
 import com.komugirice.icchat.firebase.FirebaseFacade
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.firebase.firestore.model.Message
+import com.komugirice.icchat.firebase.firestore.store.FileStore
 import com.komugirice.icchat.firebase.firestore.store.MessageStore
 import com.komugirice.icchat.util.FireStorageUtil
 import timber.log.Timber
@@ -179,7 +180,7 @@ class ChatView : RecyclerView {
 //                                    }
                                     menuList.get(0).first -> {
                                         // メッセージ削除
-                                        FirebaseFacade.deleteMessage(data){
+                                        FirebaseFacade.deleteMessage(data, null){
                                             onClickRefreshCallBack.invoke()
                                         }
                                     }

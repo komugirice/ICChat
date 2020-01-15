@@ -27,6 +27,7 @@ import com.komugirice.icchat.firebase.firestore.model.Message
 import com.komugirice.icchat.firebase.firestore.model.Room
 import com.komugirice.icchat.firebase.firestore.store.MessageStore
 import com.komugirice.icchat.util.DialogUtil
+import com.komugirice.icchat.util.FIleUtil
 import com.komugirice.icchat.util.FireStorageUtil
 import com.komugirice.icchat.viewModel.ChatViewModel
 import com.squareup.picasso.Picasso

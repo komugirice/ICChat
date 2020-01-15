@@ -11,6 +11,10 @@
             type="com.komugirice.icchat.firebase.firestore.model.Message" />
 
         <variable
+            name="file"
+            type="com.komugirice.icchat.firebase.firestore.model.File" />
+
+        <variable
             name="type"
             type="com.komugirice.icchat.enums.MessageType" />
 
@@ -82,7 +86,8 @@
                     layout="@layout/chat_type_image_cell"
                     android:visibility="@{type.isImage? View.VISIBLE : View.GONE}"
                     app:isOther="@{true}"
-                    app:message="@{message}" />
+                    app:message="@{message}"
+                    app:file="@{file}"/>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
