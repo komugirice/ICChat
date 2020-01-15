@@ -4,6 +4,7 @@ import android.net.Uri
 import com.example.qiitaapplication.extension.getSuffix
 import com.google.android.gms.tasks.Task
 import com.google.firebase.storage.FirebaseStorage
+import com.komugirice.icchat.enums.MessageType
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.firebase.firestore.model.Message
 import timber.log.Timber
@@ -123,23 +124,6 @@ class FireStorageUtil {
         }
 
         /**
-         * チャット画面の画像投稿をダウンロードして対象のUriに設定
-         * @param roomId: storageから取得対象のroomId
-         * @param srcFileName: storageから取得するファイル名
-         * @param destUri: ファイルのコピー先Uri
-         * @param onSuccess
-         *
-         */
-        fun downloadRoomMessageImage(roomId: String, srcFileName: String, destUri: Uri, onComplete: () -> Unit) {
-            FirebaseStorage.getInstance().reference.child("${ROOM_PATH}/${roomId}/${IMAGE_PATH}/${srcFileName}")
-                .putFile(destUri)
-                .addOnCompleteListener{
-                    onComplete.invoke()
-                }
-
-        }
-
-        /**
          * チャット画面の画像投稿をダウンロード
          * @param roomId: String
          * @param uri: Uri
@@ -175,6 +159,38 @@ class FireStorageUtil {
                     } else {
                         Timber.e(it.exception)
                         Timber.d("getRoomMessageImage Failed")
+                    }
+                }
+
+        }
+
+        /**
+         * チャット画面の画像/ファイルを削除
+         * @param roomId: String
+         * @param message: Message
+         * @param onSuccess
+         *
+         */
+        fun deleteRoomMessageFile(message: Message, onSuccess: () -> Unit) {
+            if(!(message.type == MessageType.IMAGE.id || message.type == MessageType.FILE.id)) {
+                onSuccess.invoke()
+                return
+            }
+
+            var path = "${ROOM_PATH}/${message.roomId}/"
+            path += if(message.type == MessageType.IMAGE.id) IMAGE_PATH else FILE_PATH
+            path += "/${message.message}"
+            FirebaseStorage.getInstance().reference.child(path)
+                .delete()
+                .addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        it.result?.apply {
+                            onSuccess.invoke()
+                        }
+                    } else {
+                        Timber.e(it.exception)
+                        Timber.d("deleteRoomMessageFile Failed")
+                        onSuccess.invoke()
                     }
                 }
 

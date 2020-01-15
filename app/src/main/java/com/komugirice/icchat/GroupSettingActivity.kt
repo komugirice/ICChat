@@ -21,7 +21,7 @@ import com.komugirice.icchat.enums.ActivityEnum
 import com.komugirice.icchat.enums.RequestStatus
 import com.komugirice.icchat.extension.afterTextChanged
 import com.komugirice.icchat.extension.setRoundedImageView
-import com.komugirice.icchat.firebase.firebaseFacade
+import com.komugirice.icchat.firebase.FirebaseFacade
 import com.komugirice.icchat.firebase.firestore.manager.RequestManager
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.firebase.firestore.model.GroupRequests
@@ -466,7 +466,7 @@ class GroupSettingActivity : BaseActivity() {
         }
         val onFailed = {Toast.makeText(this, R.string.failed_group_regist, Toast.LENGTH_SHORT).show()}
         // グループ登録
-        firebaseFacade.registerGroupRoom(tmpRoom, tmpGroupRequest, deleteRequest, onFailed){
+        FirebaseFacade.registerGroupRoom(tmpRoom, tmpGroupRequest, deleteRequest, onFailed){
             // 画像削除／登録
             if(deleteImageFlg == true) {
                 // 前画像削除

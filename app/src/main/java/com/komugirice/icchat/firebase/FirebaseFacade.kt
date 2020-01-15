@@ -9,6 +9,7 @@ import com.komugirice.icchat.firebase.firestore.manager.RequestManager
 import com.komugirice.icchat.firebase.firestore.manager.RoomManager
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.firebase.firestore.model.GroupRequests
+import com.komugirice.icchat.firebase.firestore.model.Message
 import com.komugirice.icchat.firebase.firestore.model.Room
 import com.komugirice.icchat.firebase.firestore.model.User
 import com.komugirice.icchat.firebase.firestore.store.MessageStore
@@ -21,7 +22,7 @@ import com.komugirice.icchat.util.FireStorageUtil
  * FireStoreのCRUDとManagerの更新をまとめたFunctionを提供する
  *
  */
-object firebaseFacade {
+object FirebaseFacade {
 
     /**
      * 全Managerの初期化
@@ -350,6 +351,15 @@ object firebaseFacade {
                 onSuccess.invoke()
             }
 
+        }
+    }
+
+    fun deleteMessage(message: Message, onSuccess: () -> Unit) {
+        MessageStore.deleteMessage(message){
+            // storageの保存ファイル削除
+            FireStorageUtil.deleteRoomMessageFile(message) {
+                onSuccess.invoke()
+            }
         }
     }
 

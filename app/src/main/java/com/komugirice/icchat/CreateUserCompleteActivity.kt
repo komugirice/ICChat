@@ -4,7 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.komugirice.icchat.firebase.firebaseFacade
+import com.komugirice.icchat.firebase.FirebaseFacade
 import kotlinx.android.synthetic.main.activity_create_user_complete.*
 
 class CreateUserCompleteActivity : AppCompatActivity() {
@@ -18,7 +18,7 @@ class CreateUserCompleteActivity : AppCompatActivity() {
     private fun initClick() {
         loginButton.setOnClickListener {
             // Manager初期化
-            firebaseFacade.initManager {
+            FirebaseFacade.initManager {
                 // メイン画面に遷移
                 MainActivity.start(this)
 

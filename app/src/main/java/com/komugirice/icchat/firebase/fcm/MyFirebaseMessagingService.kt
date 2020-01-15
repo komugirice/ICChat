@@ -10,8 +10,7 @@ import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.komugirice.icchat.R
-import com.komugirice.icchat.firebase.firebaseFacade
-import com.komugirice.icchat.firebase.firestore.manager.UserManager
+import com.komugirice.icchat.firebase.FirebaseFacade
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
 
@@ -73,7 +72,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         Log.d(TAG, "sendRegistrationTokenToServer($token)")
         // fireStore.usersに保持しているトークンを更新する
         token?.also{
-            firebaseFacade.updateFcmToken(token)
+            FirebaseFacade.updateFcmToken(token)
 
         }
     }

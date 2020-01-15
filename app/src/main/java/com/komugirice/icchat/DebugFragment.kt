@@ -10,7 +10,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.komugirice.icchat.interfaces.Update
 import com.komugirice.icchat.firebase.fcm.FcmApi
-import com.komugirice.icchat.firebase.firebaseFacade
+import com.komugirice.icchat.firebase.FirebaseFacade
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.firebase.firestore.model.Room
 import com.komugirice.icchat.firebase.firestore.model.User
@@ -64,7 +64,7 @@ class DebugFragment : Fragment(), Update {
         buttonAddDebugFriend.setOnClickListener {
             val friendId: String = SpinnerAddUsers.selectedItem.toString()
             var rooms: MutableList<Room> = mutableListOf()
-            firebaseFacade.addFriend(friendId,{}){
+            FirebaseFacade.addFriend(friendId,{}){
                 Toast.makeText(
                     context,
                     "友だち登録が完了しました。",

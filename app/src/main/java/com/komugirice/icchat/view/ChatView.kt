@@ -16,6 +16,7 @@ import com.komugirice.icchat.databinding.ChatMessageLeftCellBinding
 import com.komugirice.icchat.databinding.ChatMessageRightCellBinding
 import com.komugirice.icchat.databinding.ChatMessageSystemCellBinding
 import com.komugirice.icchat.enums.MessageType
+import com.komugirice.icchat.firebase.FirebaseFacade
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.firebase.firestore.model.Message
 import com.komugirice.icchat.firebase.firestore.store.MessageStore
@@ -162,27 +163,25 @@ class ChatView : RecyclerView {
             holder.binding.root.setOnLongClickListener(object : View.OnLongClickListener {
                 override fun onLongClick(v: View?): Boolean {
                     val menuList = listOf(
-                        Pair(0, R.string.quote_message),
-                        Pair(1, R.string.delete_message)
+                        //Pair(0, R.string.quote_message),
+                        Pair(0, R.string.delete_message)
                     )
                     MaterialDialog(context).apply {
                         listItems(
                             items = listOf(
                                 //context.getString(menuList.get(0).second),
-                                context.getString(menuList.get(1).second)
+                                context.getString(menuList.get(0).second)
                             ),
                             selection = { dialog, index, text ->
                                 when (index) {
+//                                    menuList.get(0).first -> {
+//                                        // メッセージ引用
+//                                    }
                                     menuList.get(0).first -> {
-                                        // メッセージ引用
-                                    }
-                                    menuList.get(1).first -> {
                                         // メッセージ削除
-                                        MessageStore.deleteMessage(data){
+                                        FirebaseFacade.deleteMessage(data){
                                             onClickRefreshCallBack.invoke()
                                         }
-
-
                                     }
                                     else -> return@listItems
                                 }

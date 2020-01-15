@@ -4,11 +4,9 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
-import android.provider.MediaStore
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -16,30 +14,24 @@ import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.core.graphics.drawable.toBitmap
-import androidx.core.net.toFile
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.example.qiitaapplication.extension.getSuffix
-import com.google.firebase.firestore.util.FileUtil
 import com.komugirice.icchat.databinding.ActivityChatBinding
 import com.komugirice.icchat.enums.ActivityEnum
 import com.komugirice.icchat.enums.MessageType
-import com.komugirice.icchat.firebase.firebaseFacade
+import com.komugirice.icchat.firebase.FirebaseFacade
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.firebase.firestore.model.Message
 import com.komugirice.icchat.firebase.firestore.model.Room
 import com.komugirice.icchat.firebase.firestore.store.MessageStore
 import com.komugirice.icchat.util.DialogUtil
-import com.komugirice.icchat.util.FIleUtil
 import com.komugirice.icchat.util.FireStorageUtil
-import com.komugirice.icchat.util.ICChatUtil
 import com.komugirice.icchat.viewModel.ChatViewModel
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_chat.*
 import timber.log.Timber
-import java.io.File
-import java.io.InputStream
 
 
 class ChatActivity : BaseActivity() {
@@ -268,7 +260,7 @@ class ChatActivity : BaseActivity() {
                 data.data?.also {
                     // 画像登録
                     Timber.d(it.toString())
-                    firebaseFacade.registChatMessageImage(room.documentId, it){
+                    FirebaseFacade.registChatMessageImage(room.documentId, it){
                         Timber.d("画像アップロード成功")
                     }
                 }
