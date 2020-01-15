@@ -218,7 +218,7 @@ class ChatView : RecyclerView {
             holder.binding.user = UserManager.getTargetUser(data.userId)
 
             // 画像タイプ ダウンロードクリック
-            holder.binding.imageCell.downloadTextView.setOnClickListener {
+            holder.binding.imageCell.downloadTextViewOther.setOnClickListener {
                 onClickDownloadCallBack.invoke(data)
             }
         }

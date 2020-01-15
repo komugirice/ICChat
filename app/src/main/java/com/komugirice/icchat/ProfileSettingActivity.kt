@@ -393,7 +393,7 @@ class ProfileSettingActivity : AppCompatActivity() {
                     userIconImageView.setRoundedImageView(it) // UIスレッド
                     uCropSrcUri = it
 
-                    // Piccaso onSUccess()はよく失敗するので使うべきではない
+                    // Picasso onSUccess()はよく失敗するので使うべきではない
 //                    Picasso.get().load(it).into(userIconImageView, object: Callback {
 //                        override fun onSuccess() {
 //                            uCropSrcUri = it

@@ -3,14 +3,19 @@ package com.komugirice.icchat
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
+import android.provider.MediaStore
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.Toast
+import androidx.core.graphics.drawable.toBitmap
 import androidx.core.net.toFile
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -30,6 +35,7 @@ import com.komugirice.icchat.util.FIleUtil
 import com.komugirice.icchat.util.FireStorageUtil
 import com.komugirice.icchat.util.ICChatUtil
 import com.komugirice.icchat.viewModel.ChatViewModel
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_chat.*
 import timber.log.Timber
 import java.io.File
@@ -42,7 +48,7 @@ class ChatActivity : BaseActivity() {
     private lateinit var viewModel: ChatViewModel
     private val handler = Handler()
     private lateinit var room: Room
-    private lateinit var messageForDownload: Message
+    private lateinit var tempImageViewForDownload: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,18 +67,6 @@ class ChatActivity : BaseActivity() {
         Timber.d("ChatActivity onRestart")
         super.onRestart()
     }
-
-    /**
-     * initializeメソッド
-     *
-     */
-//    private fun initialize() {
-//        Timber.d("ChatActivity initialize")
-//        initBinding()
-//        initViewModel()
-//        initLayout()
-//        initData()
-//    }
 
     private fun initRoom(){
         if (!viewModel.initRoom(intent))
@@ -94,9 +88,8 @@ class ChatActivity : BaseActivity() {
             initData()
         }
         binding.chatView.customAdapter.onClickDownloadCallBack = {
-            // intentに設定できないので仕方なく
-            messageForDownload = it
             createFile(it)
+            getFireStorageImage(it)
         }
     }
 
@@ -260,7 +253,6 @@ class ChatActivity : BaseActivity() {
         popup.show()
     }
 
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode != Activity.RESULT_OK || data == null)
@@ -338,21 +330,32 @@ class ChatActivity : BaseActivity() {
         startActivityForResult(intent, RC_WRITE_FILE)
     }
 
+    private fun getFireStorageImage(message: Message) {
+        var fileName = message.message
+        FireStorageUtil.downloadRoomMessageImageUri(message.roomId, fileName) {
+
+            it?.apply {
+                tempImageViewForDownload = ImageView(this@ChatActivity)
+                Picasso.get().load(this).into(tempImageViewForDownload)
+            }
+        }
+    }
+
     /**
      * 画像タイプ ダウンロード
      *
      * @param uri
      */
     private fun downloadImage(uri: Uri) {
-        var fileName = messageForDownload.message
-        FireStorageUtil.downloadRoomMessageImage(messageForDownload.roomId, fileName, uri){
-//            val file = File(FIleUtil.getPathFromUri(this, uri))
-//            File(it?.path)?.copyTo(file)
-            Toast.makeText(
-                this,
-                "alert_complete_download",
-                Toast.LENGTH_LONG).show()
-        }
+
+        val bmp = tempImageViewForDownload.drawable.toBitmap()
+        val outputStream = getContentResolver().openOutputStream(uri)
+        bmp.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+
+        Toast.makeText(
+            this@ChatActivity,
+            R.string.alert_complete_download,
+            Toast.LENGTH_LONG).show()
     }
 
 
