@@ -4,18 +4,16 @@ import android.content.Intent
 import androidx.annotation.NonNull
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 import com.komugirice.icchat.ChatActivity
-import com.komugirice.icchat.enums.MessageType
 import com.komugirice.icchat.firebase.firestore.manager.RoomManager
-import com.komugirice.icchat.firebase.firestore.model.File
+import com.komugirice.icchat.firebase.firestore.model.FileInfo
 import com.komugirice.icchat.firebase.firestore.model.Message
 import com.komugirice.icchat.firebase.firestore.model.Room
-import com.komugirice.icchat.firebase.firestore.store.FileStore
+import com.komugirice.icchat.firebase.firestore.store.FileInfoStore
 import com.komugirice.icchat.firebase.firestore.store.MessageStore
 import timber.log.Timber
 import java.util.*
@@ -23,7 +21,7 @@ import java.util.*
 
 class ChatViewModel: ViewModel() {
 
-    val items = MutableLiveData<List<Pair<Message, File?>>>()
+    val items = MutableLiveData<List<Pair<Message, FileInfo?>>>()
     val isException = MutableLiveData<Throwable>()
     private var messageListener: ListenerRegistration? = null
     // groupのusers不要論
@@ -36,13 +34,14 @@ class ChatViewModel: ViewModel() {
         //RoomStore.getTargetRoomUsers(roomId){
             //users.postValue(it)
 
-        var list = mutableListOf<Pair<Message, File?>>()
+        var list = mutableListOf<Pair<Message, FileInfo?>>()
 
             // message情報
             MessageStore.getMessages(roomId){getMessages->
+
                 getMessages.forEach {
 
-                    FileStore.getFile(it.roomId, it.message, it.type){file->
+                    FileInfoStore.getFile(it.roomId, it.message, it.type){ file->
                         list.add(Pair(it, file))
 
                         if(getMessages.size == list.size) {
@@ -56,7 +55,12 @@ class ChatViewModel: ViewModel() {
 
                     }
                 }
-
+                // message0件の不具合対応
+                if(getMessages.isEmpty()) {
+                    // 監視
+                    val lastCreatedAt = Date()
+                    initSubscribe(roomId, lastCreatedAt)
+                }
 
             }
         //}
@@ -108,8 +112,8 @@ class ChatViewModel: ViewModel() {
                 }
                 snapshot?.toObjects(Message::class.java)?.firstOrNull()?.also {
 
-                    FileStore.getFile(it.roomId, it.message, it.type){file->
-                        val tmp: MutableList<Pair<Message, File?>>? = items.value?.toMutableList()
+                    FileInfoStore.getFile(it.roomId, it.message, it.type){ file->
+                        val tmp: MutableList<Pair<Message, FileInfo?>>? = items.value?.toMutableList()
                         tmp?.add(Pair(it, file))
                         items.postValue(tmp)
                     }

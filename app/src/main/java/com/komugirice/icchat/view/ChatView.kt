@@ -17,7 +17,7 @@ import com.komugirice.icchat.databinding.ChatMessageSystemCellBinding
 import com.komugirice.icchat.enums.MessageType
 import com.komugirice.icchat.firebase.FirebaseFacade
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
-import com.komugirice.icchat.firebase.firestore.model.File
+import com.komugirice.icchat.firebase.firestore.model.FileInfo
 import com.komugirice.icchat.firebase.firestore.model.Message
 
 
@@ -46,10 +46,10 @@ class ChatView : RecyclerView {
     class Adapter(val context: Context) : RecyclerView.Adapter<ViewHolder>() {
         lateinit var onClickRefreshCallBack: () -> Unit
         lateinit var onClickDownloadCallBack: (message: Message) -> Unit
-        private val items = mutableListOf<Pair<Message, File?>>()
+        private val items = mutableListOf<Pair<Message, FileInfo?>>()
         // private val usersMap = mutableMapOf<String, User>()
 
-        fun refresh(list: List<Pair<Message, File?>>) {
+        fun refresh(list: List<Pair<Message, FileInfo?>>) {
             items.apply {
                 clear()
                 addAll(list)
@@ -178,7 +178,7 @@ class ChatView : RecyclerView {
 //                                    }
                                     menuList.get(0).first -> {
                                         // メッセージ削除
-                                        FirebaseFacade.deleteMessage(message, null){
+                                        FirebaseFacade.deleteMessage(message, file){
                                             onClickRefreshCallBack.invoke()
                                         }
                                     }
@@ -194,6 +194,7 @@ class ChatView : RecyclerView {
             holder.binding.imageCell.downloadTextView.setOnClickListener {
                 onClickDownloadCallBack.invoke(message)
             }
+
         }
 
         /**

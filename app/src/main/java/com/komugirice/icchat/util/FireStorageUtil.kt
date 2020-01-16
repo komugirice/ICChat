@@ -123,6 +123,23 @@ class FireStorageUtil {
         }
 
         /**
+         * チャット画面からファイル投稿
+         * @param roomId: String
+         * @param uri: Uri
+         * @param onSuccess
+         *
+         */
+        fun registRoomMessageFile(roomId: String, uri: Uri, convertName: String, onComplete: () -> Unit) {
+
+            FirebaseStorage.getInstance().reference.child("${ROOM_PATH}/${roomId}/${FILE_PATH}/${convertName}")
+                .putFile(uri)
+                .addOnCompleteListener{
+                    onComplete.invoke()
+                }
+
+        }
+
+        /**
          * チャット画面の画像投稿をダウンロード
          * @param roomId: String
          * @param uri: Uri

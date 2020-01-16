@@ -2,13 +2,13 @@ package com.komugirice.icchat.firebase.firestore.store
 
 import com.google.firebase.firestore.FirebaseFirestore
 import com.komugirice.icchat.enums.MessageType
-import com.komugirice.icchat.firebase.firestore.model.File
+import com.komugirice.icchat.firebase.firestore.model.FileInfo
 import java.util.*
 
-class FileStore {
+class FileInfoStore {
     companion object {
         const val ROOMS = "rooms"
-        const val FILE_PATHS = "filepaths"
+        const val FILE_PATHS = "fileInfo"
 
         /**
          * ファイル登録（fireStorageの登録名と元のファイル名の変換）
@@ -18,7 +18,7 @@ class FileStore {
          *
          */
         fun registerFile(roomId: String, fileName: String, convertName: String, onComplete: () -> Unit) {
-            val fileObj = File().apply {
+            val fileObj = FileInfo().apply {
                 this.documentId = UUID.randomUUID().toString()
                 this.roomId = roomId
                 this.name = fileName
@@ -41,7 +41,7 @@ class FileStore {
          * @param onSuccess: (File?)
          *
          */
-        fun getFile(roomId: String, convertName: String, type: Int, onSuccess: (File?) -> Unit) {
+        fun getFile(roomId: String, convertName: String, type: Int, onSuccess: (FileInfo?) -> Unit) {
             if(!(type == MessageType.IMAGE.id || type == MessageType.FILE.id)) {
                 onSuccess.invoke(null)
                 return
@@ -52,7 +52,7 @@ class FileStore {
                 .get()
                 .addOnCompleteListener {
                     if (it.isSuccessful) {
-                        it.result?.toObjects(File::class.java)?.also {
+                        it.result?.toObjects(FileInfo::class.java)?.also {
                             val file = it.firstOrNull()
                             onSuccess.invoke(file)
                         }
@@ -62,15 +62,15 @@ class FileStore {
 
         /**
          * ファイル削除
-         * @param file
+         * @param fileInfo
          * @param onComplete
          *
          */
-        fun deleteFile(file: File, onComplete: () -> Unit) {
+        fun deleteFile(fileInfo: FileInfo, onComplete: () -> Unit) {
 
             FirebaseFirestore.getInstance()
-                .collection("$ROOMS/${file.roomId}/$FILE_PATHS")
-                .document(file.documentId)
+                .collection("$ROOMS/${fileInfo.roomId}/$FILE_PATHS")
+                .document(fileInfo.documentId)
                 .delete()
                 .addOnCompleteListener {
                     onComplete.invoke()

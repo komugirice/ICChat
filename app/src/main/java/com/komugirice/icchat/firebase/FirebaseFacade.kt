@@ -11,9 +11,7 @@ import com.komugirice.icchat.firebase.firestore.manager.RoomManager
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.firebase.firestore.model.*
 import com.komugirice.icchat.firebase.firestore.store.*
-import com.komugirice.icchat.util.FIleUtil
 import com.komugirice.icchat.util.FireStorageUtil
-import timber.log.Timber
 
 /**
  * FireStoreのCRUDとManagerの更新をまとめたFunctionを提供する
@@ -351,6 +349,13 @@ object FirebaseFacade {
         }
     }
 
+    /**
+     * チャット画面 画像投稿
+     * @param roomId
+     * @param uri
+     * @param onSuccess
+     *
+     */
     fun registChatMessageImage(roomId: String, uri: Uri, onSuccess: () -> Unit){
         // 元ファイル名
         // ↓うまくいかない
@@ -365,7 +370,7 @@ object FirebaseFacade {
 
         FireStorageUtil.registRoomMessageImage(roomId, uri, convertName){
             MessageStore.registerMessage(roomId, UserManager.myUserId, convertName, MessageType.IMAGE.id){
-                FileStore.registerFile(roomId, fileName, convertName){
+                FileInfoStore.registerFile(roomId, fileName, convertName){
                     onSuccess.invoke()
                 }
 
@@ -374,13 +379,43 @@ object FirebaseFacade {
         }
     }
 
-    fun deleteMessage(message: Message, file: File?, onSuccess: () -> Unit) {
+    /**
+     * チャット画面 ファイル投稿
+     * @param roomId
+     * @param uri
+     * @param onSuccess
+     *
+     */
+    fun registChatMessageFile(roomId: String, uri: Uri, onSuccess: () -> Unit){
+        // 元ファイル名
+        // ↓うまくいかない
+        //var fileName = FIleUtil.getPathFromUri(applicationContext, uri)
+        var fileName = uri.lastPathSegment ?: ""
+        // 拡張子
+        var extension = fileName.getSuffix()
+        if(extension.isEmpty())
+            extension = "txt"
+        // 変換後ファイル名
+        val convertName = "${System.currentTimeMillis()}.${extension}"
+
+        FireStorageUtil.registRoomMessageFile(roomId, uri, convertName){
+            MessageStore.registerMessage(roomId, UserManager.myUserId, convertName, MessageType.FILE.id){
+                FileInfoStore.registerFile(roomId, fileName, convertName){
+                    onSuccess.invoke()
+                }
+
+            }
+
+        }
+    }
+
+    fun deleteMessage(message: Message, fileInfo: FileInfo?, onSuccess: () -> Unit) {
         // message削除
         MessageStore.deleteMessage(message){
             // storageの保存ファイル削除 中でtype判別
             FireStorageUtil.deleteRoomMessageFile(message) {
-                file?.also{
-                    FileStore.deleteFile(it){
+                fileInfo?.also{
+                    FileInfoStore.deleteFile(it){
                         onSuccess.invoke()
                     }
                 } ?: run{
@@ -393,7 +428,7 @@ object FirebaseFacade {
     fun deleteRoomMessges(roomId: String, onSuccess: () -> Unit){
         MessageStore.getMessages(roomId){messages->
             messages.forEach {
-                FileStore.getFile(roomId, it.message, it.type){file->
+                FileInfoStore.getFile(roomId, it.message, it.type){ file->
                     deleteMessage(it, file){
 
                         if(it.documentId == messages.last().documentId){

@@ -157,6 +157,10 @@ class ChatActivity : BaseActivity() {
         imageImageView.setOnClickListener {
             selectImage()
         }
+        // ファイル
+        fileImageView.setOnClickListener {
+            selectFile()
+        }
 
     }
 
@@ -267,6 +271,17 @@ class ChatActivity : BaseActivity() {
                 }
 
             }
+            RC_CHOOSE_FILE -> {
+
+                data.data?.also {
+                    // ファイル登録
+                    Timber.d(it.toString())
+                    FirebaseFacade.registChatMessageFile(room.documentId, it){
+                        Timber.d("ファイルアップロード成功")
+                    }
+                }
+
+            }
             RC_WRITE_FILE -> {
 
                 data.data?.also {
@@ -294,6 +309,17 @@ class ChatActivity : BaseActivity() {
             .addCategory(Intent.CATEGORY_OPENABLE)
             .setType("image/*")
         startActivityForResult(intent, RC_CHOOSE_IMAGE)
+    }
+
+    /**
+     * ファイル選択
+     *
+     */
+    private fun selectFile() {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
+            .addCategory(Intent.CATEGORY_OPENABLE)
+            .setType("*/*")
+        startActivityForResult(intent, RC_CHOOSE_FILE)
     }
 
     /**
@@ -354,9 +380,9 @@ class ChatActivity : BaseActivity() {
 
     companion object {
         private const val RC_CHOOSE_IMAGE = 1000
-        private const val RC_WRITE_FILE: Int = 1001
+        private const val RC_CHOOSE_FILE = 1001
+        private const val RC_WRITE_FILE: Int = 1002
         const val KEY_ROOM = "key_room"
-        const val KEY_MESSAGE = "key_message"
         fun start(context: Context?, room: Room) =
             context?.startActivity(
                 Intent(context, ChatActivity::class.java)

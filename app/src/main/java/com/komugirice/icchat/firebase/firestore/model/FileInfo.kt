@@ -3,7 +3,7 @@ package com.komugirice.icchat.firebase.firestore.model
 import java.io.Serializable
 import java.util.*
 
-class File: Serializable {
+class FileInfo: Serializable {
     var documentId: String = ""
     var roomId: String = ""
     var name: String = ""

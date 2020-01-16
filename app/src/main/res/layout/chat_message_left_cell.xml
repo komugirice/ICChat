@@ -12,7 +12,7 @@
 
         <variable
             name="file"
-            type="com.komugirice.icchat.firebase.firestore.model.File" />
+            type="com.komugirice.icchat.firebase.firestore.model.FileInfo" />
 
         <variable
             name="type"
@@ -88,6 +88,15 @@
                     app:isOther="@{true}"
                     app:message="@{message}"
                     app:file="@{file}"/>
+
+                <include
+                    android:id="@+id/fileCell"
+                    layout="@layout/chat_type_file_cell"
+                    android:visibility="@{type.isFile? View.VISIBLE : View.GONE}"
+                    app:isOther="@{true}"
+                    app:message="@{message}"
+                    app:file="@{file}"/>
+
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

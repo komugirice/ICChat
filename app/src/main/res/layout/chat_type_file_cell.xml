@@ -33,10 +33,10 @@
             android:id="@+id/spaceLeft"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintHorizontal_chainStyle="spread"
             android:visibility="@{isOther == true ? View.GONE : View.VISIBLE}"
-            app:layout_constraintHorizontal_weight="1"
             app:layout_constraintEnd_toStartOf="@+id/wrapLayout"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintHorizontal_weight="1"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -44,14 +44,14 @@
             android:id="@+id/wrapLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:layout_constraintEnd_toStartOf="@+id/spaceRight"
             app:layout_constraintHorizontal_chainStyle="spread"
             app:layout_constraintHorizontal_weight="1"
-            app:layout_constraintEnd_toStartOf="@+id/spaceRight"
             app:layout_constraintStart_toEndOf="@+id/spaceLeft"
             app:layout_constraintTop_toTopOf="parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/imageInfoView"
+                android:id="@+id/fileInfoView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@{isOther == true ? @drawable/background_chat_left_message : @drawable/background_chat_right_message}"
@@ -105,16 +105,6 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <ImageView
-                android:id="@+id/image"
-                android:layout_width="200dp"
-                android:layout_height="150dp"
-                android:padding="4dp"
-                android:scaleType="centerCrop"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imageInfoView"
-                app:messageImageUrl="@{message}" />
-
             <TextView
                 android:id="@+id/dateTextView"
                 android:layout_width="wrap_content"
@@ -124,19 +114,19 @@
                 android:textColor="@android:color/black"
                 android:textSize="10sp"
                 app:dateTime="@{message.createdAt}"
-                app:layout_constraintEnd_toEndOf="@id/image"
-                app:layout_constraintTop_toBottomOf="@id/image" />
+                app:layout_constraintEnd_toEndOf="@id/fileInfoView"
+                app:layout_constraintTop_toBottomOf="@id/fileInfoView" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <Space
             android:id="@+id/spaceRight"
             android:layout_width="0dp"
-            app:layout_constraintHorizontal_weight="1"
-            app:layout_constraintHorizontal_chainStyle="spread"
             android:layout_height="0dp"
             android:visibility="@{isOther == true ? View.VISIBLE : View.GONE}"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintHorizontal_weight="1"
             app:layout_constraintStart_toEndOf="@+id/wrapLayout"
             app:layout_constraintTop_toTopOf="parent" />
 
