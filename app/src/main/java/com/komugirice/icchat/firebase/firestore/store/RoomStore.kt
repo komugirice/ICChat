@@ -11,7 +11,7 @@ import java.util.*
 
 class RoomStore {
     companion object {
-
+        const val ROOMS = "rooms"
         /**
          * getLoginUserRoomsメソッド
          *
@@ -23,7 +23,7 @@ class RoomStore {
             var rooms = mutableListOf<Room>()
             // rooms取得
             FirebaseFirestore.getInstance()
-                .collection("rooms")
+                .collection("$ROOMS")
                 .get()
                 .addOnCompleteListener {
                     if (it.isSuccessful) {
@@ -61,7 +61,7 @@ class RoomStore {
             var rooms = mutableListOf<Room>()
             // rooms取得
             FirebaseFirestore.getInstance()
-                .collection("rooms")
+                .collection("$ROOMS")
                 .whereEqualTo("group", true)
                 .get()
                 .addOnCompleteListener {
@@ -103,7 +103,7 @@ class RoomStore {
                     userIdList = サシリスト
                 }
                 FirebaseFirestore.getInstance()
-                    .collection("rooms")
+                    .collection("$ROOMS")
                     .document(room.documentId)
                     .set(room)
                     .addOnCompleteListener {
@@ -124,7 +124,7 @@ class RoomStore {
          */
         fun registerGroupRoom(room: Room, onComplete: (Task<Void>) -> Unit) {
             FirebaseFirestore.getInstance()
-                .collection("rooms")
+                .collection("$ROOMS")
                 .document(room.documentId)
                 .set(room)
                 .addOnCompleteListener{
@@ -157,7 +157,7 @@ class RoomStore {
             if(updFlg) {
                 // 存在する場合、削除
                 FirebaseFirestore.getInstance()
-                    .collection("rooms")
+                    .collection("$ROOMS")
                     .document(targetRoom.documentId)
                     .delete()
             }
@@ -174,7 +174,7 @@ class RoomStore {
             val サシリスト = mutableListOf(UserManager.myUserId, targetUser.userId)
             // rooms取得
             FirebaseFirestore.getInstance()
-                .collection("rooms")
+                .collection("$ROOMS")
                 .get()
                 .addOnSuccessListener {
 
@@ -195,51 +195,6 @@ class RoomStore {
         }
 
         /**
-         * 対象のルームに所属するユーザ情報を取得する
-         * （ログインユーザのfriends以外から取得する可能性がある）
-         * ChatViewModelで使用
-         *
-         * @param roomId 対象のルーム
-         */
-        fun getTargetRoomUsers(roomId: String, onComplete: (MutableList<User>) -> Unit) {
-            val userList = mutableListOf<User>()
-            // rooms取得
-            FirebaseFirestore.getInstance()
-                .collection("rooms")
-                .document(roomId)
-                .get()
-                .addOnSuccessListener {
-                    // Room.documentId検索なので必ず成功する
-                    var room: Room? = it.toObject(
-                        Room::class.java
-                    )
-                    room?.userIdList?.apply {
-                        this.remove(UserManager.myUserId)
-
-                        if (this.isNotEmpty()) {
-                            this.forEach {
-                                FirebaseFirestore.getInstance()
-                                    .collection("users")
-                                    .whereEqualTo("userId", it)
-                                    .get()
-                                    .addOnCompleteListener {
-                                        it.result?.toObjects(User::class.java)?.firstOrNull().also {
-                                            it?.apply { userList.add(it) }
-                                        }
-                                        if (userList.size == room.userIdList.size)
-                                            onComplete.invoke(userList)
-                                    }
-
-                            }
-                        } else {
-                            // userListが0件の可能性はある
-                            onComplete.invoke(mutableListOf())
-                        }
-                    }
-                }
-        }
-
-        /**
          * 対象のルームを削除する
          *
          * @param roomId 対象のルーム
@@ -247,7 +202,7 @@ class RoomStore {
          */
         fun deleteRoom(roomId: String, onComplete: (Task<Void>) -> Unit) {
             FirebaseFirestore.getInstance()
-                .collection("rooms")
+                .collection("$ROOMS")
                 .document(roomId)
                 .delete()
                 .addOnCompleteListener {

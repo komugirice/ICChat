@@ -12,6 +12,8 @@ import java.util.*
 
 class MessageStore {
     companion object {
+        const val ROOMS = "rooms"
+        const val MESSAGES = "messages"
         fun registerMyMessage(roomId: String, message: String) {
             val msgObj = Message().apply {
                 this.documentId = UUID.randomUUID().toString()
@@ -22,7 +24,7 @@ class MessageStore {
             }
 
             FirebaseFirestore.getInstance()
-                .collection("rooms/$roomId/messages")
+                .collection("$ROOMS/$roomId/$MESSAGES")
                 .document(msgObj.documentId)
                 .set(msgObj)
         }
@@ -38,7 +40,7 @@ class MessageStore {
             }
 
             FirebaseFirestore.getInstance()
-                .collection("rooms/$roomId/messages")
+                .collection("$ROOMS/$roomId/$MESSAGES")
                 .document(msgObj.documentId)
                 .set(msgObj)
                 .addOnSuccessListener {
@@ -49,7 +51,7 @@ class MessageStore {
         fun getMessages(roomId: String, onSuccess: (List<Message>) -> Unit) {
 
             FirebaseFirestore.getInstance()
-                .collection("rooms/$roomId/messages")
+                .collection("$ROOMS/$roomId/$MESSAGES")
                 .orderBy(Message::createdAt.name, Query.Direction.ASCENDING)
                 .get()
                 // 必ず成功する。messagesが作られて無くても成功する。
@@ -61,7 +63,7 @@ class MessageStore {
 
         fun getLastMessage(roomId: String, onComplete: (Task<QuerySnapshot>) -> Unit) {
             FirebaseFirestore.getInstance()
-                .collection("rooms/$roomId/messages")
+                .collection("$ROOMS/$roomId/$MESSAGES")
                 .orderBy(Message::createdAt.name, Query.Direction.DESCENDING)
                 .limit(1)
                 .get()
@@ -72,7 +74,7 @@ class MessageStore {
 
         fun deleteMessage(message: Message, onComplete: () -> Unit) {
             FirebaseFirestore.getInstance()
-                .collection("rooms/${message.roomId}/messages")
+                .collection("$ROOMS/${message.roomId}/$MESSAGES")
                 .document(message.documentId)
                 .delete()
                 .addOnCompleteListener {

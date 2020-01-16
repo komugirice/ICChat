@@ -7,6 +7,8 @@ import java.util.*
 
 class FileStore {
     companion object {
+        const val ROOMS = "rooms"
+        const val FILE_PATHS = "filepaths"
 
         /**
          * ファイル登録（fireStorageの登録名と元のファイル名の変換）
@@ -24,7 +26,7 @@ class FileStore {
             }
 
             FirebaseFirestore.getInstance()
-                .collection("rooms/$roomId/files")
+                .collection("$ROOMS/$roomId/$FILE_PATHS")
                 .document(fileObj.documentId)
                 .set(fileObj)
                 .addOnCompleteListener {
@@ -45,7 +47,7 @@ class FileStore {
                 return
             }
             FirebaseFirestore.getInstance()
-                .collection("rooms/$roomId/files")
+                .collection("$ROOMS/$roomId/$FILE_PATHS")
                 .whereEqualTo("convertName", convertName)
                 .get()
                 .addOnCompleteListener {
@@ -67,7 +69,7 @@ class FileStore {
         fun deleteFile(file: File, onComplete: () -> Unit) {
 
             FirebaseFirestore.getInstance()
-                .collection("rooms/${file.roomId}/files")
+                .collection("$ROOMS/${file.roomId}/$FILE_PATHS")
                 .document(file.documentId)
                 .delete()
                 .addOnCompleteListener {
