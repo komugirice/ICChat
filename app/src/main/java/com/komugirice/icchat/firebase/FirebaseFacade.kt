@@ -243,21 +243,31 @@ object FirebaseFacade {
      *
      */
     fun deleteRoom(roomId: String, onSuccess: () -> Unit) {
+
+
         // Room削除
         RoomStore.deleteRoom(roomId) {
             // Roomアイコン削除
             FireStorageUtil.deleteGroupIconImage(roomId) {
-                // Room内Request削除
-                val list = RequestManager.myGroupsRequests.filter { it.room.documentId == roomId }
-                    .map { it.requests }
-                    .firstOrNull()?.map { it.documentId }?.toList()
-                RequestStore.deleteGroupRequest(roomId, list ?: listOf()) {
-                    RoomManager.initRoomManager {
-                        RequestManager.initMyGroupsRequests() {
-                            onSuccess.invoke()
-                        }
 
+                val list = RequestManager.myGroupsRequests.filter { it.room.documentId == roomId }
+                    .map { it.requests }.firstOrNull()?.map { it.documentId }?.toList()
+
+                // Room内Request削除
+                RequestStore.deleteGroupRequest(roomId, list ?: listOf()) {
+
+                    // Room内Messageと, Messageに紐づくFile, FireStorageデータ削除
+                    deleteRoomMessges(roomId){
+                        // 後処理
+                        RoomManager.initRoomManager {
+                            RequestManager.initMyGroupsRequests() {
+                                onSuccess.invoke()
+                            }
+
+                        }
                     }
+
+
                 }
 
             }
@@ -365,6 +375,7 @@ object FirebaseFacade {
     }
 
     fun deleteMessage(message: Message, file: File?, onSuccess: () -> Unit) {
+        // message削除
         MessageStore.deleteMessage(message){
             // storageの保存ファイル削除 中でtype判別
             FireStorageUtil.deleteRoomMessageFile(message) {
@@ -376,6 +387,22 @@ object FirebaseFacade {
                     onSuccess.invoke()
                 }
             }
+        }
+    }
+
+    fun deleteRoomMessges(roomId: String, onSuccess: () -> Unit){
+        MessageStore.getMessages(roomId){messages->
+            messages.forEach {
+                FileStore.getFile(roomId, it.message, it.type){file->
+                    deleteMessage(it, file){
+
+                        if(it.documentId == messages.last().documentId){
+                            onSuccess.invoke()
+                        }
+                    }
+                }
+            }
+
         }
     }
 
