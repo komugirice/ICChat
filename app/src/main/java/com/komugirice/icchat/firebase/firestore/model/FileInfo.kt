@@ -8,5 +8,6 @@ class FileInfo: Serializable {
     var roomId: String = ""
     var name: String = ""
     var convertName: String = ""
+    var mimeType: String? = ""
     var createdAt: Date? = Date()
 }

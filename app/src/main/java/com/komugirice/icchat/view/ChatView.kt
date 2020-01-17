@@ -194,6 +194,10 @@ class ChatView : RecyclerView {
             holder.binding.imageCell.downloadTextView.setOnClickListener {
                 onClickDownloadCallBack.invoke(Pair(message, file))
             }
+            // ファイルタイプ ダウンロードクリック
+            holder.binding.fileCell.downloadTextView.setOnClickListener {
+                onClickDownloadCallBack.invoke(Pair(message, file))
+            }
 
         }
 
@@ -220,6 +224,9 @@ class ChatView : RecyclerView {
 
             // 画像タイプ ダウンロードクリック
             holder.binding.imageCell.downloadTextViewOther.setOnClickListener {
+                onClickDownloadCallBack.invoke(Pair(message, file))
+            }
+            holder.binding.fileCell.downloadTextView.setOnClickListener {
                 onClickDownloadCallBack.invoke(Pair(message, file))
             }
         }

@@ -1,6 +1,8 @@
 package com.komugirice.icchat.firebase
 
+import android.content.ContentResolver
 import android.net.Uri
+import android.webkit.MimeTypeMap
 import com.example.qiitaapplication.extension.getSuffix
 import com.komugirice.icchat.ICChatApplication.Companion.applicationContext
 import com.komugirice.icchat.R
@@ -359,9 +361,7 @@ object FirebaseFacade {
      */
     fun registChatMessageImage(roomId: String, uri: Uri, onSuccess: () -> Unit){
         // 元ファイル名
-        // ↓うまくいかない
-        var fileName = uri.getFileNameFromUri(applicationContext) ?: ""
-        // var fileName = uri.lastPathSegment ?: ""
+        var fileName = uri.getFileNameFromUri() ?: ""
         // 拡張子
         var extension = fileName?.getSuffix() ?: "png"
         // 変換後ファイル名
@@ -387,9 +387,7 @@ object FirebaseFacade {
      */
     fun registChatMessageFile(roomId: String, uri: Uri, onSuccess: () -> Unit){
         // 元ファイル名
-        // ↓うまくいかない
-        var fileName = uri.getFileNameFromUri(applicationContext) ?: ""
-        //var fileName = uri.lastPathSegment ?: ""
+        var fileName = uri.getFileNameFromUri() ?: ""
         // 拡張子
         var extension = fileName?.getSuffix() ?: "txt"
         // 変換後ファイル名

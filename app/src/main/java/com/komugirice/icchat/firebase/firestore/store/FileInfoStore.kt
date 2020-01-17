@@ -1,5 +1,7 @@
 package com.komugirice.icchat.firebase.firestore.store
 
+import android.webkit.MimeTypeMap
+import com.example.qiitaapplication.extension.getSuffix
 import com.google.firebase.firestore.FirebaseFirestore
 import com.komugirice.icchat.enums.MessageType
 import com.komugirice.icchat.firebase.firestore.model.FileInfo
@@ -18,10 +20,14 @@ class FileInfoStore {
          *
          */
         fun registerFile(roomId: String, fileName: String, convertName: String, onComplete: () -> Unit) {
+            // MimeType
+            val mimetype = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileName.getSuffix())
+
             val fileObj = FileInfo().apply {
                 this.documentId = UUID.randomUUID().toString()
                 this.roomId = roomId
                 this.name = fileName
+                this.mimeType = mimetype
                 this.convertName = convertName
             }
 

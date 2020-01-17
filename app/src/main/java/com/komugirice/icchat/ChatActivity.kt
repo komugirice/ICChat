@@ -82,8 +82,8 @@ class ChatActivity : BaseActivity() {
             initData()
         }
         binding.chatView.customAdapter.onClickDownloadCallBack = {
-            createFile(it.first, it.second)
             getFireStorageImage(it.first)
+            createFile(it.first, it.second)
         }
     }
 
@@ -334,11 +334,12 @@ class ChatActivity : BaseActivity() {
      */
     private fun createFile(message: Message, fileInfo: FileInfo?) {
         val fileName = fileInfo?.name ?: getString(R.string.no_file_name)
-        var mimeType = ""
-        when(message.type) {
-            MessageType.IMAGE.id -> mimeType = "image/${message.message.getSuffix()}"
-            else-> mimeType = ""
-        }
+//        var mimeType = ""
+//        when(message.type) {
+//            MessageType.IMAGE.id -> mimeType = "image/${fileName.getSuffix()}"
+//            MessageType.FILE.id -> mimeType = ""
+//            else-> mimeType = ""
+//        }
 
         val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
             // Filter to only show results that can be "opened", such as
@@ -346,16 +347,21 @@ class ChatActivity : BaseActivity() {
             addCategory(Intent.CATEGORY_OPENABLE)
 
             // Create a file with the requested MIME type.
-            type = mimeType
+            type = fileInfo?.mimeType   // TODO NULLで落ちるか調査が必要
             putExtra(Intent.EXTRA_TITLE, fileName)
         }
 
         startActivityForResult(intent, RC_WRITE_FILE)
     }
 
+    /**
+     * FireStorageImage取得
+     * message
+     *
+     */
     private fun getFireStorageImage(message: Message) {
-        var fileName = message.message
-        FireStorageUtil.downloadRoomMessageImageUri(message.roomId, fileName) {
+        var convertName = message.message
+        FireStorageUtil.downloadRoomMessageImageUri(message.roomId, convertName) {
 
             it?.apply {
                 tempImageViewForDownload = ImageView(this@ChatActivity)
