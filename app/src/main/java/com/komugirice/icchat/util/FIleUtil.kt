@@ -11,6 +11,7 @@ import android.provider.MediaStore
 import timber.log.Timber
 
 object FIleUtil {
+
     /**
      * Contents://のUriからファイルパスを取得するパクリもの
      */

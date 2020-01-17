@@ -45,7 +45,7 @@ class ChatView : RecyclerView {
 
     class Adapter(val context: Context) : RecyclerView.Adapter<ViewHolder>() {
         lateinit var onClickRefreshCallBack: () -> Unit
-        lateinit var onClickDownloadCallBack: (message: Message) -> Unit
+        lateinit var onClickDownloadCallBack: (Pair<Message, FileInfo?>) -> Unit
         private val items = mutableListOf<Pair<Message, FileInfo?>>()
         // private val usersMap = mutableMapOf<String, User>()
 
@@ -192,7 +192,7 @@ class ChatView : RecyclerView {
             })
             // 画像タイプ ダウンロードクリック
             holder.binding.imageCell.downloadTextView.setOnClickListener {
-                onClickDownloadCallBack.invoke(message)
+                onClickDownloadCallBack.invoke(Pair(message, file))
             }
 
         }
@@ -220,7 +220,7 @@ class ChatView : RecyclerView {
 
             // 画像タイプ ダウンロードクリック
             holder.binding.imageCell.downloadTextViewOther.setOnClickListener {
-                onClickDownloadCallBack.invoke(message)
+                onClickDownloadCallBack.invoke(Pair(message, file))
             }
         }
 

@@ -5,6 +5,7 @@ import com.example.qiitaapplication.extension.getSuffix
 import com.komugirice.icchat.ICChatApplication.Companion.applicationContext
 import com.komugirice.icchat.R
 import com.komugirice.icchat.enums.MessageType
+import com.komugirice.icchat.extension.getFileNameFromUri
 import com.komugirice.icchat.firebase.fcm.FcmStore
 import com.komugirice.icchat.firebase.firestore.manager.RequestManager
 import com.komugirice.icchat.firebase.firestore.manager.RoomManager
@@ -359,12 +360,10 @@ object FirebaseFacade {
     fun registChatMessageImage(roomId: String, uri: Uri, onSuccess: () -> Unit){
         // 元ファイル名
         // ↓うまくいかない
-        //var fileName = FIleUtil.getPathFromUri(applicationContext, uri)
-        var fileName = uri.lastPathSegment ?: ""
+        var fileName = uri.getFileNameFromUri(applicationContext) ?: ""
+        // var fileName = uri.lastPathSegment ?: ""
         // 拡張子
-        var extension = fileName.getSuffix()
-        if(extension.isEmpty())
-            extension = "png"
+        var extension = fileName?.getSuffix() ?: "png"
         // 変換後ファイル名
         val convertName = "${System.currentTimeMillis()}.${extension}"
 
@@ -389,12 +388,10 @@ object FirebaseFacade {
     fun registChatMessageFile(roomId: String, uri: Uri, onSuccess: () -> Unit){
         // 元ファイル名
         // ↓うまくいかない
-        //var fileName = FIleUtil.getPathFromUri(applicationContext, uri)
-        var fileName = uri.lastPathSegment ?: ""
+        var fileName = uri.getFileNameFromUri(applicationContext) ?: ""
+        //var fileName = uri.lastPathSegment ?: ""
         // 拡張子
-        var extension = fileName.getSuffix()
-        if(extension.isEmpty())
-            extension = "txt"
+        var extension = fileName?.getSuffix() ?: "txt"
         // 変換後ファイル名
         val convertName = "${System.currentTimeMillis()}.${extension}"
 

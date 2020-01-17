@@ -23,6 +23,7 @@ import com.komugirice.icchat.enums.ActivityEnum
 import com.komugirice.icchat.enums.MessageType
 import com.komugirice.icchat.firebase.FirebaseFacade
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
+import com.komugirice.icchat.firebase.firestore.model.FileInfo
 import com.komugirice.icchat.firebase.firestore.model.Message
 import com.komugirice.icchat.firebase.firestore.model.Room
 import com.komugirice.icchat.firebase.firestore.store.MessageStore
@@ -81,8 +82,8 @@ class ChatActivity : BaseActivity() {
             initData()
         }
         binding.chatView.customAdapter.onClickDownloadCallBack = {
-            createFile(it)
-            getFireStorageImage(it)
+            createFile(it.first, it.second)
+            getFireStorageImage(it.first)
         }
     }
 
@@ -260,6 +261,7 @@ class ChatActivity : BaseActivity() {
                 if (!viewModel.initRoom(this.room))
                     onBackPressed()
             }
+            // 画像ボタンから
             RC_CHOOSE_IMAGE -> {
 
                 data.data?.also {
@@ -271,6 +273,7 @@ class ChatActivity : BaseActivity() {
                 }
 
             }
+            // ファイルボタンから
             RC_CHOOSE_FILE -> {
 
                 data.data?.also {
@@ -282,6 +285,7 @@ class ChatActivity : BaseActivity() {
                 }
 
             }
+            // ダウンロードリンクから
             RC_WRITE_FILE -> {
 
                 data.data?.also {
@@ -328,8 +332,8 @@ class ChatActivity : BaseActivity() {
      * fileName: Uri設定
      *
      */
-    private fun createFile(message: Message) {
-        val fileName = message.message
+    private fun createFile(message: Message, fileInfo: FileInfo?) {
+        val fileName = fileInfo?.name ?: getString(R.string.no_file_name)
         var mimeType = ""
         when(message.type) {
             MessageType.IMAGE.id -> mimeType = "image/${message.message.getSuffix()}"
