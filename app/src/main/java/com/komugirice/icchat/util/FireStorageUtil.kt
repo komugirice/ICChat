@@ -135,9 +135,9 @@ class FireStorageUtil {
          */
         fun registRoomMessageFile(context: Context, roomId: String, uri: Uri, convertName: String, onComplete: () -> Unit) {
 
-            //val path = FIleUtil.getPathFromUri(context, uri)
-            //val tmpFile = File(path)
-            val tmpFile = uri.makeTempFile(context, convertName.getRemoveSuffixName(), convertName.getSuffix())
+            val path = ICChatFileUtil.getPathFromUri(context, uri)
+            val tmpFile = File(path)
+            //val tmpFile = uri.makeTempFile(context, convertName.getRemoveSuffixName(), convertName.getSuffix())
             val tmpUri = Uri.fromFile(tmpFile)
             FirebaseStorage.getInstance().reference.child("${ROOM_PATH}/${roomId}/${FILE_PATH}/${convertName}")
                 .putFile(tmpUri)
@@ -150,7 +150,6 @@ class FireStorageUtil {
         /**
          * チャット画面の画像投稿をダウンロード
          * @param message: Message
-         * @param uri: Uri
          * @param onSuccess
          *
          */
@@ -168,6 +167,32 @@ class FireStorageUtil {
                 }
         }
 
+        /**
+         * チャット画面のファイル投稿をinputStream使用でファイルにputする
+         * @param context: Context
+         * @param message: Message
+         * @param destFile: File
+         * @param onSuccess
+         *
+         */
+        fun downloadRoomMessageFile(context: Context, message: Message, destFile: File?, onComplete: () -> Unit) {
+            var path = "${ROOM_PATH}/${message.roomId}/"
+            path += if(message.type == MessageType.IMAGE.id) IMAGE_PATH else FILE_PATH
+            path += "/${message.message}"
+
+            val uri = Uri.fromFile(destFile)
+            val inputStream = context.contentResolver.openInputStream(uri)
+            inputStream?.apply{
+                FirebaseStorage.getInstance().reference.child(path)
+                    .putStream(inputStream)
+                    .addOnCompleteListener{
+                        onComplete.invoke()
+                    }
+            } ?: run{
+                onComplete.invoke()
+            }
+
+        }
 
         /**
          * チャット画面の画像投稿を取得

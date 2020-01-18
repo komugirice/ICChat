@@ -44,6 +44,10 @@ fun Uri?.getFileNameFromUri(): String? { // is null
     return fileName
 }
 
+/**
+ * ファイル作成　
+ * ※ローカルストレージから:◯、fireStorageから:☓　あやしい時がある
+ */
 fun Uri.makeTempFile(context: Context, filename: String, suffix: String): File? {
     val file = File.createTempFile(filename, suffix, context.cacheDir)
     val inputStream = context.contentResolver.openInputStream(this)

@@ -9,8 +9,12 @@ import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
 import timber.log.Timber
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.io.IOException
 
-object FIleUtil {
+object ICChatFileUtil {
 
     /**
      * Contents://のUriからファイルパスを取得するパクリもの
@@ -86,5 +90,18 @@ object FIleUtil {
         return null
     }
 
+    @Throws(IOException::class)
+    fun copy(src: File?, dst: File?) {
+        FileInputStream(src).use { `in` ->
+            FileOutputStream(dst).use { out ->
+                // Transfer bytes from in to out
+                val buf = ByteArray(1024)
+                var len: Int
+                while (`in`.read(buf).also { len = it } > 0) {
+                    out.write(buf, 0, len)
+                }
+            }
+        }
+    }
 
 }

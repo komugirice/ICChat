@@ -14,13 +14,17 @@ import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.core.graphics.drawable.toBitmap
+import androidx.core.net.toFile
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import com.example.qiitaapplication.extension.getRemoveSuffixName
 import com.example.qiitaapplication.extension.getSuffix
 import com.komugirice.icchat.databinding.ActivityChatBinding
 import com.komugirice.icchat.enums.ActivityEnum
 import com.komugirice.icchat.enums.MessageType
+import com.komugirice.icchat.extension.getFileNameFromUri
+import com.komugirice.icchat.extension.makeTempFile
 import com.komugirice.icchat.firebase.FirebaseFacade
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.firebase.firestore.model.FileInfo
@@ -28,12 +32,13 @@ import com.komugirice.icchat.firebase.firestore.model.Message
 import com.komugirice.icchat.firebase.firestore.model.Room
 import com.komugirice.icchat.firebase.firestore.store.MessageStore
 import com.komugirice.icchat.util.DialogUtil
-import com.komugirice.icchat.util.FIleUtil
+import com.komugirice.icchat.util.ICChatFileUtil
 import com.komugirice.icchat.util.FireStorageUtil
 import com.komugirice.icchat.viewModel.ChatViewModel
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_chat.*
 import timber.log.Timber
+import java.io.File
 
 
 class ChatActivity : BaseActivity() {
@@ -43,6 +48,7 @@ class ChatActivity : BaseActivity() {
     private val handler = Handler()
     private lateinit var room: Room
     private var tempImageViewForDownload: ImageView? = null
+    private var tempFileForDownload: File? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,6 +88,9 @@ class ChatActivity : BaseActivity() {
             initData()
         }
         binding.chatView.customAdapter.onClickDownloadCallBack = {
+            // storageのファイルを削除済だとexceptionが発生するバグ対応
+            tempImageViewForDownload = null
+            tempFileForDownload = null
             getFireStorageFile(it.first)
             createFile(it.first, it.second)
         }
@@ -294,7 +303,11 @@ class ChatActivity : BaseActivity() {
                             (Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
                     // Check for the freshest data.
                     contentResolver.takePersistableUriPermission(it, takeFlags)
-                    downloadImage(it)
+                    if(tempImageViewForDownload != null) {
+                        downloadImage(it)
+                    } else if(tempFileForDownload != null) {
+                        downloadFile(it)
+                    }
 
                 }
             }
@@ -361,21 +374,35 @@ class ChatActivity : BaseActivity() {
      */
     private fun getFireStorageFile(message: Message) {
 
-        // storageのファイルを削除済だとexceptionが発生するバグ対応
-        tempImageViewForDownload = null
-        FireStorageUtil.downloadRoomMessageFileUri(message) {
+        if(message.type == MessageType.IMAGE.id) {
+            FireStorageUtil.downloadRoomMessageFileUri(message) {
 
-            it?.apply {
-                tempImageViewForDownload = ImageView(this@ChatActivity)
-                Picasso.get().load(this).into(tempImageViewForDownload)
+                it?.apply {
+
+                    // 画像タイプ
+                    tempImageViewForDownload = ImageView(this@ChatActivity)
+                    Picasso.get().load(this).into(tempImageViewForDownload)
+                }
             }
+        } else {
+            // ファイルタイプ
+            tempFileForDownload = File.createTempFile("file", "temp", cacheDir)
+            // TODO storageからのファイル取得は↓で成功しているのか？？
+            FireStorageUtil.downloadRoomMessageFile(this@ChatActivity, message, tempFileForDownload) {
+            }
+
+            //↓fireStorageからの取得データは失敗する
+            //val fileName = message.message
+            //tempFileForDownload = this.makeTempFile(this@ChatActivity, fileName.getRemoveSuffixName(), fileName.getSuffix())
+
         }
+
     }
 
     /**
      * 画像タイプ ダウンロード
      *
-     * @param uri
+     * @param uri ダウンロード先のローカルストレージのuri
      */
     private fun downloadImage(uri: Uri) {
 
@@ -395,6 +422,41 @@ class ChatActivity : BaseActivity() {
             this@ChatActivity,
             R.string.alert_complete_download,
             Toast.LENGTH_LONG).show()
+    }
+
+    /**
+     * ファイルタイプ ダウンロード
+     *
+     * @param uri ダウンロード先のローカルストレージのuri
+     */
+    private fun downloadFile(uri: Uri) {
+
+        if(tempFileForDownload == null) {
+            Toast.makeText(
+                this@ChatActivity,
+                R.string.alert_failed_download,
+                Toast.LENGTH_LONG).show()
+            return
+        }
+        val filename = uri.getFileNameFromUri() ?: ""
+        //val path = FIleUtil.getPathFromUri(context, uri)
+        //val destFile = File(path)
+        val destFile = uri.makeTempFile(this@ChatActivity, filename.getRemoveSuffixName(), filename.getSuffix())
+        destFile?.apply{
+            ICChatFileUtil.copy(tempFileForDownload, destFile)
+            Toast.makeText(
+                this@ChatActivity,
+                R.string.alert_complete_download,
+                Toast.LENGTH_LONG).show()
+        } ?: run {
+            Toast.makeText(
+                this@ChatActivity,
+                R.string.alert_failed_download,
+                Toast.LENGTH_LONG).show()
+        }
+
+
+
     }
 
 
