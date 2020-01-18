@@ -1,11 +1,14 @@
 package com.komugirice.icchat.util
 
+import android.content.Context
 import android.net.Uri
+import com.example.qiitaapplication.extension.getRemoveSuffixName
 import com.example.qiitaapplication.extension.getSuffix
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.util.FileUtil
 import com.google.firebase.storage.FirebaseStorage
 import com.komugirice.icchat.enums.MessageType
+import com.komugirice.icchat.extension.makeTempFile
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.firebase.firestore.model.Message
 import timber.log.Timber
@@ -129,10 +132,12 @@ class FireStorageUtil {
          * @param onSuccess
          *
          */
-        fun registRoomMessageFile(roomId: String, uri: Uri, convertName: String, onComplete: () -> Unit) {
+        fun registRoomMessageFile(context: Context, roomId: String, uri: Uri, convertName: String, onComplete: () -> Unit) {
 
+            val tmpFile = uri.makeTempFile(context, convertName.getRemoveSuffixName(), convertName.getSuffix())
+            val tmpUri = Uri.fromFile(tmpFile)
             FirebaseStorage.getInstance().reference.child("${ROOM_PATH}/${roomId}/${FILE_PATH}/${convertName}")
-                .putFile(uri)
+                .putFile(tmpUri)
                 .addOnCompleteListener{
                     onComplete.invoke()
                 }
@@ -141,18 +146,26 @@ class FireStorageUtil {
 
         /**
          * チャット画面の画像投稿をダウンロード
-         * @param roomId: String
+         * @param message: Message
          * @param uri: Uri
+         * @param onFailed ファイル削除済のバグ対応
          * @param onSuccess
          *
          */
-        fun downloadRoomMessageImageUri(roomId: String, srcFileName: String, onComplete: (Uri?) -> Unit) {
-            FirebaseStorage.getInstance().reference.child("${ROOM_PATH}/${roomId}/${IMAGE_PATH}/${srcFileName}")
+        fun downloadRoomMessageFileUri(message: Message, onFailed:()->Unit, onComplete: (Uri?) -> Unit) {
+            var path = "${ROOM_PATH}/${message.roomId}/"
+            path += if(message.type == MessageType.IMAGE.id) IMAGE_PATH else FILE_PATH
+            path += "/${message.message}"
+
+            FirebaseStorage.getInstance().reference.child(path)
+                // storage内のファイルが削除済だとdownloadUrlが必ずexceptionが発生する
                 .downloadUrl
                 .addOnCompleteListener{
-                    if(it.isSuccessful)
+
                     onComplete.invoke(it.result)
                 }
+            //storage内のファイルが削除済のバグ対応
+            onFailed.invoke()
         }
 
 
@@ -199,9 +212,7 @@ class FireStorageUtil {
                 .delete()
                 .addOnCompleteListener {
                     if (it.isSuccessful) {
-                        it.result?.apply {
-                            onSuccess.invoke()
-                        }
+                        onSuccess.invoke()
                     } else {
                         Timber.e(it.exception)
                         Timber.d("deleteRoomMessageFile Failed")

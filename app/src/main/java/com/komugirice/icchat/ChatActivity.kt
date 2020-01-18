@@ -42,7 +42,7 @@ class ChatActivity : BaseActivity() {
     private lateinit var viewModel: ChatViewModel
     private val handler = Handler()
     private lateinit var room: Room
-    private lateinit var tempImageViewForDownload: ImageView
+    private var tempImageViewForDownload: ImageView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,7 +82,7 @@ class ChatActivity : BaseActivity() {
             initData()
         }
         binding.chatView.customAdapter.onClickDownloadCallBack = {
-            getFireStorageImage(it.first)
+            getFireStorageFile(it.first)
             createFile(it.first, it.second)
         }
     }
@@ -279,7 +279,7 @@ class ChatActivity : BaseActivity() {
                 data.data?.also {
                     // ファイル登録
                     Timber.d(it.toString())
-                    FirebaseFacade.registChatMessageFile(room.documentId, it){
+                    FirebaseFacade.registChatMessageFile(this, room.documentId, it){
                         Timber.d("ファイルアップロード成功")
                     }
                 }
@@ -355,13 +355,15 @@ class ChatActivity : BaseActivity() {
     }
 
     /**
-     * FireStorageImage取得
+     * FireStorageFile取得
      * message
      *
      */
-    private fun getFireStorageImage(message: Message) {
-        var convertName = message.message
-        FireStorageUtil.downloadRoomMessageImageUri(message.roomId, convertName) {
+    private fun getFireStorageFile(message: Message) {
+
+        // storageのファイルを削除済だとexceptionが発生するバグ対応
+        val onFailed = {tempImageViewForDownload = null}
+        FireStorageUtil.downloadRoomMessageFileUri(message, onFailed) {
 
             it?.apply {
                 tempImageViewForDownload = ImageView(this@ChatActivity)
@@ -377,9 +379,17 @@ class ChatActivity : BaseActivity() {
      */
     private fun downloadImage(uri: Uri) {
 
-        val bmp = tempImageViewForDownload.drawable.toBitmap()
+        if(tempImageViewForDownload == null) {
+            Toast.makeText(
+                this@ChatActivity,
+                R.string.alert_failed_download,
+                Toast.LENGTH_LONG).show()
+            return
+        }
+
+        val bmp = tempImageViewForDownload?.drawable?.toBitmap()
         val outputStream = getContentResolver().openOutputStream(uri)
-        bmp.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+        bmp?.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
 
         Toast.makeText(
             this@ChatActivity,

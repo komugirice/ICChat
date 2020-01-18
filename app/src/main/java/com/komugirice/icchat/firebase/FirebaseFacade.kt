@@ -1,6 +1,7 @@
 package com.komugirice.icchat.firebase
 
 import android.content.ContentResolver
+import android.content.Context
 import android.net.Uri
 import android.webkit.MimeTypeMap
 import com.example.qiitaapplication.extension.getSuffix
@@ -385,7 +386,7 @@ object FirebaseFacade {
      * @param onSuccess
      *
      */
-    fun registChatMessageFile(roomId: String, uri: Uri, onSuccess: () -> Unit){
+    fun registChatMessageFile(context: Context, roomId: String, uri: Uri, onSuccess: () -> Unit){
         // 元ファイル名
         var fileName = uri.getFileNameFromUri() ?: ""
         // 拡張子
@@ -393,7 +394,7 @@ object FirebaseFacade {
         // 変換後ファイル名
         val convertName = "${System.currentTimeMillis()}.${extension}"
 
-        FireStorageUtil.registRoomMessageFile(roomId, uri, convertName){
+        FireStorageUtil.registRoomMessageFile(context, roomId, uri, convertName){
             MessageStore.registerMessage(roomId, UserManager.myUserId, convertName, MessageType.FILE.id){
                 FileInfoStore.registerFile(roomId, fileName, convertName){
                     onSuccess.invoke()

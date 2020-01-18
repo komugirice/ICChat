@@ -420,7 +420,6 @@ fun String.removeAllSpace(): String {
 /**
  * ファイル名から拡張子を取得する
  * 単純に一番最後の.以降を取得しているだけ。
- * @param fileName ファイル名
  * @return ファイルの拡張子。拡張子がない場合はnull
  */
 fun String.getSuffix(): String {
@@ -428,5 +427,18 @@ fun String.getSuffix(): String {
      val point = this.lastIndexOf(".")
      return if (point != -1) {
           this.substring(point + 1)
+     } else ""
+}
+
+/**
+ * ファイル名から拡張子を除去する
+ * @param fileName ファイル名
+ * @return ファイル名から拡張子を除去した値
+ */
+fun String.getRemoveSuffixName(): String {
+     if (this == null) return ""
+     val point = this.lastIndexOf(".")
+     return if (point != -1) {
+          this.substring(0, point)
      } else ""
 }

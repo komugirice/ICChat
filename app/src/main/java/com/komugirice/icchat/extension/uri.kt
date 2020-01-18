@@ -44,9 +44,9 @@ fun Uri?.getFileNameFromUri(): String? { // is null
     return fileName
 }
 
-fun Uri.makeTempFile(filename: String, suffix: String): File? {
-    val file = File.createTempFile(filename, suffix, applicationContext.cacheDir)
-    val inputStream = applicationContext.contentResolver.openInputStream(this)
+fun Uri.makeTempFile(context: Context, filename: String, suffix: String): File? {
+    val file = File.createTempFile(filename, suffix, context.cacheDir)
+    val inputStream = context.contentResolver.openInputStream(this)
     inputStream?.apply{
         val fileOutputStream = FileOutputStream(file)
         val buffer = ByteArray(1024)
