@@ -362,8 +362,8 @@ class ChatActivity : BaseActivity() {
     private fun getFireStorageFile(message: Message) {
 
         // storageのファイルを削除済だとexceptionが発生するバグ対応
-        val onFailed = {tempImageViewForDownload = null}
-        FireStorageUtil.downloadRoomMessageFileUri(message, onFailed) {
+        tempImageViewForDownload = null
+        FireStorageUtil.downloadRoomMessageFileUri(message) {
 
             it?.apply {
                 tempImageViewForDownload = ImageView(this@ChatActivity)

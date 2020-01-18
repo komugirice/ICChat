@@ -148,11 +148,10 @@ class FireStorageUtil {
          * チャット画面の画像投稿をダウンロード
          * @param message: Message
          * @param uri: Uri
-         * @param onFailed ファイル削除済のバグ対応
          * @param onSuccess
          *
          */
-        fun downloadRoomMessageFileUri(message: Message, onFailed:()->Unit, onComplete: (Uri?) -> Unit) {
+        fun downloadRoomMessageFileUri(message: Message, onComplete: (Uri?) -> Unit) {
             var path = "${ROOM_PATH}/${message.roomId}/"
             path += if(message.type == MessageType.IMAGE.id) IMAGE_PATH else FILE_PATH
             path += "/${message.message}"
@@ -164,8 +163,6 @@ class FireStorageUtil {
 
                     onComplete.invoke(it.result)
                 }
-            //storage内のファイルが削除済のバグ対応
-            onFailed.invoke()
         }
 
 

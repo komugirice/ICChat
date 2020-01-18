@@ -369,8 +369,9 @@ object FirebaseFacade {
         val convertName = "${System.currentTimeMillis()}.${extension}"
 
         FireStorageUtil.registRoomMessageImage(roomId, uri, convertName){
-            MessageStore.registerMessage(roomId, UserManager.myUserId, convertName, MessageType.IMAGE.id){
-                FileInfoStore.registerFile(roomId, fileName, convertName){
+            // initSubscribeの呼び出しの関係からFile先→Message後の登録順にすること
+            FileInfoStore.registerFile(roomId, fileName, convertName){
+                MessageStore.registerMessage(roomId, UserManager.myUserId, convertName, MessageType.IMAGE.id){
                     onSuccess.invoke()
                 }
 
@@ -395,8 +396,9 @@ object FirebaseFacade {
         val convertName = "${System.currentTimeMillis()}.${extension}"
 
         FireStorageUtil.registRoomMessageFile(context, roomId, uri, convertName){
-            MessageStore.registerMessage(roomId, UserManager.myUserId, convertName, MessageType.FILE.id){
-                FileInfoStore.registerFile(roomId, fileName, convertName){
+            // initSubscribeの呼び出しの関係からFile先→Message後の登録順にすること
+            FileInfoStore.registerFile(roomId, fileName, convertName){
+                MessageStore.registerMessage(roomId, UserManager.myUserId, convertName, MessageType.FILE.id){
                     onSuccess.invoke()
                 }
 
