@@ -127,13 +127,16 @@ class FireStorageUtil {
 
         /**
          * チャット画面からファイル投稿
+         * @param context: ※applicationContextだと落ちたので…
          * @param roomId: String
-         * @param uri: Uri
+         * @param uri: Uri ローカルストレージから取得したファイルのUri
          * @param onSuccess
          *
          */
         fun registRoomMessageFile(context: Context, roomId: String, uri: Uri, convertName: String, onComplete: () -> Unit) {
 
+            //val path = FIleUtil.getPathFromUri(context, uri)
+            //val tmpFile = File(path)
             val tmpFile = uri.makeTempFile(context, convertName.getRemoveSuffixName(), convertName.getSuffix())
             val tmpUri = Uri.fromFile(tmpFile)
             FirebaseStorage.getInstance().reference.child("${ROOM_PATH}/${roomId}/${FILE_PATH}/${convertName}")

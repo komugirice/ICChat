@@ -383,7 +383,7 @@ object FirebaseFacade {
     /**
      * チャット画面 ファイル投稿
      * @param roomId
-     * @param uri
+     * @param uri　ローカルストレージから選択したファイルのUri
      * @param onSuccess
      *
      */
