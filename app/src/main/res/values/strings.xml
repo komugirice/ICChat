@@ -157,6 +157,7 @@
     <string name="alert_cancel_deny">拒否を取り消しました</string>
     <string name="confirm_group_request">招待中のグループを承認しますか？</string>
     <string name="confirm_cancel_group_deny">グループの拒否を取り消しますか？</string>
+    <string name="alert_no_file_size">ファイルサイズが0バイトです</string>
 
     <!-- FCM -->
     <string name="fcm_friend_request">%1$sさんから友だち申請がありました。</string>

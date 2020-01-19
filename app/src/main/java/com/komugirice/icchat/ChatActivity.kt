@@ -276,6 +276,17 @@ class ChatActivity : BaseActivity() {
             RC_CHOOSE_IMAGE -> {
 
                 data.data?.also {
+                    val path = ICChatFileUtil.getPathFromUri(this, it)
+                    val tmpFile = File(path)
+                    // ファイルサイズが0バイトなら終了
+                    if(tmpFile.readBytes().size == 0){
+                        Toast.makeText(
+                            this@ChatActivity,
+                            R.string.alert_no_file_size,
+                            Toast.LENGTH_LONG).show()
+                        return
+                    }
+
                     // 画像登録
                     Timber.d(it.toString())
                     FirebaseFacade.registChatMessageImage(room.documentId, it){
@@ -288,6 +299,16 @@ class ChatActivity : BaseActivity() {
             RC_CHOOSE_FILE -> {
 
                 data.data?.also {
+                    val path = ICChatFileUtil.getPathFromUri(this, it)
+                    val tmpFile = File(path)
+                    // ファイルサイズが0バイトなら終了
+                    if(tmpFile.readBytes().size == 0){
+                        Toast.makeText(
+                            this@ChatActivity,
+                            R.string.alert_no_file_size,
+                            Toast.LENGTH_LONG).show()
+                        return
+                    }
                     // ファイル登録
                     Timber.d(it.toString())
                     FirebaseFacade.registChatMessageFile(this, room.documentId, it){
@@ -457,10 +478,7 @@ class ChatActivity : BaseActivity() {
                 Toast.LENGTH_LONG).show()
         }
 
-
-
     }
-
 
     companion object {
         private const val RC_CHOOSE_IMAGE = 1000
