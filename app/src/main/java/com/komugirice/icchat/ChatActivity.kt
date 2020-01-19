@@ -85,7 +85,7 @@ class ChatActivity : BaseActivity() {
 
         // 削除処理の後
         binding.chatView.customAdapter.onClickRefreshCallBack = {
-            initData()
+            initData(true)
         }
         binding.chatView.customAdapter.onClickDownloadCallBack = {
             // storageのファイルを削除済だとexceptionが発生するバグ対応
@@ -115,10 +115,12 @@ class ChatActivity : BaseActivity() {
                 binding.apply {
                     chatView.customAdapter.refresh(it)
                     // 一番下へ移動
-                    handler.postDelayed({
-                        chatView.scrollToPosition(chatView.customAdapter.itemCount - 1)
-                    }, 100L)
+                    if (!viewModel.isNonMove)
+                        handler.postDelayed({
+                            chatView.scrollToPosition(chatView.customAdapter.itemCount - 1)
+                        }, 500L)
                     swipeRefreshLayout.isRefreshing = false
+                    viewModel.isNonMove = false
                 }
             })
 //            users.observe(this@ChatActivity, Observer {
@@ -202,9 +204,9 @@ class ChatActivity : BaseActivity() {
      * initDataメソッド
      *
      */
-    private fun initData() {
+    private fun initData(isNonMove: Boolean = false) {
 
-        viewModel.initData(this@ChatActivity, room.documentId)
+        viewModel.initData(this@ChatActivity, room.documentId, isNonMove)
 
     }
 

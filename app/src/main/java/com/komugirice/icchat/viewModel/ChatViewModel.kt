@@ -27,9 +27,11 @@ class ChatViewModel: ViewModel() {
     // groupのusers不要論
     //val users = MutableLiveData<List<User>>()
     val room = MutableLiveData<Room>()
+    var isNonMove = false
 
 
-    fun initData(@NonNull owner: LifecycleOwner, roomId: String) {
+    fun initData(@NonNull owner: LifecycleOwner, roomId: String, isNonMove: Boolean = false) {
+        this.isNonMove = isNonMove
         // ユーザ情報保持
         //RoomStore.getTargetRoomUsers(roomId){
             //users.postValue(it)
@@ -45,7 +47,7 @@ class ChatViewModel: ViewModel() {
                         list.add(Pair(it, file))
 
                         if(getMessages.size == list.size) {
-                            // 表示順序がおかしいバグ
+                            // 表示順序がおかしいバグ対応
                             list.sortBy { it.first.createdAt }
                             items.postValue(list)
                             // 監視
@@ -58,6 +60,7 @@ class ChatViewModel: ViewModel() {
                 // message0件の不具合対応
                 if(getMessages.isEmpty()) {
                     // 監視
+                    this.isNonMove = false
                     val lastCreatedAt = Date()
                     initSubscribe(roomId, lastCreatedAt)
                 }
