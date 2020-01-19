@@ -33,21 +33,23 @@ object firebaseFacade {
 
                 RequestManager.initRequestManager() {
 
-                    // fcmトークン更新処理
-                    if(UserManager.myUser.fcmToken == null) {
-                       FcmStore.getLoginUserToken {
-                           UserStore.updateFcmToken(it){
-                               UserManager.myUser.fcmToken = it
-                               onSuccess.invoke()
-                           }
-                       }
-                    } else {
-                        onSuccess.invoke()
-                    }
+                    onSuccess.invoke()
 
                 }
             }
         }
+    }
+
+    /**
+     * 全Managerのクリア
+     *
+     * @param onSuccess
+     *
+     */
+    fun clearManager() {
+        UserManager.clear()
+        RoomManager.clear()
+        RequestManager.clear()
     }
 
     /**

@@ -5,11 +5,32 @@ import android.widget.Toast
 import com.komugirice.icchat.ICChatApplication.Companion.applicationContext
 import com.komugirice.icchat.R
 import com.komugirice.icchat.firebase.fcm.FcmApi
+import com.komugirice.icchat.firebase.fcm.FcmStore
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
+import com.komugirice.icchat.firebase.firestore.store.UserStore
 import timber.log.Timber
 
 class FcmUtil {
     companion object {
+
+        /**
+         * FCM初期化。新規ログイン時に呼び出す
+         *
+         */
+        fun initFcm() {
+            // ↓初回起動時に通らないので外す
+            //if(Prefs().hasToUpdateFcmToken.get().blockingSingle()){
+                FcmStore.getLoginUserToken {
+                    it?.apply{
+                        Prefs().fcmToken.put(it)
+                        UserStore.updateFcmToken(it){
+                            UserManager.myUser.fcmToken = it
+                        }
+                    }
+
+                }
+            //}
+        }
 
         /**
          * 友だち申請のfcm送信

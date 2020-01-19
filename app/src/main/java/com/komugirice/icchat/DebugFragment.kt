@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.komugirice.icchat.firebase.fcm.FcmApi
+import com.komugirice.icchat.firebase.fcm.FcmStore
 import com.komugirice.icchat.firebase.firebaseFacade
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.firebase.firestore.model.Room
@@ -42,6 +43,10 @@ class DebugFragment : Fragment() {
     }
 
     private fun initLayout() {
+        //tokenTextView.text = UserManager.myUser.fcmToken
+        FcmStore.getLoginUserToken {
+            tokenTextView.text = it
+        }
         initClick()
     }
 

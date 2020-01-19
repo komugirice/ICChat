@@ -15,6 +15,7 @@ object UserManager {
     var myUser = User()
         set(value) {
             field = value
+            myUserId = value.userId
             myFriends = allUsers.filter { value.friendIdList.contains(it.userId) }
         }
 
@@ -59,7 +60,8 @@ object UserManager {
         UserStore.getLoginUser {
             it.result?.toObjects(User::class.java)?.firstOrNull().also {
                 it?.also {
-                    myUserId = it.userId
+                    // ↓なぜか値が入らないバグ
+                    //myUserId = it.userId
                     myUser = it
                     UserStore.getAllUsers(){
                         it.result?.toObjects(User::class.java)?.also {
