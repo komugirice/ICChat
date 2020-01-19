@@ -60,8 +60,8 @@ object UserManager {
         UserStore.getLoginUser {
             it.result?.toObjects(User::class.java)?.firstOrNull().also {
                 it?.also {
-                    // ↓なぜか値が入らないバグ
-                    //myUserId = it.userId
+                    // ↓なぜかmyUserIdの値が入らない潜在バグ
+                    myUserId = it.userId
                     myUser = it
                     UserStore.getAllUsers(){
                         it.result?.toObjects(User::class.java)?.also {
