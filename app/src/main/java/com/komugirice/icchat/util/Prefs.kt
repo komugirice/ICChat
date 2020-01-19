@@ -12,8 +12,8 @@ class Prefs {
 
     //val isHighQuality by lazy { BooleanEntry("is_height_quality") }
     //val settingData by lazy { SettingDataEntry("setting_data") }
-    val fcmToken by lazy { StringEntry("fcm_token")}
-    val hasToUpdateFcmToken by lazy {BooleanEntry("has_to_update_fcm_token")}
+    val fcmToken by lazy { StringEntry("fcm_token")}    // 今のところ必要としてないが一応残す
+    val hasToUpdateFcmToken by lazy {BooleanEntry("has_to_update_fcm_token")}    // 今のところ必要としてないが一応残す
 
     interface Entry<T> {
         fun put(value: T)

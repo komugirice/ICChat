@@ -7,6 +7,7 @@ import android.media.RingtoneManager
 import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.komugirice.icchat.R
@@ -22,6 +23,10 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
      */
     // [START receive_message]
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
+
+        // ログインしてない場合は通知せず、処理終了
+        if(FirebaseAuth.getInstance().currentUser == null)
+            return
 
         // TODO(developer): Handle FCM messages here.
         // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
