@@ -1,8 +1,7 @@
-package com.komugirice.icchat.firestore.manager
+package com.komugirice.icchat.firebase.firestore.manager
 
-import androidx.lifecycle.MutableLiveData
-import com.komugirice.icchat.firestore.model.Room
-import com.komugirice.icchat.firestore.store.RoomStore
+import com.komugirice.icchat.firebase.firestore.model.Room
+import com.komugirice.icchat.firebase.firestore.store.RoomStore
 
 object RoomManager {
     

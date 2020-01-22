@@ -1,14 +1,16 @@
-package com.komugirice.icchat.firestore
+package com.komugirice.icchat.firebase
 
-import com.komugirice.icchat.firestore.manager.RequestManager
-import com.komugirice.icchat.firestore.manager.RoomManager
-import com.komugirice.icchat.firestore.manager.UserManager
-import com.komugirice.icchat.firestore.model.GroupRequests
-import com.komugirice.icchat.firestore.model.Room
-import com.komugirice.icchat.firestore.model.User
-import com.komugirice.icchat.firestore.store.RequestStore
-import com.komugirice.icchat.firestore.store.RoomStore
-import com.komugirice.icchat.firestore.store.UserStore
+import com.komugirice.icchat.firebase.fcm.FcmStore
+import com.komugirice.icchat.firebase.firestore.manager.RequestManager
+import com.komugirice.icchat.firebase.firestore.manager.RoomManager
+import com.komugirice.icchat.firebase.firestore.manager.UserManager
+import com.komugirice.icchat.firebase.firestore.model.GroupRequests
+import com.komugirice.icchat.firebase.firestore.model.Room
+import com.komugirice.icchat.firebase.firestore.model.User
+import com.komugirice.icchat.firebase.firestore.store.RequestStore
+import com.komugirice.icchat.firebase.firestore.store.RoomStore
+import com.komugirice.icchat.firebase.firestore.store.UserStore
+import com.komugirice.icchat.util.FcmUtil
 import com.komugirice.icchat.util.FireStorageUtil
 
 /**
@@ -38,6 +40,12 @@ object firebaseFacade {
         }
     }
 
+    /**
+     * 全Managerのクリア
+     *
+     * @param onSuccess
+     *
+     */
     fun clearManager() {
         UserManager.clear()
         RoomManager.clear()
@@ -61,7 +69,8 @@ object firebaseFacade {
                 RequestStore.deleteUsersRequest(UserManager.myUserId, targetUserId)
                 // Request target→自分 削除
                 RequestStore.deleteUsersRequest(targetUserId, UserManager.myUserId)
-
+                // FCM通知
+                FcmUtil.sendAcceptFriendFcm(targetUserId)
                 initManager {
 
                     onSuccess.invoke()
@@ -85,6 +94,8 @@ object firebaseFacade {
         list.forEach {
             index++
             RequestStore.requestFriend(it.userId) {
+                // FCM通知
+                FcmUtil.sendRequestFriendFcm(it.userId)
                 if (list.size == index) {
                     // 再設定
                     RequestManager.initMyUserRequests {
@@ -116,6 +127,10 @@ object firebaseFacade {
             if (it.isSuccessful) {
                 //チェックありのRequest登録
                 RequestStore.registerGroupRequest(groupRequest) {
+                    // Request登録へのFCM通知
+                    groupRequest?.requests?.forEach {
+                        FcmUtil.sendRequestGroupFcm(it.beRequestedId, room.name)
+                    }
                     // チェックを外したRequest削除
                     RequestStore.deleteGroupRequest(room.documentId, delRequests) {
                         // RoomManager更新
@@ -129,6 +144,24 @@ object firebaseFacade {
                 }
             } else {
                 onFailed.invoke()
+            }
+        }
+    }
+
+    /**
+     * 友だち申請を拒否する
+     *
+     * @param requesterId
+     * @param onSuccess
+     *
+     */
+    fun denyUserRequest(requesterId: String, onSuccess: () -> Unit) {
+        // Request更新
+        RequestStore.denyUserRequest(requesterId) {
+            // FCM通知
+            FcmUtil.sendDenyFriendFcm(requesterId)
+            RequestManager.initUsersRequestToMe {
+                onSuccess.invoke()
             }
         }
     }
@@ -194,11 +227,22 @@ object firebaseFacade {
      *
      */
     fun deleteRoom(roomId: String, onSuccess: () -> Unit) {
+        // Room削除
         RoomStore.deleteRoom(roomId) {
+            // Roomアイコン削除
             FireStorageUtil.deleteGroupIconImage(roomId) {
-                RoomManager.initRoomManager {
-                    onSuccess.invoke()
+                // Room内Request削除
+                val list = RequestManager.myGroupsRequests.filter{it.room.documentId == roomId}.map{it.requests}
+                    .firstOrNull()?.map{it.documentId}?.toList()
+                RequestStore.deleteGroupRequest(roomId, list ?: listOf()){
+                    RoomManager.initRoomManager {
+                        RequestManager.initMyGroupsRequests(){
+                            onSuccess.invoke()
+                        }
+
+                    }
                 }
+
             }
         }
     }
@@ -216,6 +260,12 @@ object firebaseFacade {
             RoomManager.initRoomManager {
                 onSuccess.invoke()
             }
+        }
+    }
+
+    fun updateFcmToken(token: String){
+        UserStore.updateFcmToken(token){
+            UserManager.myUser.fcmToken = token
         }
     }
 

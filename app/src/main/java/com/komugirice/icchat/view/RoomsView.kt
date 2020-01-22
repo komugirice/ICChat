@@ -4,13 +4,12 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.komugirice.icchat.ChatActivity
 import com.komugirice.icchat.databinding.RoomCellBinding
-import com.komugirice.icchat.firestore.model.Message
-import com.komugirice.icchat.firestore.model.Room
+import com.komugirice.icchat.firebase.firestore.model.Message
+import com.komugirice.icchat.firebase.firestore.model.Room
 
 class RoomsView : RecyclerView {
     constructor(ctx: Context) : super(ctx)

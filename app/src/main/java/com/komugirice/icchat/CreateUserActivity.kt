@@ -14,10 +14,9 @@ import com.example.qiitaapplication.extension.getDateToString
 import com.example.qiitaapplication.extension.toDate
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
-import com.komugirice.icchat.firestore.model.User
-import com.komugirice.icchat.firestore.store.UserStore
 import com.komugirice.icchat.databinding.ActivityCreateUserBinding
-import com.komugirice.icchat.extension.afterTextChanged
+import com.komugirice.icchat.firebase.firestore.model.User
+import com.komugirice.icchat.firebase.firestore.store.UserStore
 import com.komugirice.icchat.ui.createUser.CreateUserViewModel
 import com.komugirice.icchat.util.FireStoreUtil
 import kotlinx.android.synthetic.main.activity_chat.backImageView

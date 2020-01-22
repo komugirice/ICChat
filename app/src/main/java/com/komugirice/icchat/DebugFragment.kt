@@ -2,20 +2,21 @@ package com.komugirice.icchat
 
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
-import androidx.lifecycle.MutableLiveData
-import com.komugirice.icchat.firestore.firebaseFacade
-import com.komugirice.icchat.firestore.manager.UserManager
-import com.komugirice.icchat.firestore.model.Room
-import com.komugirice.icchat.firestore.model.User
-import com.komugirice.icchat.firestore.store.DebugUserStore
-import com.komugirice.icchat.firestore.store.RoomStore
-import com.komugirice.icchat.firestore.store.UserStore
+import androidx.fragment.app.Fragment
+import com.komugirice.icchat.firebase.fcm.FcmApi
+import com.komugirice.icchat.firebase.fcm.FcmStore
+import com.komugirice.icchat.firebase.firebaseFacade
+import com.komugirice.icchat.firebase.firestore.manager.UserManager
+import com.komugirice.icchat.firebase.firestore.model.Room
+import com.komugirice.icchat.firebase.firestore.model.User
+import com.komugirice.icchat.firebase.firestore.store.DebugUserStore
+import com.komugirice.icchat.firebase.firestore.store.RoomStore
+import com.komugirice.icchat.firebase.firestore.store.UserStore
 import kotlinx.android.synthetic.main.fragment_debug.*
 
 /**
@@ -42,6 +43,10 @@ class DebugFragment : Fragment() {
     }
 
     private fun initLayout() {
+        //tokenTextView.text = UserManager.myUser.fcmToken
+        FcmStore.getLoginUserToken {
+            tokenTextView.text = it
+        }
         initClick()
     }
 
@@ -91,6 +96,11 @@ class DebugFragment : Fragment() {
                 }
             }
         }
+        // FCM通知
+        buttonfcmSend.setOnClickListener {
+            val friendId: String = SpinnerDelUsers.selectedItem.toString()
+            sendFcm(friendId)
+        }
 
 
         buttonRefresh.setOnClickListener{
@@ -127,7 +137,6 @@ class DebugFragment : Fragment() {
                         SpinnerAddUsers.adapter = adapter
                     }
 
-
                 }
             }
         }
@@ -144,6 +153,22 @@ class DebugFragment : Fragment() {
             SpinnerDelUsers.adapter = adapter
         }
 
+    }
+
+    private fun sendFcm(friendId: String) {
+        val  friend = UserManager.getMyFriend(friendId)
+        friend?.fcmToken?.apply{
+            val message = getString(R.string.fcm_friend_request, friend.name)
+            val token = friend.fcmToken
+            val type = "0"
+            FcmApi.sendMessageOkHttp(token, message, type)
+        } ?: run{
+            Toast.makeText(
+                context,
+                "FCMトークンがnullです",
+                Toast.LENGTH_LONG
+            ).show()
+        }
     }
 
 }

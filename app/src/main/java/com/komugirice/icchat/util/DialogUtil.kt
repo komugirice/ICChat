@@ -5,16 +5,15 @@ import android.content.Context
 import android.content.DialogInterface
 import android.widget.Toast
 import com.komugirice.icchat.R
-import com.komugirice.icchat.firestore.firebaseFacade
-import com.komugirice.icchat.firestore.manager.RequestManager
-import com.komugirice.icchat.firestore.manager.RoomManager
-import com.komugirice.icchat.firestore.manager.UserManager
-import com.komugirice.icchat.firestore.model.Request
-import com.komugirice.icchat.firestore.model.Room
-import com.komugirice.icchat.firestore.store.RequestStore
-import com.komugirice.icchat.firestore.store.RoomStore
-import com.komugirice.icchat.firestore.store.UserStore
-import com.komugirice.icchat.view.FriendsView
+import com.komugirice.icchat.firebase.firebaseFacade
+import com.komugirice.icchat.firebase.firestore.manager.RequestManager
+import com.komugirice.icchat.firebase.firestore.manager.RoomManager
+import com.komugirice.icchat.firebase.firestore.manager.UserManager
+import com.komugirice.icchat.firebase.firestore.model.Request
+import com.komugirice.icchat.firebase.firestore.model.Room
+import com.komugirice.icchat.firebase.firestore.store.RequestStore
+import com.komugirice.icchat.firebase.firestore.store.RoomStore
+import com.komugirice.icchat.firebase.firestore.store.UserStore
 
 class DialogUtil {
     companion object {
@@ -46,15 +45,13 @@ class DialogUtil {
                 })
                 .setNegativeButton(R.string.deny, object : DialogInterface.OnClickListener {
                     override fun onClick(dialog: DialogInterface?, which: Int) {
-                        RequestStore.denyUserRequest(request.requesterId) {
-                            RequestManager.initUsersRequestToMe {
-                                Toast.makeText(
-                                    context,
-                                    R.string.alert_deny,
-                                    Toast.LENGTH_LONG
-                                ).show()
-                                onSuccess.invoke()
-                            }
+                        firebaseFacade.denyUserRequest(request.requesterId) {
+                            Toast.makeText(
+                                context,
+                                R.string.alert_deny,
+                                Toast.LENGTH_LONG
+                            ).show()
+                            onSuccess.invoke()
                         }
                     }
                 })

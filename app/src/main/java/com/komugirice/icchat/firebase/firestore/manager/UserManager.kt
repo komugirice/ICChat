@@ -1,10 +1,9 @@
-package com.komugirice.icchat.firestore.manager
+package com.komugirice.icchat.firebase.firestore.manager
 
 import androidx.databinding.library.BuildConfig
-import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.FirebaseAuth
-import com.komugirice.icchat.firestore.model.User
-import com.komugirice.icchat.firestore.store.UserStore
+import com.komugirice.icchat.firebase.firestore.model.User
+import com.komugirice.icchat.firebase.firestore.store.UserStore
 
 object UserManager {
 
@@ -16,6 +15,7 @@ object UserManager {
     var myUser = User()
         set(value) {
             field = value
+            myUserId = value.userId
             myFriends = allUsers.filter { value.friendIdList.contains(it.userId) }
         }
 
@@ -42,6 +42,10 @@ object UserManager {
         return myFriends.filter { it.userId.equals(friendId) }.firstOrNull()
     }
 
+    fun getTargetUser (targetId: String): User?{
+        return allUsers.filter { it.userId.equals(targetId) }.firstOrNull()
+    }
+
     fun removeMyFriends (friendId: String) {
         myUser.friendIdList.remove(friendId)
         myFriends = allUsers.filter { myUser.friendIdList.contains(it.userId) }
@@ -56,7 +60,7 @@ object UserManager {
         UserStore.getLoginUser {
             it.result?.toObjects(User::class.java)?.firstOrNull().also {
                 it?.also {
-                    myUserId = it.userId
+                    // ↓なぜかmyUserIdの値が入らない潜在バグ
                     myUser = it
                     UserStore.getAllUsers(){
                         it.result?.toObjects(User::class.java)?.also {

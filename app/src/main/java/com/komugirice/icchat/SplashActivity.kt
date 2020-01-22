@@ -1,13 +1,9 @@
 package com.komugirice.icchat
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import com.google.firebase.auth.FirebaseAuth
-import com.komugirice.icchat.firestore.firebaseFacade
-import com.komugirice.icchat.firestore.manager.RequestManager
-import com.komugirice.icchat.firestore.manager.RoomManager
-import com.komugirice.icchat.firestore.manager.UserManager
+import com.komugirice.icchat.firebase.firebaseFacade
 
 class SplashActivity : BaseActivity() {
 

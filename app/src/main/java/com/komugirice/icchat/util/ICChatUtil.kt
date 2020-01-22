@@ -10,10 +10,9 @@ import com.example.qiitaapplication.extension.compareDate
 import com.example.qiitaapplication.extension.yyyyMMddHHmmToString
 import com.google.gson.Gson
 import com.komugirice.icchat.extension.setRoundedImageView
-import com.komugirice.icchat.firestore.manager.UserManager
-import com.komugirice.icchat.firestore.model.Request
-import com.komugirice.icchat.firestore.model.Room
-import com.komugirice.icchat.util.ICChatUtil.loadUserIconImage
+import com.komugirice.icchat.firebase.firestore.manager.UserManager
+import com.komugirice.icchat.firebase.firestore.model.Request
+import com.komugirice.icchat.firebase.firestore.model.Room
 import com.squareup.picasso.Picasso
 import timber.log.Timber
 import java.util.*

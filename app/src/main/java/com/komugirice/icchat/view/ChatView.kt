@@ -8,9 +8,9 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.komugirice.icchat.firestore.model.Message
-import com.komugirice.icchat.firestore.model.User
-import com.komugirice.icchat.firestore.manager.UserManager
+import com.komugirice.icchat.firebase.firestore.model.Message
+import com.komugirice.icchat.firebase.firestore.model.User
+import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.databinding.ChatMessageCellBinding
 import com.komugirice.icchat.databinding.ChatMessageOtheruserCellBinding
 

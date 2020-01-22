@@ -5,11 +5,11 @@
     <data>
         <variable
             name="room"
-            type="com.komugirice.icchat.firestore.model.Room" />
+            type="com.komugirice.icchat.firebase.firestore.model.Room" />
 
         <variable
             name="message"
-            type="com.komugirice.icchat.firestore.model.Message" />
+            type="com.komugirice.icchat.firebase.firestore.model.Message" />
 
     </data>
 

@@ -22,12 +22,12 @@ import com.komugirice.icchat.enum.ActivityEnum
 import com.komugirice.icchat.enum.RequestStatus
 import com.komugirice.icchat.extension.afterTextChanged
 import com.komugirice.icchat.extension.setRoundedImageView
-import com.komugirice.icchat.firestore.firebaseFacade
-import com.komugirice.icchat.firestore.manager.RequestManager
-import com.komugirice.icchat.firestore.manager.UserManager
-import com.komugirice.icchat.firestore.model.GroupRequests
-import com.komugirice.icchat.firestore.model.Request
-import com.komugirice.icchat.firestore.model.Room
+import com.komugirice.icchat.firebase.firebaseFacade
+import com.komugirice.icchat.firebase.firestore.manager.RequestManager
+import com.komugirice.icchat.firebase.firestore.manager.UserManager
+import com.komugirice.icchat.firebase.firestore.model.GroupRequests
+import com.komugirice.icchat.firebase.firestore.model.Request
+import com.komugirice.icchat.firebase.firestore.model.Room
 import com.komugirice.icchat.ui.groupSetting.GroupSettingViewModel
 import com.komugirice.icchat.util.FireStorageUtil
 import com.makeramen.roundedimageview.RoundedDrawable
@@ -323,14 +323,16 @@ class GroupSettingActivity : BaseActivity() {
      */
     private fun upload(room: Room, onSuccess: (UploadTask.TaskSnapshot) -> Unit) {
 
+        // 画像未設定の場合は終了
+        if(groupIconImageView.drawable == null) return
+
         val imageUrl = "${System.currentTimeMillis()}.jpg"
         val ref = FirebaseStorage.getInstance().reference.child("${FireStorageUtil.ROOM_PATH}/${room.documentId}/${FireStorageUtil.ROOM_ICON_PATH}/${imageUrl}")
 
         // RoundedImageViewの不具合修正
         val bitmap = when (groupIconImageView) {
             is RoundedImageView -> (groupIconImageView.drawable as RoundedDrawable).toBitmap()
-            is AppCompatImageView -> (groupIconImageView.drawable as BitmapDrawable).bitmap
-            else -> return  // 画像未設定なので終了
+            else -> (groupIconImageView.drawable as BitmapDrawable).bitmap
         }
         val baos = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos)

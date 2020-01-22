@@ -5,7 +5,6 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
@@ -16,9 +15,9 @@ import com.komugirice.icchat.R
 import com.komugirice.icchat.databinding.FriendCellBinding
 import com.komugirice.icchat.databinding.FriendRequestCellBinding
 import com.komugirice.icchat.databinding.TitleCellBinding
-import com.komugirice.icchat.firestore.manager.UserManager
-import com.komugirice.icchat.firestore.model.Request
-import com.komugirice.icchat.firestore.model.Room
+import com.komugirice.icchat.firebase.firestore.manager.UserManager
+import com.komugirice.icchat.firebase.firestore.model.Request
+import com.komugirice.icchat.firebase.firestore.model.Room
 import com.komugirice.icchat.util.DialogUtil
 
 class FriendsView : RecyclerView {

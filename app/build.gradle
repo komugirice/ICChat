@@ -54,6 +54,8 @@ dependencies {
     implementation "com.google.firebase:firebase-auth:$firebase_auth_version"
     // FirebaseStrage
     implementation "com.google.firebase:firebase-storage:$firebase_storage_version"
+    // FirebaseCloudMessage
+    implementation 'com.google.firebase:firebase-messaging:20.0.0'
     // ViewModel
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycler_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycler_version"
@@ -80,6 +82,11 @@ dependencies {
     implementation 'com.journeyapps:zxing-android-embedded:3.6.0'
     // Expandable RecyclerView
     implementation 'com.thoughtbot:expandablerecyclerview:1.3'
+    // retrofit
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-scalars:$retrofit_version"
+    implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofit_version"
 }
 
 apply plugin: 'com.google.gms.google-services'

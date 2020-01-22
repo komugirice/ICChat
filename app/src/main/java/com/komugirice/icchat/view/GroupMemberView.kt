@@ -6,9 +6,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.firebase.auth.FirebaseAuth
 import com.komugirice.icchat.databinding.GroupMemberCellBinding
-import com.komugirice.icchat.firestore.model.User
+import com.komugirice.icchat.firebase.firestore.model.User
 
 class GroupMemberView : RecyclerView {
     constructor(ctx: Context) : super(ctx)

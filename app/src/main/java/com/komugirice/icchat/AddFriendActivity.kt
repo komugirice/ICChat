@@ -7,31 +7,20 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.LayoutInflater
-import com.afollestad.materialdialogs.MaterialDialog
-import com.komugirice.icchat.databinding.QrCodeDialogBinding
-import com.komugirice.icchat.firestore.model.Room
-import kotlinx.android.synthetic.main.activity_add_friend.*
-import kotlinx.android.synthetic.main.activity_chat.*
-import kotlinx.android.synthetic.main.activity_chat.backImageView
-import android.opengl.ETC1.getWidth
-import android.opengl.ETC1.getHeight
 import android.widget.Toast
-import androidx.core.view.ViewCompat.getMatrix
+import com.afollestad.materialdialogs.MaterialDialog
 import com.google.zxing.integration.android.IntentIntegrator
-import com.google.zxing.qrcode.encoder.ByteMatrix
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
 import com.google.zxing.qrcode.encoder.Encoder
-import com.google.zxing.qrcode.encoder.QRCode
 import com.komugirice.icchat.ICChatApplication.Companion.applicationContext
-import com.komugirice.icchat.firestore.firebaseFacade
-import com.komugirice.icchat.firestore.manager.UserManager
-import com.komugirice.icchat.firestore.store.RequestStore
-import com.komugirice.icchat.firestore.store.RoomStore
-import com.komugirice.icchat.firestore.store.UserStore
-import com.komugirice.icchat.util.DialogUtil
+import com.komugirice.icchat.databinding.QrCodeDialogBinding
+import com.komugirice.icchat.firebase.firebaseFacade
+import com.komugirice.icchat.firebase.firestore.manager.UserManager
+import com.komugirice.icchat.firebase.firestore.store.UserStore
+import kotlinx.android.synthetic.main.activity_add_friend.*
+import kotlinx.android.synthetic.main.activity_chat.backImageView
 import timber.log.Timber
 
 
@@ -51,14 +40,39 @@ class AddFriendActivity : BaseActivity() {
                 // 必須チェック
                 if(targetUserId.isEmpty()) {
                     AlertDialog.Builder(this@AddFriendActivity)
-                        .setMessage(R.string.alert_failed_qr_read)
-                        .setPositiveButton(R.string.ok, null)
+                        .setMessage("QRコードの読み取りに失敗しました")
+                        .setPositiveButton("OK", null)
                         .show()
                     return
                 }
                 Timber.d("onReceiveByQr:${targetUserId}")
-                // 友だち追加確認ダイアログ
-                DialogUtil.addFriendDialog(this, targetUserId)
+                    UserStore.getTargetUser(targetUserId) {
+
+                        AlertDialog.Builder(this)
+                            .setTitle("${it.name}")
+                            .setMessage("ユーザを友だち登録しますか？")
+                            .setPositiveButton("OK", object : DialogInterface.OnClickListener {
+                                override fun onClick(dialog: DialogInterface?, which: Int) {
+
+                                    val onFailed = {
+                                        Toast.makeText(
+                                            this@AddFriendActivity,
+                                            "既に登録済みです。",
+                                            Toast.LENGTH_LONG
+                                        ).show()
+                                    }
+                                    // Users更新
+                                    firebaseFacade.addFriend(targetUserId, onFailed) {
+                                        AlertDialog.Builder(this@AddFriendActivity)
+                                            .setMessage("友だち登録が完了しました")
+                                            .setPositiveButton("OK", null)
+                                            .show()
+                                    }
+                                }
+                            })
+                            .setNegativeButton("キャンセル", null)
+                            .show()
+                    }
             }
         }
     }
