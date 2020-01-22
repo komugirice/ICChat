@@ -61,7 +61,6 @@ object UserManager {
             it.result?.toObjects(User::class.java)?.firstOrNull().also {
                 it?.also {
                     // ↓なぜかmyUserIdの値が入らない潜在バグ
-                    myUserId = it.userId
                     myUser = it
                     UserStore.getAllUsers(){
                         it.result?.toObjects(User::class.java)?.also {
