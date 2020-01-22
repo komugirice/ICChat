@@ -8,13 +8,11 @@ import com.komugirice.icchat.firebase.firestore.store.UserStore
 object UserManager {
 
     var myUserId = "" // ここにSharedPreferencesから取得する
-        set(value) {
-            field = value
-        }
 
     var myUser = User()
         set(value) {
             field = value
+            myUserId = value.userId
             myFriends = allUsers.filter { value.friendIdList.contains(it.userId) }
         }
 
@@ -62,9 +60,9 @@ object UserManager {
         UserStore.getLoginUser {
             it.result?.toObjects(User::class.java)?.firstOrNull().also {
                 it?.also {
-                    myUserId = it.userId
+                    // ↓なぜかmyUserIdの値が入らない潜在バグ
                     myUser = it
-                    UserStore.getAllUsers(){
+                    UserStore.getAllUsers {
                         it.result?.toObjects(User::class.java)?.also {
                             allUsers = it
                         }

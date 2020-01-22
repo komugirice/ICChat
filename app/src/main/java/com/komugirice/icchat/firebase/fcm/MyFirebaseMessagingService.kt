@@ -7,10 +7,12 @@ import android.media.RingtoneManager
 import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.komugirice.icchat.R
 import com.komugirice.icchat.firebase.FirebaseFacade
+import com.komugirice.icchat.firebase.firestore.manager.UserManager
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
 
@@ -21,6 +23,10 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
      */
     // [START receive_message]
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
+
+        // ログインしてない場合は通知せず、処理終了
+        if(FirebaseAuth.getInstance().currentUser == null)
+            return
 
         // TODO(developer): Handle FCM messages here.
         // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
@@ -91,8 +97,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val channelId = getString(R.string.default_notification_channel_id)
         val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
-                //.setSmallIcon(R.drawable.ic_stat_ic_notification)
-                //.setContentTitle(getString(R.string.fcm_message))
+                .setSmallIcon(R.drawable.ic_arrow_down)
+                .setContentTitle(getString(R.string.app_name) + ":${UserManager.myUser.name}さん")
                 .setContentText(messageBody)
                 .setAutoCancel(true)
                 //.setSound(defaultSoundUri)
@@ -109,15 +115,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         }
 
         notificationManager.notify(0 /* ID of notification */, notificationBuilder.build())
-    }
-
-    private fun showNotification(title: String, message: String) {
-        (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).notify(0, NotificationCompat.Builder(this, "1")
-            //.setSmallIcon(R.mipmap.ic_launcher)
-            //.setContentTitle(title)
-            .setContentText(message)
-            .setAutoCancel(true)
-            .build())
     }
 
     companion object {

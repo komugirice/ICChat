@@ -31,11 +31,11 @@ object FirebaseFacade {
      */
     fun initManager(onSuccess: () -> Unit) {
 
-        UserManager.initUserManager() {
+        UserManager.initUserManager {
 
-            RoomManager.initRoomManager() {
+            RoomManager.initRoomManager {
 
-                RequestManager.initRequestManager() {
+                RequestManager.initRequestManager {
 
                     // fcmトークン更新処理
                     if (UserManager.myUser.fcmToken == null) {
@@ -262,7 +262,7 @@ object FirebaseFacade {
                     deleteRoomMessges(roomId){
                         // 後処理
                         RoomManager.initRoomManager {
-                            RequestManager.initMyGroupsRequests() {
+                            RequestManager.initMyGroupsRequests {
                                 onSuccess.invoke()
                             }
 
@@ -364,7 +364,7 @@ object FirebaseFacade {
         // 元ファイル名
         var fileName = uri.getFileNameFromUri() ?: ""
         // 拡張子
-        var extension = fileName?.getSuffix() ?: "png"
+        var extension = fileName.getSuffix()
         // 変換後ファイル名
         val convertName = "${System.currentTimeMillis()}.${extension}"
 
@@ -391,7 +391,7 @@ object FirebaseFacade {
         // 元ファイル名
         var fileName = uri.getFileNameFromUri() ?: ""
         // 拡張子
-        var extension = fileName?.getSuffix() ?: "txt"
+        var extension = fileName.getSuffix()
         // 変換後ファイル名
         val convertName = "${System.currentTimeMillis()}.${extension}"
 

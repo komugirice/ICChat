@@ -20,3 +20,4 @@ Androidモバイルアプリ<br>
 ・Firebase<br>
 ・FireStore<br>
 ・FireStorage<br>
+・Firebase Cloud Messaging<br>

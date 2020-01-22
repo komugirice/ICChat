@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import com.komugirice.icchat.interfaces.Update
 import com.komugirice.icchat.firebase.fcm.FcmApi
 import com.komugirice.icchat.firebase.FirebaseFacade
+import com.komugirice.icchat.firebase.fcm.FcmStore
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.firebase.firestore.model.Room
 import com.komugirice.icchat.firebase.firestore.model.User
@@ -43,6 +44,10 @@ class DebugFragment : Fragment(), Update {
     }
 
     private fun initLayout() {
+        //tokenTextView.text = UserManager.myUser.fcmToken
+        FcmStore.getLoginUserToken {
+            tokenTextView.text = it
+        }
         initClick()
     }
 
@@ -82,7 +87,7 @@ class DebugFragment : Fragment(), Update {
             UserStore.delFriend(friendId) {
 
                 // Room削除
-                RoomStore.getLoginUserRooms() {
+                RoomStore.getLoginUserRooms {
                     RoomStore.delSingleUserRooms(it, friendId)
                     Toast.makeText(
                         context,
@@ -110,7 +115,7 @@ class DebugFragment : Fragment(), Update {
         var tmpList: List<User>
 
         // NotFriend
-        DebugUserStore.getDebugNotFriendIdArray() {
+        DebugUserStore.getDebugNotFriendIdArray {
             if (it.isSuccessful) {
                 it.result?.toObjects(User::class.java)?.also {
                     // とりあえずuser全件をnotFriendListに格納
@@ -157,7 +162,7 @@ class DebugFragment : Fragment(), Update {
             val message = getString(R.string.fcm_friend_request, friend.name)
             val token = friend.fcmToken
             val type = "0"
-            FcmApi.sendMessage(token, message, type)
+            FcmApi.sendMessageOkHttp(token, message, type)
         } ?: run{
             Toast.makeText(
                 context,

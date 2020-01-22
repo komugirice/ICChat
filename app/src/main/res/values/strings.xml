@@ -135,8 +135,7 @@
     <string name="display_qrcode_button">自分のQRコードを表示する</string>
     <string name="user_search_activity_button">ユーザを検索する</string>
 
-
-    <!-- SearchUserActivity -->
+    <!-- UserSearchActivity -->
     <string name="user_search_title">ユーザ検索</string>
     <string name="friend_request_button">友だち申請する</string>
     <string name="invalid_search_result">該当ユーザは存在しません</string>

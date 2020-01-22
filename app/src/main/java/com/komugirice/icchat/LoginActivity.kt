@@ -36,6 +36,7 @@ import com.komugirice.icchat.firebase.FirebaseFacade
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.ui.login.LoginViewModel
 import com.komugirice.icchat.ui.login.LoginViewModelFactory
+import com.komugirice.icchat.util.FcmUtil
 import kotlinx.android.synthetic.main.activity_create_user.*
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.activity_login.container
@@ -301,8 +302,10 @@ class LoginActivity : BaseActivity() {
         val welcome = getString(R.string.welcome)
         // TODO : initiate successful logged in experience
 
-        // UserManager初期設定
-        FirebaseFacade.initManager() {
+        // Manager初期設定
+            FirebaseFacade.initManager {
+            // FCM初期化
+            FcmUtil.initFcm()
             val displayName = UserManager.myUser.name
 
             Toast.makeText(
@@ -351,6 +354,7 @@ class LoginActivity : BaseActivity() {
             FirebaseAuth.getInstance().signOut()
             LoginManager.getInstance().logOut()
             activity.apply {
+                logout()
                 finishAffinity()
                 activity.startActivity(Intent(activity, LoginActivity::class.java))
             }
