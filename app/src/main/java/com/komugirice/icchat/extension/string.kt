@@ -1,5 +1,6 @@
 package com.example.qiitaapplication.extension
 
+import android.util.Patterns
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -277,9 +278,7 @@ fun String.isHan(): Boolean {
  * @return true, 半角数値; false, それ以外
  */
 fun String.isHanNum(): Boolean {
-     return if (!this.matches("^[0-9]+$".toRegex())) {
-          false
-     } else true
+     return this.matches("^[0-9]+$".toRegex())
 }
 
 /**
@@ -289,9 +288,7 @@ fun String.isHanNum(): Boolean {
  * @return true, 半角英数; false, それ以外
  */
 fun String.isHanStr(): Boolean {
-     return if (!this.matches("^[0-9a-zA-Z]+$".toRegex())) {
-          false
-     } else true
+     return this.matches("^[0-9a-zA-Z]+$".toRegex())
 }
 
 /**
@@ -301,9 +298,7 @@ fun String.isHanStr(): Boolean {
  * @return true, 半角英数; false, それ以外
  */
 fun String.isHanStrBigOnly(): Boolean {
-     return if (!this.matches("^[0-9A-Z]+$".toRegex())) {
-          false
-     } else true
+     return this.matches("^[0-9A-Z]+$".toRegex())
 }
 
 /**
@@ -313,9 +308,7 @@ fun String.isHanStrBigOnly(): Boolean {
  * @return true, 半角大文字英字; false, それ以外
  */
 fun String.isHanBigStr(): Boolean {
-     return if (!this.matches("^[A-Z]+$".toRegex())) {
-          false
-     } else true
+     return this.matches("^[A-Z]+$".toRegex())
 }
 
 /**
@@ -325,9 +318,7 @@ fun String.isHanBigStr(): Boolean {
  * @return true, 日付文字; false, それ以外
  */
 fun String.isDateStr(): Boolean {
-     return if (!this.matches("^[/0-9]+$".toRegex())) {
-          false
-     } else true
+     return this.matches("^[/0-9]+$".toRegex())
 }
 
 /**
@@ -337,9 +328,7 @@ fun String.isDateStr(): Boolean {
  * @return true, 全角文字のみ; false, 半角文字が含まれている
  */
 fun String.isZenStr(): Boolean {
-     return if (!this.matches("^[^ -~｡-ﾟ]+$".toRegex())) {
-          false
-     } else true
+     return this.matches("^[^ -~｡-ﾟ]+$".toRegex())
 }
 
 /**
@@ -441,4 +430,12 @@ fun String.getRemoveSuffixName(): String {
      return if (point != -1) {
           this.substring(0, point)
      } else ""
+}
+
+/**
+ * 文字列からURLを抽出する
+ * @return URL
+ */
+fun String.extractURL(): String? {
+     return Patterns.WEB_URL.toRegex().find(this)?.value
 }
