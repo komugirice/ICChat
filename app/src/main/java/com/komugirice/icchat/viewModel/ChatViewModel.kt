@@ -103,7 +103,7 @@ class ChatViewModel: ViewModel() {
         messageListener = FirebaseFirestore
             .getInstance()
             .collection("rooms/$roomId/messages")
-            .orderBy(Room::createdAt.name, Query.Direction.DESCENDING)
+            .orderBy(Message::createdAt.name, Query.Direction.DESCENDING)
             .whereGreaterThan(Message::createdAt.name, lastCreatedAt)
             .limit(1L)
             .addSnapshotListener { snapshot, firebaseFirestoreException ->
