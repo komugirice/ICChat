@@ -3,8 +3,11 @@ package com.komugirice.icchat
 import android.content.Intent
 import android.os.Bundle
 import com.example.qiitaapplication.extension.extractURL
+import com.google.firebase.auth.FirebaseAuth
 import com.google.gson.Gson
 import com.komugirice.icchat.data.model.OgpData
+import com.komugirice.icchat.firebase.firestore.model.Interest
+import com.komugirice.icchat.firebase.firestore.store.InterestStore
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -18,10 +21,19 @@ import java.net.URISyntaxException
 class ActionSendActivity: BaseActivity() {
 
     var url: String? = null
+    lateinit var ogpData: OgpData
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // ログインしていない場合、終了
+        if(FirebaseAuth.getInstance().currentUser == null) {
+            finish()
+            return
+        }
+
+
+        // url取得処理
         val intent = intent
         val action = intent.action
         if (Intent.ACTION_SEND == action) {
@@ -36,14 +48,22 @@ class ActionSendActivity: BaseActivity() {
         }
 
         url?.apply {
+            // ogp取得処理
             getJsoupDocument(this,{
-                val ogpData = OgpData().apply{
+                ogpData = OgpData().apply{
                     this.url = this@ActionSendActivity.url ?: ""
                     this.title = _getTitle(it)
                     this.imageUrl = _getImage(it, url)
                     this.description = _getDescription(it)
                 }
                 Timber.d(Gson().toJson(ogpData))
+
+                // FireStoreに登録
+                InterestStore.registerInterestWithOgp(ogpData){
+                    finish()
+                }
+
+
             },{
                 Timber.e(it)
             })
