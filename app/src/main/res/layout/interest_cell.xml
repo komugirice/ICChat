@@ -2,58 +2,97 @@
 <layout>
 
     <data>
+
         <import type="android.view.View" />
+
+        <import type="android.view.Gravity" />
+
         <variable
             name="interest"
             type="com.komugirice.icchat.firebase.firestore.model.Interest" />
 
         <variable
             name="isLeft"
-            type="Boolean"/>
+            type="Boolean" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/rootView"
+        android:id="@+id/overWrap"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="4dp">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/ogpTitleTextView"
+        <Space
+            android:id="@+id/spaceLeft"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="@{isLeft == true ? View.GONE : View.VISIBLE}"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintEnd_toStartOf="@+id/wrapLayout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/wrapLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:gravity="start"
-            android:textColor="@android:color/black"
-            android:textSize="15sp"
-            android:visibility="@{interest.isOgp == true ? View.VISIBLE : View.GONE}"
-            android:text="@{interest.ogpTitle}"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
-
-        <ImageView
-            android:id="@+id/ogpImageView"
-            android:layout_width="200dp"
-            android:layout_height="150dp"
             android:padding="4dp"
-            android:visibility="@{interest.isOgp == true ? View.VISIBLE : View.GONE}"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ogpTitleTextView"
-            app:imageUrl="@{interest.ogpImageUrl}" />
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintStart_toEndOf="@+id/spaceLeft"
+            app:layout_constraintEnd_toStartOf="@+id/spaceRight"
+            app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/ogpDescriptionTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:gravity="start"
-            android:textColor="@android:color/black"
-            android:visibility="@{interest.isOgp == true ? View.VISIBLE : View.GONE}"
-            android:textSize="12sp"
-            android:text="@{interest.ogpDescription}"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ogpImageView"/>
+            <ImageView
+                android:id="@+id/ogpImageView"
+                android:layout_width="160dp"
+                android:layout_height="120dp"
+                android:visibility="@{interest.isOgp == true ? View.VISIBLE : View.GONE}"
+                app:imageUrl="@{interest.ogpImageUrl}"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/ogpTitleTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@{interest.ogpTitle}"
+                android:textColor="@android:color/black"
+                android:textSize="15sp"
+                android:visibility="@{interest.isOgp == true ? View.VISIBLE : View.GONE}"
+                app:layout_constraintEnd_toEndOf="@+id/ogpImageView"
+                app:layout_constraintStart_toStartOf="@+id/ogpImageView"
+                app:layout_constraintTop_toBottomOf="@+id/ogpImageView" />
+
+
+            <TextView
+                android:id="@+id/ogpDescriptionTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@{interest.ogpDescription}"
+                android:textColor="@android:color/black"
+                android:textSize="12sp"
+                android:visibility="@{interest.isOgp == true ? View.VISIBLE : View.GONE}"
+                app:layout_constraintEnd_toEndOf="@+id/ogpImageView"
+                app:layout_constraintStart_toStartOf="@+id/ogpImageView"
+                app:layout_constraintTop_toBottomOf="@+id/ogpTitleTextView" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <Space
+            android:id="@+id/spaceRight"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="@{isLeft == true ? View.VISIBLE : View.GONE}"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintStart_toEndOf="@+id/wrapLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

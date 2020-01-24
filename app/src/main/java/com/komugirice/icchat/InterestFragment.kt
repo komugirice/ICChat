@@ -12,6 +12,7 @@ import com.komugirice.icchat.databinding.FragmentInterestBinding
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.interfaces.Update
 import com.komugirice.icchat.viewModel.InterestViewModel
+import kotlinx.android.synthetic.main.fragment_friend.*
 
 /**
  * A simple [Fragment] subclass.
@@ -52,7 +53,13 @@ class InterestFragment : Fragment(), Update {
     }
 
     private fun initialize() {
+        initSwipeRefreshLayout()
+    }
 
+    private fun initSwipeRefreshLayout() {
+        swipeRefreshLayout.setOnRefreshListener {
+            interestViewModel.initData(this@InterestFragment, UserManager.myUserId)
+        }
     }
 
     /**
