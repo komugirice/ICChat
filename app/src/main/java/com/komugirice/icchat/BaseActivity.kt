@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.komugirice.icchat.firebase.FirebaseFacade
 import com.komugirice.icchat.firebase.firestore.store.UserStore
 import com.komugirice.icchat.util.Prefs
+import com.komugirice.icchat.util.WriteLogThread
 
 abstract class BaseActivity : AppCompatActivity() {
 

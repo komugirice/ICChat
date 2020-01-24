@@ -3,6 +3,7 @@ package com.komugirice.icchat
 import android.app.Application
 import android.content.Context
 import androidx.databinding.library.BuildConfig
+import com.komugirice.icchat.util.WriteLogThread
 import timber.log.Timber
 
 
