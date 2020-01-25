@@ -100,6 +100,22 @@
                     app:layout_constraintStart_toStartOf="@+id/ogpTitleTextView"
                     app:layout_constraintTop_toBottomOf="@+id/ogpTitleTextView" />
 
+                <TextView
+                    android:id="@+id/ogpUrlTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{interest.ogpUrl}"
+                    android:textColor="@android:color/black"
+                    android:textSize="12sp"
+                    android:paddingBottom="4dp"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    android:scrollHorizontally="true"
+                    android:visibility="@{interest.isOgp == true ? View.VISIBLE : View.GONE}"
+                    app:layout_constraintEnd_toEndOf="@+id/ogpDescriptionTextView"
+                    app:layout_constraintStart_toStartOf="@+id/ogpDescriptionTextView"
+                    app:layout_constraintTop_toBottomOf="@+id/ogpDescriptionTextView" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
