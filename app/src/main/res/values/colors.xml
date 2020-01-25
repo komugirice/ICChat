@@ -189,5 +189,6 @@
     <!---->
     <color name="facebook">#1877f2</color>
     <color name="skype_blue">#dcf4fd</color>
+    <color name="skype_gray">#f1f1f4</color>
     <color name="message_gray">#f2f6f9</color>
 </resources>
