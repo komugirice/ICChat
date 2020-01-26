@@ -11,11 +11,12 @@ import com.google.firebase.firestore.Query
 import com.komugirice.icchat.InterestFragment
 import com.komugirice.icchat.firebase.firestore.model.Interest
 import com.komugirice.icchat.firebase.firestore.store.InterestStore
+import com.komugirice.icchat.view.InterestView
 import timber.log.Timber
 import java.util.*
 
 class InterestViewModel: ViewModel() {
-    val items = MutableLiveData<List<Interest>>()
+    val items = MutableLiveData<List<InterestView.InterestViewData>>()
     val userId = MutableLiveData<String>()
     val isException = MutableLiveData<Throwable>()
     private var interestListener: ListenerRegistration? = null
@@ -44,8 +45,14 @@ class InterestViewModel: ViewModel() {
 
         // interest情報
         InterestStore.getInterests(userId) { interests ->
-
-            items.postValue(interests)
+            val list = mutableListOf<InterestView.InterestViewData>()
+            interests.forEach {
+                list.add(InterestView.InterestViewData(
+                    it,
+                    InterestView.VIEW_TYPE_INTEREST
+                ))
+            }
+            items.postValue(list)
             // 監視
             val lastCreatedAt = interests.map { it.createdAt }.max() ?: Date()
             initSubscribe(userId, lastCreatedAt)
@@ -79,8 +86,13 @@ class InterestViewModel: ViewModel() {
                     return@addSnapshotListener
                 }
                 snapshot?.toObjects(Interest::class.java)?.firstOrNull()?.also {
-                    val tmp: MutableList<Interest>? = items.value?.toMutableList()
-                    tmp?.add(it)
+                    val tmp: MutableList<InterestView.InterestViewData>? = items.value?.toMutableList()
+                    tmp?.add(
+                        InterestView.InterestViewData(
+                        it,
+                        InterestView.VIEW_TYPE_INTEREST
+                    ))
+                    // TODO 本日日付の追加
                     items.postValue(tmp)
                 }
             }
