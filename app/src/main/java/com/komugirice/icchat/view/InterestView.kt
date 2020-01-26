@@ -64,14 +64,27 @@ class InterestView : RecyclerView {
             return items[position].viewType
         }
 
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
-            InterestCellViewHolder(
-                InterestCellBinding.inflate(
-                    LayoutInflater.from(context),
-                    parent,
-                    false
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+            if(viewType == VIEW_TYPE_INTEREST) {
+                return InterestCellViewHolder(
+                    InterestCellBinding.inflate(
+                        LayoutInflater.from(context),
+                        parent,
+                        false
+                    )
                 )
-            )
+            } else {
+                //if(viewType == VIEW_TYPE_DATE) {
+                return DateBorderCellViewHolder(
+                    DateBorderCellBinding.inflate(
+                        LayoutInflater.from(context),
+                        parent,
+                        false
+                    )
+                )
+                    //}
+            }
+        }
 
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
             if (holder is InterestCellViewHolder)
@@ -110,7 +123,9 @@ class InterestView : RecyclerView {
         }
     }
 
+    // 興味セル
     class InterestCellViewHolder(val binding: InterestCellBinding) : RecyclerView.ViewHolder(binding.root)
+    // 日付セル
     class DateBorderCellViewHolder(val binding: DateBorderCellBinding) : RecyclerView.ViewHolder(binding.root)
 
     class InterestViewData {
@@ -130,6 +145,7 @@ class InterestView : RecyclerView {
             this.viewType = viewType
         }
     }
+
     companion object {
         const val VIEW_TYPE_INTEREST = 0
         const val VIEW_TYPE_DATE = 1
