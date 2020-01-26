@@ -18,8 +18,8 @@ import androidx.core.net.toFile
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import com.example.qiitaapplication.extension.getRemoveSuffixName
-import com.example.qiitaapplication.extension.getSuffix
+import com.komugirice.icchat.extension.getRemoveSuffixName
+import com.komugirice.icchat.extension.getSuffix
 import com.komugirice.icchat.databinding.ActivityChatBinding
 import com.komugirice.icchat.enums.ActivityEnum
 import com.komugirice.icchat.enums.MessageType
@@ -231,9 +231,9 @@ class ChatActivity : BaseActivity() {
         popup.inflate(R.menu.chat_group_setting)
 
         if(room.ownerId == UserManager.myUserId)
-            popup.menu.findItem(R.id.group_withdraw).setVisible(false)
+            popup.menu.findItem(R.id.group_withdraw).isVisible = false
         else
-            popup.menu.findItem(R.id.group_setting).setVisible(false)
+            popup.menu.findItem(R.id.group_setting).isVisible = false
 
         popup.setOnMenuItemClickListener ( object: PopupMenu.OnMenuItemClickListener {
 
@@ -438,7 +438,7 @@ class ChatActivity : BaseActivity() {
         }
 
         val bmp = tempImageViewForDownload?.drawable?.toBitmap()
-        val outputStream = getContentResolver().openOutputStream(uri)
+        val outputStream = contentResolver.openOutputStream(uri)
         bmp?.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
 
         Toast.makeText(

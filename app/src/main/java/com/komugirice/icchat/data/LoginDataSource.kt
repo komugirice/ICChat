@@ -1,7 +1,7 @@
 package com.komugirice.icchat.data
 
 import androidx.lifecycle.MutableLiveData
-import com.example.qiitaapplication.extension.getIdFromEmail
+import com.komugirice.icchat.extension.getIdFromEmail
 import com.google.firebase.auth.FirebaseAuth
 import com.komugirice.icchat.R
 import com.komugirice.icchat.data.model.LoggedInUser

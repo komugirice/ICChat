@@ -5,8 +5,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.qiitaapplication.extension.isDateStr
-import com.example.qiitaapplication.extension.toDate
+import com.komugirice.icchat.extension.isDateStr
+import com.komugirice.icchat.extension.toDate
 import com.komugirice.icchat.R
 import com.komugirice.icchat.ui.login.LoginFormState
 import java.util.regex.Pattern

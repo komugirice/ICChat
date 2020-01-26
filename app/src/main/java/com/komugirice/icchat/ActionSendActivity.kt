@@ -2,7 +2,7 @@ package com.komugirice.icchat
 
 import android.content.Intent
 import android.os.Bundle
-import com.example.qiitaapplication.extension.extractURL
+import com.komugirice.icchat.extension.extractURL
 import com.google.firebase.auth.FirebaseAuth
 import com.google.gson.Gson
 import com.komugirice.icchat.data.model.OgpData

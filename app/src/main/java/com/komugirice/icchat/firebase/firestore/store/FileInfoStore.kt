@@ -1,7 +1,7 @@
 package com.komugirice.icchat.firebase.firestore.store
 
 import android.webkit.MimeTypeMap
-import com.example.qiitaapplication.extension.getSuffix
+import com.komugirice.icchat.extension.getSuffix
 import com.google.firebase.firestore.FirebaseFirestore
 import com.komugirice.icchat.enums.MessageType
 import com.komugirice.icchat.firebase.firestore.model.FileInfo

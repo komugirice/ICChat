@@ -5,8 +5,8 @@ import androidx.annotation.NonNull
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.qiitaapplication.extension.getDateToString
-import com.example.qiitaapplication.extension.toDate
+import com.komugirice.icchat.extension.getDateToString
+import com.komugirice.icchat.extension.toDate
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query

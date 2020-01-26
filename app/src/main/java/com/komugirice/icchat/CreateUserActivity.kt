@@ -10,8 +10,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import com.example.qiitaapplication.extension.getDateToString
-import com.example.qiitaapplication.extension.toDate
+import com.komugirice.icchat.extension.getDateToString
+import com.komugirice.icchat.extension.toDate
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.komugirice.icchat.databinding.ActivityCreateUserBinding
@@ -127,7 +127,7 @@ class CreateUserActivity : BaseActivity() {
         }
 
         birthDayClickView.setOnClickListener {
-            showDateDialog() {
+            showDateDialog {
                 birthDayEditText.setText(it.getDateToString())
                 // birthDayEditText.afterTextChangedに検知されないので無理やり変える
                 //birthDayEditText.error = null
@@ -261,7 +261,7 @@ class CreateUserActivity : BaseActivity() {
         AlertDialog.Builder(this)
             .setTitle(title)
             .setMessage(msg)
-            .show();
+            .show()
     }
 
     companion object {

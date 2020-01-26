@@ -1,24 +1,13 @@
 package com.komugirice.icchat.util
 
-import android.content.ContentUris
-import android.content.Context
-import android.database.Cursor
-import android.net.Uri
-import android.os.Build
-import android.os.Environment
-import android.provider.DocumentsContract
-import android.provider.MediaStore
 import android.text.Html
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
-import com.example.qiitaapplication.extension.HHmmToString
-import com.example.qiitaapplication.extension.compareDate
-import com.example.qiitaapplication.extension.yyyyMMddHHmmToString
 import com.google.gson.Gson
 import com.komugirice.icchat.R
 import com.komugirice.icchat.enums.MessageType
-import com.komugirice.icchat.extension.setRoundedImageView
+import com.komugirice.icchat.extension.*
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.firebase.firestore.model.Message
 import com.komugirice.icchat.firebase.firestore.model.Request
@@ -46,6 +35,34 @@ object ICChatUtil {
             this.text = dateTime.HHmmToString()
         else
             this.text = dateTime.yyyyMMddHHmmToString()
+    }
+
+    /**
+     * xmlでTextViewに:dateJPを設定するとyyyy年mm月dd日が取得できる
+     *
+     * @param url
+     *
+     */
+    @JvmStatic
+    @BindingAdapter("dateJP")
+    fun TextView.getDateJp(dateTime: Date?) {
+        if (dateTime == null) return
+
+        this.text = dateTime.getJPDateToString()
+    }
+
+    /**
+     * xmlでTextViewに:timeを設定するとhh:mmが取得できる
+     *
+     * @param url
+     *
+     */
+    @JvmStatic
+    @BindingAdapter("time")
+    fun TextView.getTime(dateTime: Date?) {
+        if (dateTime == null) return
+
+        this.text = dateTime.HHmmToString()
     }
     /**
      * TextViewに必須マークを表示

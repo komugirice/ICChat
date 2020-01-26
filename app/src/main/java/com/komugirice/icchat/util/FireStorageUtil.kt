@@ -2,8 +2,8 @@ package com.komugirice.icchat.util
 
 import android.content.Context
 import android.net.Uri
-import com.example.qiitaapplication.extension.getRemoveSuffixName
-import com.example.qiitaapplication.extension.getSuffix
+import com.komugirice.icchat.extension.getRemoveSuffixName
+import com.komugirice.icchat.extension.getSuffix
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.util.FileUtil
 import com.google.firebase.storage.FirebaseStorage
@@ -89,10 +89,10 @@ class FireStorageUtil {
                                     .delete()
                                     .addOnCompleteListener {
                                         if (it.isSuccessful) {
-                                            Timber.d("グループアイコン削除: ${this?.result.toString()}")
+                                            Timber.d("グループアイコン削除: ${this.result.toString()}")
                                         } else {
                                             Timber.d(it.exception)
-                                            Timber.d(this?.result.toString())
+                                            Timber.d(this.result.toString())
                                             Timber.d("deleteGroupIconImage delete Failed")
                                         }
                                     }

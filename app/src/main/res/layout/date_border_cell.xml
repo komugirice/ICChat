@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
-
     <data>
-
         <variable
             name="date"
             type="java.util.Date" />
@@ -14,14 +12,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginLeft="8dp">
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp">
 
         <View
             android:id="@+id/line"
             android:layout_width="0dp"
             android:layout_height="1dp"
-            android:background="@color/gainsboro"
+            android:background="@color/gray"
             android:layout_gravity="center_vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -33,9 +32,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:textColor="@color/gainsboro"
+            android:textColor="@color/gray"
             android:textSize="13sp"
-            android:text="2020年1月14日"
+            app:dateJP="@{date}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

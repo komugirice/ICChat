@@ -13,8 +13,8 @@ import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import com.example.qiitaapplication.extension.getIdFromEmail
-import com.example.qiitaapplication.extension.loggingSize
+import com.komugirice.icchat.extension.getIdFromEmail
+import com.komugirice.icchat.extension.loggingSize
 import com.facebook.AccessToken
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
