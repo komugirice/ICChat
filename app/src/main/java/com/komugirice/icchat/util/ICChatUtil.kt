@@ -38,7 +38,7 @@ object ICChatUtil {
     }
 
     /**
-     * xmlでTextViewに:dateJPを設定するとyyyy年mm月dd日が取得できる
+     * xmlでTextViewに:dateJPを設定するとyyyy年mm月dd日(曜日)が取得できる
      *
      * @param url
      *
@@ -48,7 +48,7 @@ object ICChatUtil {
     fun TextView.getDateJp(dateTime: Date?) {
         if (dateTime == null) return
 
-        this.text = dateTime.getJPDateToString()
+        this.text = "${dateTime.getJPDateToString()}(${CommonUtil.getDayOfWeek(dateTime)})"
     }
 
     /**

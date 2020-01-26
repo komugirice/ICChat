@@ -4,7 +4,7 @@ import android.content.ContentResolver
 import android.content.Context
 import android.net.Uri
 import android.webkit.MimeTypeMap
-import com.example.qiitaapplication.extension.getSuffix
+import com.komugirice.icchat.extension.getSuffix
 import com.komugirice.icchat.ICChatApplication.Companion.applicationContext
 import com.komugirice.icchat.R
 import com.komugirice.icchat.enums.MessageType

@@ -1,4 +1,4 @@
-package com.example.qiitaapplication.extension
+package com.komugirice.icchat.extension
 
 import android.view.View
 

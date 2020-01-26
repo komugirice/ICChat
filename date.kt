@@ -1,4 +1,4 @@
-package com.example.qiitaapplication.extension
+package com.komugirice.icchat.extension
 
 import java.text.SimpleDateFormat
 import java.util.*
