@@ -9,11 +9,16 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.widget.PopupMenu
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.fragment.app.FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT
 import androidx.viewpager.widget.ViewPager
+import com.komugirice.icchat.extension.toggle
+import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.interfaces.Update
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -47,6 +52,14 @@ class MainActivity : BaseActivity() {
 
     }
 
+    override fun onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            closeDrawer()
+            return
+        }
+        super.onBackPressed()
+    }
+
     /**
      * initializeメソッド
      *
@@ -63,6 +76,7 @@ class MainActivity : BaseActivity() {
         initClick()
         initViewPager()
         initTabLayout()
+        initDrawerLayout()
     }
 
     /**
@@ -91,7 +105,9 @@ class MainActivity : BaseActivity() {
                 override fun onPageScrollStateChanged(state: Int) {}
                 override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
                 override fun onPageSelected(position: Int) {
-                    headerTextView.text = customAdapter.getPageTitle(position)
+                    headerTextView?.text = customAdapter.getPageTitle(position)
+                    closeDrawer()
+                    drawerLayout.setDrawerLockMode(if (position == VISIBLE_DRAWER_POSITION) DrawerLayout.LOCK_MODE_UNLOCKED else DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
                 }
             })
         }
@@ -112,6 +128,32 @@ class MainActivity : BaseActivity() {
         tabLayout.getTabAt(3)?.setText(R.string.tab_debug)
     }
 
+    private fun initDrawerLayout() {
+        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+    }
+
+    /**
+     * 興味UserId変更処理
+     * @param newUserId : 新しいUserId
+     */
+    private fun changeInterestUserId(newUserId: String) {
+        customAdapter.fragments.map { it.fragment }.forEach {
+            if (it is InterestFragment)
+                it.updateUserId(newUserId)
+        }
+    }
+
+    private fun closeDrawer() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START))
+            drawerLayout.closeDrawer(GravityCompat.START)
+    }
+
+    private fun openDrawer() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START))
+            return
+        drawerLayout.openDrawer(GravityCompat.START)
+    }
+
     /**
      * CustomAdapterクラス
      * TabLayout用
@@ -124,7 +166,11 @@ class MainActivity : BaseActivity() {
 
         val fragments = listOf(Item(FriendFragment(), R.string.tab_frient)
             , Item(RoomFragment(), R.string.tab_room)
-            , Item(InterestFragment(), R.string.tab_interest)
+            , Item(InterestFragment().apply {
+                arguments = Bundle().apply {
+                    putString(InterestFragment.KEY_USER_ID, UserManager.myUserId)
+                }
+            }, R.string.tab_interest)
             , Item(DebugFragment(), R.string.tab_debug))
 
         override fun getCount(): Int = fragments.size
@@ -204,6 +250,7 @@ class MainActivity : BaseActivity() {
 
 
     companion object {
+        private const val VISIBLE_DRAWER_POSITION = 2
         fun start(activity: Activity) = activity.apply {
             startActivity(Intent(activity, MainActivity::class.java))
         }

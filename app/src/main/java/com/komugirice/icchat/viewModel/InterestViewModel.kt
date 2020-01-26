@@ -20,31 +20,14 @@ import java.util.*
 
 class InterestViewModel: ViewModel() {
     val items = MutableLiveData<List<InterestView.InterestViewData>>()
-    val userId = MutableLiveData<String>()
     val isException = MutableLiveData<Throwable>()
+
+    var userId : String = ""
     private var interestListener: ListenerRegistration? = null
 
-    /**
-     * intent用（他画面遷移）
-     */
-    fun initUserId(intent: Intent): Boolean {
-        intent.getStringExtra(InterestFragment.KEY_USER_ID).also {
-            this.userId.postValue(it)
-            return true
-        }
-        return false
 
-    }
 
-    /**
-     * intentを使用しない場合（次画面のリロード）
-     */
-    fun initUserId(userId: String): Boolean {
-        this.userId.postValue(userId)
-        return true
-    }
-
-    fun initData(@NonNull owner: LifecycleOwner, userId: String) {
+    fun initData() {
 
         // interest情報 昇順ソート済
         InterestStore.getInterests(userId) { interests ->
@@ -65,6 +48,13 @@ class InterestViewModel: ViewModel() {
             }
         }
 
+    }
+
+    fun updateData(newUserId: String) {
+        if (userId == newUserId)
+            return
+        userId = newUserId
+        initData()
     }
 
     /**

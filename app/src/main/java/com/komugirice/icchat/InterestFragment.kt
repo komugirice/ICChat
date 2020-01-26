@@ -41,6 +41,7 @@ class InterestFragment : Fragment(), Update {
                     swipeRefreshLayout.isRefreshing = false
                 }
             })
+            userId = arguments?.getString(KEY_USER_ID) ?: UserManager.myUserId
         }
         return binding.root
     }
@@ -49,7 +50,11 @@ class InterestFragment : Fragment(), Update {
         super.onViewCreated(view, savedInstanceState)
         initialize()
         // TODO userId取得
-        interestViewModel.initData(this@InterestFragment, UserManager.myUserId)
+        interestViewModel.initData()
+    }
+
+    fun updateUserId(userId: String) {
+        interestViewModel.updateData(userId)
     }
 
     private fun initialize() {
@@ -58,7 +63,7 @@ class InterestFragment : Fragment(), Update {
 
     private fun initSwipeRefreshLayout() {
         swipeRefreshLayout.setOnRefreshListener {
-            interestViewModel.initData(this@InterestFragment, UserManager.myUserId)
+            interestViewModel.initData()
         }
     }
 
