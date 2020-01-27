@@ -57,7 +57,7 @@ class InterestFragment : Fragment(), Update {
      * ユーザID更新
      */
     fun updateUserId(userId: String) {
-        interestViewModel.updateData(userId)
+        interestViewModel.updateUserId(userId)
     }
 
     private fun initialize() {

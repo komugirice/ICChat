@@ -11,6 +11,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 import com.komugirice.icchat.InterestFragment
+import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.firebase.firestore.model.Interest
 import com.komugirice.icchat.firebase.firestore.store.InterestStore
 import com.komugirice.icchat.view.InterestView
@@ -23,6 +24,7 @@ class InterestViewModel: ViewModel() {
     val isException = MutableLiveData<Throwable>()
 
     var userId: String = ""
+    var updateMode = false
     private var interestListener: ListenerRegistration? = null
 
     fun initData() {
@@ -48,10 +50,13 @@ class InterestViewModel: ViewModel() {
 
     }
 
-    fun updateData(newUserId: String) {
+    fun updateUserId(newUserId: String) {
         if (userId == newUserId)
             return
         userId = newUserId
+        // 更新モード
+        updateMode = UserManager.myUserId == userId
+
         initData()
     }
 

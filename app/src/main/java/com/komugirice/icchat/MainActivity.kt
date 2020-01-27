@@ -15,10 +15,15 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.fragment.app.FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.viewpager.widget.ViewPager
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.interfaces.Update
+import com.komugirice.icchat.view.OtherUserView
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.fragment_interest.*
+import kotlinx.android.synthetic.main.item_drawer.*
+import kotlinx.android.synthetic.main.item_drawer.swipeRefreshLayout
 
 class MainActivity : BaseActivity() {
 
@@ -78,6 +83,7 @@ class MainActivity : BaseActivity() {
         initViewPager()
         initTabLayout()
         initDrawerLayout()
+        initDrawerSwipeLayout()
     }
 
     /**
@@ -131,6 +137,17 @@ class MainActivity : BaseActivity() {
 
     private fun initDrawerLayout() {
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+        // ユーザ一覧更新
+        otherUsersView.customAdapter.refresh(UserManager.myFriends)
+    }
+
+    private fun initDrawerSwipeLayout(){
+        val swipeRefreshLayout = drawerMenuView.findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout)
+        swipeRefreshLayout.setOnRefreshListener {
+            swipeRefreshLayout.isRefreshing = false
+            // ユーザ一覧更新
+            otherUsersView.customAdapter.refresh(UserManager.myFriends)
+        }
     }
 
     /**

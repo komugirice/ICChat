@@ -13,7 +13,7 @@
             android:id="@+id/headerView"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:background="#090"
+            android:background="#008577"
             app:layout_constraintDimensionRatio="11:9"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -31,14 +31,22 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/headerView" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/otherUsersView"
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefreshLayout"
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/myTextView" />
+            app:layout_constraintTop_toBottomOf="@id/myTextView">
+
+            <com.komugirice.icchat.view.OtherUserView
+                android:id="@+id/otherUsersView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>>
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
