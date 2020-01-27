@@ -27,40 +27,52 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:visibility="@{isOther ? View.GONE : View.VISIBLE}"
-            app:layout_constraintEnd_toStartOf="@id/messageTextView"
+            app:layout_constraintEnd_toStartOf="@id/wrapLayout"
             app:layout_constraintHorizontal_chainStyle="spread"
             app:layout_constraintHorizontal_weight="1"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/messageTextView"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/wrapLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@{isOther == true ? @drawable/background_chat_left_message : @drawable/background_chat_right_message}"
-            android:gravity="@{isOther == true ? Gravity.LEFT : Gravity.RIGHT}"
-            android:paddingStart="12dp"
-            android:paddingTop="5dp"
-            android:paddingEnd="12dp"
-            android:paddingBottom="5dp"
-            android:text="@{message.message}"
-            android:textColor="@{isOther == true ? @android:color/white : @android:color/black}"
-            android:textSize="12sp"
-            app:layout_constraintStart_toEndOf="@+id/spaceLeft"
             app:layout_constraintEnd_toStartOf="@+id/spaceRight"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintStart_toEndOf="@+id/spaceLeft"
+            app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/dateTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:gravity="end"
-            android:textColor="@android:color/black"
-            android:textSize="10sp"
-            app:dateTime="@{message.createdAt}"
-            app:layout_constraintStart_toStartOf="@id/messageTextView"
-            app:layout_constraintTop_toBottomOf="@id/messageTextView" />
+            <TextView
+                android:id="@+id/messageTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@{isOther == true ? @drawable/background_chat_left_message : @drawable/background_chat_right_message}"
+                android:gravity="@{isOther == true ? Gravity.LEFT : Gravity.RIGHT}"
+                android:paddingStart="12dp"
+                android:paddingTop="5dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="5dp"
+                android:text="@{message.message}"
+                android:textColor="@{isOther == true ? @android:color/white : @android:color/black}"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/dateTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:gravity="end"
+                android:textColor="@android:color/black"
+                android:textSize="10sp"
+                app:dateTime="@{message.createdAt}"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/messageTextView" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
 
         <Space
             android:id="@+id/spaceRight"
@@ -70,7 +82,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_chainStyle="spread"
             app:layout_constraintHorizontal_weight="1"
-            app:layout_constraintStart_toEndOf="@+id/messageTextView"
+            app:layout_constraintStart_toEndOf="@+id/wrapLayout"
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
