@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.widget.PopupMenu
+import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -21,6 +22,7 @@ import com.komugirice.icchat.extension.toggle
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.interfaces.Update
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.item_drawer.*
 
 class MainActivity : BaseActivity() {
 
@@ -90,6 +92,10 @@ class MainActivity : BaseActivity() {
 
         addFriendsImageView.setOnClickListener {
             showAddFriendsMenu(it)
+        }
+
+        myTextView.setOnClickListener {
+            Toast.makeText(this, "自分ボタンが押されたよ", Toast.LENGTH_SHORT).show()
         }
     }
 
