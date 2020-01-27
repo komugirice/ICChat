@@ -10,6 +10,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.PopupMenu
 import androidx.core.view.GravityCompat
+import androidx.databinding.DataBindingUtil
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -17,6 +18,7 @@ import androidx.fragment.app.FragmentPagerAdapter
 import androidx.fragment.app.FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.viewpager.widget.ViewPager
+import com.komugirice.icchat.databinding.ActivityMainBinding
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.interfaces.Update
 import com.komugirice.icchat.view.OtherUserView
@@ -30,6 +32,7 @@ class MainActivity : BaseActivity() {
     // TabLayoutで使用
     private val customAdapter by lazy { CustomAdapter(this, supportFragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) }
 
+    private lateinit var binding: ActivityMainBinding
     /**
      * onCreateメソッド
      *
@@ -39,6 +42,7 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         initialize()
+
     }
 
     /**
@@ -71,9 +75,20 @@ class MainActivity : BaseActivity() {
      *
      */
     private fun initialize() {
+        initBinding()
         initLayout()
     }
 
+    /**
+     * MVVMのBinding
+     *
+     */
+    private fun initBinding() {
+        binding = DataBindingUtil.setContentView(this,
+            R.layout.activity_main
+        )
+        binding.lifecycleOwner = this
+    }
     /**
      * initLayoutメソッド
      *
@@ -112,6 +127,7 @@ class MainActivity : BaseActivity() {
                 override fun onPageScrollStateChanged(state: Int) {}
                 override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
                 override fun onPageSelected(position: Int) {
+                    binding.fragmentIndex = position
                     headerTextView?.text = customAdapter.getPageTitle(position)
                     closeDrawer()
                     drawerLayout.setDrawerLockMode(if (position == VISIBLE_DRAWER_POSITION) DrawerLayout.LOCK_MODE_UNLOCKED else DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
