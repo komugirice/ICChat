@@ -31,6 +31,7 @@ class OtherUserView : RecyclerView {
     }
 
     class Adapter(val context: Context) : RecyclerView.Adapter<ViewHolder>() {
+        lateinit var onClickCallBack: (userId: String) -> Unit
         val items = mutableListOf<User>()
 
         fun refresh(list: List<User>) {
@@ -60,7 +61,12 @@ class OtherUserView : RecyclerView {
 
             if(holder is DrawerUserCellViewHolder) {
                 holder.binding.user = data
+                holder.binding.root.setOnClickListener {
+                    onClickCallBack.invoke(data.userId)
+                }
             }
+
+
         }
 
     }

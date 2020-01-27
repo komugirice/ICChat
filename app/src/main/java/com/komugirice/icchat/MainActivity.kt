@@ -26,6 +26,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_interest.*
 import kotlinx.android.synthetic.main.item_drawer.*
 import kotlinx.android.synthetic.main.item_drawer.swipeRefreshLayout
+import kotlinx.android.synthetic.main.item_drawer.view.*
 
 class MainActivity : BaseActivity() {
 
@@ -88,6 +89,11 @@ class MainActivity : BaseActivity() {
             R.layout.activity_main
         )
         binding.lifecycleOwner = this
+
+        binding.drawerLayout.otherUsersView.customAdapter.onClickCallBack = {
+            closeDrawer()
+            changeInterestUserId(it)
+        }
     }
     /**
      * initLayoutメソッド
@@ -113,6 +119,17 @@ class MainActivity : BaseActivity() {
         addFriendsImageView.setOnClickListener {
             showAddFriendsMenu(it)
         }
+
+        editInterestImageView.setOnClickListener {
+            viewPager.currentItem = VISIBLE_DRAWER_POSITION
+
+        }
+
+        showInterestImageView.setOnClickListener {
+            openDrawer()
+        }
+
+
     }
 
     /**
@@ -127,8 +144,8 @@ class MainActivity : BaseActivity() {
                 override fun onPageScrollStateChanged(state: Int) {}
                 override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
                 override fun onPageSelected(position: Int) {
-                    binding.fragmentIndex = position
-                    headerTextView?.text = customAdapter.getPageTitle(position)
+                    binding.fragmentIndex = position    // アイコン切り替えの為
+                    headerTextView?.text = customAdapter.getPageTitle(position) // タイトル
                     closeDrawer()
                     drawerLayout.setDrawerLockMode(if (position == VISIBLE_DRAWER_POSITION) DrawerLayout.LOCK_MODE_UNLOCKED else DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
                 }
@@ -172,8 +189,10 @@ class MainActivity : BaseActivity() {
      */
     private fun changeInterestUserId(newUserId: String) {
         customAdapter.fragments.map { it.fragment }.forEach {
-            if (it is InterestFragment)
+            if (it is InterestFragment) {
                 it.updateUserId(newUserId)
+                it.update()
+            }
         }
     }
 

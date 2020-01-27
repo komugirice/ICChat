@@ -74,7 +74,7 @@ class InterestFragment : Fragment(), Update {
      * 遷移先のActivityから戻ってきた場合にリロードする
      */
     override fun update() {
-
+        interestViewModel.initData()
     }
 
     companion object {
