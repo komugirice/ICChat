@@ -32,6 +32,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
+            android:background="@color/icchat_backgroud_color"
+            android:padding="4dp"
             android:textColor="@color/gray"
             android:textSize="13sp"
             app:dateJP="@{date}"

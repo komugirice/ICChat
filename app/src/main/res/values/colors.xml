@@ -191,4 +191,7 @@
     <color name="skype_blue">#dcf4fd</color>
     <color name="skype_gray">#f1f1f4</color>
     <color name="message_gray">#f2f6f9</color>
+
+    <!-- 機能別 -->
+    <color name="icchat_backgroud_color">@color/white</color>
 </resources>

@@ -8,6 +8,7 @@ import com.google.gson.Gson
 import com.komugirice.icchat.data.model.OgpData
 import com.komugirice.icchat.firebase.firestore.model.Interest
 import com.komugirice.icchat.firebase.firestore.store.InterestStore
+import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -93,6 +94,19 @@ class ActionSendActivity: BaseActivity() {
         }, {
             onError.invoke(it)
         })
+
+        // こっちでも可
+//        Observable.just(url)
+//            .map {
+//                Jsoup.connect(url).get()
+//            }
+//            .subscribeOn(Schedulers.io())
+//            .observeOn(AndroidSchedulers.mainThread())
+//            .subscribe({
+//                onSuccess.invoke(it)
+//            }, {
+//                onError.invoke(it)
+//            })
 
     }
 
