@@ -60,14 +60,15 @@ class InterestFragment : Fragment(), Update {
      */
     fun updateUserId(userId: String) {
         interestViewModel.updateUserId(userId)
+        initNameTextView()
     }
 
     private fun initialize() {
-        initLayout()
+        initNameTextView()
         initSwipeRefreshLayout()
     }
 
-    private fun initLayout(){
+    private fun initNameTextView(){
         // ユーザ名設定
         nameTextView.text = UserManager.getTargetUser(interestViewModel.userId)?.name ?: ""
     }
