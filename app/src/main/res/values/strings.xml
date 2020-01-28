@@ -141,6 +141,8 @@
     <string name="invalid_search_result">該当ユーザは存在しません</string>
     <string name="success_user_request">友だち申請しました</string>
 
+    <!-- InterestFragment -->
+    <string name="name_label">ユーザ名</string>
     <!-- ダイアログ関係 -->
     <string name="confirm_add_friend">ユーザを友だち登録しますか？</string>
     <string name="alert_success_add_friend">友だち登録が完了しました</string>
