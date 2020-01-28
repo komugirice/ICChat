@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.widget.PopupMenu
+import android.widget.TextView
 import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.drawerlayout.widget.DrawerLayout
@@ -112,23 +113,29 @@ class MainActivity : BaseActivity() {
      *
      */
     private fun initClick() {
+        // 設定ボタン
         settingImageView.setOnClickListener {
             showSettingMenu(it)
         }
-
+        // 友達追加ボタン
         addFriendsImageView.setOnClickListener {
             showAddFriendsMenu(it)
         }
-
+        // 興味（編集）ボタン
         editInterestImageView.setOnClickListener {
-            viewPager.currentItem = VISIBLE_DRAWER_POSITION
+            closeDrawer()
+            changeInterestUserId(UserManager.myUserId)
 
         }
-
+        // 興味（閲覧）ボタン
         showInterestImageView.setOnClickListener {
             openDrawer()
         }
-
+        // ナビゲーション：自分リンク
+        drawerMenuView.findViewById<TextView>(R.id.myTextView).setOnClickListener {
+            closeDrawer()
+            changeInterestUserId(UserManager.myUserId)
+        }
 
     }
 
@@ -191,6 +198,7 @@ class MainActivity : BaseActivity() {
         customAdapter.fragments.map { it.fragment }.forEach {
             if (it is InterestFragment) {
                 it.updateUserId(newUserId)
+                // 画面更新
                 it.update()
             }
         }
