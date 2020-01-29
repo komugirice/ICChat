@@ -178,7 +178,10 @@ class MainActivity : BaseActivity() {
     private fun initDrawerLayout() {
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
         // ユーザ一覧更新
-        otherUsersView.customAdapter.refresh(UserManager.myFriends)
+        binding.drawerLayout.otherUsersView.customAdapter.refresh(UserManager.myFriends)
+        // 初回は自分がSelected
+        binding.drawerMyUserSelected = true
+
     }
 
     private fun initDrawerSwipeLayout(){
@@ -186,7 +189,7 @@ class MainActivity : BaseActivity() {
         swipeRefreshLayout.setOnRefreshListener {
             swipeRefreshLayout.isRefreshing = false
             // ユーザ一覧更新
-            otherUsersView.customAdapter.refresh(UserManager.myFriends)
+            binding.drawerLayout.otherUsersView.customAdapter.refresh(UserManager.myFriends)
         }
     }
 
@@ -200,8 +203,24 @@ class MainActivity : BaseActivity() {
                 it.updateUserId(newUserId)
                 // 画面更新
                 it.update()
+                // ナビゲーション更新
+                refreshDrawerLayout(newUserId)
             }
         }
+    }
+
+    /**
+     * DrawerLayout更新
+     */
+    private fun refreshDrawerLayout(newUserId: String) {
+
+        val adapter = binding.drawerLayout.otherUsersView.customAdapter
+        // 選択中のユーザID更新
+        adapter.userId = newUserId
+        // ユーザ一覧更新
+        adapter.refresh(UserManager.myFriends)
+        // 「自分」背景色の更新
+        binding.drawerMyUserSelected = adapter.userId == UserManager.myUserId
     }
 
     private fun closeDrawer() {

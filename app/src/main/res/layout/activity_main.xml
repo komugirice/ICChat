@@ -9,6 +9,11 @@
         <variable
             name="fragmentIndex"
             type="Integer" />
+
+        <variable
+            name="drawerMyUserSelected"
+            type="Boolean" />
+
     </data>
     <androidx.drawerlayout.widget.DrawerLayout
         android:id="@+id/drawerLayout"
@@ -115,6 +120,7 @@
 
         <include
             android:id="@+id/drawerMenuView"
+            app:myUserSelected="@{drawerMyUserSelected}"
             layout="@layout/item_drawer" />
     </androidx.drawerlayout.widget.DrawerLayout>
 </layout>

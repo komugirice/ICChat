@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.komugirice.icchat.databinding.DrawerUserCellBinding
+import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.firebase.firestore.model.User
 
 class OtherUserView : RecyclerView {
@@ -33,6 +34,7 @@ class OtherUserView : RecyclerView {
     class Adapter(val context: Context) : RecyclerView.Adapter<ViewHolder>() {
         lateinit var onClickCallBack: (userId: String) -> Unit
         val items = mutableListOf<User>()
+        var userId = UserManager.myUserId
 
         fun refresh(list: List<User>) {
             items.apply {
@@ -61,8 +63,13 @@ class OtherUserView : RecyclerView {
 
             if(holder is DrawerUserCellViewHolder) {
                 holder.binding.user = data
+                // 背景色
+                holder.binding.selected = userId == data.userId
+
                 holder.binding.root.setOnClickListener {
+                   // userId = data.userId    // userIdを更新 → MainActivity.refreshDrawerLayout
                     onClickCallBack.invoke(data.userId)
+
                 }
             }
 
