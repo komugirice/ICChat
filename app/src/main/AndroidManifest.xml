@@ -13,8 +13,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".InputInterestActivity"></activity>
-        <activity android:name=".SearchUserActivity" />
+        <activity
+            android:name=".InputInterestActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".SearchUserActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".AddFriendActivity"
             android:screenOrientation="portrait" />
