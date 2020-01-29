@@ -27,6 +27,7 @@
             android:paddingStart="60dp"
             android:textSize="16dp"
             android:text="自分"
+            android:drawable="@drawable/text_background_color_gray"
             android:textColor="@android:color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
