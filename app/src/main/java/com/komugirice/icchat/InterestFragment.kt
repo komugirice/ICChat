@@ -52,6 +52,7 @@ class InterestFragment : Fragment(), Update {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initialize()
+        initData()
         interestViewModel.initData()
     }
 
@@ -60,15 +61,14 @@ class InterestFragment : Fragment(), Update {
      */
     fun updateUserId(userId: String) {
         interestViewModel.updateUserId(userId)
-        initNameTextView()
+        initData()
     }
 
     private fun initialize() {
-        initNameTextView()
         initSwipeRefreshLayout()
     }
 
-    private fun initNameTextView(){
+    private fun initData(){
         // ユーザ名設定
         nameTextView.text = UserManager.getTargetUser(interestViewModel.userId)?.name ?: ""
     }
@@ -83,6 +83,7 @@ class InterestFragment : Fragment(), Update {
      * 遷移先のActivityから戻ってきた場合にリロードする
      */
     override fun update() {
+        initData()
         interestViewModel.initData()
     }
 
