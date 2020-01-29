@@ -143,7 +143,7 @@
 
     <!-- InterestFragment -->
     <string name="name_label">ユーザ名</string>
-    <string name="no_regist">登録データが0件です</string>
+    <string name="regist_zero">登録データが0件です</string>
     <!-- ダイアログ関係 -->
     <string name="confirm_add_friend">ユーザを友だち登録しますか？</string>
     <string name="alert_success_add_friend">友だち登録が完了しました</string>

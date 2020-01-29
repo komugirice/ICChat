@@ -3,10 +3,13 @@ package com.komugirice.icchat.view
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.komugirice.icchat.ChatActivity
+import com.komugirice.icchat.R
 import com.komugirice.icchat.databinding.DateBorderCellBinding
 import com.komugirice.icchat.databinding.InterestCellBinding
 import com.komugirice.icchat.databinding.RoomCellBinding
@@ -38,7 +41,12 @@ class InterestView : RecyclerView {
     class Adapter(val context: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         private val items = mutableListOf<InterestViewData>()
 
+        // スワイプ更新中に「検索結果が0件です」を出さない為の対応
+        private var hasCompletedFirstRefresh = false
+
         fun refresh(list: List<InterestViewData>) {
+            // リフレッシュ実行フラグON
+            hasCompletedFirstRefresh = true
             items.apply {
                 clear()
                 addAll(list)
@@ -51,7 +59,15 @@ class InterestView : RecyclerView {
             notifyDataSetChanged()
         }
 
-        override fun getItemCount(): Int = items.size
+        override fun getItemCount(): Int {
+            // リストデータ中の件数をリターン。
+            return if (items.isEmpty()) {
+                if (hasCompletedFirstRefresh)
+                    1
+                else
+                    0
+            } else items.size
+        }
 
         /**
          * itemsの数によってVIEW_TYPEを振り分け
@@ -61,10 +77,12 @@ class InterestView : RecyclerView {
          */
 
         override fun getItemViewType(position: Int): Int {
-            return items[position].viewType
+            // 0件対策
+            return if(items.isEmpty()) VIEW_TYPE_EMPTY else items[position].viewType
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+            // 興味セル
             if(viewType == VIEW_TYPE_INTEREST) {
                 return InterestCellViewHolder(
                     InterestCellBinding.inflate(
@@ -73,7 +91,8 @@ class InterestView : RecyclerView {
                         false
                     )
                 )
-            } else {
+            } else if(viewType == VIEW_TYPE_DATE) {
+                // 日付セル
                 //if(viewType == VIEW_TYPE_DATE) {
                 return DateBorderCellViewHolder(
                     DateBorderCellBinding.inflate(
@@ -83,14 +102,26 @@ class InterestView : RecyclerView {
                     )
                 )
                     //}
+            } else {
+                // Emptyセル
+                return EmptyViewHolder(LayoutInflater.from(context)
+                    .inflate(R.layout.empty_cell, parent, false))
             }
         }
 
+        /**
+         * onBindViewHolder
+         *
+         * @param holder
+         * @param position
+         */
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
             if (holder is InterestCellViewHolder)
                 onBindViewHolder(holder, position)
             else if (holder is DateBorderCellViewHolder)
                 onBindViewHolder(holder, position)
+            else if (holder is EmptyViewHolder)
+                onBindEmptyViewHolder(holder, position)
         }
 
         /**
@@ -119,7 +150,15 @@ class InterestView : RecyclerView {
             val data = items[position]
             holder.binding.date = data.date
 
+        }
 
+        /**
+         * itemsが0件のViewHolder
+         *
+         * @param holder
+         * @param position
+         */
+        private fun onBindEmptyViewHolder(holder: EmptyViewHolder, position: Int) {
         }
     }
 
@@ -127,6 +166,16 @@ class InterestView : RecyclerView {
     class InterestCellViewHolder(val binding: InterestCellBinding) : RecyclerView.ViewHolder(binding.root)
     // 日付セル
     class DateBorderCellViewHolder(val binding: DateBorderCellBinding) : RecyclerView.ViewHolder(binding.root)
+
+    /**
+     * EmptyViewHolderクラス
+     * 検索結果が0件の場合のViewHolder
+     *
+     * @param itemView
+     */
+    class EmptyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        var searchZeroText = itemView.findViewById(R.id.registZeroText) as TextView
+    }
 
     class InterestViewData {
         var interest: Interest? = null
@@ -149,5 +198,6 @@ class InterestView : RecyclerView {
     companion object {
         const val VIEW_TYPE_INTEREST = 0
         const val VIEW_TYPE_DATE = 1
+        const val VIEW_TYPE_EMPTY = -1
     }
 }

@@ -40,7 +40,7 @@ class InterestViewModel: ViewModel() {
             val lastCreatedAt = interests.map { it.createdAt }.max() ?: Date()
             initSubscribe(lastCreatedAt)
 
-            // interest0件の不具合対応
+            // interest0件の対応
             if (interests.isEmpty()) {
                 // 監視
                 val lastCreatedAt = Date()
