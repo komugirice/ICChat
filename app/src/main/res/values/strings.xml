@@ -143,6 +143,10 @@
 
     <!-- InterestFragment -->
     <string name="name_label">ユーザ名</string>
+
+    <!-- InputInterestActivity -->
+    <string name="input_interest_activity_title">興味入力</string>
+
     <string name="regist_zero">登録データが0件です</string>
     <!-- ダイアログ関係 -->
     <string name="confirm_add_friend">ユーザを友だち登録しますか？</string>
