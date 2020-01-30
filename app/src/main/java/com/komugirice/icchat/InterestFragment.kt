@@ -43,7 +43,12 @@ class InterestFragment : Fragment(), Update {
                     swipeRefreshLayout.isRefreshing = false
                 }
             })
+            // 編集モード
+            editMode.observe(this@InterestFragment, Observer{
+                binding.isMyUser = it
+            })
             userId = arguments?.getString(KEY_USER_ID) ?: UserManager.myUserId
+            editMode.postValue(UserManager.myUserId == userId)
 
         }
         return binding.root

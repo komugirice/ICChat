@@ -3,80 +3,126 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="isMyUser"
+            type="Boolean" />
+    </data>
+
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         tools:context=".InterestFragment">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/overWrap"
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:id="@+id/coordinatorLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/nameWrap"
+                android:id="@+id/overWrap"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/interest_selected_color"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                android:layout_height="match_parent">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/nameWrap"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/interest_selected_color"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <!--
+                    <TextView
+                        android:id="@+id/nameLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:gravity="center"
+                        android:text="@string/name_label"
+                        android:textColor="@android:color/black"
+                        android:textSize="15sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                    -->
+                    <TextView
+                        android:id="@+id/nameTextView"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:gravity="center"
+                        android:paddingTop="8dp"
+                        android:paddingBottom="8dp"
+                        android:textColor="@android:color/black"
+                        android:textSize="16sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <!--
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:id="@+id/borderView"
+                        android:background="@color/gray"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/nameTextView"/>
+                    -->
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                    android:id="@+id/swipeRefreshLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/nameWrap">
+
+                    <com.komugirice.icchat.view.InterestView
+                        android:id="@+id/InterestView"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+
+                </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
                 <!--
-                <TextView
-                    android:id="@+id/nameLabel"
+                <Button
+                    android:id="@+id/inputButton"
+                    android:text="@string/add_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:gravity="center"
-                    android:text="@string/name_label"
-                    android:textColor="@android:color/black"
-                    android:textSize="15sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-                -->
-                <TextView
-                    android:id="@+id/nameTextView"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:gravity="center"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
-                    android:textColor="@android:color/black"
-                    android:textSize="16sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <!--
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="1dp"
-                    android:id="@+id/borderView"
-                    android:background="@color/gray"
-                    app:layout_constraintStart_toStartOf="parent"
+                    android:background="@drawable/background_radius_button"
+                    android:textSize="20sp"
+                    android:paddingBottom="4dp"
+                    android:textColor="@color/white"
+                    android:visibility="@{isMyUser == true ? View.VISIBLE : View.GONE}"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/nameTextView"/>
-                -->
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/swipeRefreshLayout"/>
+               -->
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-                android:id="@+id/swipeRefreshLayout"
-                android:layout_width="match_parent"
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/inputButton"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/nameWrap">
+                android:background="@drawable/background_radius_button"
+                android:text="@string/add_button"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:visibility="@{isMyUser == true ? View.VISIBLE : View.GONE}"
+                app:layout_anchor="@id/coordinatorLayout"
+                app:layout_anchorGravity="bottom|right|end" />
 
-                <com.komugirice.icchat.view.InterestView
-                    android:id="@+id/InterestView"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>
 </layout>

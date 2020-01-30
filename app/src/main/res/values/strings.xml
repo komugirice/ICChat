@@ -5,6 +5,7 @@
     <string name="create_button">登録</string>
     <string name="buttonRefresh">更新</string>
     <string name="search_button">検索</string>
+    <string name="add_button">追加</string>
     <string name="failed_regist">登録に失敗しました</string>
     <string name="ok">OK</string>
     <string name="cancel">キャンセル</string>
