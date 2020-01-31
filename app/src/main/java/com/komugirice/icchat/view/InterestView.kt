@@ -8,14 +8,12 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.komugirice.icchat.ChatActivity
+import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.list.listItems
 import com.komugirice.icchat.R
 import com.komugirice.icchat.databinding.DateBorderCellBinding
 import com.komugirice.icchat.databinding.InterestCellBinding
-import com.komugirice.icchat.databinding.RoomCellBinding
 import com.komugirice.icchat.firebase.firestore.model.Interest
-import com.komugirice.icchat.firebase.firestore.model.Message
-import com.komugirice.icchat.firebase.firestore.model.Room
 import java.util.*
 
 class InterestView : RecyclerView {
@@ -40,6 +38,7 @@ class InterestView : RecyclerView {
     }
     class Adapter(val context: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         private val items = mutableListOf<InterestViewData>()
+        private var isEditMode = true
 
         // スワイプ更新中に「検索結果が0件です」を出さない為の対応
         private var hasCompletedFirstRefresh = false
@@ -57,6 +56,10 @@ class InterestView : RecyclerView {
         fun clear() {
             items.clear()
             notifyDataSetChanged()
+        }
+
+        fun updateEditMode(isEdit: Boolean) {
+            isEditMode = isEdit
         }
 
         override fun getItemCount(): Int {
@@ -138,6 +141,40 @@ class InterestView : RecyclerView {
             holder.binding.root.setOnClickListener {
 
             }
+
+            // 長押し
+            holder.binding.root.setOnLongClickListener(object: View.OnLongClickListener {
+
+                override fun onLongClick(v: View?): Boolean {
+
+                    val menuList = listOf(
+                        Pair(0, R.string.edit),
+                        Pair(1, R.string.delete_message)
+                    )
+
+                    // 編集モードの場合のみ表示
+                    if(isEditMode) {
+                        MaterialDialog(context).apply {
+                            listItems(items = listOf(
+                                context.getString(menuList.get(0).second),
+                                context.getString(menuList.get(1).second)
+                            ),
+                                selection = { dialog, index, text ->
+                                    when (index) {
+                                        menuList.get(0).first -> {
+                                            // 編集
+                                        }
+                                        menuList.get(1).first -> {
+                                            // 削除
+                                        }
+                                        else -> return@listItems
+                                    }
+                                })
+                        }.show()
+                    }
+                    return true
+                }
+            })
         }
 
         /**

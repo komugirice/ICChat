@@ -157,6 +157,7 @@
     <string name="confirm_user_request">友だち申請を承認しますか？</string>
     <string name="accept">承認</string>
     <string name="deny">拒否</string>
+    <string name="edit">編集</string>
     <string name="alert_already_accept">既に登録済みです</string>
     <string name="alert_accept">承認しました</string>
     <string name="alert_deny">拒否しました</string>

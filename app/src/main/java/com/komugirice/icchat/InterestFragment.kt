@@ -12,7 +12,6 @@ import com.komugirice.icchat.databinding.FragmentInterestBinding
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.interfaces.Update
 import com.komugirice.icchat.viewModel.InterestViewModel
-import kotlinx.android.synthetic.main.fragment_friend.*
 import kotlinx.android.synthetic.main.fragment_friend.swipeRefreshLayout
 import kotlinx.android.synthetic.main.fragment_interest.*
 
@@ -44,11 +43,12 @@ class InterestFragment : Fragment(), Update {
                 }
             })
             // 編集モード
-            editMode.observe(this@InterestFragment, Observer{
+            isEditMode.observe(this@InterestFragment, Observer{
                 binding.isMyUser = it
+                InterestView.customAdapter.updateEditMode(it)
             })
             userId = arguments?.getString(KEY_USER_ID) ?: UserManager.myUserId
-            editMode.postValue(UserManager.myUserId == userId)
+            isEditMode.postValue(UserManager.myUserId == userId)
 
         }
         return binding.root
