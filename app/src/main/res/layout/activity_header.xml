@@ -26,7 +26,6 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="left"
-        android:text="@string/title_create_group"
         android:textColor="@android:color/white"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"

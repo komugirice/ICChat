@@ -70,12 +70,19 @@ class InterestFragment : Fragment(), Update {
     }
 
     private fun initialize() {
+        initClick()
         initSwipeRefreshLayout()
     }
 
     private fun initData(){
         // ユーザ名設定
         nameTextView.text = UserManager.getTargetUser(interestViewModel.userId)?.name ?: ""
+    }
+
+    private fun initClick() {
+        binding.inputButton.setOnClickListener {
+            InputInterestActivity.start(context)
+        }
     }
 
     private fun initSwipeRefreshLayout() {

@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItems
+import com.komugirice.icchat.InputInterestActivity
 import com.komugirice.icchat.R
 import com.komugirice.icchat.databinding.DateBorderCellBinding
 import com.komugirice.icchat.databinding.InterestCellBinding
@@ -163,6 +164,7 @@ class InterestView : RecyclerView {
                                     when (index) {
                                         menuList.get(0).first -> {
                                             // 編集
+                                            InputInterestActivity.update(context, data.interest)
                                         }
                                         menuList.get(1).first -> {
                                             // 削除

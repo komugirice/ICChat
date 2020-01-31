@@ -146,7 +146,7 @@
     <string name="name_label">ユーザ名</string>
 
     <!-- InputInterestActivity -->
-    <string name="input_interest_activity_title">興味入力</string>
+    <string name="input_interest_activity_title">興味(編集)</string>
 
     <string name="regist_zero">登録データが0件です</string>
     <!-- ダイアログ関係 -->
