@@ -23,6 +23,150 @@
                 android:id="@+id/header"
                 layout="@layout/activity_header" />
 
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/contents"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/header">
+
+                <TextView
+                    android:id="@+id/commentLabel"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:text="@string/comment"
+                    android:textColor="@android:color/black"
+                    android:textSize="18sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <EditText
+                    android:id="@+id/comment"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/edit_text_border"
+                    android:gravity="left"
+                    android:lines="2"
+                    android:maxLines="10"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/commentLabel" />
+
+                <TextView
+                    android:id="@+id/imageLabel"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:paddingTop="@dimen/contents_padding"
+                    android:text="@string/image"
+                    android:textColor="@android:color/black"
+                    android:textSize="18sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/comment" />
+
+                <ImageView
+                    android:id="@+id/interestImageView"
+                    android:layout_width="250dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintDimensionRatio="3:2"
+                    android:background="@drawable/edit_text_border"
+                    android:scaleType="centerCrop"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/imageLabel" />
+
+                <TextView
+                    android:id="@+id/urlLabel"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:paddingTop="@dimen/contents_padding"
+                    android:text="@string/url"
+                    android:textColor="@android:color/black"
+                    android:textSize="18sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/interestImageView" />
+
+                <EditText
+                    android:id="@+id/url"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/edit_text_border"
+                    android:gravity="left"
+                    android:lines="2"
+                    android:maxLines="10"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toStartOf="@id/checkButton"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/urlLabel" />
+
+                <Button
+                    android:id="@+id/checkButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:textSize="12sp"
+                    android:layout_marginLeft="4dp"
+                    android:text="チェック"
+                    android:background="@color/yellow"
+                    app:layout_constraintStart_toEndOf="@+id/url"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/url"
+                    app:layout_constraintBottom_toBottomOf="@+id/url"/>
+
+                <ImageView
+                    android:id="@+id/urlImageView"
+                    android:layout_width="250dp"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="@dimen/contents_padding"
+                    app:layout_constraintDimensionRatio="3:2"
+                    android:background="@drawable/edit_text_border"
+                    android:scaleType="centerCrop"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/url" />
+
+                <TextView
+                    android:id="@+id/createdAtLabel"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:paddingTop="@dimen/contents_padding"
+                    android:text="@string/createdAt"
+                    android:textColor="@android:color/black"
+                    android:textSize="18sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/urlImageView" />
+
+                <TextView
+                    android:id="@+id/createdAt"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/createdAtLabel" />
+
+                <Button
+                    android:id="@+id/saveButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/create_button"
+                    android:paddingTop="@dimen/contents_padding"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/createdAt" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

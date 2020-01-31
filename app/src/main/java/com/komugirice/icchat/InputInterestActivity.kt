@@ -12,7 +12,7 @@ import com.komugirice.icchat.viewModel.InputInterestViewModel
 import com.komugirice.icchat.viewModel.InterestViewModel
 import kotlinx.android.synthetic.main.activity_header.view.*
 
-class InputInterestActivity : AppCompatActivity() {
+class InputInterestActivity : BaseActivity() {
 
     private lateinit var binding: ActivityInputInterestBinding
     private lateinit var viewModel: InputInterestViewModel
@@ -52,6 +52,10 @@ class InputInterestActivity : AppCompatActivity() {
         // 戻る
         binding.header.backImageView.setOnClickListener {
             finish()
+        }
+
+        binding.container.setOnClickListener {
+            hideKeybord(it)
         }
     }
 
