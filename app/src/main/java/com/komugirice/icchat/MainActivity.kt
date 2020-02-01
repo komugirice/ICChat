@@ -44,8 +44,8 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         initialize()
-
     }
+
 
     /**
      * 各Activityから戻った時にRoomが更新されていないバグ対応
