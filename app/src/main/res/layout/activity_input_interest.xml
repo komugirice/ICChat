@@ -70,6 +70,7 @@
                         android:text="@string/image"
                         android:textSize="18sp" />
 
+
                     <RadioButton
                         android:id="@+id/urlRadioButton"
                         android:layout_width="match_parent"
@@ -77,6 +78,7 @@
                         android:layout_marginBottom="8dp"
                         android:text="@string/url"
                         android:textSize="18sp" />
+
 
                 </RadioGroup>
 
@@ -259,9 +261,9 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:background="@drawable/edit_text_border"
-                    android:gravity="left"
-                    android:lines="2"
+                    android:gravity="left|center"
                     android:maxLines="10"
+                    android:minHeight="20dp"
                     android:textSize="16sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -304,5 +306,7 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

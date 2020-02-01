@@ -6,12 +6,15 @@ import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
+import com.afollestad.materialdialogs.MaterialDialog
 import com.komugirice.icchat.data.model.OgpData
 import com.komugirice.icchat.databinding.ActivityInputInterestBinding
+import com.komugirice.icchat.databinding.UrlPreviewDialogBinding
 import com.komugirice.icchat.extension.setRoundedImageView
 import com.komugirice.icchat.firebase.firestore.model.Interest
 import com.komugirice.icchat.services.JsoupService
@@ -195,6 +198,17 @@ class InputInterestActivity : BaseActivity() {
             binding.ogpData = ogpData
             binding.isCheckedUrl = true
 
+            MaterialDialog(this).apply {
+                cancelable(true)
+                val dialogBinding = UrlPreviewDialogBinding.inflate(LayoutInflater.from(this@InputInterestActivity), null, false)
+                dialogBinding.apply {
+                    this.ogpData = ogpData
+                    ogpImageView.setOnClickListener {
+                        dismiss()
+                    }
+                }
+                setContentView(dialogBinding.root)
+            }.show()
 
 
             // app:imageUrlで出来なかったので設置、だがダメ
