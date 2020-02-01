@@ -3,7 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <data></data>
+    <data>
+        <import type="android.view.View" />
+        <variable
+            name="ogpData"
+            type="com.komugirice.icchat.data.model.OgpData" />
+
+        <variable
+            name="isOgp"
+            type="Boolean" />
+    </data>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -34,31 +43,6 @@
                 app:layout_constraintTop_toBottomOf="@+id/header">
 
                 <TextView
-                    android:id="@+id/commentLabel"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:gravity="left"
-                    android:text="@string/comment"
-                    android:textColor="@android:color/black"
-                    android:textSize="18sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <EditText
-                    android:id="@+id/comment"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/edit_text_border"
-                    android:gravity="left"
-                    android:lines="2"
-                    android:maxLines="10"
-                    android:textSize="16sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/commentLabel" />
-
-                <TextView
                     android:id="@+id/imageLabel"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -69,7 +53,7 @@
                     android:textSize="18sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/comment" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <ImageView
                     android:id="@+id/interestImageView"
@@ -140,15 +124,105 @@
                     app:layout_constraintBottom_toBottomOf="@+id/url"/>
 
                 <ImageView
-                    android:id="@+id/urlImageView"
-                    android:layout_width="250dp"
+                    android:id="@+id/ogpImageView"
+                    android:layout_width="180dp"
                     android:layout_height="0dp"
                     android:layout_marginTop="@dimen/contents_padding"
-                    app:layout_constraintDimensionRatio="3:2"
+                    app:layout_constraintDimensionRatio="4:3"
                     android:background="@drawable/edit_text_border"
+                    android:visibility="@{isOgp == true ? View.VISIBLE : View.GONE}"
                     android:scaleType="centerCrop"
+                    android:src="@{ogpData.url}"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/url" />
+
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/ogpTitleLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="@color/skype_gray"
+                    android:paddingLeft="4dp"
+                    android:paddingRight="4dp"
+                    app:layout_constraintStart_toStartOf="@+id/ogpImageView"
+                    app:layout_constraintEnd_toEndOf="@+id/ogpImageView"
+                    app:layout_constraintTop_toBottomOf="@+id/ogpImageView">
+
+                    <TextView
+                        android:id="@+id/ogpTitleTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@{ogpData.title}"
+                        android:textColor="@android:color/black"
+                        android:textSize="15sp"
+                        android:ellipsize="end"
+                        android:maxLines="2"
+                        android:scrollHorizontally="true"
+                        android:paddingTop="4dp"
+                        android:visibility="@{isOgp == true ? View.VISIBLE : View.GONE}"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/ogpDescriptionTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@{ogpData.description}"
+                        android:textColor="@android:color/black"
+                        android:textSize="12sp"
+                        android:paddingBottom="4dp"
+                        android:ellipsize="end"
+                        android:maxLines="2"
+                        android:scrollHorizontally="true"
+                        android:visibility="@{isOgp == true ? View.VISIBLE : View.GONE}"
+                        app:layout_constraintEnd_toEndOf="@+id/ogpTitleTextView"
+                        app:layout_constraintStart_toStartOf="@+id/ogpTitleTextView"
+                        app:layout_constraintTop_toBottomOf="@+id/ogpTitleTextView" />
+
+                    <TextView
+                        android:id="@+id/ogpUrlTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@{ogpData.url}"
+                        android:textColor="@android:color/black"
+                        android:textSize="12sp"
+                        android:paddingBottom="4dp"
+                        android:ellipsize="end"
+                        android:maxLines="2"
+                        android:scrollHorizontally="true"
+                        android:visibility="@{isOgp == true ? View.VISIBLE : View.GONE}"
+                        app:layout_constraintEnd_toEndOf="@+id/ogpDescriptionTextView"
+                        app:layout_constraintStart_toStartOf="@+id/ogpDescriptionTextView"
+                        app:layout_constraintTop_toBottomOf="@+id/ogpDescriptionTextView" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <TextView
+                    android:id="@+id/commentLabel"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:text="@string/comment"
+                    android:paddingTop="@dimen/contents_padding"
+                    android:textColor="@android:color/black"
+                    android:textSize="18sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/ogpTitleLayout" />
+
+                <EditText
+                    android:id="@+id/comment"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/edit_text_border"
+                    android:gravity="left"
+                    android:lines="2"
+                    android:maxLines="10"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/commentLabel" />
 
                 <TextView
                     android:id="@+id/createdAtLabel"
@@ -161,7 +235,7 @@
                     android:textSize="18sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/urlImageView" />
+                    app:layout_constraintTop_toBottomOf="@+id/comment" />
 
                 <TextView
                     android:id="@+id/createdAt"

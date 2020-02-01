@@ -10,9 +10,11 @@ import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
+import com.komugirice.icchat.data.model.OgpData
 import com.komugirice.icchat.databinding.ActivityInputInterestBinding
 import com.komugirice.icchat.extension.setRoundedImageView
 import com.komugirice.icchat.firebase.firestore.model.Interest
+import com.komugirice.icchat.services.JsoupService
 import com.komugirice.icchat.viewModel.InputInterestViewModel
 import com.komugirice.icchat.viewModel.InterestViewModel
 import com.squareup.picasso.Picasso
@@ -20,6 +22,7 @@ import com.yalantis.ucrop.UCrop
 import kotlinx.android.synthetic.main.activity_group_setting.*
 import kotlinx.android.synthetic.main.activity_header.view.*
 import kotlinx.android.synthetic.main.chat_type_image_cell.view.*
+import org.jsoup.Jsoup
 import timber.log.Timber
 import java.io.File
 
@@ -70,19 +73,19 @@ class InputInterestActivity : BaseActivity() {
             selectImage()
         }
 
-        // +
+        // +ボタン
         binding.addImageButton.setOnClickListener {
             selectImage()
         }
 
-        // -
+        // -ボタン
         binding.removeImageButton.setOnClickListener {
             binding.interestImageView.setImageDrawable(null)
         }
 
         // チェック
         binding.checkButton.setOnClickListener{
-
+            searchUrl()
         }
 
         binding.container.setOnClickListener {
@@ -158,6 +161,37 @@ class InputInterestActivity : BaseActivity() {
                 })
                 .start(this@InputInterestActivity)
         }
+    }
+
+    /**
+     * URL検索
+     */
+    private fun searchUrl() {
+        val url = binding.url.text.toString()
+
+        if( url.isEmpty()) {
+            // TODO Toast
+            binding.ogpData = null
+            binding.isOgp = false
+            return
+        }
+
+        JsoupService.getJsoupDocument(url, {
+            val ogpData = OgpData().apply{
+                this.url = url
+                this.title = JsoupService._getTitle(it)
+                this.imageUrl = JsoupService._getImage(it, url)
+                this.description = JsoupService._getDescription(it)
+            }
+            binding.ogpData = ogpData
+            binding.isOgp = true
+
+            // app:imageUrlで出来なかったので設置、だがダメ
+            Picasso.get().load(ogpData.url).into(binding.ogpImageView)
+
+        }, {
+            Timber.e(it)
+        })
     }
 
     companion object {
