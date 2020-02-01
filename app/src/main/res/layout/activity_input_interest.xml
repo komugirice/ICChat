@@ -20,28 +20,32 @@
             type="Boolean" />
     </data>
 
-    <ScrollView
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:descendantFocusability="beforeDescendants"
+        android:focusableInTouchMode="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:descendantFocusability="beforeDescendants"
-            android:focusableInTouchMode="true"
+        <include
+            android:id="@+id/header"
+            layout="@layout/activity_header" />
+
+        <ScrollView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <include
-                android:id="@+id/header"
-                layout="@layout/activity_header" />
+            app:layout_constraintTop_toBottomOf="@+id/header">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/contents"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:padding="8dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -168,8 +172,8 @@
                         android:layout_marginTop="@dimen/contents_padding"
                         android:background="@drawable/edit_text_border"
                         android:scaleType="centerCrop"
-                        android:src="@{ogpData.url}"
                         android:visibility="@{isCheckedUrl == true ? View.VISIBLE : View.GONE}"
+                        app:imageUrlNoImage="@{ogpData.url}"
                         app:layout_constraintDimensionRatio="4:3"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -299,7 +303,6 @@
                     app:layout_constraintTop_toBottomOf="@+id/createdAt" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </ScrollView>
+        </ScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

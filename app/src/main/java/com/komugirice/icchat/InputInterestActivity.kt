@@ -178,7 +178,7 @@ class InputInterestActivity : BaseActivity() {
     private fun searchUrl() {
         val url = binding.url.text.toString()
 
-        if( url.isEmpty()) {
+        if(url.isEmpty()) {
             // TODO Toast
             binding.ogpData = null
             binding.isCheckedUrl = false
@@ -195,11 +195,14 @@ class InputInterestActivity : BaseActivity() {
             binding.ogpData = ogpData
             binding.isCheckedUrl = true
 
+
+
             // app:imageUrlで出来なかったので設置、だがダメ
-            Picasso.get().load(ogpData.url).into(binding.ogpImageView)
+//            Picasso.get().load(ogpData.url).into(binding.ogpImageView)
 
         }, {
             Timber.e(it)
+            Toast.makeText(this, "${it.message}", Toast.LENGTH_SHORT).show()
         })
     }
 
