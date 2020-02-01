@@ -41,6 +41,7 @@ class InputInterestActivity : BaseActivity() {
         initViewModel()
         initLayout()
         initClick()
+        initRadioGroup()
     }
 
     private fun initBinding(){
@@ -48,6 +49,7 @@ class InputInterestActivity : BaseActivity() {
             R.layout.activity_input_interest
         )
         binding.lifecycleOwner = this
+        binding.isSelectedImage = true
     }
 
     private fun initViewModel() {
@@ -90,6 +92,13 @@ class InputInterestActivity : BaseActivity() {
 
         binding.container.setOnClickListener {
             hideKeybord(it)
+        }
+    }
+
+    private fun initRadioGroup() {
+        binding.radioGroup.setOnCheckedChangeListener { group, checkedId ->
+            binding.isSelectedImage = binding.imageRadioButton.isChecked
+
         }
     }
 
@@ -172,7 +181,7 @@ class InputInterestActivity : BaseActivity() {
         if( url.isEmpty()) {
             // TODO Toast
             binding.ogpData = null
-            binding.isOgp = false
+            binding.isCheckedUrl = false
             return
         }
 
@@ -184,7 +193,7 @@ class InputInterestActivity : BaseActivity() {
                 this.description = JsoupService._getDescription(it)
             }
             binding.ogpData = ogpData
-            binding.isOgp = true
+            binding.isCheckedUrl = true
 
             // app:imageUrlで出来なかったので設置、だがダメ
             Picasso.get().load(ogpData.url).into(binding.ogpImageView)

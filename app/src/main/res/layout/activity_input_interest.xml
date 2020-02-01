@@ -4,13 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <import type="android.view.View" />
+
         <variable
             name="ogpData"
             type="com.komugirice.icchat.data.model.OgpData" />
 
         <variable
-            name="isOgp"
+            name="isSelectedImage"
+            type="Boolean" />
+
+        <variable
+            name="isCheckedUrl"
             type="Boolean" />
     </data>
 
@@ -42,60 +48,74 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/header">
 
-                <TextView
-                    android:id="@+id/imageLabel"
+                <RadioGroup
+                    android:id="@+id/radioGroup"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:gravity="left"
-                    android:paddingTop="@dimen/contents_padding"
-                    android:text="@string/image"
-                    android:textColor="@android:color/black"
-                    android:textSize="18sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent">
 
-                <ImageView
-                    android:id="@+id/interestImageView"
-                    android:layout_width="250dp"
-                    android:layout_height="0dp"
-                    app:layout_constraintDimensionRatio="3:2"
-                    android:background="@drawable/edit_text_border"
-                    android:scaleType="centerCrop"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/imageLabel" />
+                    <RadioButton
+                        android:id="@+id/imageRadioButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:checked="true"
+                        android:text="@string/image"
+                        android:textSize="18sp" />
 
-                <ImageView
-                    android:id="@+id/addImageButton"
+                    <RadioButton
+                        android:id="@+id/urlRadioButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:text="@string/url"
+                        android:textSize="18sp" />
+
+                </RadioGroup>
+
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/imageContainer"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginBottom="8dp"
-                    android:background="@drawable/ic_add_circle_outline_blue_48dp"
-                    app:layout_constraintStart_toEndOf="@+id/interestImageView"
-                    app:layout_constraintBottom_toTopOf="@+id/removeImageButton" />
-
-                <ImageView
-                    android:id="@+id/removeImageButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="4dp"
-                    android:background="@drawable/ic_remove_circle_outline_red_48dp"
-                    app:layout_constraintStart_toEndOf="@+id/interestImageView"
-                    app:layout_constraintBottom_toBottomOf="@+id/interestImageView" />
-
-                <TextView
-                    android:id="@+id/urlLabel"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:gravity="left"
-                    android:paddingTop="@dimen/contents_padding"
-                    android:text="@string/url"
-                    android:textColor="@android:color/black"
-                    android:textSize="18sp"
-                    app:layout_constraintEnd_toEndOf="parent"
+                    android:visibility="@{isSelectedImage == true ? View.VISIBLE : View.GONE}"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/interestImageView" />
+                    app:layout_constraintTop_toBottomOf="@+id/radioGroup">
+
+                    <ImageView
+                        android:id="@+id/interestImageView"
+                        android:layout_width="250dp"
+                        android:layout_height="0dp"
+                        android:background="@drawable/edit_text_border"
+                        android:scaleType="centerCrop"
+                        app:layout_constraintDimensionRatio="3:2"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <ImageView
+                        android:id="@+id/addImageButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="4dp"
+                        android:layout_marginBottom="8dp"
+                        android:background="@drawable/ic_add_circle_outline_blue_48dp"
+                        app:layout_constraintBottom_toTopOf="@+id/removeImageButton"
+                        app:layout_constraintStart_toEndOf="@+id/interestImageView" />
+
+                    <ImageView
+                        android:id="@+id/removeImageButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="4dp"
+                        android:background="@drawable/ic_remove_circle_outline_red_48dp"
+                        app:layout_constraintBottom_toBottomOf="@+id/interestImageView"
+                        app:layout_constraintStart_toEndOf="@+id/interestImageView" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
 
                 <EditText
                     android:id="@+id/url"
@@ -106,96 +126,106 @@
                     android:lines="2"
                     android:maxLines="10"
                     android:textSize="16sp"
+                    android:visibility="@{isSelectedImage == false ? View.VISIBLE : View.GONE}"
                     app:layout_constraintEnd_toStartOf="@id/checkButton"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/urlLabel" />
+                    app:layout_constraintTop_toBottomOf="@+id/imageContainer" />
 
                 <Button
                     android:id="@+id/checkButton"
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
-                    android:textSize="12sp"
                     android:layout_marginLeft="4dp"
-                    android:text="チェック"
                     android:background="@color/yellow"
-                    app:layout_constraintStart_toEndOf="@+id/url"
+                    android:text="チェック"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/url"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/url"
-                    app:layout_constraintBottom_toBottomOf="@+id/url"/>
-
-                <ImageView
-                    android:id="@+id/ogpImageView"
-                    android:layout_width="180dp"
-                    android:layout_height="0dp"
-                    android:layout_marginTop="@dimen/contents_padding"
-                    app:layout_constraintDimensionRatio="4:3"
-                    android:background="@drawable/edit_text_border"
-                    android:visibility="@{isOgp == true ? View.VISIBLE : View.GONE}"
-                    android:scaleType="centerCrop"
-                    android:src="@{ogpData.url}"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/url" />
-
+                    app:layout_constraintStart_toEndOf="@+id/url"
+                    app:layout_constraintTop_toTopOf="@+id/url" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/ogpTitleLayout"
-                    android:layout_width="0dp"
+                    android:id="@+id/ogpContainer"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@color/skype_gray"
-                    android:paddingLeft="4dp"
-                    android:paddingRight="4dp"
-                    app:layout_constraintStart_toStartOf="@+id/ogpImageView"
-                    app:layout_constraintEnd_toEndOf="@+id/ogpImageView"
-                    app:layout_constraintTop_toBottomOf="@+id/ogpImageView">
+                    android:visibility="@{isSelectedImage == false ? View.VISIBLE : View.GONE}"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/url">
 
-                    <TextView
-                        android:id="@+id/ogpTitleTextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@{ogpData.title}"
-                        android:textColor="@android:color/black"
-                        android:textSize="15sp"
-                        android:ellipsize="end"
-                        android:maxLines="2"
-                        android:scrollHorizontally="true"
-                        android:paddingTop="4dp"
-                        android:visibility="@{isOgp == true ? View.VISIBLE : View.GONE}"
+                    <ImageView
+                        android:id="@+id/ogpImageView"
+                        android:layout_width="180dp"
+                        android:layout_height="0dp"
+                        android:layout_marginTop="@dimen/contents_padding"
+                        android:background="@drawable/edit_text_border"
+                        android:scaleType="centerCrop"
+                        android:src="@{ogpData.url}"
+                        android:visibility="@{isCheckedUrl == true ? View.VISIBLE : View.GONE}"
+                        app:layout_constraintDimensionRatio="4:3"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
-                    <TextView
-                        android:id="@+id/ogpDescriptionTextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@{ogpData.description}"
-                        android:textColor="@android:color/black"
-                        android:textSize="12sp"
-                        android:paddingBottom="4dp"
-                        android:ellipsize="end"
-                        android:maxLines="2"
-                        android:scrollHorizontally="true"
-                        android:visibility="@{isOgp == true ? View.VISIBLE : View.GONE}"
-                        app:layout_constraintEnd_toEndOf="@+id/ogpTitleTextView"
-                        app:layout_constraintStart_toStartOf="@+id/ogpTitleTextView"
-                        app:layout_constraintTop_toBottomOf="@+id/ogpTitleTextView" />
 
-                    <TextView
-                        android:id="@+id/ogpUrlTextView"
-                        android:layout_width="wrap_content"
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/ogpTitleLayout"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="@{ogpData.url}"
-                        android:textColor="@android:color/black"
-                        android:textSize="12sp"
-                        android:paddingBottom="4dp"
-                        android:ellipsize="end"
-                        android:maxLines="2"
-                        android:scrollHorizontally="true"
-                        android:visibility="@{isOgp == true ? View.VISIBLE : View.GONE}"
-                        app:layout_constraintEnd_toEndOf="@+id/ogpDescriptionTextView"
-                        app:layout_constraintStart_toStartOf="@+id/ogpDescriptionTextView"
-                        app:layout_constraintTop_toBottomOf="@+id/ogpDescriptionTextView" />
+                        android:background="@color/skype_gray"
+                        android:paddingLeft="4dp"
+                        android:paddingRight="4dp"
+                        app:layout_constraintEnd_toEndOf="@+id/ogpImageView"
+                        app:layout_constraintStart_toStartOf="@+id/ogpImageView"
+                        app:layout_constraintTop_toBottomOf="@+id/ogpImageView">
 
+                        <TextView
+                            android:id="@+id/ogpTitleTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:maxLines="2"
+                            android:paddingTop="4dp"
+                            android:scrollHorizontally="true"
+                            android:text="@{ogpData.title}"
+                            android:textColor="@android:color/black"
+                            android:textSize="15sp"
+                            android:visibility="@{isCheckedUrl == true ? View.VISIBLE : View.GONE}"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/ogpDescriptionTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:maxLines="2"
+                            android:paddingBottom="4dp"
+                            android:scrollHorizontally="true"
+                            android:text="@{ogpData.description}"
+                            android:textColor="@android:color/black"
+                            android:textSize="12sp"
+                            android:visibility="@{isCheckedUrl == true ? View.VISIBLE : View.GONE}"
+                            app:layout_constraintEnd_toEndOf="@+id/ogpTitleTextView"
+                            app:layout_constraintStart_toStartOf="@+id/ogpTitleTextView"
+                            app:layout_constraintTop_toBottomOf="@+id/ogpTitleTextView" />
+
+                        <TextView
+                            android:id="@+id/ogpUrlTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:maxLines="2"
+                            android:paddingBottom="4dp"
+                            android:scrollHorizontally="true"
+                            android:text="@{ogpData.url}"
+                            android:textColor="@android:color/black"
+                            android:textSize="12sp"
+                            android:visibility="@{isCheckedUrl == true ? View.VISIBLE : View.GONE}"
+                            app:layout_constraintEnd_toEndOf="@+id/ogpDescriptionTextView"
+                            app:layout_constraintStart_toStartOf="@+id/ogpDescriptionTextView"
+                            app:layout_constraintTop_toBottomOf="@+id/ogpDescriptionTextView" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <TextView
@@ -203,13 +233,13 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:gravity="left"
-                    android:text="@string/comment"
                     android:paddingTop="@dimen/contents_padding"
+                    android:text="@string/comment"
                     android:textColor="@android:color/black"
                     android:textSize="18sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/ogpTitleLayout" />
+                    app:layout_constraintTop_toBottomOf="@+id/ogpContainer" />
 
                 <EditText
                     android:id="@+id/comment"
@@ -253,8 +283,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="@string/create_button"
                     android:paddingTop="@dimen/contents_padding"
+                    android:text="@string/create_button"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/createdAt" />
