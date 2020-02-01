@@ -96,6 +96,15 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_add_black_24dp"
+                        app:layout_constraintBottom_toBottomOf="@id/interestImageView"
+                        app:layout_constraintEnd_toEndOf="@id/interestImageView"
+                        app:layout_constraintStart_toStartOf="@id/interestImageView"
+                        app:layout_constraintTop_toTopOf="@id/interestImageView" />
+
+                    <ImageView
                         android:id="@+id/addImageButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
