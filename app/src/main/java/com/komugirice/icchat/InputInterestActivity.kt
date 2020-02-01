@@ -70,6 +70,16 @@ class InputInterestActivity : BaseActivity() {
             selectImage()
         }
 
+        // +
+        binding.addImageButton.setOnClickListener {
+            selectImage()
+        }
+
+        // -
+        binding.removeImageButton.setOnClickListener {
+            binding.interestImageView.setImageDrawable(null)
+        }
+
         // チェック
         binding.checkButton.setOnClickListener{
 
