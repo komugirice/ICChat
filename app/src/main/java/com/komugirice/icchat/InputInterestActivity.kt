@@ -1,16 +1,27 @@
 package com.komugirice.icchat
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
+import androidx.core.net.toUri
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
 import com.komugirice.icchat.databinding.ActivityInputInterestBinding
+import com.komugirice.icchat.extension.setRoundedImageView
 import com.komugirice.icchat.firebase.firestore.model.Interest
 import com.komugirice.icchat.viewModel.InputInterestViewModel
 import com.komugirice.icchat.viewModel.InterestViewModel
+import com.squareup.picasso.Picasso
+import com.yalantis.ucrop.UCrop
+import kotlinx.android.synthetic.main.activity_group_setting.*
 import kotlinx.android.synthetic.main.activity_header.view.*
+import kotlinx.android.synthetic.main.chat_type_image_cell.view.*
+import timber.log.Timber
+import java.io.File
 
 class InputInterestActivity : BaseActivity() {
 
@@ -54,14 +65,94 @@ class InputInterestActivity : BaseActivity() {
             finish()
         }
 
+        // 画像
+        binding.interestImageView.setOnClickListener {
+            selectImage()
+        }
+
+        // チェック
+        binding.checkButton.setOnClickListener{
+
+        }
+
         binding.container.setOnClickListener {
             hideKeybord(it)
         }
     }
 
+    /**
+     * プロフィール画像選択
+     *
+     */
+    private fun selectImage() {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
+            .addCategory(Intent.CATEGORY_OPENABLE)
+            .setType("image/jpeg")
+        startActivityForResult(intent, RC_CHOOSE_IMAGE)
+    }
+    /**
+     * ActivityResult
+     *
+     */
+    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (resultCode != Activity.RESULT_OK || data == null)
+            return
+        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+        when(requestCode) {
+            // 画像選択
+            RC_CHOOSE_IMAGE -> {
+
+                data.data?.also {
+                    // uCrop実行
+                    startUCrop(it)
+                }
+
+            }
+            UCrop.REQUEST_CROP -> {
+                val resultUri = UCrop.getOutput(data)
+
+                resultUri?.also {
+                    Timber.d(it.toString())
+
+                    Picasso.get().load(it).into(binding.interestImageView) // UIスレッド
+
+                }
+            }
+            UCrop.RESULT_ERROR -> {
+                Timber.d(UCrop.getError(data))
+                // TODO エラーダイアログ
+                Toast.makeText(this, "画像の加工に失敗しました", Toast.LENGTH_SHORT).show()
+            }
+
+        }
+    }
+
+    /**
+     * uCropActivity表示
+     *
+     */
+    private fun startUCrop(srcUri: Uri?) {
+        var file = File.createTempFile("${System.currentTimeMillis()}", ".temp", cacheDir)
+        srcUri?.apply {
+            UCrop.of(this, file.toUri())
+                .withAspectRatio(1f, 1f)
+                .withOptions(UCrop.Options().apply {
+                    setHideBottomControls(true)
+                    setCircleDimmedLayer(false)
+                    setShowCropGrid(false)
+                    setShowCropFrame(false)
+                    withAspectRatio(binding.interestImageView.width.toFloat()
+                        ,  binding.interestImageView.height.toFloat())
+                })
+                .start(this@InputInterestActivity)
+        }
+    }
 
     companion object {
         private const val KEY_INTEREST = "key_interest"
+        private const val RC_CHOOSE_IMAGE = 1000
 
         fun start(context: Context?) {
             context?.startActivity(
