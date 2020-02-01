@@ -6,10 +6,13 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.text.format.DateFormat
+import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.PopupMenu
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.drawerlayout.widget.DrawerLayout
@@ -19,7 +22,9 @@ import androidx.fragment.app.FragmentPagerAdapter
 import androidx.fragment.app.FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.viewpager.widget.ViewPager
+import com.afollestad.materialdialogs.MaterialDialog
 import com.komugirice.icchat.databinding.ActivityMainBinding
+import com.komugirice.icchat.databinding.DateTimePickerDialogBinding
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.interfaces.Update
 import com.komugirice.icchat.view.OtherUserView
@@ -28,6 +33,7 @@ import kotlinx.android.synthetic.main.fragment_interest.*
 import kotlinx.android.synthetic.main.item_drawer.*
 import kotlinx.android.synthetic.main.item_drawer.swipeRefreshLayout
 import kotlinx.android.synthetic.main.item_drawer.view.*
+import java.util.*
 
 class MainActivity : BaseActivity() {
 
@@ -44,6 +50,21 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         initialize()
+        MaterialDialog(this).apply {
+            val dateTimePickerDialogBinding = DateTimePickerDialogBinding.inflate(LayoutInflater.from(this@MainActivity), null, false)
+            dateTimePickerDialogBinding.okButton.setOnClickListener {
+                val date = Calendar.getInstance().apply {
+                    set(Calendar.YEAR, dateTimePickerDialogBinding.datePicker.year)
+                    set(Calendar.MONTH, dateTimePickerDialogBinding.datePicker.month)
+                    set(Calendar.DAY_OF_MONTH, dateTimePickerDialogBinding.datePicker.dayOfMonth)
+                    set(Calendar.HOUR_OF_DAY, dateTimePickerDialogBinding.timePicker.currentHour)
+                    set(Calendar.MINUTE, dateTimePickerDialogBinding.timePicker.currentMinute)
+                }.time
+                Toast.makeText(this@MainActivity, "${DateFormat.format("yyyy年MM月dd日 hh時mm分", date)}", Toast.LENGTH_SHORT).show()
+                dismiss()
+            }
+            setContentView(dateTimePickerDialogBinding.root)
+        }.show()
     }
 
 
