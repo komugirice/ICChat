@@ -222,6 +222,7 @@ class InputInterestActivity : BaseActivity() {
         }, {
             Timber.e(it)
             Toast.makeText(this, R.string.url_error, Toast.LENGTH_SHORT).show()
+            binding.isCheckedUrl = false
         })
     }
 
