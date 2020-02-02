@@ -62,62 +62,21 @@
                     app:layout_constraintTop_toTopOf="parent">
 
                     <RadioButton
-                        android:id="@+id/imageRadioButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
-                        android:checked="true"
-                        android:text="@string/image"
-                        android:textSize="18sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/imageContainer"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:visibility="@{isSelectedImage == true ? View.VISIBLE : View.GONE}"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/imageRadioButton">
-
-                        <ImageView
-                            android:id="@+id/interestImageView"
-                            android:layout_width="250dp"
-                            android:layout_height="0dp"
-                            android:background="@drawable/edit_text_border"
-                            android:scaleType="centerCrop"
-                            android:layout_marginBottom="8dp"
-                            app:layout_constraintDimensionRatio="3:2"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                        <ImageView
-                            android:id="@+id/addImageButton"
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:background="@drawable/ic_add_circle_outline_black_48dp"
-                            app:layout_constraintBottom_toBottomOf="@+id/interestImageView"
-                            app:layout_constraintEnd_toEndOf="@+id/interestImageView"
-                            app:layout_constraintStart_toStartOf="@+id/interestImageView"
-                            app:layout_constraintTop_toTopOf="@+id/interestImageView" />
-
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-
-                    <RadioButton
                         android:id="@+id/urlRadioButton"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
+                        android:checked="true"
                         android:text="@string/url"
                         android:textSize="18sp"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/imageContainer" />
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/urlRadioGroup"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:layout_marginBottom="8dp"
                         android:visibility="@{isSelectedImage == false ? View.VISIBLE : View.GONE}"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/urlRadioButton">
@@ -161,6 +120,48 @@
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
+                    <RadioButton
+                        android:id="@+id/imageRadioButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:text="@string/image"
+                        android:textSize="18sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/urlRadioGroup" />
+
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/imageContainer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:visibility="@{isSelectedImage == true ? View.VISIBLE : View.GONE}"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/imageRadioButton">
+
+                        <ImageView
+                            android:id="@+id/interestImageView"
+                            android:layout_width="250dp"
+                            android:layout_height="0dp"
+                            android:background="@drawable/edit_text_border"
+                            android:scaleType="centerCrop"
+                            android:layout_marginBottom="8dp"
+                            app:layout_constraintDimensionRatio="3:2"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <ImageView
+                            android:id="@+id/addImageButton"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:background="@drawable/ic_add_circle_outline_black_48dp"
+                            app:layout_constraintBottom_toBottomOf="@+id/interestImageView"
+                            app:layout_constraintEnd_toEndOf="@+id/interestImageView"
+                            app:layout_constraintStart_toStartOf="@+id/interestImageView"
+                            app:layout_constraintTop_toTopOf="@+id/interestImageView" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
                 </RadioGroup>
 
                 <TextView
@@ -193,7 +194,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:gravity="left"
-                    android:paddingTop="@dimen/contents_padding"
+                    android:layout_marginTop="16dp"
                     android:text="@string/createdAt"
                     android:textColor="@android:color/black"
                     android:textSize="18sp"
@@ -207,6 +208,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="left"
                     android:textColor="@color/royal_blue"
+                    android:layout_marginTop="4dp"
                     android:textSize="16sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -216,7 +218,7 @@
                     android:id="@+id/createdAtLine"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="@dimen/contents_padding"
                     android:background="@color/gainsboro"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -226,8 +228,7 @@
                     android:id="@+id/saveButton"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:paddingTop="@dimen/contents_padding"
+                    android:layout_marginTop="16dp"
                     android:text="@string/create_button"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

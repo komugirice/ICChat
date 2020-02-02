@@ -52,7 +52,7 @@ class InputInterestActivity : BaseActivity() {
             R.layout.activity_input_interest
         )
         binding.lifecycleOwner = this
-        binding.isSelectedImage = true
+        binding.isSelectedImage = false
     }
 
     private fun initViewModel() {
@@ -259,6 +259,7 @@ class InputInterestActivity : BaseActivity() {
     private fun showCreatedAtDialog() {
         MaterialDialog(this).apply {
             val dateTimePickerDialogBinding = DateTimePickerDialogBinding.inflate(LayoutInflater.from(this@InputInterestActivity), null, false)
+            dateTimePickerDialogBinding.datePicker.maxDate = Date().time
             dateTimePickerDialogBinding.okButton.setOnClickListener {
                 val date = Calendar.getInstance().apply {
                     set(Calendar.YEAR, dateTimePickerDialogBinding.datePicker.year)
@@ -267,7 +268,7 @@ class InputInterestActivity : BaseActivity() {
                     set(Calendar.HOUR_OF_DAY, dateTimePickerDialogBinding.timePicker.currentHour)
                     set(Calendar.MINUTE, dateTimePickerDialogBinding.timePicker.currentMinute)
                 }.time
-                Toast.makeText(this@InputInterestActivity, "${DateFormat.format("yyyy年MM月dd日 hh時mm分", date)}", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(this@InputInterestActivity, "${DateFormat.format("yyyy年MM月dd日 hh時mm分", date)}", Toast.LENGTH_SHORT).show()
                 binding.createdAt.text = "${DateFormat.format("yyyy年MM月dd日 hh時mm分", date)}"
                 dismiss()
             }
