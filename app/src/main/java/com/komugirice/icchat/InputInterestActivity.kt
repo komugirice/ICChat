@@ -16,6 +16,7 @@ import com.komugirice.icchat.data.model.OgpData
 import com.komugirice.icchat.databinding.ActivityInputInterestBinding
 import com.komugirice.icchat.databinding.UrlPreviewDialogBinding
 import com.komugirice.icchat.extension.setRoundedImageView
+import com.komugirice.icchat.extension.toggle
 import com.komugirice.icchat.firebase.firestore.model.Interest
 import com.komugirice.icchat.services.JsoupService
 import com.komugirice.icchat.viewModel.InputInterestViewModel
@@ -139,16 +140,16 @@ class InputInterestActivity : BaseActivity() {
                 val resultUri = UCrop.getOutput(data)
 
                 resultUri?.also {
-                    Timber.d(it.toString())
+                    Timber.d("画像URL：$it")
 
                     Picasso.get().load(it).into(binding.interestImageView) // UIスレッド
+                    binding.addImageButton.toggle(false)
 
                 }
             }
             UCrop.RESULT_ERROR -> {
                 Timber.d(UCrop.getError(data))
-                // TODO エラーダイアログ
-                Toast.makeText(this, "画像の加工に失敗しました", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, R.string.failed_ucrop, Toast.LENGTH_SHORT).show()
             }
 
         }
@@ -182,7 +183,7 @@ class InputInterestActivity : BaseActivity() {
         val url = binding.url.text.toString()
 
         if( url.isEmpty()) {
-            // TODO Toast
+            Toast.makeText(this, R.string.url_empty, Toast.LENGTH_SHORT).show()
             binding.ogpData = null
             binding.isCheckedUrl = false
             return
@@ -214,6 +215,7 @@ class InputInterestActivity : BaseActivity() {
 
         }, {
             Timber.e(it)
+            Toast.makeText(this, R.string.url_error, Toast.LENGTH_SHORT).show()
         })
     }
 

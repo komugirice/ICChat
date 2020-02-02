@@ -87,15 +87,16 @@
                             android:layout_height="0dp"
                             android:background="@drawable/edit_text_border"
                             android:scaleType="centerCrop"
+                            android:layout_marginBottom="8dp"
                             app:layout_constraintDimensionRatio="3:2"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
                         <ImageView
                             android:id="@+id/addImageButton"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/ic_add_circle_outline_blue_48dp"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:background="@drawable/ic_add_circle_outline_black_48dp"
                             app:layout_constraintBottom_toBottomOf="@+id/interestImageView"
                             app:layout_constraintEnd_toEndOf="@+id/interestImageView"
                             app:layout_constraintStart_toStartOf="@+id/interestImageView"

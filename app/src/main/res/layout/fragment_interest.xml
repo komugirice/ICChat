@@ -32,19 +32,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <!--
-                <TextView
-                    android:id="@+id/nameLabel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:gravity="center"
-                    android:text="@string/name_label"
-                    android:textColor="@android:color/black"
-                    android:textSize="15sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-                -->
                 <TextView
                     android:id="@+id/nameTextView"
                     android:layout_width="0dp"
@@ -58,16 +45,6 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <!--
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="1dp"
-                    android:id="@+id/borderView"
-                    android:background="@color/gray"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/nameTextView"/>
-                -->
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
