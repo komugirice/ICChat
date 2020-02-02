@@ -7,11 +7,13 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
 import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.list.listItems
 import com.komugirice.icchat.data.model.OgpData
 import com.komugirice.icchat.databinding.ActivityInputInterestBinding
 import com.komugirice.icchat.databinding.UrlPreviewDialogBinding
@@ -19,6 +21,7 @@ import com.komugirice.icchat.extension.setRoundedImageView
 import com.komugirice.icchat.extension.toggle
 import com.komugirice.icchat.firebase.firestore.model.Interest
 import com.komugirice.icchat.services.JsoupService
+import com.komugirice.icchat.util.DialogUtil
 import com.komugirice.icchat.viewModel.InputInterestViewModel
 import com.komugirice.icchat.viewModel.InterestViewModel
 import com.squareup.picasso.Picasso
@@ -76,18 +79,21 @@ class InputInterestActivity : BaseActivity() {
 
         // 画像
         binding.interestImageView.setOnClickListener {
-            selectImage()
+            if(binding.interestImageView.drawable == null)
+                selectImage()
+            else
+                showImageChangeDialog()
         }
 
-        // +ボタン
-        binding.addImageButton.setOnClickListener {
-            selectImage()
-        }
+        // 画像長押し
+        binding.interestImageView.setOnLongClickListener(object: View.OnLongClickListener {
+            override fun onLongClick(v: View?): Boolean {
+                if (binding.interestImageView.drawable != null)
+                    showImageChangeDialog()
 
-        // -ボタン
-//        binding.removeImageButton.setOnClickListener {
-//            binding.interestImageView.setImageDrawable(null)
-//        }
+                return true
+            }
+        })
 
         // チェック
         binding.checkButton.setOnClickListener{
@@ -217,6 +223,33 @@ class InputInterestActivity : BaseActivity() {
             Timber.e(it)
             Toast.makeText(this, R.string.url_error, Toast.LENGTH_SHORT).show()
         })
+    }
+
+    private fun showImageChangeDialog() {
+        val menuList = listOf(
+            Pair(0, R.string.change),
+            Pair(1, R.string.delete_message)
+        )
+
+        MaterialDialog(this).apply {
+            listItems(items = listOf(
+                context.getString(menuList.get(0).second),
+                context.getString(menuList.get(1).second)
+            ),
+                selection = { dialog, index, text ->
+                    when (index) {
+                        menuList.get(0).first -> {
+                            selectImage()
+                        }
+                        menuList.get(1).first -> {
+                            binding.interestImageView.setImageDrawable(null)
+                            binding.addImageButton.toggle(true)
+                        }
+
+                        else -> return@listItems
+                    }
+                })
+        }.show()
     }
 
     companion object {
