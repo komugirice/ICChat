@@ -206,11 +206,21 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:gravity="left"
-                    android:textColor="@color/black"
+                    android:textColor="@color/royal_blue"
                     android:textSize="16sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/createdAtLabel" />
+
+                <TextView
+                    android:id="@+id/createdAtLine"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@color/gainsboro"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/createdAt" />
 
                 <Button
                     android:id="@+id/saveButton"
@@ -221,7 +231,7 @@
                     android:text="@string/create_button"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/createdAt" />
+                    app:layout_constraintTop_toBottomOf="@+id/createdAtLine" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>

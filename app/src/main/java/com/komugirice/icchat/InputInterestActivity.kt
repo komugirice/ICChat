@@ -4,8 +4,8 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.format.DateFormat
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
@@ -16,22 +16,18 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItems
 import com.komugirice.icchat.data.model.OgpData
 import com.komugirice.icchat.databinding.ActivityInputInterestBinding
+import com.komugirice.icchat.databinding.DateTimePickerDialogBinding
 import com.komugirice.icchat.databinding.UrlPreviewDialogBinding
-import com.komugirice.icchat.extension.setRoundedImageView
 import com.komugirice.icchat.extension.toggle
 import com.komugirice.icchat.firebase.firestore.model.Interest
 import com.komugirice.icchat.services.JsoupService
-import com.komugirice.icchat.util.DialogUtil
 import com.komugirice.icchat.viewModel.InputInterestViewModel
-import com.komugirice.icchat.viewModel.InterestViewModel
 import com.squareup.picasso.Picasso
 import com.yalantis.ucrop.UCrop
-import kotlinx.android.synthetic.main.activity_group_setting.*
 import kotlinx.android.synthetic.main.activity_header.view.*
-import kotlinx.android.synthetic.main.chat_type_image_cell.view.*
-import org.jsoup.Jsoup
 import timber.log.Timber
 import java.io.File
+import java.util.*
 
 class InputInterestActivity : BaseActivity() {
 
@@ -69,6 +65,8 @@ class InputInterestActivity : BaseActivity() {
     private fun initLayout(){
         // タイトル
         binding.header.titleTextView.text = getString(R.string.input_interest_activity_title)
+        // 登録日時
+        binding.createdAt.text = "${DateFormat.format("yyyy年MM月dd日 hh時mm分", Date())}"
     }
 
     private fun initClick(){
@@ -98,6 +96,11 @@ class InputInterestActivity : BaseActivity() {
         // チェック
         binding.checkButton.setOnClickListener{
             searchUrl()
+        }
+
+        // 登録日時
+        binding.createdAt.setOnClickListener {
+            showCreatedAtDialog()
         }
 
         binding.container.setOnClickListener {
@@ -250,6 +253,25 @@ class InputInterestActivity : BaseActivity() {
                         else -> return@listItems
                     }
                 })
+        }.show()
+    }
+
+    private fun showCreatedAtDialog() {
+        MaterialDialog(this).apply {
+            val dateTimePickerDialogBinding = DateTimePickerDialogBinding.inflate(LayoutInflater.from(this@InputInterestActivity), null, false)
+            dateTimePickerDialogBinding.okButton.setOnClickListener {
+                val date = Calendar.getInstance().apply {
+                    set(Calendar.YEAR, dateTimePickerDialogBinding.datePicker.year)
+                    set(Calendar.MONTH, dateTimePickerDialogBinding.datePicker.month)
+                    set(Calendar.DAY_OF_MONTH, dateTimePickerDialogBinding.datePicker.dayOfMonth)
+                    set(Calendar.HOUR_OF_DAY, dateTimePickerDialogBinding.timePicker.currentHour)
+                    set(Calendar.MINUTE, dateTimePickerDialogBinding.timePicker.currentMinute)
+                }.time
+                Toast.makeText(this@InputInterestActivity, "${DateFormat.format("yyyy年MM月dd日 hh時mm分", date)}", Toast.LENGTH_SHORT).show()
+                binding.createdAt.text = "${DateFormat.format("yyyy年MM月dd日 hh時mm分", date)}"
+                dismiss()
+            }
+            setContentView(dateTimePickerDialogBinding.root)
         }.show()
     }
 
