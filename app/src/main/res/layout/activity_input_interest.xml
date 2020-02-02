@@ -61,83 +61,74 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
+                    <RadioButton
+                        android:id="@+id/imageRadioButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:checked="true"
+                        android:text="@string/image"
+                        android:textSize="18sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+
                     <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/imageRadioGroup"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:id="@+id/imageContainer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:visibility="@{isSelectedImage == true ? View.VISIBLE : View.GONE}"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent">
+                        app:layout_constraintTop_toBottomOf="@+id/imageRadioButton">
 
-                        <RadioButton
-                            android:id="@+id/imageRadioButton"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="8dp"
-                            android:checked="true"
-                            android:text="@string/image"
-                            android:textSize="18sp"
+                        <ImageView
+                            android:id="@+id/interestImageView"
+                            android:layout_width="250dp"
+                            android:layout_height="0dp"
+                            android:background="@drawable/edit_text_border"
+                            android:scaleType="centerCrop"
+                            app:layout_constraintDimensionRatio="3:2"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
-                        <androidx.constraintlayout.widget.ConstraintLayout
-                            android:id="@+id/imageContainer"
+                        <ImageView
+                            android:id="@+id/addImageButton"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:visibility="@{isSelectedImage == true ? View.VISIBLE : View.GONE}"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/imageRadioButton">
+                            android:background="@drawable/ic_add_circle_outline_blue_48dp"
+                            app:layout_constraintBottom_toBottomOf="@+id/interestImageView"
+                            app:layout_constraintEnd_toEndOf="@+id/interestImageView"
+                            app:layout_constraintStart_toStartOf="@+id/interestImageView"
+                            app:layout_constraintTop_toTopOf="@+id/interestImageView" />
 
-                            <ImageView
-                                android:id="@+id/interestImageView"
-                                android:layout_width="250dp"
-                                android:layout_height="0dp"
-                                android:background="@drawable/edit_text_border"
-                                android:scaleType="centerCrop"
-                                app:layout_constraintDimensionRatio="3:2"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent" />
-
-                            <ImageView
-                                android:id="@+id/addImageButton"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:background="@drawable/ic_add_circle_outline_blue_48dp"
-                                app:layout_constraintBottom_toBottomOf="@+id/interestImageView"
-                                app:layout_constraintEnd_toEndOf="@+id/interestImageView"
-                                app:layout_constraintStart_toStartOf="@+id/interestImageView"
-                                app:layout_constraintTop_toTopOf="@+id/interestImageView" />
-
-                            <ImageView
-                                android:id="@+id/removeImageButton"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginLeft="4dp"
-                                android:background="@drawable/ic_remove_circle_outline_red_48dp"
-                                app:layout_constraintBottom_toBottomOf="@+id/interestImageView"
-                                app:layout_constraintStart_toEndOf="@+id/interestImageView" />
-
-                        </androidx.constraintlayout.widget.ConstraintLayout>
+                        <ImageView
+                            android:id="@+id/removeImageButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="4dp"
+                            android:background="@drawable/ic_remove_circle_outline_red_48dp"
+                            app:layout_constraintBottom_toBottomOf="@+id/interestImageView"
+                            app:layout_constraintStart_toEndOf="@+id/interestImageView" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <RadioButton
+                        android:id="@+id/urlRadioButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:text="@string/url"
+                        android:textSize="18sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/imageContainer" />
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/urlRadioGroup"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:visibility="@{isSelectedImage == true ? View.VISIBLE : View.GONE}"
+                        android:visibility="@{isSelectedImage == false ? View.VISIBLE : View.GONE}"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/imageRadioGroup">
-
-                        <RadioButton
-                            android:id="@+id/urlRadioButton"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="8dp"
-                            android:text="@string/url"
-                            android:textSize="18sp"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toBottomOf="@id/urlRadioButton">
 
                         <EditText
                             android:id="@+id/url"
@@ -148,10 +139,10 @@
                             android:maxLines="10"
                             android:minHeight="30dp"
                             android:textSize="16sp"
-                            android:visibility="@{isSelectedImage == false ? View.VISIBLE : View.GONE}"
+                            android:hint="@string/url_hint"
                             app:layout_constraintEnd_toStartOf="@id/checkButton"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/urlRadioButton" />
+                            app:layout_constraintTop_toTopOf="parent" />
 
                         <Button
                             android:id="@+id/checkButton"
@@ -161,7 +152,6 @@
                             android:background="@color/yellow"
                             android:text="チェック"
                             android:textSize="12sp"
-                            android:visibility="@{isSelectedImage == false ? View.VISIBLE : View.GONE}"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toEndOf="@+id/url"
                             app:layout_constraintTop_toTopOf="@+id/url" />
@@ -170,7 +160,6 @@
                             android:id="@+id/ogpContainer"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:visibility="@{isSelectedImage == false ? View.VISIBLE : View.GONE}"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/url">
 

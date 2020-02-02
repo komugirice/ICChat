@@ -151,6 +151,7 @@
     <string name="image">画像</string>
     <string name="url">URL</string>
     <string name="createdAt">登録日時</string>
+    <string name="url_hint"><font size="10">URLを入力し、チェックボタンを押してください</font></string>
 
     <string name="regist_zero">登録データが0件です</string>
     <!-- ダイアログ関係 -->
