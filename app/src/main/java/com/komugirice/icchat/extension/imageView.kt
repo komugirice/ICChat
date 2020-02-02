@@ -4,9 +4,11 @@ import android.graphics.*
 import android.net.Uri
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
+import androidx.databinding.BindingAdapter
 import com.komugirice.icchat.R
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Transformation
+import timber.log.Timber
 
 fun ImageView.setRoundedImageView(uri: Uri?) {
     if (uri == null) {
@@ -56,4 +58,14 @@ fun ImageView.setRoundedImageView(uri: Uri?) {
 
     }).into(this)
 
+}
+
+@BindingAdapter("imageUrlNoImage")
+fun ImageView.loadImageUrl(imageUrl: String?) {
+    Timber.d("loadImageUrl imageUrl:$imageUrl")
+
+    if (imageUrl == null || imageUrl.isEmpty() || !imageUrl.hasImageExtension())
+        setImageResource(R.drawable.no_image)
+    else
+        Picasso.get().load(imageUrl).into(this)
 }

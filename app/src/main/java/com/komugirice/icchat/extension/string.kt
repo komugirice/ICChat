@@ -439,3 +439,14 @@ fun String.getRemoveSuffixName(): String {
 fun String.extractURL(): String? {
      return Patterns.WEB_URL.toRegex().find(this)?.value
 }
+
+/**
+ * 画像タイプの拡張子チェック
+ * @return 画像拡張子の有無
+ */
+fun String.hasImageExtension(): Boolean {
+     val imageExtensions = listOf("png", "jpg", "jpeg", "PNG", "JPG", "JPEG")
+     if (!this.contains("."))
+          return false
+     return imageExtensions.contains(this.split(".").last())
+}
