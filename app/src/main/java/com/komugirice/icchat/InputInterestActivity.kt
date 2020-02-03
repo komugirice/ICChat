@@ -350,6 +350,7 @@ class InputInterestActivity : BaseActivity() {
 
         // URL
         viewModel.ogpData?.apply {
+            data.isOgp = true
             data.setOgpData(this)
         } ?: run {
             data.isOgp = false
