@@ -20,7 +20,9 @@ import com.komugirice.icchat.databinding.DateTimePickerDialogBinding
 import com.komugirice.icchat.databinding.UrlPreviewDialogBinding
 import com.komugirice.icchat.extension.toggle
 import com.komugirice.icchat.firebase.firestore.model.Interest
+import com.komugirice.icchat.firebase.firestore.store.InterestStore
 import com.komugirice.icchat.services.JsoupService
+import com.komugirice.icchat.util.FireStorageUtil
 import com.komugirice.icchat.viewModel.InputInterestViewModel
 import com.squareup.picasso.Picasso
 import com.yalantis.ucrop.UCrop
@@ -47,8 +49,9 @@ class InputInterestActivity : BaseActivity() {
         initRadioGroup()
     }
 
-    private fun initBinding(){
-        binding = DataBindingUtil.setContentView(this,
+    private fun initBinding() {
+        binding = DataBindingUtil.setContentView(
+            this,
             R.layout.activity_input_interest
         )
         binding.lifecycleOwner = this
@@ -64,8 +67,11 @@ class InputInterestActivity : BaseActivity() {
 
                     val data = interestData
                     // ogpデータ有りの場合、復元
-                    if(data.isOgp)
+                    if (data.isOgp)
                         ogpData = OgpData(data)
+
+                    // 更新モードON
+                    isUpdateMode = true
                 }
             } ?: run {
                 // 新規モードの場合、登録日時に現在日時を設定
@@ -76,15 +82,16 @@ class InputInterestActivity : BaseActivity() {
     }
 
 
-    private fun initLayout(){
+    private fun initLayout() {
         // タイトル
         binding.header.titleTextView.text = getString(R.string.input_interest_activity_title)
 
         // 登録日時
-        binding.createdAt.text = "${DateFormat.format("yyyy年MM月dd日 hh時mm分", viewModel.interestData.createdAt)}"
+        binding.createdAt.text =
+            "${DateFormat.format("yyyy年MM月dd日 hh時mm分", viewModel.interestData.createdAt)}"
     }
 
-    private fun initClick(){
+    private fun initClick() {
         // 戻る
         binding.header.backImageView.setOnClickListener {
             finish()
@@ -92,14 +99,14 @@ class InputInterestActivity : BaseActivity() {
 
         // 画像
         binding.interestImageView.setOnClickListener {
-            if(binding.interestImageView.drawable == null)
+            if (binding.interestImageView.drawable == null)
                 selectImage()
             else
                 showImageChangeDialog()
         }
 
         // 画像長押し
-        binding.interestImageView.setOnLongClickListener(object: View.OnLongClickListener {
+        binding.interestImageView.setOnLongClickListener(object : View.OnLongClickListener {
             override fun onLongClick(v: View?): Boolean {
                 if (binding.interestImageView.drawable != null)
                     showImageChangeDialog()
@@ -109,7 +116,7 @@ class InputInterestActivity : BaseActivity() {
         })
 
         // チェック
-        binding.checkButton.setOnClickListener{
+        binding.checkButton.setOnClickListener {
             searchUrl()
         }
 
@@ -119,7 +126,7 @@ class InputInterestActivity : BaseActivity() {
         }
 
         // 登録ボタン
-        binding.saveButton.setOnClickListener{
+        binding.saveButton.setOnClickListener {
             registInterest()
         }
 
@@ -145,6 +152,7 @@ class InputInterestActivity : BaseActivity() {
             .setType("image/jpeg")
         startActivityForResult(intent, RC_CHOOSE_IMAGE)
     }
+
     /**
      * ActivityResult
      *
@@ -155,7 +163,7 @@ class InputInterestActivity : BaseActivity() {
         if (resultCode != Activity.RESULT_OK || data == null)
             return
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-        when(requestCode) {
+        when (requestCode) {
             // 画像選択
             RC_CHOOSE_IMAGE -> {
 
@@ -170,8 +178,10 @@ class InputInterestActivity : BaseActivity() {
 
                 resultUri?.also {
                     Timber.d("画像URL：$it")
-                    
+
+                    // 各種設定
                     viewModel.imageUri = it
+                    viewModel.isImageUpdate = true
                     Picasso.get().load(it).into(binding.interestImageView) // UIスレッド
                     binding.addImageButton.toggle(false)
 
@@ -199,8 +209,10 @@ class InputInterestActivity : BaseActivity() {
                     setCircleDimmedLayer(false)
                     setShowCropGrid(false)
                     setShowCropFrame(false)
-                    withAspectRatio(binding.interestImageView.width.toFloat()
-                        ,  binding.interestImageView.height.toFloat())
+                    withAspectRatio(
+                        binding.interestImageView.width.toFloat()
+                        , binding.interestImageView.height.toFloat()
+                    )
                 })
                 .start(this@InputInterestActivity)
         }
@@ -212,7 +224,7 @@ class InputInterestActivity : BaseActivity() {
     private fun searchUrl() {
         val url = binding.url.text.toString()
 
-        if( url.isEmpty()) {
+        if (url.isEmpty()) {
             Toast.makeText(this, R.string.url_empty, Toast.LENGTH_SHORT).show()
             viewModel.ogpData = null
             binding.isCheckedUrl = false
@@ -220,7 +232,7 @@ class InputInterestActivity : BaseActivity() {
         }
 
         JsoupService.getJsoupDocument(url, {
-            val ogpData = OgpData().apply{
+            val ogpData = OgpData().apply {
                 this.ogpUrl = url
                 this.ogpTitle = JsoupService._getTitle(it)
                 this.ogpImageUrl = JsoupService._getImage(it, url)
@@ -232,7 +244,11 @@ class InputInterestActivity : BaseActivity() {
             // プレビューダイアログ表示
             MaterialDialog(this).apply {
                 cancelable(true)
-                val dialogBinding = UrlPreviewDialogBinding.inflate(LayoutInflater.from(this@InputInterestActivity), null, false)
+                val dialogBinding = UrlPreviewDialogBinding.inflate(
+                    LayoutInflater.from(this@InputInterestActivity),
+                    null,
+                    false
+                )
                 dialogBinding.apply {
                     this.ogpData = ogpData
                     ogpImageView.setOnClickListener {
@@ -271,6 +287,7 @@ class InputInterestActivity : BaseActivity() {
                             binding.interestImageView.setImageDrawable(null)
                             binding.addImageButton.toggle(true)
                             viewModel.imageUri = null
+                            viewModel.isImageUpdate = true
                         }
 
                         else -> return@listItems
@@ -281,7 +298,11 @@ class InputInterestActivity : BaseActivity() {
 
     private fun showCreatedAtDialog() {
         MaterialDialog(this).apply {
-            val dateTimePickerDialogBinding = DateTimePickerDialogBinding.inflate(LayoutInflater.from(this@InputInterestActivity), null, false)
+            val dateTimePickerDialogBinding = DateTimePickerDialogBinding.inflate(
+                LayoutInflater.from(this@InputInterestActivity),
+                null,
+                false
+            )
             dateTimePickerDialogBinding.datePicker.maxDate = Date().time
             dateTimePickerDialogBinding.okButton.setOnClickListener {
                 val date = Calendar.getInstance().apply {
@@ -322,7 +343,7 @@ class InputInterestActivity : BaseActivity() {
         val data = viewModel.interestData
 
         // documentId
-        if (data.documentId.isEmpty())  data.documentId = UUID.randomUUID().toString()
+        if (data.documentId.isEmpty()) data.documentId = UUID.randomUUID().toString()
 
         // コメント
         data.comment = binding.comment.text.toString()
@@ -336,8 +357,42 @@ class InputInterestActivity : BaseActivity() {
         }
 
         // 画像
+        val imageFileName = "${System.currentTimeMillis()}.jpg"
+        // 新規モード：画像データ有り、更新モード：画像データ更新、の場合は設定
+        if (viewModel.isImageUpdate && viewModel.imageUri != null)
+            data.image = imageFileName
 
         // 登録日時は設定済
+
+        // FireStoreに登録
+        InterestStore.registerInterest(data) {
+
+            // 画像をFireStorageに登録
+            if (viewModel.isImageUpdate) {
+                // 更新モード(data.imageに値有り)
+                if (viewModel.isUpdateMode) {
+                    // 更新モードの場合、変更・削除、いづれも元画像削除
+                    FireStorageUtil.deleteInterestImage(data.image) {
+                        // 更新モード：変更
+                        viewModel.imageUri?.apply {
+                            // 変更画像登録
+                            FireStorageUtil.registInterestImage(imageFileName, this) {
+                            }
+                        }
+                    }
+                } else {
+                    // 新規モード
+                    viewModel.imageUri?.apply {
+                        // 画像登録
+                        FireStorageUtil.registInterestImage(imageFileName, this) {
+                        }
+                    }
+                }
+            }
+
+
+        }
+
     }
 
     companion object {

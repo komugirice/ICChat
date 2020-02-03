@@ -21,6 +21,7 @@ class FireStorageUtil {
         val ROOM_ICON_PATH = "roomIcon"
         val FILE_PATH = "file"
         val IMAGE_PATH = "image"
+        val INTEREST_PATH = "interest"
 
         /**
          * ユーザアイコン取得
@@ -246,5 +247,52 @@ class FireStorageUtil {
                 }
 
         }
+
+        /**
+         * 興味入力画面より画像登録
+         * @param fileName: String
+         * @param uri: Uri
+         * @param onSuccess
+         *
+         */
+        fun registInterestImage(fileName: String?, uri: Uri, onComplete: () -> Unit) {
+
+            if(fileName == null) onComplete.invoke()
+
+            FirebaseStorage.getInstance().reference.child("${INTEREST_PATH}/${UserManager.myUserId}/${IMAGE_PATH}/${fileName}")
+                .putFile(uri)
+                .addOnCompleteListener{
+                    onComplete.invoke()
+                }
+
+        }
+
+        /**
+         * 興味入力画面より画像削除
+         * @param fileName: String
+         * @param uri: Uri
+         * @param onSuccess
+         *
+         */
+        fun deleteInterestImage(fileName: String?, onSuccess: () -> Unit) {
+
+            if(fileName == null) onSuccess.invoke()
+
+            FirebaseStorage.getInstance().reference.child("${INTEREST_PATH}/${UserManager.myUserId}/${IMAGE_PATH}/${fileName}")
+                .delete()
+                .addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        onSuccess.invoke()
+                    } else {
+                        Timber.e(it.exception)
+                        Timber.d("registRoomMessageImage Failed")
+                        onSuccess.invoke()
+                    }
+                }
+
+
+        }
+
+
     }
 }

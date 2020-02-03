@@ -32,6 +32,24 @@ class InterestStore {
         }
 
         /**
+         * Interest登録
+         * (ログインユーザからのみ登録可能）
+         * @param interest
+         * @param onSuccess
+         *
+         */
+        fun registerInterest(interest: Interest, onSuccess: () -> Unit) {
+
+            FirebaseFirestore.getInstance()
+                .collection("$USERS/${UserManager.myUserId}/$INTERESTS")
+                .document(interest.documentId)
+                .set(interest)
+                .addOnSuccessListener {
+                    onSuccess.invoke()
+                }
+        }
+
+        /**
          * Interest登録（別サイトからIntent.ACTION_SEND）
          * (ログインユーザからのみ登録可能）
          * @param ogpData
