@@ -53,10 +53,10 @@ class ActionSendActivity: BaseActivity() {
             // ogp取得処理
             JsoupService.getJsoupDocument(this,{
                 ogpData = OgpData().apply{
-                    this.url = this@ActionSendActivity.url ?: ""
-                    this.title = JsoupService._getTitle(it)
-                    this.imageUrl = JsoupService._getImage(it, url)
-                    this.description = JsoupService._getDescription(it)
+                    this.ogpUrl = this@ActionSendActivity.url ?: ""
+                    this.ogpTitle = JsoupService._getTitle(it)
+                    this.ogpImageUrl = JsoupService._getImage(it, url.toString())
+                    this.ogpDescription = JsoupService._getDescription(it)
                 }
                 Timber.d(Gson().toJson(ogpData))
 

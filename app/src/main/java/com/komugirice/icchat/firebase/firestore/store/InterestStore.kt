@@ -40,13 +40,9 @@ class InterestStore {
          */
         fun registerInterestWithOgp(ogpData: OgpData, onSuccess: () -> Unit) {
 
-            val interest = Interest().apply{
+            val interest = Interest(ogpData).apply{
                 this.documentId = UUID.randomUUID().toString()
                 this.isOgp = true
-                this.ogpUrl = ogpData.url
-                this.ogpTitle = ogpData.title
-                this.ogpImageUrl = ogpData.imageUrl
-                this.ogpDescription = ogpData.description
             }
 
             FirebaseFirestore.getInstance()

@@ -8,10 +8,6 @@
         <import type="android.view.View" />
 
         <variable
-            name="ogpData"
-            type="com.komugirice.icchat.data.model.OgpData" />
-
-        <variable
             name="isSelectedImage"
             type="Boolean" />
 

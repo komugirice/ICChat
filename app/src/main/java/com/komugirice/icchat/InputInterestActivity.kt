@@ -57,7 +57,21 @@ class InputInterestActivity : BaseActivity() {
 
     private fun initViewModel() {
         viewModel = ViewModelProviders.of(this).get(InputInterestViewModel::class.java).apply {
+            // 更新モードの場合は、intentからデータが取得される。
+            intent.getSerializableExtra(KEY_INTEREST).also {
+                if (it is Interest && it.documentId.isNotEmpty()) {
+                    viewModel.interestData = it
 
+                    val data = viewModel.interestData
+                    // ogpデータ有りの場合、復元
+                    if(data.isOgp)
+                        ogpData = OgpData(data)
+                }
+            } ?: run {
+                // 新規モードの場合、登録日時に現在日時を設定
+                viewModel.interestData.createdAt = Date()
+
+            }
         }
     }
 
@@ -65,8 +79,9 @@ class InputInterestActivity : BaseActivity() {
     private fun initLayout(){
         // タイトル
         binding.header.titleTextView.text = getString(R.string.input_interest_activity_title)
+
         // 登録日時
-        binding.createdAt.text = "${DateFormat.format("yyyy年MM月dd日 hh時mm分", Date())}"
+        binding.createdAt.text = "${DateFormat.format("yyyy年MM月dd日 hh時mm分", viewModel.interestData.createdAt)}"
     }
 
     private fun initClick(){
@@ -101,6 +116,11 @@ class InputInterestActivity : BaseActivity() {
         // 登録日時
         binding.createdAt.setOnClickListener {
             showCreatedAtDialog()
+        }
+
+        // 登録ボタン
+        binding.saveButton.setOnClickListener{
+            registInterest()
         }
 
         binding.container.setOnClickListener {
@@ -150,7 +170,8 @@ class InputInterestActivity : BaseActivity() {
 
                 resultUri?.also {
                     Timber.d("画像URL：$it")
-
+                    
+                    viewModel.imageUri = it
                     Picasso.get().load(it).into(binding.interestImageView) // UIスレッド
                     binding.addImageButton.toggle(false)
 
@@ -193,19 +214,19 @@ class InputInterestActivity : BaseActivity() {
 
         if( url.isEmpty()) {
             Toast.makeText(this, R.string.url_empty, Toast.LENGTH_SHORT).show()
-            binding.ogpData = null
+            viewModel.ogpData = null
             binding.isCheckedUrl = false
             return
         }
 
         JsoupService.getJsoupDocument(url, {
             val ogpData = OgpData().apply{
-                this.url = url
-                this.title = JsoupService._getTitle(it)
-                this.imageUrl = JsoupService._getImage(it, url)
-                this.description = JsoupService._getDescription(it)
+                this.ogpUrl = url
+                this.ogpTitle = JsoupService._getTitle(it)
+                this.ogpImageUrl = JsoupService._getImage(it, url)
+                this.ogpDescription = JsoupService._getDescription(it)
             }
-            binding.ogpData = ogpData
+            viewModel.ogpData = ogpData
             binding.isCheckedUrl = true
 
             // プレビューダイアログ表示
@@ -225,6 +246,7 @@ class InputInterestActivity : BaseActivity() {
         }, {
             Timber.e(it)
             Toast.makeText(this, R.string.url_error, Toast.LENGTH_SHORT).show()
+            viewModel.ogpData = null
             binding.isCheckedUrl = false
         })
     }
@@ -248,6 +270,7 @@ class InputInterestActivity : BaseActivity() {
                         menuList.get(1).first -> {
                             binding.interestImageView.setImageDrawable(null)
                             binding.addImageButton.toggle(true)
+                            viewModel.imageUri = null
                         }
 
                         else -> return@listItems
@@ -270,10 +293,51 @@ class InputInterestActivity : BaseActivity() {
                 }.time
                 //Toast.makeText(this@InputInterestActivity, "${DateFormat.format("yyyy年MM月dd日 hh時mm分", date)}", Toast.LENGTH_SHORT).show()
                 binding.createdAt.text = "${DateFormat.format("yyyy年MM月dd日 hh時mm分", date)}"
+                viewModel.interestData.createdAt = date // 直に設定する
                 dismiss()
             }
             setContentView(dateTimePickerDialogBinding.root)
         }.show()
+    }
+
+    /**
+     * 登録ボタン押下でエラーチェック
+     */
+    private fun validateInputData() {
+        // URLチェック時、URLorコメントの必須チェック
+        // 画像チェック時、画像orコメントの必須チェック
+    }
+
+    /**
+     * 登録ボタン押下でプレビュー表示
+     */
+    private fun previewInputData() {
+
+    }
+
+    /**
+     * 入力された興味データを登録する。
+     */
+    private fun registInterest() {
+        val data = viewModel.interestData
+
+        // documentId
+        if (data.documentId.isEmpty())  data.documentId = UUID.randomUUID().toString()
+
+        // コメント
+        data.comment = binding.comment.text.toString()
+
+        // URL
+        viewModel.ogpData?.apply {
+            data.setOgpData(this)
+        } ?: run {
+            data.isOgp = false
+            data.setOgpData(OgpData())
+        }
+
+        // 画像
+
+        // 登録日時は設定済
     }
 
     companion object {
