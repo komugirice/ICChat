@@ -60,16 +60,16 @@ class InputInterestActivity : BaseActivity() {
             // 更新モードの場合は、intentからデータが取得される。
             intent.getSerializableExtra(KEY_INTEREST).also {
                 if (it is Interest && it.documentId.isNotEmpty()) {
-                    viewModel.interestData = it
+                    interestData = it
 
-                    val data = viewModel.interestData
+                    val data = interestData
                     // ogpデータ有りの場合、復元
                     if(data.isOgp)
                         ogpData = OgpData(data)
                 }
             } ?: run {
                 // 新規モードの場合、登録日時に現在日時を設定
-                viewModel.interestData.createdAt = Date()
+                interestData.createdAt = Date()
 
             }
         }
