@@ -127,10 +127,15 @@ class InputInterestActivity : BaseActivity() {
 
         // 登録ボタン
         binding.saveButton.setOnClickListener {
-            registInterest()
+            if(validateInputData())
+                registInterest()
         }
 
         binding.container.setOnClickListener {
+            hideKeybord(it)
+        }
+        // containerでは効かないので追加
+        binding.contents.setOnClickListener {
             hideKeybord(it)
         }
     }
@@ -324,15 +329,33 @@ class InputInterestActivity : BaseActivity() {
     /**
      * 登録ボタン押下でエラーチェック
      */
-    private fun validateInputData() {
+    private fun validateInputData(): Boolean {
+        val comment = binding.comment.text.toString()
+
         // URLチェック時、URLorコメントの必須チェック
+        if (binding.urlRadioButton.isChecked) {
+
+            if((binding.isCheckedUrl == null || binding.isCheckedUrl == false)
+                && comment.isEmpty()) {
+                Toast.makeText(this, R.string.regist_validate_error, Toast.LENGTH_SHORT).show()
+                return false
+            }
+        }
+
         // 画像チェック時、画像orコメントの必須チェック
+        if (binding.imageRadioButton.isChecked) {
+            if(binding.interestImageView.drawable == null && comment.isEmpty()) {
+                Toast.makeText(this, R.string.regist_validate_error, Toast.LENGTH_SHORT).show()
+                return false
+            }
+        }
+        return true
     }
 
     /**
      * 登録ボタン押下でプレビュー表示
      */
-    private fun previewInputData() {
+    private fun previewRegistData() {
 
     }
 
@@ -390,6 +413,8 @@ class InputInterestActivity : BaseActivity() {
                     }
                 }
             }
+            Toast.makeText(this, R.string.regist_complete, Toast.LENGTH_SHORT).show()
+            finish()
 
 
         }

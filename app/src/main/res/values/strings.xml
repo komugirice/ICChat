@@ -156,6 +156,8 @@
     <string name="url_error">入力されたURLは解析できませんでした</string>
     <string name="url_empty">URLが入力されていません</string>
     <string name="failed_ucrop">画像の加工に失敗しました</string>
+    <string name="regist_complete">登録が完了しました</string>
+    <string name="regist_validate_error">URL、画像、コメントのいづれかを入力してください</string>
 
     <string name="regist_zero">登録データが0件です</string>
     <!-- ダイアログ関係 -->
