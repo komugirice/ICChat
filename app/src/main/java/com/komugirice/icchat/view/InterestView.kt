@@ -39,6 +39,7 @@ class InterestView : RecyclerView {
     }
     class Adapter(val context: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         private val items = mutableListOf<InterestViewData>()
+        private var userId = ""
         private var isEditMode = true
 
         // スワイプ更新中に「検索結果が0件です」を出さない為の対応
@@ -57,6 +58,10 @@ class InterestView : RecyclerView {
         fun clear() {
             items.clear()
             notifyDataSetChanged()
+        }
+
+        fun updateUserId(newUserId: String) {
+            userId = newUserId
         }
 
         fun updateEditMode(isEdit: Boolean) {
@@ -137,6 +142,7 @@ class InterestView : RecyclerView {
         private fun onBindViewHolder(holder: InterestCellViewHolder, position: Int) {
             val data = items[position]
             holder.binding.interest = data.interest
+            holder.binding.userId = this.userId
             holder.binding.isLeft = position % 2 == 0
 
             holder.binding.root.setOnClickListener {

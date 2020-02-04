@@ -24,10 +24,12 @@ class InterestViewModel: ViewModel() {
     val isException = MutableLiveData<Throwable>()
 
     var userId: String = ""
+    var mutableUserId = MutableLiveData<String>()
     var isEditMode = MutableLiveData<Boolean>()
     private var interestListener: ListenerRegistration? = null
 
     fun initData() {
+
 
         // interest情報 昇順ソート済
         InterestStore.getInterests(userId) { interests ->
@@ -54,6 +56,7 @@ class InterestViewModel: ViewModel() {
         if (userId == newUserId)
             return
         userId = newUserId
+        mutableUserId.postValue(newUserId)
         // 編集モード
         isEditMode.postValue(UserManager.myUserId == userId)
 

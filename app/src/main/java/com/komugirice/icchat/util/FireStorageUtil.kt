@@ -249,6 +249,29 @@ class FireStorageUtil {
         }
 
         /**
+         * 興味画面の投稿画像を取得
+         * @param roomId: String
+         * @param fileName: String
+         * @param onSuccess
+         *
+         */
+        fun getInterestImage(userId: String, fileName: String, onSuccess: (Uri) -> Unit) {
+            FirebaseStorage.getInstance().reference.child("${INTEREST_PATH}/$userId/${IMAGE_PATH}/$fileName")
+                .downloadUrl
+                .addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        it.result?.apply {
+                            onSuccess.invoke(this)
+                        }
+                    } else {
+                        Timber.e(it.exception)
+                        Timber.d("getRoomMessageImage Failed")
+                    }
+                }
+
+        }
+
+        /**
          * 興味入力画面より画像登録
          * @param fileName: String
          * @param uri: Uri

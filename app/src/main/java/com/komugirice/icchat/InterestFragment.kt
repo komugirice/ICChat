@@ -14,6 +14,7 @@ import com.komugirice.icchat.interfaces.Update
 import com.komugirice.icchat.viewModel.InterestViewModel
 import kotlinx.android.synthetic.main.fragment_friend.swipeRefreshLayout
 import kotlinx.android.synthetic.main.fragment_interest.*
+import timber.log.Timber
 
 /**
  * A simple [Fragment] subclass.
@@ -42,12 +43,18 @@ class InterestFragment : Fragment(), Update {
                     swipeRefreshLayout.isRefreshing = false
                 }
             })
+            // userId
+            mutableUserId.observe(this@InterestFragment, Observer{
+                InterestView.customAdapter.updateUserId(it)
+            })
             // 編集モード
             isEditMode.observe(this@InterestFragment, Observer{
                 binding.isMyUser = it
                 InterestView.customAdapter.updateEditMode(it)
             })
+            // initDataでmutableLiveDataがnullになったので分離
             userId = arguments?.getString(KEY_USER_ID) ?: UserManager.myUserId
+            mutableUserId.postValue(arguments?.getString(KEY_USER_ID) ?: UserManager.myUserId)
             isEditMode.postValue(UserManager.myUserId == userId)
 
         }

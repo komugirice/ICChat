@@ -214,4 +214,20 @@ object ICChatUtil {
         }
     }
 
+    /**
+     * 興味データの画像を設定する
+     *
+     * @param url
+     *
+     */
+    @JvmStatic
+    @BindingAdapter("userIdForInterestImage", "interestImageFileName")
+    fun ImageView.loadInterestImage(userId: String?, fileName: String?) {
+        if(userId == null || fileName == null) return
+
+        FireStorageUtil.getInterestImage(userId, fileName){
+            Picasso.get().load(it).into(this)
+        }
+    }
+
 }

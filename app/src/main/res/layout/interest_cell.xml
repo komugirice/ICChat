@@ -12,6 +12,9 @@
             type="com.komugirice.icchat.firebase.firestore.model.Interest" />
 
         <variable
+            name="userId"
+            type="String" />
+        <variable
             name="isLeft"
             type="Boolean" />
     </data>
@@ -42,83 +45,110 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="4dp"
+            app:layout_constraintEnd_toStartOf="@+id/spaceRight"
             app:layout_constraintHorizontal_chainStyle="spread"
             app:layout_constraintHorizontal_weight="1"
             app:layout_constraintStart_toEndOf="@+id/spaceLeft"
-            app:layout_constraintEnd_toStartOf="@+id/spaceRight"
             app:layout_constraintTop_toTopOf="parent">
 
-            <ImageView
-                android:id="@+id/ogpImageView"
-                android:layout_width="180dp"
-                android:layout_height="135dp"
-                android:visibility="@{interest.isOgp == true ? View.VISIBLE : View.GONE}"
-                app:imageUrl="@{interest.ogpImageUrl}"
-                android:scaleType="centerCrop"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
-
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/ogpTitleLayout"
-                android:layout_width="0dp"
+                android:id="@+id/ogpWrapLayout"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@color/skype_gray"
-                android:paddingLeft="4dp"
-                android:paddingRight="4dp"
-                app:layout_constraintStart_toStartOf="@+id/ogpImageView"
-                app:layout_constraintEnd_toEndOf="@+id/ogpImageView"
-                app:layout_constraintTop_toBottomOf="@+id/ogpImageView">
+                android:visibility="@{interest.isOgp == true ? View.VISIBLE : View.GONE}"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-                <TextView
-                    android:id="@+id/ogpTitleTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@{interest.ogpTitle}"
-                    android:textColor="@android:color/black"
-                    android:textSize="15sp"
-                    android:ellipsize="end"
-                    android:maxLines="2"
-                    android:scrollHorizontally="true"
-                    android:paddingTop="4dp"
-                    android:visibility="@{interest.isOgp == true ? View.VISIBLE : View.GONE}"
+                <ImageView
+                    android:id="@+id/ogpImageView"
+                    android:layout_width="180dp"
+                    android:layout_height="135dp"
+                    android:scaleType="centerCrop"
+                    app:imageUrl="@{interest.ogpImageUrl}"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                    android:id="@+id/ogpDescriptionTextView"
-                    android:layout_width="wrap_content"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/ogpTitleLayout"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="@{interest.ogpDescription}"
-                    android:textColor="@android:color/black"
-                    android:textSize="12sp"
-                    android:paddingBottom="4dp"
-                    android:ellipsize="end"
-                    android:maxLines="2"
-                    android:scrollHorizontally="true"
-                    android:visibility="@{interest.isOgp == true ? View.VISIBLE : View.GONE}"
-                    app:layout_constraintEnd_toEndOf="@+id/ogpTitleTextView"
-                    app:layout_constraintStart_toStartOf="@+id/ogpTitleTextView"
-                    app:layout_constraintTop_toBottomOf="@+id/ogpTitleTextView" />
+                    android:background="@color/skype_gray"
+                    android:paddingLeft="4dp"
+                    android:paddingRight="4dp"
+                    app:layout_constraintEnd_toEndOf="@+id/ogpImageView"
+                    app:layout_constraintStart_toStartOf="@+id/ogpImageView"
+                    app:layout_constraintTop_toBottomOf="@+id/ogpImageView">
 
-                <TextView
-                    android:id="@+id/ogpUrlTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@{interest.ogpUrl}"
-                    android:textColor="@android:color/black"
-                    android:textSize="12sp"
-                    android:paddingBottom="4dp"
-                    android:ellipsize="end"
-                    android:maxLines="2"
-                    android:scrollHorizontally="true"
-                    android:visibility="@{interest.isOgp == true ? View.VISIBLE : View.GONE}"
-                    app:layout_constraintEnd_toEndOf="@+id/ogpDescriptionTextView"
-                    app:layout_constraintStart_toStartOf="@+id/ogpDescriptionTextView"
-                    app:layout_constraintTop_toBottomOf="@+id/ogpDescriptionTextView" />
+                    <TextView
+                        android:id="@+id/ogpTitleTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="2"
+                        android:paddingTop="4dp"
+                        android:scrollHorizontally="true"
+                        android:text="@{interest.ogpTitle}"
+                        android:textColor="@android:color/black"
+                        android:textSize="15sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
+                    <TextView
+                        android:id="@+id/ogpDescriptionTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="2"
+                        android:paddingBottom="4dp"
+                        android:scrollHorizontally="true"
+                        android:text="@{interest.ogpDescription}"
+                        android:textColor="@android:color/black"
+                        android:textSize="12sp"
+                        app:layout_constraintEnd_toEndOf="@+id/ogpTitleTextView"
+                        app:layout_constraintStart_toStartOf="@+id/ogpTitleTextView"
+                        app:layout_constraintTop_toBottomOf="@+id/ogpTitleTextView" />
+
+                    <TextView
+                        android:id="@+id/ogpUrlTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="2"
+                        android:paddingBottom="4dp"
+                        android:scrollHorizontally="true"
+                        android:text="@{interest.ogpUrl}"
+                        android:textColor="@android:color/black"
+                        android:textSize="12sp"
+                        app:layout_constraintEnd_toEndOf="@+id/ogpDescriptionTextView"
+                        app:layout_constraintStart_toStartOf="@+id/ogpDescriptionTextView"
+                        app:layout_constraintTop_toBottomOf="@+id/ogpDescriptionTextView" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="180dp"
+                android:layout_height="135dp"
+                android:scaleType="centerCrop"
+                app:userIdForInterestImage="@{userId}"
+                app:interestImageFileName="@{interest.image}"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ogpWrapLayout" />
+
+            <TextView
+                android:id="@+id/commentTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="12dp"
+                android:paddingTop="5dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="5dp"
+                android:text="@{interest.comment}"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
             <TextView
                 android:id="@+id/timeTextView"
@@ -128,9 +158,9 @@
                 android:gravity="end"
                 android:textColor="@android:color/black"
                 android:textSize="10sp"
-                app:time="@{interest.createdAt}"
-                app:layout_constraintEnd_toEndOf="@id/ogpTitleLayout"
-                app:layout_constraintTop_toBottomOf="@id/ogpTitleLayout" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/commentTextView"
+                app:time="@{interest.createdAt}" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
