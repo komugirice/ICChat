@@ -369,7 +369,11 @@ class InputInterestActivity : BaseActivity() {
         if (data.documentId.isEmpty()) data.documentId = UUID.randomUUID().toString()
 
         // コメント
-        data.comment = binding.comment.text.toString()
+        val comment = binding.comment.text.toString()
+        if(comment.isEmpty())
+            data.comment = null
+        else
+            data.comment = comment
 
         // URL
         viewModel.ogpData?.apply {
@@ -383,8 +387,11 @@ class InputInterestActivity : BaseActivity() {
         // 画像
         val imageFileName = "${System.currentTimeMillis()}.jpg"
         // 新規モード：画像データ有り、更新モード：画像データ更新、の場合は設定
-        if (viewModel.isImageUpdate && viewModel.imageUri != null)
+        if (viewModel.isImageUpdate && viewModel.imageUri != null) {
             data.image = imageFileName
+        } else if(viewModel.imageUri == null){
+            data.image = null
+        }
 
         // 登録日時は設定済
 

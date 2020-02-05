@@ -134,6 +134,7 @@
                 android:scaleType="centerCrop"
                 app:userIdForInterestImage="@{userId}"
                 app:interestImageFileName="@{interest.image}"
+                android:visibility="@{interest.image != null ? View.VISIBLE : View.GONE}"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/ogpWrapLayout" />
 
@@ -145,7 +146,9 @@
                 android:paddingTop="5dp"
                 android:paddingEnd="12dp"
                 android:paddingBottom="5dp"
+                android:background="@drawable/background_edit_text"
                 android:text="@{interest.comment}"
+                android:visibility="@{interest.comment != null ? View.VISIBLE : View.GONE}"
                 android:textSize="12sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/imageView" />
