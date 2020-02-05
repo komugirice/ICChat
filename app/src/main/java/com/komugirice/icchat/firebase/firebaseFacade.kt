@@ -259,7 +259,7 @@ object FirebaseFacade {
                 RequestStore.deleteGroupRequest(roomId, list ?: listOf()) {
 
                     // Room内Messageと, Messageに紐づくFile, FireStorageデータ削除
-                    deleteRoomMessges(roomId){
+                    deleteRoomMessages(roomId){
                         // 後処理
                         RoomManager.initRoomManager {
                             RequestManager.initMyGroupsRequests {
@@ -407,6 +407,13 @@ object FirebaseFacade {
         }
     }
 
+    /**
+     * チャット画面 メッセージ削除
+     * @param message
+     * @param fileInfo
+     * @param onSuccess
+     *
+     */
     fun deleteMessage(message: Message, fileInfo: FileInfo?, onSuccess: () -> Unit) {
         // message削除
         MessageStore.deleteMessage(message){
@@ -423,7 +430,13 @@ object FirebaseFacade {
         }
     }
 
-    fun deleteRoomMessges(roomId: String, onSuccess: () -> Unit){
+    /**
+     * ルームのメッセージ一括削除
+     * @param roomId
+     * @param onSuccess
+     *
+     */
+    fun deleteRoomMessages(roomId: String, onSuccess: () -> Unit){
         MessageStore.getMessages(roomId){messages->
             messages.forEach {
                 FileInfoStore.getFile(roomId, it.message, it.type){ file->
@@ -435,6 +448,25 @@ object FirebaseFacade {
                     }
                 }
             }
+
+        }
+    }
+
+    /**
+     * 興味データ削除
+     * (ログインユーザのみ可能なのでuserIdを引数に指定しない)
+     * @param interest
+     * @param onSuccess
+     *
+     */
+    fun deleteInterest(interest: Interest, onSuccess: () -> Unit) {
+        InterestStore.deleteInterest(interest){
+            if(interest.image != null)
+                FireStorageUtil.deleteInterestImage(interest.image){
+                    onSuccess.invoke()
+                }
+            else
+                onSuccess.invoke()
 
         }
     }

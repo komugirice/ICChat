@@ -6,9 +6,98 @@ import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import com.komugirice.icchat.R
+import com.komugirice.icchat.enums.MessageType
+import com.komugirice.icchat.firebase.firestore.manager.UserManager
+import com.komugirice.icchat.firebase.firestore.model.Message
+import com.komugirice.icchat.firebase.firestore.model.Room
+import com.komugirice.icchat.util.FireStorageUtil
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Transformation
 import timber.log.Timber
+
+
+/**
+ * xmlでImageViewに:imageUrlを設定すると画像が取得できる
+ *
+ * @param url
+ *
+ */
+@BindingAdapter("imageUrl")
+fun ImageView.loadImage(url: String?) {
+    Picasso.get().load(url).into(this)
+}
+
+/**
+ * ユーザアイコンを設定する
+ *
+ * @param userId
+ *
+ */
+@BindingAdapter("userIconImageUrl")
+fun ImageView.loadUserIconImage(userId: String?) {
+    if(userId == null) return
+    FireStorageUtil.getUserIconImage(userId) {
+        this.setRoundedImageView(it)
+    }
+}
+
+/**
+ * RoomFragmentにアイコン画像を設定する
+ *
+ * @param url
+ *
+ */
+@BindingAdapter("roomIconImageUrl")
+fun ImageView.loadRoomIconImage(room: Room?) {
+    if(room == null) return
+
+    this.setImageDrawable(null)
+
+    // シングルルームとグループルームで分岐
+    if(room.isGroup == false) {
+        // シングルルームの場合
+        val friendId  = room.userIdList.filter{ !it.equals(UserManager.myUserId) }.first()
+        FireStorageUtil.getUserIconImage(friendId) {
+            this.setRoundedImageView(it)
+        }
+    } else {
+        // グループルームの場合
+        FireStorageUtil.getGroupIconImage(room.documentId) {
+            this.setRoundedImageView(it)
+        }
+    }
+}
+
+/**
+ * メッセージの画像を設定する
+ *
+ * @param url
+ *
+ */
+@BindingAdapter("messageImageUrl")
+fun ImageView.loadMessageImage(message: Message) {
+    // 画像タイプ判定
+    if(!MessageType.getValue(message.type).isImage) return
+
+    FireStorageUtil.getRoomMessageImage(message){
+        Picasso.get().load(it).into(this)
+    }
+}
+
+/**
+ * 興味データの画像を設定する
+ *
+ * @param url
+ *
+ */
+@BindingAdapter("userIdForInterestImage", "interestImageFileName")
+fun ImageView.loadInterestImage(userId: String?, fileName: String?) {
+    if(userId == null || fileName == null) return
+
+    FireStorageUtil.getInterestImage(userId, fileName){
+        Picasso.get().load(it).into(this)
+    }
+}
 
 fun ImageView.setRoundedImageView(uri: Uri?) {
     if (uri == null) {
