@@ -72,5 +72,22 @@ class InterestStore {
                 }
         }
 
+        /**
+         * Interest削除
+         * (ログインユーザからのみ削除可能）
+         * @param interest
+         * @param onComplete
+         *
+         */
+        fun deleteInterest(interest: Interest, onComplete: () -> Unit) {
+            FirebaseFirestore.getInstance()
+                .collection("$USERS/${UserManager.myUserId}/$INTERESTS")
+                .document(interest.documentId)
+                .delete()
+                .addOnCompleteListener {
+                    onComplete.invoke()
+                }
+        }
+
     }
 }

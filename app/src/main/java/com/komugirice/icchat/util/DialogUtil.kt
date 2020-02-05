@@ -7,6 +7,7 @@ import android.widget.Toast
 import com.komugirice.icchat.R
 import com.komugirice.icchat.firebase.FirebaseFacade
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
+import com.komugirice.icchat.firebase.firestore.model.Interest
 import com.komugirice.icchat.firebase.firestore.model.Request
 import com.komugirice.icchat.firebase.firestore.model.Room
 import com.komugirice.icchat.firebase.firestore.store.UserStore
@@ -277,6 +278,32 @@ class DialogUtil {
                     .setNegativeButton(R.string.cancel, null)
                     .show()
             }
+        }
+
+        /**
+         * 興味削除確認ダイアログ
+         * @param context
+         * @param room
+         * @param onSuccess
+         *
+         */
+        fun confirmDeleteInterestDialog(context: Context, interest: Interest, onSuccess: () -> Unit) {
+            AlertDialog.Builder(context)
+                .setMessage(context.getString(R.string.confirm_delete))
+                .setPositiveButton("OK", object: DialogInterface.OnClickListener {
+                    override fun onClick(dialog: DialogInterface?, which: Int) {
+                        FirebaseFacade.deleteInterest(interest) {
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.delete_complete),
+                                Toast.LENGTH_LONG
+                            ).show()
+                            onSuccess.invoke()
+                        }
+                    }
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .show()
         }
 
     }

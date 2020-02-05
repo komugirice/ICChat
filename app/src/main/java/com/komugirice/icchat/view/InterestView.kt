@@ -15,6 +15,7 @@ import com.komugirice.icchat.R
 import com.komugirice.icchat.databinding.DateBorderCellBinding
 import com.komugirice.icchat.databinding.InterestCellBinding
 import com.komugirice.icchat.firebase.firestore.model.Interest
+import com.komugirice.icchat.util.DialogUtil
 import java.util.*
 
 class InterestView : RecyclerView {
@@ -174,6 +175,10 @@ class InterestView : RecyclerView {
                                         }
                                         menuList.get(1).first -> {
                                             // 削除
+                                            data.interest?.apply{
+                                                DialogUtil.confirmDeleteInterestDialog(context, this) {
+                                                }
+                                            }
                                         }
                                         else -> return@listItems
                                     }
