@@ -147,6 +147,7 @@
 
     <!-- InputInterestActivity -->
     <string name="input_interest_activity_title">興味入力</string>
+    <string name="input_interest_activity_date">yyyy年MM月dd日 hh時mm分</string>
     <string name="comment">コメント</string>
     <string name="image">画像</string>
     <string name="url">URL</string>

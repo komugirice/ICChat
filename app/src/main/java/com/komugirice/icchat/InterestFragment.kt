@@ -35,6 +35,10 @@ class InterestFragment : Fragment(), Update {
         binding = FragmentInterestBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = this
 
+        binding.InterestView.customAdapter.onClickCallBack = {
+            interestViewModel.initData()
+        }
+
         interestViewModel = ViewModelProviders.of(this).get(InterestViewModel::class.java).apply {
             // interest情報更新
             items.observe(this@InterestFragment, Observer {

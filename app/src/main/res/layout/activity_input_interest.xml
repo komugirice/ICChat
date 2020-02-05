@@ -8,6 +8,9 @@
         <import type="android.view.View" />
 
         <variable
+            name="interest"
+            type="com.komugirice.icchat.firebase.firestore.model.Interest" />
+        <variable
             name="isSelectedImage"
             type="Boolean" />
 
@@ -83,9 +86,11 @@
                             android:layout_height="wrap_content"
                             android:background="@drawable/edit_text_border"
                             android:gravity="left|center"
+                            android:paddingLeft="4dp"
                             android:hint="@string/url_hint"
                             android:maxLines="10"
                             android:minHeight="30dp"
+                            android:text="@{interest.ogpUrl}"
                             android:textSize="16sp"
                             app:layout_constraintEnd_toStartOf="@id/checkButton"
                             app:layout_constraintStart_toStartOf="parent"
@@ -178,6 +183,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:background="@drawable/edit_text_border"
+                    android:paddingLeft="4dp"
+                    android:text="@{interest.comment}"
                     android:gravity="left|center"
                     android:minHeight="30dp"
                     android:textSize="16sp"

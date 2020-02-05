@@ -39,6 +39,7 @@ class InterestView : RecyclerView {
         layoutManager = LinearLayoutManager(context)
     }
     class Adapter(val context: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+        lateinit var onClickCallBack: () -> Unit
         private val items = mutableListOf<InterestViewData>()
         private var userId = ""
         private var isEditMode = true
@@ -177,6 +178,7 @@ class InterestView : RecyclerView {
                                             // 削除
                                             data.interest?.apply{
                                                 DialogUtil.confirmDeleteInterestDialog(context, this) {
+                                                    onClickCallBack.invoke()
                                                 }
                                             }
                                         }

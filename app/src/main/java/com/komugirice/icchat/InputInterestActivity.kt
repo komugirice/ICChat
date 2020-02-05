@@ -30,6 +30,7 @@ import kotlinx.android.synthetic.main.activity_header.view.*
 import timber.log.Timber
 import java.io.File
 import java.util.*
+import kotlin.time.hours
 
 class InputInterestActivity : BaseActivity() {
 
@@ -64,6 +65,7 @@ class InputInterestActivity : BaseActivity() {
             intent.getSerializableExtra(KEY_INTEREST).also {
                 if (it is Interest && it.documentId.isNotEmpty()) {
                     interestData = it
+                    binding.interest = it
 
                     val data = interestData
                     // ogpデータ有りの場合、復元
@@ -88,7 +90,7 @@ class InputInterestActivity : BaseActivity() {
 
         // 登録日時
         binding.createdAt.text =
-            "${DateFormat.format("yyyy年MM月dd日 hh時mm分", viewModel.interestData.createdAt)}"
+            "${DateFormat.format(getString(R.string.input_interest_activity_date), viewModel.interestData.createdAt)}"
     }
 
     private fun initClick() {
@@ -308,7 +310,18 @@ class InputInterestActivity : BaseActivity() {
                 null,
                 false
             )
-            dateTimePickerDialogBinding.datePicker.maxDate = Date().time
+            // 初期値設定
+            val settingDate = viewModel.interestData.createdAt
+            dateTimePickerDialogBinding.datePicker.apply {
+                maxDate = Date().time
+                this.updateDate(settingDate.year, settingDate.month, settingDate.day)
+
+            }
+            dateTimePickerDialogBinding.timePicker.apply {
+                currentHour = settingDate.hours
+                currentMinute = settingDate.minutes
+            }
+
             dateTimePickerDialogBinding.okButton.setOnClickListener {
                 val date = Calendar.getInstance().apply {
                     set(Calendar.YEAR, dateTimePickerDialogBinding.datePicker.year)
@@ -318,8 +331,12 @@ class InputInterestActivity : BaseActivity() {
                     set(Calendar.MINUTE, dateTimePickerDialogBinding.timePicker.currentMinute)
                 }.time
                 //Toast.makeText(this@InputInterestActivity, "${DateFormat.format("yyyy年MM月dd日 hh時mm分", date)}", Toast.LENGTH_SHORT).show()
-                binding.createdAt.text = "${DateFormat.format("yyyy年MM月dd日 hh時mm分", date)}"
+                binding.createdAt.text =
+                    "${DateFormat.format(getString(R.string.input_interest_activity_date), date)}"
                 viewModel.interestData.createdAt = date // 直に設定する
+                dismiss()
+            }
+            dateTimePickerDialogBinding.cancelButton.setOnClickListener {
                 dismiss()
             }
             setContentView(dateTimePickerDialogBinding.root)
