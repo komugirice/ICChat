@@ -23,13 +23,13 @@ class InterestViewModel: ViewModel() {
     val items = MutableLiveData<List<InterestView.InterestViewData>>()
     val isException = MutableLiveData<Throwable>()
 
-    var userId: String = ""
     var mutableUserId = MutableLiveData<String>()
     var isEditMode = MutableLiveData<Boolean>()
     private var interestListener: ListenerRegistration? = null
 
     fun initData() {
 
+        val userId = mutableUserId.value ?: ""
 
         // interest情報 昇順ソート済
         InterestStore.getInterests(userId) { interests ->
@@ -53,12 +53,12 @@ class InterestViewModel: ViewModel() {
     }
 
     fun updateUserId(newUserId: String) {
-        if (userId == newUserId)
+        if (mutableUserId.value == newUserId)
             return
-        userId = newUserId
+        mutableUserId.value = newUserId
         mutableUserId.postValue(newUserId)
         // 編集モード
-        isEditMode.postValue(UserManager.myUserId == userId)
+        isEditMode.postValue(UserManager.myUserId == mutableUserId.value)
 
         initData()
     }
@@ -70,7 +70,7 @@ class InterestViewModel: ViewModel() {
     private fun initSubscribe(lastCreatedAt: Date) {
         interestListener = FirebaseFirestore
             .getInstance()
-            .collection("users/$userId/interests")
+            .collection("users/${mutableUserId.value}/interests")
             .orderBy(Interest::createdAt.name, Query.Direction.DESCENDING)
             .whereGreaterThan(Interest::createdAt.name, lastCreatedAt)
             .limit(1L)

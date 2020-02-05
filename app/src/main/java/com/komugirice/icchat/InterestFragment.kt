@@ -53,9 +53,9 @@ class InterestFragment : Fragment(), Update {
                 InterestView.customAdapter.updateEditMode(it)
             })
             // initDataでmutableLiveDataがnullになったので分離
-            userId = arguments?.getString(KEY_USER_ID) ?: UserManager.myUserId
-            mutableUserId.postValue(arguments?.getString(KEY_USER_ID) ?: UserManager.myUserId)
-            isEditMode.postValue(UserManager.myUserId == userId)
+            //userId = arguments?.getString(KEY_USER_ID) ?: UserManager.myUserId
+            mutableUserId.value = arguments?.getString(KEY_USER_ID) ?: UserManager.myUserId
+            isEditMode.postValue(UserManager.myUserId == mutableUserId.value)
 
         }
         return binding.root
@@ -83,7 +83,7 @@ class InterestFragment : Fragment(), Update {
 
     private fun initData(){
         // ユーザ名設定
-        nameTextView.text = UserManager.getTargetUser(interestViewModel.userId)?.name ?: ""
+        nameTextView.text = UserManager.getTargetUser(interestViewModel.mutableUserId.value ?: "")?.name ?: ""
     }
 
     private fun initClick() {
