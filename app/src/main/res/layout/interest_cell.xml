@@ -136,17 +136,19 @@
                 app:interestImageFileName="@{interest.image}"
                 android:visibility="@{interest.image != null ? View.VISIBLE : View.GONE}"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/ogpWrapLayout" />
+                app:layout_constraintTop_toBottomOf="@+id/ogpWrapLayout"
+                app:layout_constraintBottom_toTopOf="@+id/commentTextView"/>
 
             <TextView
                 android:id="@+id/commentTextView"
-                android:layout_width="wrap_content"
+                android:layout_width="180dp"
                 android:layout_height="wrap_content"
                 android:paddingStart="12dp"
                 android:paddingTop="5dp"
                 android:paddingEnd="12dp"
                 android:paddingBottom="5dp"
-                android:background="@drawable/background_edit_text"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/background_interest_comment"
                 android:text="@{interest.comment}"
                 android:visibility="@{interest.comment != null ? View.VISIBLE : View.GONE}"
                 android:textSize="12sp"
