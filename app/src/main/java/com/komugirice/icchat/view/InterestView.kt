@@ -1,11 +1,14 @@
 package com.komugirice.icchat.view
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
@@ -13,6 +16,7 @@ import com.afollestad.materialdialogs.list.listItems
 import com.komugirice.icchat.InputInterestActivity
 import com.komugirice.icchat.R
 import com.komugirice.icchat.databinding.DateBorderCellBinding
+import com.komugirice.icchat.databinding.ImageViewDialogBinding
 import com.komugirice.icchat.databinding.InterestCellBinding
 import com.komugirice.icchat.firebase.firestore.model.Interest
 import com.komugirice.icchat.util.DialogUtil
@@ -39,7 +43,8 @@ class InterestView : RecyclerView {
         layoutManager = LinearLayoutManager(context)
     }
     class Adapter(val context: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-        lateinit var onClickCallBack: () -> Unit
+        lateinit var onClickDeleteCallBack: () -> Unit
+        lateinit var onClickUrlCallBack: (uri: Uri) -> Unit
         private val items = mutableListOf<InterestViewData>()
         private var userId = ""
         private var isEditMode = true
@@ -147,8 +152,25 @@ class InterestView : RecyclerView {
             holder.binding.userId = this.userId
             holder.binding.isLeft = position % 2 == 0
 
-            holder.binding.root.setOnClickListener {
+            // URL記事クリック
+            holder.binding.ogpWrapLayout.setOnClickListener {
+                data.interest?.apply{
+                    onClickUrlCallBack.invoke(Uri.parse(this.ogpUrl))
+                }
+            }
 
+            // 画像クリック
+            holder.binding.imageView.setOnClickListener {
+                MaterialDialog(context).apply {
+                    cancelable(true)
+                    val dialogBinding = ImageViewDialogBinding.inflate(
+                        LayoutInflater.from(context),
+                        null,
+                        false
+                    )
+                    dialogBinding.imageView.setImageDrawable(holder.binding.imageView.drawable)
+                    setContentView(dialogBinding.root)
+                }.show()
             }
 
             // 長押し
@@ -178,7 +200,7 @@ class InterestView : RecyclerView {
                                             // 削除
                                             data.interest?.apply{
                                                 DialogUtil.confirmDeleteInterestDialog(context, this) {
-                                                    onClickCallBack.invoke()
+                                                    onClickDeleteCallBack.invoke()
                                                 }
                                             }
                                         }

@@ -1,6 +1,7 @@
 package com.komugirice.icchat
 
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,7 +15,6 @@ import com.komugirice.icchat.interfaces.Update
 import com.komugirice.icchat.viewModel.InterestViewModel
 import kotlinx.android.synthetic.main.fragment_friend.swipeRefreshLayout
 import kotlinx.android.synthetic.main.fragment_interest.*
-import timber.log.Timber
 
 /**
  * A simple [Fragment] subclass.
@@ -35,8 +35,14 @@ class InterestFragment : Fragment(), Update {
         binding = FragmentInterestBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = this
 
-        binding.InterestView.customAdapter.onClickCallBack = {
+        // 削除メニュー押下
+        binding.InterestView.customAdapter.onClickDeleteCallBack = {
             interestViewModel.initData()
+        }
+        // URL記事押下
+        binding.InterestView.customAdapter.onClickUrlCallBack = {
+            val intent = Intent(Intent.ACTION_VIEW, it)
+            startActivity(intent)
         }
 
         interestViewModel = ViewModelProviders.of(this).get(InterestViewModel::class.java).apply {

@@ -88,7 +88,6 @@ class InterestViewModel: ViewModel() {
                         it,
                         InterestView.VIEW_TYPE_INTEREST
                     ))
-                    // TODO 本日日付の追加
                     items.postValue(tmp)
                 }
             }
