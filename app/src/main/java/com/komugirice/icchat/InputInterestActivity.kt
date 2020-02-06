@@ -332,15 +332,16 @@ class InputInterestActivity : BaseActivity() {
                 false
             )
             // 初期値設定
-            val settingDate = viewModel.interestData.createdAt
+            val settingDate = Calendar.getInstance()
+            settingDate.time = viewModel.interestData.createdAt
             dateTimePickerDialogBinding.datePicker.apply {
                 maxDate = Date().time
-                updateDate(settingDate.year, settingDate.month, settingDate.day)
+                updateDate(settingDate.get(Calendar.YEAR), settingDate.get(Calendar.MONTH), settingDate.get(Calendar.DAY_OF_MONTH))
 
             }
             dateTimePickerDialogBinding.timePicker.apply {
-                currentHour = settingDate.hours
-                currentMinute = settingDate.minutes
+                currentHour = settingDate.get(Calendar.HOUR_OF_DAY)
+                currentMinute = settingDate.get(Calendar.MINUTE)
             }
 
             dateTimePickerDialogBinding.okButton.setOnClickListener {
@@ -351,7 +352,7 @@ class InputInterestActivity : BaseActivity() {
                     set(Calendar.HOUR_OF_DAY, dateTimePickerDialogBinding.timePicker.currentHour)
                     set(Calendar.MINUTE, dateTimePickerDialogBinding.timePicker.currentMinute)
                 }.time
-                //Toast.makeText(this@InputInterestActivity, "${DateFormat.format("yyyy年MM月dd日 hh時mm分", date)}", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(this@InputInterestActivity, "${DateFormat.format("yyyy年MM月dd日 HH時mm分", date)}", Toast.LENGTH_SHORT).show()
                 binding.createdAt.text =
                     "${DateFormat.format(getString(R.string.input_interest_activity_date), date)}"
                 viewModel.interestData.createdAt = date // 直に設定する
