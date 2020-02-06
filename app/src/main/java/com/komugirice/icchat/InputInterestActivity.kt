@@ -88,6 +88,7 @@ class InputInterestActivity : BaseActivity() {
                                 FireStorageUtil.getInterestImage(UserManager.myUserId, this){
                                     Picasso.get().load(it).into(binding.interestImageView) // UIスレッド
                                     binding.addImageButton.toggle(false)
+                                    viewModel.imageUri = it // これを設定しないと画像が消えるので注意
                                 }
                             }
                         }
