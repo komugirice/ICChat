@@ -19,6 +19,7 @@ import com.komugirice.icchat.databinding.ActivityInputInterestBinding
 import com.komugirice.icchat.databinding.DateTimePickerDialogBinding
 import com.komugirice.icchat.databinding.UrlPreviewDialogBinding
 import com.komugirice.icchat.extension.toggle
+import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.firebase.firestore.model.Interest
 import com.komugirice.icchat.firebase.firestore.store.InterestStore
 import com.komugirice.icchat.services.JsoupService
@@ -67,13 +68,33 @@ class InputInterestActivity : BaseActivity() {
                     interestData = it
                     binding.interest = it
 
-                    val data = interestData
-                    // ogpデータ有りの場合、復元
-                    if (data.isOgp)
-                        ogpData = OgpData(data)
-
                     // 更新モードON
                     isUpdateMode = true
+
+                    interestData.apply{
+
+                        if (this.isOgp) {
+                            binding.urlRadioButton.isChecked = true
+                            binding.isCheckedUrl = true
+                            // ogp設定
+                            ogpData = OgpData(this)
+                        } else {
+                            //画像設定
+                            this.image?.apply{
+                                // 画像有りの場合（コメントだけのデータはURLにチェックしたいので）
+                                binding.imageRadioButton.isChecked = true
+                                binding.isSelectedImage = true
+
+                                FireStorageUtil.getInterestImage(UserManager.myUserId, this){
+                                    Picasso.get().load(it).into(binding.interestImageView) // UIスレッド
+                                    binding.addImageButton.toggle(false)
+                                }
+                            }
+                        }
+
+
+                    }
+
                 }
             } ?: run {
                 // 新規モードの場合、登録日時に現在日時を設定
@@ -314,7 +335,7 @@ class InputInterestActivity : BaseActivity() {
             val settingDate = viewModel.interestData.createdAt
             dateTimePickerDialogBinding.datePicker.apply {
                 maxDate = Date().time
-                this.updateDate(settingDate.year, settingDate.month, settingDate.day)
+                updateDate(settingDate.year, settingDate.month, settingDate.day)
 
             }
             dateTimePickerDialogBinding.timePicker.apply {
