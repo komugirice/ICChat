@@ -152,27 +152,6 @@ class InterestView : RecyclerView {
             holder.binding.userId = this.userId
             holder.binding.isLeft = position % 2 == 0
 
-            // URL記事クリック
-            holder.binding.ogpWrapLayout.setOnClickListener {
-                data.interest?.apply{
-                    onClickUrlCallBack.invoke(Uri.parse(this.ogpUrl))
-                }
-            }
-
-            // 画像クリック
-            holder.binding.imageView.setOnClickListener {
-                MaterialDialog(context).apply {
-                    cancelable(true)
-                    val dialogBinding = ImageViewDialogBinding.inflate(
-                        LayoutInflater.from(context),
-                        null,
-                        false
-                    )
-                    dialogBinding.imageView.setImageDrawable(holder.binding.imageView.drawable)
-                    setContentView(dialogBinding.root)
-                }.show()
-            }
-
             // 長押し
             holder.binding.root.setOnLongClickListener(object: View.OnLongClickListener {
 
@@ -212,6 +191,28 @@ class InterestView : RecyclerView {
                     return true
                 }
             })
+
+            // URL記事クリック
+            holder.binding.ogpWrapLayout.setOnClickListener {
+                data.interest?.apply{
+                    onClickUrlCallBack.invoke(Uri.parse(this.ogpUrl))
+                }
+            }
+
+            // 画像クリック
+            holder.binding.imageView.setOnClickListener {
+                // 画像プレビュー表示
+                MaterialDialog(context).apply {
+                    cancelable(true)
+                    val dialogBinding = ImageViewDialogBinding.inflate(
+                        LayoutInflater.from(context),
+                        null,
+                        false
+                    )
+                    dialogBinding.imageView.setImageDrawable(holder.binding.imageView.drawable)
+                    setContentView(dialogBinding.root)
+                }.show()
+            }
         }
 
         /**
