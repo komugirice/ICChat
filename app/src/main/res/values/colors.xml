@@ -196,4 +196,5 @@
     <!-- 機能別 -->
     <color name="icchat_backgroud_color">@color/white</color>
     <color name="interest_selected_color">@color/lavender</color>
+    <color name="interest_add_button">#E00099cc</color>
 </resources>

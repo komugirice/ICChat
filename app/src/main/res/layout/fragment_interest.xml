@@ -66,14 +66,14 @@
 
             <Button
                 android:id="@+id/inputButton"
-                android:layout_width="48dp"
+                android:layout_width="64dp"
                 android:layout_height="48dp"
                 android:layout_marginBottom="8dp"
                 android:elevation="10dp"
                 android:text="@string/add_button"
-                android:textSize="14dp"
+                android:textSize="16dp"
                 android:textColor="@color/white"
-                android:background="@drawable/background_radius_button"
+                android:background="@drawable/background_interest_add_button"
                 android:visibility="@{isMyUser == true ? View.VISIBLE : View.GONE}"
                 app:layout_constraintBottom_toBottomOf="@+id/swipeRefreshLayout"
                 app:layout_constraintEnd_toEndOf="parent"
