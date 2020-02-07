@@ -109,7 +109,6 @@ class InterestView : RecyclerView {
                 )
             } else if(viewType == VIEW_TYPE_DATE) {
                 // 日付セル
-                //if(viewType == VIEW_TYPE_DATE) {
                 return DateBorderCellViewHolder(
                     DateBorderCellBinding.inflate(
                         LayoutInflater.from(context),
@@ -117,7 +116,6 @@ class InterestView : RecyclerView {
                         false
                     )
                 )
-                    //}
             } else {
                 // Emptyセル
                 return EmptyViewHolder(LayoutInflater.from(context)
@@ -153,7 +151,7 @@ class InterestView : RecyclerView {
             holder.binding.isLeft = position % 2 == 0
 
             // 長押し
-            holder.binding.root.setOnLongClickListener(object: View.OnLongClickListener {
+            holder.binding.longClickView.setOnLongClickListener(object: View.OnLongClickListener {
 
                 override fun onLongClick(v: View?): Boolean {
 
