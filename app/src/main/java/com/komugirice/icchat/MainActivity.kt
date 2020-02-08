@@ -278,6 +278,10 @@ class MainActivity : BaseActivity() {
                         ProfileSettingActivity.start(this@MainActivity)
                         return true
                     }
+                    R.id.change_password -> {
+                        ChangePasswordActivity.start(this@MainActivity)
+                        return true
+                    }
                     R.id.logout_setting -> {
                         AlertDialog.Builder(this@MainActivity)
                             .setMessage(getString(R.string.confirm_logout))
