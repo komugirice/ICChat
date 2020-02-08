@@ -8,7 +8,7 @@ import androidx.databinding.DataBindingUtil
 import com.komugirice.icchat.databinding.ActivityChangePasswordBinding
 import kotlinx.android.synthetic.main.activity_header.view.*
 
-class ChangePasswordActivity : AppCompatActivity() {
+class ChangePasswordActivity : BaseActivity() {
 
     private lateinit var binding: ActivityChangePasswordBinding
 
@@ -46,6 +46,13 @@ class ChangePasswordActivity : AppCompatActivity() {
         // 戻るボタン
         binding.backButton.setOnClickListener {
             finish()
+        }
+
+        binding.root.setOnClickListener {
+            hideKeybord(it)
+        }
+        binding.contents.setOnClickListener {
+            hideKeybord(it)
         }
     }
 

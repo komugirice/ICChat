@@ -40,6 +40,7 @@ import com.komugirice.icchat.util.FcmUtil
 import kotlinx.android.synthetic.main.activity_create_user.*
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.activity_login.container
+import kotlinx.android.synthetic.main.activity_send_password.*
 import timber.log.Timber
 
 
@@ -289,8 +290,13 @@ class LoginActivity : BaseActivity() {
         container.setOnClickListener {
             hideKeybord(it)
         }
+        // ユーザ新規作成
         createUserTextView.setOnClickListener {
             CreateUserActivity.start(this)
+        }
+        // パスワードを忘れた方へ
+        SendPasswordActivityTextView.setOnClickListener{
+            SendPasswordActivity.start(this)
         }
     }
 

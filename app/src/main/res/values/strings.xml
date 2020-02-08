@@ -7,6 +7,7 @@
     <string name="search_button">検索</string>
     <string name="add_button">追加</string>
     <string name="back_button">戻る</string>
+    <string name="send_button">送信</string>
     <string name="failed_regist">登録に失敗しました</string>
     <string name="ok">OK</string>
     <string name="cancel">キャンセル</string>
@@ -167,6 +168,11 @@
     <string name="current_password_label">現在のパスワード</string>
     <string name="new_password_label">新パスワード</string>
     <string name="new_password_confirm_label">新パスワード（確認用）</string>
+
+    <!-- SendPasswordActivity -->
+    <string name="send_password_activity_title">パスワードを忘れた方へ</string>
+    <string name="send_password_info">※メールアドレスと誕生日を入力し、送信ボタンを押して下さい</string>
+
 
     <!-- ダイアログ関係 -->
     <string name="confirm_add_friend">ユーザを友だち登録しますか？</string>
