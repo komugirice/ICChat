@@ -12,7 +12,6 @@
     <string name="error">エラー</string>
 
     <!-- ログイン画面 -->
-    <string name="app_name">ICChat</string>
     <string name="title_activity_login">ログイン</string>
     <string name="prompt_email">メールアドレス</string>
     <string name="prompt_password">パスワード</string>

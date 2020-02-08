@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "514323271426",
+    "firebase_url": "https://icchat-pro.firebaseio.com",
+    "project_id": "icchat-pro",
+    "storage_bucket": "icchat-pro.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:514323271426:android:c8b22b5e8117f0d167fc1b",
+        "android_client_info": {
+          "package_name": "com.komugirice.icchat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "514323271426-93o3f47foqjm1246vi8v1obbufgham48.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAy0gFBfn6h4z6aFdnLa4ob0rqN6Hn3690"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "514323271426-93o3f47foqjm1246vi8v1obbufgham48.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
