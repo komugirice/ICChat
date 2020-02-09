@@ -165,9 +165,12 @@
 
     <!-- ChangePasswordActivity -->
     <string name="change_password_activity_title">パスワード変更</string>
-    <string name="current_password_label">現在のパスワード</string>
     <string name="new_password_label">新パスワード</string>
     <string name="new_password_confirm_label">新パスワード（確認用）</string>
+    <string name="invalid_input">%1$sを入力して下さい</string>
+    <string name="invalid_match_input">%1$sが一致していません</string>
+    <string name="success_change_password">パスワードを変更しました</string>
+    <string name="failed_change_password">パスワードの変更に失敗しました</string>
 
     <!-- SendPasswordActivity -->
     <string name="send_password_activity_title">パスワードを忘れた方へ</string>

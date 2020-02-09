@@ -96,13 +96,16 @@
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
-                        <Button
+                        <TextView
                             android:id="@+id/checkButton"
                             android:layout_width="wrap_content"
-                            android:layout_height="30dp"
+                            android:layout_height="wrap_content"
                             android:layout_marginLeft="4dp"
-                            android:background="@color/yellow"
+                            android:background="@drawable/background_button_gradation_yellow"
+                            android:gravity="center"
                             android:text="チェック"
+                            android:textAlignment="center"
+                            android:textColor="@color/black"
                             android:textSize="12sp"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toEndOf="@+id/url"
@@ -227,12 +230,18 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/createdAt" />
 
-                <Button
+                <TextView
                     android:id="@+id/saveButton"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:text="@string/create_button"
+                    android:textColor="@color/white"
+                    android:gravity="center"
+                    android:shadowDx="2.0"
+                    android:shadowDy="2.0"
+                    android:shadowRadius="-2.0"
+                    android:background="@drawable/background_button_gradation_blue"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/createdAtLine" />
