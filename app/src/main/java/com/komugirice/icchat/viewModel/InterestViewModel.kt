@@ -74,6 +74,7 @@ class InterestViewModel: ViewModel() {
         interestListener = FirebaseFirestore
             .getInstance()
             .collection("users/${mutableUserId.value}/interests")
+            .whereEqualTo(Interest::delFlg.name, false)
             .orderBy(Interest::createdAt.name, Query.Direction.DESCENDING)
             .whereGreaterThan(Interest::createdAt.name, lastCreatedAt)
             .limit(1L)
