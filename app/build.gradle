@@ -89,6 +89,8 @@ dependencies {
     implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofit_version"
     // htmlスクレイピング
     implementation 'org.jsoup:jsoup:1.12.1'
+    // 動画
+    implementation "com.airbnb.android:lottie:$lottieVersion"
 }
 
 apply plugin: 'com.google.gms.google-services'
