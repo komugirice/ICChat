@@ -32,10 +32,12 @@ class InterestViewModel: ViewModel() {
         val userId = mutableUserId.value ?: ""
         this.isNonMove = isNonMove
 
-        // interest情報 昇順ソート済
+        // interest情報
         InterestStore.getInterests(userId) { interests ->
+            // 昇順ソート
+            val tmpInterests = interests.sortedBy { it.createdAt }
             // InterestViewData作成
-            val list = createInterestViewData(interests)
+            val list = createInterestViewData(tmpInterests)
             items.postValue(list)
 
             // 監視

@@ -22,12 +22,17 @@ class InterestStore {
         fun getInterests(userId: String, onSuccess: (List<Interest>) -> Unit) {
             FirebaseFirestore.getInstance()
                 .collection("$USERS/$userId/$INTERESTS")
-                .orderBy(Interest::createdAt.name, Query.Direction.ASCENDING)
+                .whereEqualTo(Interest::delFlg.name, false)
                 .get()
-                // 必ず成功する。interestsが作られて無くても成功する。
-                .addOnSuccessListener {
-                    val interests = it.toObjects(Interest::class.java)
-                    onSuccess.invoke(interests)
+                .addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        it.result?.toObjects(Interest::class.java)?.also {
+                            onSuccess.invoke(it)
+                        }
+                    } else {
+                        // 0件の場合はこっち
+                        onSuccess.invoke(mutableListOf())
+                    }
                 }
         }
 
@@ -73,17 +78,19 @@ class InterestStore {
         }
 
         /**
-         * Interest削除
+         * Interest削除（論理削除）
          * (ログインユーザからのみ削除可能）
          * @param interest
          * @param onComplete
          *
          */
         fun deleteInterest(interest: Interest, onComplete: () -> Unit) {
+            // 削除フラグON
+            interest.delFlg = true
             FirebaseFirestore.getInstance()
                 .collection("$USERS/${UserManager.myUserId}/$INTERESTS")
                 .document(interest.documentId)
-                .delete()
+                .set(interest)
                 .addOnCompleteListener {
                     onComplete.invoke()
                 }

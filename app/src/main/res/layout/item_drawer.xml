@@ -18,7 +18,7 @@
             android:id="@+id/headerView"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:background="#008577"
+            android:background="@color/colorPrimary"
             app:layout_constraintDimensionRatio="11:9"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
