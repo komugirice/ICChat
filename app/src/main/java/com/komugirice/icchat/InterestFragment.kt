@@ -3,6 +3,7 @@ package com.komugirice.icchat
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,6 +24,7 @@ class InterestFragment : Fragment(), Update {
 
     private lateinit var binding: FragmentInterestBinding
     private lateinit var interestViewModel: InterestViewModel
+    private val handler = Handler()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,11 +38,11 @@ class InterestFragment : Fragment(), Update {
         binding.lifecycleOwner = this
 
         // 削除メニュー押下
-        binding.InterestView.customAdapter.onClickDeleteCallBack = {
-            interestViewModel.initData()
+        binding.interestView.customAdapter.onClickDeleteCallBack = {
+            interestViewModel.initData(isNonMove = true)
         }
         // URL記事押下
-        binding.InterestView.customAdapter.onClickUrlCallBack = {
+        binding.interestView.customAdapter.onClickUrlCallBack = {
             val intent = Intent(Intent.ACTION_VIEW, it)
             startActivity(intent)
         }
@@ -49,18 +51,23 @@ class InterestFragment : Fragment(), Update {
             // interest情報更新
             items.observe(this@InterestFragment, Observer {
                 binding.apply {
-                    InterestView.customAdapter.refresh(it)
+                    interestView.customAdapter.refresh(it)
+                    // 一番下へ移動
+                    if (!interestViewModel.isNonMove)
+                        handler.postDelayed({
+                            interestView.scrollToPosition(interestView.customAdapter.itemCount - 1)
+                        }, 500L)
                     swipeRefreshLayout.isRefreshing = false
                 }
             })
             // userId
             mutableUserId.observe(this@InterestFragment, Observer{
-                InterestView.customAdapter.updateUserId(it)
+                interestView.customAdapter.updateUserId(it)
             })
             // 編集モード
             isEditMode.observe(this@InterestFragment, Observer{
                 binding.isMyUser = it
-                InterestView.customAdapter.updateEditMode(it)
+                interestView.customAdapter.updateEditMode(it)
             })
             // initDataでmutableLiveDataがnullになったので分離
             //userId = arguments?.getString(KEY_USER_ID) ?: UserManager.myUserId
