@@ -99,8 +99,8 @@ class ProfileSettingActivity : AppCompatActivity() {
     private fun initLayout() {
         val myUser = UserManager.myUser
         email.text = myUser.email
-        userName.text = if(myUser.name.isNotEmpty()) myUser.name else "設定なし"
-        birthDay.text = myUser.birthDay?.getDateToString() ?: "設定なし"
+        userName.text = if(myUser.name.isNotEmpty()) myUser.name else getString(R.string.no_setting)
+        birthDay.text = myUser.birthDay?.getDateToString() ?: getString(R.string.no_setting)
     }
 
     private fun initData(){
@@ -192,7 +192,7 @@ class ProfileSettingActivity : AppCompatActivity() {
             override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
                 updateBirthDay(year, month, dayOfMonth)
             }
-        }, 2000, 1, 1)
+        }, 2000, 0, 1)
         dialog.show()
     }
 
