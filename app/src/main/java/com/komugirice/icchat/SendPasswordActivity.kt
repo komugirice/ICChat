@@ -72,7 +72,7 @@ class SendPasswordActivity : BaseActivity() {
             validateSend()
             isValid.observe(this, Observer{
                 // メール送信
-                //sendPasswordMail()
+                sendPasswordMail()
                 finish()
             })
         }
@@ -87,23 +87,29 @@ class SendPasswordActivity : BaseActivity() {
 
     private fun validateSend() {
         val inputMail = binding.mailEditText.text.toString()
-        var timestamp: Timestamp? = null
-        inputBirthDay?.apply{
-            timestamp = Timestamp(inputBirthDay?.time ?: 0)
-        }
+//        var timestamp: Timestamp? = null
+//        inputBirthDay?.apply{
+//            timestamp = Timestamp(inputBirthDay?.time ?: 0)
+//        }
         FirebaseFirestore.getInstance()
             .collection("${UserStore.USERS}")
             .whereEqualTo(User::email.name, inputMail)
-            .whereEqualTo(User::birthDay.name, timestamp)
+            //.whereEqualTo(User::birthDay.name, timestamp)
             .limit(1L)
             .get()
             .addOnCompleteListener {
                 if (it.isSuccessful) {
                     it.result?.toObjects(User::class.java)?.firstOrNull().also {
                         it?.also {
-                            isValid.value = true
-                            return@addOnCompleteListener
-
+                            val targetDate = it.birthDay
+                            // 誕生日一致チェック
+                            if(
+                                (targetDate == null && inputBirthDay == null) ||
+                                targetDate?.getDateToString() == inputBirthDay?.getDateToString()
+                            ) {
+                                isValid.value = true
+                                return@addOnCompleteListener
+                            }
                         }
                     }
                 }
@@ -144,7 +150,6 @@ class SendPasswordActivity : BaseActivity() {
         }, 2000, 0, 1)
         dialog.show()
     }
-
 
     companion object {
         fun start(activity: Activity?) =
