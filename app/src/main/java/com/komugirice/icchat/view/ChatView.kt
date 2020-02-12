@@ -11,9 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItems
 import com.komugirice.icchat.R
-import com.komugirice.icchat.databinding.ChatMessageLeftCellBinding
-import com.komugirice.icchat.databinding.ChatMessageRightCellBinding
-import com.komugirice.icchat.databinding.ChatMessageSystemCellBinding
+import com.komugirice.icchat.databinding.*
 import com.komugirice.icchat.enums.MessageType
 import com.komugirice.icchat.firebase.FirebaseFacade
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
@@ -57,15 +55,6 @@ class ChatView : RecyclerView {
             notifyDataSetChanged()
         }
 
-//        fun setUsers(list: List<User>) {
-//            val map = list.map { it.userId to it }.toMap()
-//            usersMap.apply {
-//                clear()
-//                putAll(map)
-//            }
-//            notifyDataSetChanged()
-//        }
-
         override fun getItemCount(): Int = items.size
 
         /**
@@ -80,6 +69,8 @@ class ChatView : RecyclerView {
             val file = items[position].second
             return if (message.type == MessageType.SYSTEM.id) {
                 VIEW_TYPE_SYSTEM
+            } else if (message.type == MessageType.DATE.id) {
+                VIEW_TYPE_DATE
             } else if (message.userId.equals(UserManager.myUserId)) {
                 VIEW_TYPE_LOGIN_USER
             } else
@@ -117,10 +108,24 @@ class ChatView : RecyclerView {
                         }
                     })
                 }
-                // VIEW_TYPE_SYSTEM
-                else -> {
+                VIEW_TYPE_SYSTEM -> {
                     holder = ChatMessageSystemCellViewHolder(
                         ChatMessageSystemCellBinding.inflate(
+                            LayoutInflater.from(context),
+                            parent,
+                            false
+                        )
+                    )
+                    holder.binding.root.setOnClickListener(object : View.OnClickListener {
+                        override fun onClick(v: View?) {
+                            hideKeyboard(v)
+                        }
+                    })
+                }
+                // VIEW_TYPE_DATE
+                else -> {
+                    holder = ChatMessageDateCellViewHolder(
+                        ChatMessageDateCellBinding.inflate(
                             LayoutInflater.from(context),
                             parent,
                             false
@@ -143,6 +148,8 @@ class ChatView : RecyclerView {
                 onBindOtherUserViewHolder(holder, position)
             else if (holder is ChatMessageSystemCellViewHolder)
                 onBindSystemViewHolder(holder, position)
+            else if (holder is ChatMessageDateCellViewHolder)
+                onBindDateViewHolder(holder, position)
         }
 
         /**
@@ -243,12 +250,24 @@ class ChatView : RecyclerView {
         }
 
         /**
+         * 日付用
+         *
+         * @param holder
+         * @param position
+         */
+        private fun onBindDateViewHolder(holder: ChatMessageDateCellViewHolder, position: Int) {
+            val message = items[position].first
+            holder.binding.date = message.createdAt
+        }
+
+
+        /**
          * hideKeyboard
          *
          * @param v: View?
          */
         private fun hideKeyboard(v: View?) {
-            (v?.getContext()?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).hideSoftInputFromWindow(
+            (v?.context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).hideSoftInputFromWindow(
                 v.windowToken,
                 InputMethodManager.HIDE_NOT_ALWAYS
             )
@@ -265,10 +284,14 @@ class ChatView : RecyclerView {
     class ChatMessageSystemCellViewHolder(val binding: ChatMessageSystemCellBinding) :
         RecyclerView.ViewHolder(binding.root)
 
+    class ChatMessageDateCellViewHolder(val binding: ChatMessageDateCellBinding) :
+        RecyclerView.ViewHolder(binding.root)
+
 
     companion object {
         private const val VIEW_TYPE_LOGIN_USER = 0
         private const val VIEW_TYPE_OTHER_USER = 1
         private const val VIEW_TYPE_SYSTEM = 2
+        private const val VIEW_TYPE_DATE = 3
     }
 }

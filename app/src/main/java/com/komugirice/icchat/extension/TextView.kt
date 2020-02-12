@@ -39,7 +39,19 @@ fun TextView.getDateTime(dateTime: Date?) {
 fun TextView.getDateJp(dateTime: Date?) {
     if (dateTime == null) return
 
-    this.text = "${dateTime.getJPDateToString()}(${CommonUtil.getDayOfWeek(dateTime)})"
+    val today = Calendar.getInstance().time
+    val yesterday = Calendar.getInstance().run{
+            add(Calendar.DAY_OF_MONTH, -1)
+            time
+        }
+
+    if(today.getDateToString() == dateTime.getDateToString()) {
+        this.text = "今日(${CommonUtil.getDayOfWeek(dateTime)})"
+    } else if(yesterday.getDateToString() == dateTime.getDateToString()) {
+        this.text = "昨日(${CommonUtil.getDayOfWeek(dateTime)})"
+    } else {
+        this.text = "${dateTime.getJPDateToString()}(${CommonUtil.getDayOfWeek(dateTime)})"
+    }
 }
 
 /**

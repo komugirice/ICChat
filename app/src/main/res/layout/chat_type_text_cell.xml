@@ -67,7 +67,7 @@
                 android:gravity="end"
                 android:textColor="@android:color/black"
                 android:textSize="10sp"
-                app:dateTime="@{message.createdAt}"
+                app:time="@{message.createdAt}"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/messageTextView" />
 

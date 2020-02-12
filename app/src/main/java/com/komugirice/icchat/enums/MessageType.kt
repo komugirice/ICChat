@@ -5,7 +5,8 @@ enum class MessageType(val id: Int) {
     IMAGE(1),
     FILE(2),
     QUOTE(3),
-    SYSTEM(4);
+    SYSTEM(4),
+    DATE(5);
 
     companion object {
 
@@ -27,4 +28,7 @@ enum class MessageType(val id: Int) {
 
     val isSystem: Boolean
     get() = this == SYSTEM
+
+    val isDate: Boolean
+        get() = this == DATE
 }
