@@ -132,6 +132,8 @@ dependencies {
     implementation 'org.jsoup:jsoup:1.12.1'
     //　viewpager2
     implementation "androidx.viewpager2:viewpager2:1.0.0"
+    // EventBus
+    implementation 'org.greenrobot:eventbus:3.2.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

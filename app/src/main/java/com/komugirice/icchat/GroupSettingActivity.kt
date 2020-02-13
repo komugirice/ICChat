@@ -212,7 +212,7 @@ class GroupSettingActivity : BaseActivity() {
                     viewModel._requestUser.add(it)
                 }
                 // 未加入、招待中
-                if(beRequesteds?.contains(it.userId) ?: false) {
+                if(beRequesteds?.contains(it.userId) == true) {
                     checkBox.isChecked = true
                     checkBox.text =  "(招待中) " + it.name
                     // とりあえず申請中も変更できるようにしよう
@@ -220,7 +220,7 @@ class GroupSettingActivity : BaseActivity() {
                     viewModel._requestUser.add(it)
                 }
                 // 拒否
-                if(beDenyeds?.contains(it.userId) ?: false) {
+                if(beDenyeds?.contains(it.userId) == true) {
                     checkBox.text = "(拒否) " + it.name
                     checkBox.isEnabled = false
                 }
@@ -376,6 +376,9 @@ class GroupSettingActivity : BaseActivity() {
         var tmpGroupRequest: GroupRequests? = null
         var deleteRequest = mutableListOf<String>()
 
+        // プログレスバー表示
+        showProgressDialog(this)
+
         // Room作成
         if(displayFlg == DISPLAY_FLAG_INSERT) {
             tmpRoom.apply {
@@ -415,7 +418,7 @@ class GroupSettingActivity : BaseActivity() {
                 if(this.room.userIdList.contains(it)) {
                     // 前：userIdListにいる 後：チェック有り
                     userIdList.add(it)
-                } else if(currentrequesterIdList?.contains(it) ?: false){
+                } else if(currentrequesterIdList?.contains(it) == true){
                     // 前：userIdListにいない、requesterIdListにいる 後：チェック有り
                     requesterIdList.add(it)
                 } else {
@@ -461,10 +464,10 @@ class GroupSettingActivity : BaseActivity() {
 
             // 削除リクエストリスト作成
             deleteRequest = currentrequesterIdList?.toMutableList() ?: mutableListOf()
-            deleteRequest?.removeAll(viewModel._requestUser.map{it.userId})
+            deleteRequest.removeAll(viewModel._requestUser.map{it.userId})
 
         }
-        val onFailed = {Toast.makeText(this, R.string.failed_group_regist, Toast.LENGTH_SHORT).show()}
+        val onFailed = {Toast.makeText(this, R.string.failed_group_regist, Toast.LENGTH_SHORT).show(); dismissProgressDialog()}
         // グループ登録
         FirebaseFacade.registerGroupRoom(tmpRoom, tmpGroupRequest, deleteRequest, onFailed){
             // 画像削除／登録
@@ -481,6 +484,7 @@ class GroupSettingActivity : BaseActivity() {
             Timber.tag(TAG)
             Timber.d("グループ登録成功：${tmpRoom.documentId}")
             setResult(Activity.RESULT_OK, intent)
+            dismissProgressDialog()
             // 画面終了
             finish()
         }
