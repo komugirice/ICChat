@@ -153,8 +153,19 @@ class ChatViewModel: ViewModel() {
                 }
                 snapshot?.toObjects(Message::class.java)?.firstOrNull()?.also {
 
+                    val tmp: MutableList<Pair<Message, FileInfo?>>? = items.value?.toMutableList()
+
+                    // 日付線追加
+                    if(it.createdAt.getDateToString() != lastCreatedAt.getDateToString()) {
+                        tmp?.add(
+                            Pair(Message().apply{
+                                createdAt = it.createdAt
+                                type = MessageType.DATE.id
+                            }, null)
+                        )
+                    }
+                    // ファイルデータ取得＆データ追加
                     FileInfoStore.getFile(it.roomId, it.message, it.type){ file->
-                        val tmp: MutableList<Pair<Message, FileInfo?>>? = items.value?.toMutableList()
                         tmp?.add(Pair(it, file))
                         items.postValue(tmp)
                     }
