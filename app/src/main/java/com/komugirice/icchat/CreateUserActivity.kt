@@ -226,6 +226,7 @@ class CreateUserActivity : BaseActivity() {
         val email = emailEditText.text.toString().trim()
         val password = passwordEditText.text.toString()
 
+        showProgressDialog(this)
         FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener{
                 if(it.isSuccessful) {
@@ -242,6 +243,7 @@ class CreateUserActivity : BaseActivity() {
                             errorMsg.postValue(getString(R.string.invalid_unknown_exception))
                         }
                     }
+                    dismissProgressDialog()
                 }
             }
     }
@@ -260,6 +262,8 @@ class CreateUserActivity : BaseActivity() {
         }
 
         UserStore.registerUser(user){
+            dismissProgressDialog()
+
             // ユーザ登録完了画面に遷移
             CreateUserCompleteActivity.start(this)
         }

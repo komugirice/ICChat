@@ -405,6 +405,8 @@ class InputInterestActivity : BaseActivity() {
     private fun registInterest() {
         val data = viewModel.interestData
 
+        showProgressDialog(this)
+
         // documentId
         if (data.documentId.isEmpty()) data.documentId = UUID.randomUUID().toString()
 
@@ -461,6 +463,7 @@ class InputInterestActivity : BaseActivity() {
                 }
             }
             Toast.makeText(this, R.string.regist_complete, Toast.LENGTH_SHORT).show()
+            dismissProgressDialog()
             finish()
 
 
