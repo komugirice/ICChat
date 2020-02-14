@@ -29,7 +29,7 @@ class ExplanationActivity : AppCompatActivity() {
         binding.lifecycleOwner = this
 
         initLayout()
-        initAdapter()
+        initViewPager2()
         initClick()
 
     }
@@ -38,14 +38,15 @@ class ExplanationActivity : AppCompatActivity() {
         binding.header.titleTextView.text = getString(R.string.explanation_activity_title)
     }
 
-    private fun initAdapter() {
+    private fun initViewPager2() {
         viewpager2.adapter = ExplanationAdapter()
         viewpager2.registerOnPageChangeCallback(object: ViewPager2.OnPageChangeCallback() {
+
         })
     }
 
     private fun initClick() {
-        binding.header.backButton.setOnClickListener {
+        binding.header.backImageView.setOnClickListener {
             finish()
         }
     }
