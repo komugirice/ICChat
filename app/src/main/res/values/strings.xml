@@ -66,6 +66,7 @@
     <string name="group_withdraw">グループ退会</string>
     <string name="user_info">ユーザ情報</string>
     <string name="group_info">グループ情報</string>
+    <string name="explanation_item">説明を見る</string>
 
     <!-- FriendFragment -->
     <string name="title_friend">友だち</string>
@@ -178,8 +179,11 @@
     <!-- SendPasswordActivity -->
     <string name="send_password_activity_title">パスワードを忘れた方へ</string>
     <string name="send_password_info">※パスワード再設定メールを送信します。\n\nメールアドレスと誕生日を入力し、送信ボタンを押して下さい。</string>
-    <string name ="succsess_send_password_mail">パスワード再設定メールを送信しました</string>
-    <string name ="failed_send_password_mail">送信に失敗しました</string>
+    <string name="succsess_send_password_mail">パスワード再設定メールを送信しました</string>
+    <string name="failed_send_password_mail">送信に失敗しました</string>
+
+    <!-- ExplanationActivity -->
+    <string name="explanation_activity_title">説明画面</string>
 
     <!-- ダイアログ関係 -->
     <string name="confirm_add_friend">ユーザを友だち登録しますか？</string>

@@ -22,11 +22,7 @@ import androidx.viewpager.widget.ViewPager
 import com.komugirice.icchat.databinding.ActivityMainBinding
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.interfaces.Update
-import com.komugirice.icchat.view.OtherUserView
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_interest.*
-import kotlinx.android.synthetic.main.item_drawer.*
-import kotlinx.android.synthetic.main.item_drawer.swipeRefreshLayout
 import kotlinx.android.synthetic.main.item_drawer.view.*
 
 class MainActivity : BaseActivity() {
@@ -276,6 +272,10 @@ class MainActivity : BaseActivity() {
                 when (item?.itemId) {
                     R.id.profile_setting -> {
                         ProfileSettingActivity.start(this@MainActivity)
+                        return true
+                    }
+                    R.id.explanation -> {
+                        ExplanationActivity.start(this@MainActivity)
                         return true
                     }
                     R.id.change_password -> {
