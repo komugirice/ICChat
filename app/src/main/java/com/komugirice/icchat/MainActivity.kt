@@ -168,7 +168,7 @@ class MainActivity : BaseActivity() {
         tabLayout.getTabAt(1)?.text = ""
         tabLayout.getTabAt(2)?.setCustomView(R.layout.design_fragment_icon_interest)
         tabLayout.getTabAt(2)?.text = ""
-        tabLayout.getTabAt(3)?.setText(R.string.tab_debug)
+        //tabLayout.getTabAt(3)?.setText(R.string.tab_debug)
     }
 
     private fun initDrawerLayout() {
@@ -247,7 +247,8 @@ class MainActivity : BaseActivity() {
                     putString(InterestFragment.KEY_USER_ID, UserManager.myUserId)
                 }
             }, R.string.tab_interest)
-            , Item(DebugFragment(), R.string.tab_debug))
+            //, Item(DebugFragment(), R.string.tab_debug)
+        )
 
         override fun getCount(): Int = fragments.size
 

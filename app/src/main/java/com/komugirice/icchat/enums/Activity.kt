@@ -15,6 +15,7 @@ enum class ActivityEnum(val id: Int) {
     SearchUserActivity(1012),
     InputInterestActivity(1013),
     SendPasswordActivity(1014),
-    ChangePasswordActivity(1015)
+    ChangePasswordActivity(1015),
+    ExplanationActivity(1016)
 
 }

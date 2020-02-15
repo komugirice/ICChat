@@ -4,13 +4,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.komugirice.icchat.ExplanationActivity
-import com.komugirice.icchat.databinding.ExplanationView1Binding
-import com.komugirice.icchat.databinding.ExplanationView2Binding
-import com.komugirice.icchat.databinding.ExplanationView3Binding
+import com.komugirice.icchat.databinding.*
 
 class ExplanationAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    override fun getItemCount() = 3
+    override fun getItemCount() = 5
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
 
@@ -30,9 +28,25 @@ class ExplanationAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                     false
                 )
             )
-        } else {
+        } else if(viewType == VIEW_TYPE_3) {
             return ExplanationView3Holder(
                 ExplanationView3Binding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
+            )
+        } else if(viewType == VIEW_TYPE_4) {
+            return ExplanationView4Holder(
+                ExplanationView4Binding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
+            )
+        } else {
+            return ExplanationView5Holder(
+                ExplanationView5Binding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
                     false
@@ -53,12 +67,8 @@ class ExplanationAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
      * @param position
      */
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if (holder is ExplanationView1Holder)
-            onBindViewHolder(holder, position)
     }
 
-    private fun onBindViewHolder(holder: ExplanationView1Holder, position: Int) {
-    }
 
     companion object {
         const val VIEW_TYPE_1 = 1
@@ -73,4 +83,6 @@ class ExplanationAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 class ExplanationView1Holder(val binding: ExplanationView1Binding) : RecyclerView.ViewHolder(binding.root)
 class ExplanationView2Holder(val binding: ExplanationView2Binding) : RecyclerView.ViewHolder(binding.root)
 class ExplanationView3Holder(val binding: ExplanationView3Binding) : RecyclerView.ViewHolder(binding.root)
+class ExplanationView4Holder(val binding: ExplanationView4Binding) : RecyclerView.ViewHolder(binding.root)
+class ExplanationView5Holder(val binding: ExplanationView5Binding) : RecyclerView.ViewHolder(binding.root)
 

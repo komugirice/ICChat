@@ -11,12 +11,24 @@
             android:id="@+id/textView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="view_3"
-            android:gravity="center_horizontal"
+            android:text="興味画面ではユーザの興味があるものを「記事、画像、コメント」形式で登録しておき、タイムラインで表示します。"
+            android:layout_marginBottom="@dimen/contents_padding"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/imageView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:src="@drawable/explanation_interest_fragment"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toBottomOf="@+id/textView"/>
+
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
