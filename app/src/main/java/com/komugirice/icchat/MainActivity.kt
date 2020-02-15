@@ -10,6 +10,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.PopupMenu
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.drawerlayout.widget.DrawerLayout
@@ -40,7 +41,6 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         initialize()
-
     }
 
     /**

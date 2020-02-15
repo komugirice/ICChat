@@ -17,13 +17,24 @@ android {
         minSdkVersion 22
         targetSdkVersion 29
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+
+//        def properties = new Properties()
+//        properties.load(project.rootProject.file('key.properties').newDataInputStream())
+//        // local.propertiesのapi_keyに定義されている値を読み込む
+//        def ID = properties.getProperty("id")
+//        def PASSWORD = properties.getProperty("password")
+//        // ついでにbuildConfigFieldに定義
+//        buildConfigField("String", "ADMIN_ID", "\"${ID}\"")
+//        buildConfigField("String", "ADMIN_PASSWORD", "\"${PASSWORD}\"")
     }
+
     // signingConfigs
     apply from: 'signingConfigs/debug.gradle', to: android
     apply from: 'signingConfigs/release.gradle', to: android
-    
+
     buildTypes {
         debug {
             debuggable true
