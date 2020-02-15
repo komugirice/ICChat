@@ -51,7 +51,7 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.util.*
 
-class ProfileSettingActivity : AppCompatActivity() {
+class ProfileSettingActivity : BaseActivity() {
 
     private lateinit var viewModel: ProfileSettingViewModel
 
@@ -458,6 +458,8 @@ class ProfileSettingActivity : AppCompatActivity() {
      */
     private fun upload() {
 
+        showProgressDialog(this)
+
         // 前画像削除
         if(prevSettingUri.isNotEmpty())
             //FirebaseStorage.getInstance().reference.child("${UserManager.myUserId}/${FireStorageUtil.USER_ICON_PATH}/${prevSettingUri}").delete()
@@ -477,12 +479,14 @@ class ProfileSettingActivity : AppCompatActivity() {
             .addOnFailureListener {
                 Toast.makeText(this, "Uploadに失敗しました", Toast.LENGTH_SHORT).show()
                 bitmap.recycle()
+                dismissProgressDialog()
             }
             .addOnSuccessListener {
                 prevSettingUri = ref.toString()
 
                 Toast.makeText(this, "プロフィール画像を設定しました", Toast.LENGTH_SHORT).show()
                 Timber.d("Upload成功：${imageUrl}")
+                dismissProgressDialog()
                 // ImageViewのbitmapだとなぜか落ちる
                 //bitmap.recycle()
             }
