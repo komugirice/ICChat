@@ -38,13 +38,14 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <View
+            <LinearLayout
                 android:id="@+id/pagerButton"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="32dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
                 android:gravity="center"
+                android:orientation="horizontal"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

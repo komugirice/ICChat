@@ -9,4 +9,6 @@
     <dimen name="image_cell">50dp</dimen>
     <dimen name="label_padding">4dp</dimen>
     <dimen name="contents_padding">8dp</dimen>
+
+    <dimen name="pager_button_image_length">18dp</dimen>
 </resources>
