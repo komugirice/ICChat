@@ -1,0 +1,8 @@
+signingConfigs {
+    debug {
+        storeFile file("keystore")
+        storePassword "hdRx35Vd74gaM98h"
+        keyAlias "debug"
+        keyPassword "kxXbBFpbo9bDnRnM"
+    }
+}
