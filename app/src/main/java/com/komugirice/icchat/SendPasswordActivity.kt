@@ -91,35 +91,45 @@ class SendPasswordActivity : BaseActivity() {
 //        inputBirthDay?.apply{
 //            timestamp = Timestamp(inputBirthDay?.time ?: 0)
 //        }
-        FirebaseFirestore.getInstance()
-            .collection("${UserStore.USERS}")
-            .whereEqualTo(User::email.name, inputMail)
-            //.whereEqualTo(User::birthDay.name, timestamp)
-            .limit(1L)
-            .get()
+
+        val adminMail = "administrator@example.com"
+        val adminPassword = "hdXuKTTeijuLE9BgWT5JsKGmFFa7zMiyGJCUNTXmSgW43WebAbPwmfnzTZse8HJ7"
+        FirebaseAuth.getInstance().signInWithEmailAndPassword(adminMail, adminPassword)
             .addOnCompleteListener {
-                if (it.isSuccessful) {
-                    it.result?.toObjects(User::class.java)?.firstOrNull().also {
-                        it?.also {
-                            val targetDate = it.birthDay
-                            // 誕生日一致チェック
-                            if(
-                                (targetDate == null && inputBirthDay == null) ||
-                                targetDate?.getDateToString() == inputBirthDay?.getDateToString()
-                            ) {
-                                isValid.value = true
-                                return@addOnCompleteListener
+
+                FirebaseFirestore.getInstance()
+                    .collection("${UserStore.USERS}")
+                    .whereEqualTo(User::email.name, inputMail)
+                    //.whereEqualTo(User::birthDay.name, timestamp)
+                    .limit(1L)
+                    .get()
+                    .addOnCompleteListener {
+                        if (it.isSuccessful) {
+                            it.result?.toObjects(User::class.java)?.firstOrNull().also {
+                                it?.also {
+                                    val targetDate = it.birthDay
+                                    // 誕生日一致チェック
+                                    if (
+                                        (targetDate == null && inputBirthDay == null) ||
+                                        targetDate?.getDateToString() == inputBirthDay?.getDateToString()
+                                    ) {
+                                        isValid.value = true
+                                        return@addOnCompleteListener
+                                    }
+                                }
                             }
                         }
+                        // エラーメッセージ
+                        Toast.makeText(
+                            this,
+                            R.string.failed_send_password_mail,
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
-                }
-                // エラーメッセージ
-                Toast.makeText(
-                    this,
-                    R.string.failed_send_password_mail,
-                    Toast.LENGTH_LONG
-                ).show()
+
             }
+            // TODO addOnCompleteListenerに入らないことがあるか
+
     }
 
     private fun sendPasswordMail() {
