@@ -67,7 +67,7 @@ class ExplanationActivity : AppCompatActivity() {
                 }
             }, LinearLayout.LayoutParams(resources.getDimensionPixelSize(R.dimen.pager_button_image_length), resources.getDimensionPixelSize(R.dimen.pager_button_image_length)).apply {
                 gravity = Gravity.CENTER
-                setMargins(5, 0, 5, 0)
+                setMargins(15, 0, 15, 0)
             })
         }
     }

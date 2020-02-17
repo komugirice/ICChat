@@ -21,14 +21,14 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
 
-//        def properties = new Properties()
-//        properties.load(project.rootProject.file('key.properties').newDataInputStream())
-//        // local.propertiesのapi_keyに定義されている値を読み込む
-//        def ID = properties.getProperty("id")
-//        def PASSWORD = properties.getProperty("password")
-//        // ついでにbuildConfigFieldに定義
-//        buildConfigField("String", "ADMIN_ID", "\"${ID}\"")
-//        buildConfigField("String", "ADMIN_PASSWORD", "\"${PASSWORD}\"")
+        def properties = new Properties()
+        properties.load(project.rootProject.file('key.properties').newDataInputStream())
+        // local.propertiesのapi_keyに定義されている値を読み込む
+        def MAIL = properties.getProperty("admin_mail")
+        def PASSWORD = properties.getProperty("admin_password")
+        // ついでにbuildConfigFieldに定義
+        buildConfigField("String", "ADMIN_MAIL", "\"${MAIL}\"")
+        buildConfigField("String", "ADMIN_PASSWORD", "\"${PASSWORD}\"")
     }
 
     // signingConfigs

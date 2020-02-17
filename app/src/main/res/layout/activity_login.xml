@@ -50,6 +50,7 @@
         android:layout_gravity="start"
         android:enabled="false"
         android:text="@string/action_sign_in"
+        android:elevation="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/email"
         app:layout_constraintStart_toStartOf="@+id/email"

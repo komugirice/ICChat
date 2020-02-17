@@ -92,8 +92,8 @@ class SendPasswordActivity : BaseActivity() {
 //            timestamp = Timestamp(inputBirthDay?.time ?: 0)
 //        }
 
-        val adminMail = "administrator@example.com"
-        val adminPassword = "hdXuKTTeijuLE9BgWT5JsKGmFFa7zMiyGJCUNTXmSgW43WebAbPwmfnzTZse8HJ7"
+        val adminMail = BuildConfig.ADMIN_MAIL
+        val adminPassword = BuildConfig.ADMIN_PASSWORD
         FirebaseAuth.getInstance().signInWithEmailAndPassword(adminMail, adminPassword)
             .addOnCompleteListener {
 
