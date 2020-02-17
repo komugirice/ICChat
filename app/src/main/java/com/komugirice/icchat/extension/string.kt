@@ -1,6 +1,7 @@
 package com.komugirice.icchat.extension
 
 import android.util.Patterns
+import timber.log.Timber
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -449,4 +450,20 @@ fun String.hasImageExtension(): Boolean {
      if (!this.contains("."))
           return false
      return imageExtensions.contains(this.split(".").last())
+}
+
+/**
+ * バージョン情報をIntで取得
+ * @return Int
+ */
+fun String.getVersion(): Int {
+     val array = this.split(".")
+     if (array.size != 3)
+          return 0
+     try {
+          return (0..2).sumBy { Integer.parseInt(array[it]) * Math.pow(1000.0, (2 - it).toDouble()).toInt() }
+     } catch (e: Exception) {
+          Timber.e(e)
+     }
+     return 0
 }
