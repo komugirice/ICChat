@@ -17,7 +17,7 @@ class SplashActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 
-        // TODO ネットワークエラー対応
+        // TODO ネットワークエラー対応が必要
         if (FirebaseAuth.getInstance().currentUser != null) {
             // バージョンチェック
             FireStoreUtil.getVersion {

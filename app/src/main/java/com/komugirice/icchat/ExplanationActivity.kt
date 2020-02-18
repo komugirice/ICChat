@@ -7,6 +7,8 @@ import android.view.Gravity
 import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.updatePadding
+import androidx.core.view.updatePaddingRelative
 import androidx.databinding.DataBindingUtil
 import androidx.viewpager2.widget.ViewPager2
 import com.komugirice.icchat.databinding.ActivityExplanationBinding
