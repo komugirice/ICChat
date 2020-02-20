@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.Gravity
+import android.view.LayoutInflater
 import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
@@ -13,6 +14,7 @@ import androidx.core.view.updatePaddingRelative
 import androidx.databinding.DataBindingUtil
 import androidx.viewpager2.widget.ViewPager2
 import com.komugirice.icchat.databinding.ActivityExplanationBinding
+import com.komugirice.icchat.databinding.IndicatorLayoutBinding
 import com.komugirice.icchat.view.ExplanationAdapter
 import kotlinx.android.synthetic.main.activity_header.view.*
 
@@ -21,6 +23,8 @@ class ExplanationActivity : AppCompatActivity() {
     private lateinit var binding: ActivityExplanationBinding
 
     private val pagerAdapter by lazy { ExplanationAdapter() }
+
+    private val indicatorLayouts = mutableListOf<IndicatorLayoutBinding>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,20 +65,30 @@ class ExplanationActivity : AppCompatActivity() {
     }
 
     private fun initPagerButton() {
-        binding.pagerButtonConstraintLayout.removeAllViews()
+        binding.pagerButton.removeAllViews()
         for (i in 0 until pagerAdapter.itemCount) {
-            binding.pagerButtonConstraintLayout.addView(ImageView(this).apply {
+            binding.pagerButton.addView(ImageView(this).apply {
                 setImageResource(R.drawable.ic_fiber_manual_record_gray_24dp)
                 setOnClickListener {
                     changePage(i)
                 }
-            }, ConstraintLayout.LayoutParams(resources.getDimensionPixelSize(R.dimen.pager_button_image_length), resources.getDimensionPixelSize(R.dimen.pager_button_image_length)).apply {
+            }, LinearLayout.LayoutParams(resources.getDimensionPixelSize(R.dimen.pager_button_image_length), resources.getDimensionPixelSize(R.dimen.pager_button_image_length)).apply {
 
-                //gravity = Gravity.CENTER
-                //setMargins(15, 0, 15, 0)
+                gravity = Gravity.CENTER
+                setMargins(15, 0, 15, 0)
 
             })
         }
+//        for (i in 0 until pagerAdapter.itemCount) {
+//            val indicatorLayoutBinding = IndicatorLayoutBinding.inflate(LayoutInflater.from(this), null, false)
+//            binding.pagerButton.addView(indicatorLayoutBinding.root)
+//            indicatorLayouts.add(indicatorLayoutBinding)
+//            indicatorLayoutBinding.root.setOnClickListener {
+//                // ViewPagerのcurrentItem変更処理
+//                changePage(i)
+//            }
+//        }
+
     }
 
     private fun changePage(index: Int) {
@@ -82,8 +96,8 @@ class ExplanationActivity : AppCompatActivity() {
     }
 
     private fun changePagerButtonColor(index: Int) {
-        for (i in 0 until binding.pagerButtonConstraintLayout.childCount) {
-            (binding.pagerButtonConstraintLayout.getChildAt(i) as? ImageView)?.also {
+        for (i in 0 until binding.pagerButton.childCount) {
+            (binding.pagerButton.getChildAt(i) as? ImageView)?.also {
                 it.setImageResource(if (i == index) R.drawable.ic_fiber_manual_record_red_24dp else R.drawable.ic_fiber_manual_record_gray_24dp)
             }
         }
