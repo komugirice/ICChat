@@ -8,7 +8,7 @@ import com.komugirice.icchat.databinding.*
 
 class ExplanationAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    override fun getItemCount() = 5
+    override fun getItemCount() = 7
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
 
@@ -44,9 +44,25 @@ class ExplanationAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                     false
                 )
             )
-        } else {
+        } else if(viewType == VIEW_TYPE_5) {
             return ExplanationView5Holder(
                 ExplanationView5Binding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
+            )
+        } else if(viewType == VIEW_TYPE_6) {
+            return ExplanationView6Holder(
+                ExplanationView6Binding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
+            )
+        } else {
+            return ExplanationView7Holder(
+                ExplanationView7Binding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
                     false
@@ -76,6 +92,8 @@ class ExplanationAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         const val VIEW_TYPE_3 = 3
         const val VIEW_TYPE_4 = 4
         const val VIEW_TYPE_5 = 5
+        const val VIEW_TYPE_6 = 6
+        const val VIEW_TYPE_7 = 7
     }
 
 }
@@ -85,4 +103,7 @@ class ExplanationView2Holder(val binding: ExplanationView2Binding) : RecyclerVie
 class ExplanationView3Holder(val binding: ExplanationView3Binding) : RecyclerView.ViewHolder(binding.root)
 class ExplanationView4Holder(val binding: ExplanationView4Binding) : RecyclerView.ViewHolder(binding.root)
 class ExplanationView5Holder(val binding: ExplanationView5Binding) : RecyclerView.ViewHolder(binding.root)
+class ExplanationView6Holder(val binding: ExplanationView6Binding) : RecyclerView.ViewHolder(binding.root)
+class ExplanationView7Holder(val binding: ExplanationView7Binding) : RecyclerView.ViewHolder(binding.root)
+
 

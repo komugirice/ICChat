@@ -7,6 +7,7 @@ import android.view.Gravity
 import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.updatePadding
 import androidx.core.view.updatePaddingRelative
 import androidx.databinding.DataBindingUtil
@@ -60,16 +61,18 @@ class ExplanationActivity : AppCompatActivity() {
     }
 
     private fun initPagerButton() {
-        binding.pagerButton.removeAllViews()
+        binding.pagerButtonConstraintLayout.removeAllViews()
         for (i in 0 until pagerAdapter.itemCount) {
-            binding.pagerButton.addView(ImageView(this).apply {
+            binding.pagerButtonConstraintLayout.addView(ImageView(this).apply {
                 setImageResource(R.drawable.ic_fiber_manual_record_gray_24dp)
                 setOnClickListener {
                     changePage(i)
                 }
-            }, LinearLayout.LayoutParams(resources.getDimensionPixelSize(R.dimen.pager_button_image_length), resources.getDimensionPixelSize(R.dimen.pager_button_image_length)).apply {
-                gravity = Gravity.CENTER
-                setMargins(15, 0, 15, 0)
+            }, ConstraintLayout.LayoutParams(resources.getDimensionPixelSize(R.dimen.pager_button_image_length), resources.getDimensionPixelSize(R.dimen.pager_button_image_length)).apply {
+
+                //gravity = Gravity.CENTER
+                //setMargins(15, 0, 15, 0)
+
             })
         }
     }
@@ -79,8 +82,8 @@ class ExplanationActivity : AppCompatActivity() {
     }
 
     private fun changePagerButtonColor(index: Int) {
-        for (i in 0 until binding.pagerButton.childCount) {
-            (binding.pagerButton.getChildAt(i) as? ImageView)?.also {
+        for (i in 0 until binding.pagerButtonConstraintLayout.childCount) {
+            (binding.pagerButtonConstraintLayout.getChildAt(i) as? ImageView)?.also {
                 it.setImageResource(if (i == index) R.drawable.ic_fiber_manual_record_red_24dp else R.drawable.ic_fiber_manual_record_gray_24dp)
             }
         }

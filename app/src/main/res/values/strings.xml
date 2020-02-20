@@ -183,7 +183,7 @@
     <string name="failed_send_password_mail">送信に失敗しました</string>
 
     <!-- ExplanationActivity -->
-    <string name="explanation_activity_title">説明画面</string>
+    <string name="explanation_activity_title">操作説明</string>
 
     <!-- ダイアログ関係 -->
     <string name="confirm_add_friend">ユーザを友だち登録しますか？</string>
