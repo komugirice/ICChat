@@ -9,9 +9,12 @@ import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.DatePicker
+import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
@@ -30,6 +33,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FacebookAuthCredential
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
@@ -256,6 +260,7 @@ class ProfileSettingActivity : BaseActivity() {
         Log.d(TAG, "handleFacebookAccessToken:$token")
 
         val credential = FacebookAuthProvider.getCredential(token.token)
+
         auth.signInWithCredential(credential)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
@@ -506,6 +511,10 @@ class ProfileSettingActivity : BaseActivity() {
 
     }
 
+    /**
+     * 友だち申請中リスト表示
+     *
+     */
     private fun displayRequestFriend(list : List<Request>) {
         requestFriendsParentView.removeAllViews()
         list.forEach {
@@ -514,7 +523,16 @@ class ProfileSettingActivity : BaseActivity() {
             cellBindable.request = it
             requestFriendsParentView.addView(cellBindable.root)
         }
-        if(list.isEmpty()) expandableImageView.visibility = View.GONE
+        if(list.isEmpty()) {
+            expandableImageView.visibility = View.GONE
+            requestFriendsParentView.visibility = View.VISIBLE
+            requestFriendsParentView.addView(TextView(this).apply{
+                text = getString(R.string.none)
+                gravity = Gravity.START
+                textSize = 16.0f
+
+            })
+        }
     }
 
     companion object {
