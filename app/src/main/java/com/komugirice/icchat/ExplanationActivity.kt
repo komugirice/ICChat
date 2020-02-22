@@ -26,6 +26,7 @@ class ExplanationActivity : AppCompatActivity() {
 
     private val indicatorLayouts = mutableListOf<IndicatorLayoutBinding>()
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -67,27 +68,14 @@ class ExplanationActivity : AppCompatActivity() {
     private fun initPagerButton() {
         binding.pagerButton.removeAllViews()
         for (i in 0 until pagerAdapter.itemCount) {
-            binding.pagerButton.addView(ImageView(this).apply {
-                setImageResource(R.drawable.ic_fiber_manual_record_gray_24dp)
-                setOnClickListener {
-                    changePage(i)
-                }
-            }, LinearLayout.LayoutParams(resources.getDimensionPixelSize(R.dimen.pager_button_image_length), resources.getDimensionPixelSize(R.dimen.pager_button_image_length)).apply {
-
-                gravity = Gravity.CENTER
-                setMargins(15, 0, 15, 0)
-
-            })
+            val indicatorLayoutBinding = IndicatorLayoutBinding.inflate(LayoutInflater.from(this), null, false)
+            binding.pagerButton.addView(indicatorLayoutBinding.root, LinearLayout.LayoutParams(resources.getDimensionPixelSize(R.dimen.pager_button_image_width), LinearLayout.LayoutParams.MATCH_PARENT))
+            indicatorLayouts.add(indicatorLayoutBinding)
+            indicatorLayoutBinding.root.setOnClickListener {
+                // ViewPagerのcurrentItem変更処理
+                changePage(i)
+            }
         }
-//        for (i in 0 until pagerAdapter.itemCount) {
-//            val indicatorLayoutBinding = IndicatorLayoutBinding.inflate(LayoutInflater.from(this), null, false)
-//            binding.pagerButton.addView(indicatorLayoutBinding.root)
-//            indicatorLayouts.add(indicatorLayoutBinding)
-//            indicatorLayoutBinding.root.setOnClickListener {
-//                // ViewPagerのcurrentItem変更処理
-//                changePage(i)
-//            }
-//        }
 
     }
 
@@ -97,9 +85,7 @@ class ExplanationActivity : AppCompatActivity() {
 
     private fun changePagerButtonColor(index: Int) {
         for (i in 0 until binding.pagerButton.childCount) {
-            (binding.pagerButton.getChildAt(i) as? ImageView)?.also {
-                it.setImageResource(if (i == index) R.drawable.ic_fiber_manual_record_red_24dp else R.drawable.ic_fiber_manual_record_gray_24dp)
-            }
+            indicatorLayouts[i].isActive = index == i
         }
     }
 
