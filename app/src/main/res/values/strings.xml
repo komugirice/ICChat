@@ -145,7 +145,7 @@
     <!-- UserSearchActivity -->
     <string name="user_search_title">ユーザ検索</string>
     <string name="friend_request_button">友だち申請する</string>
-    <string name="invalid_search_result">該当ユーザは存在しません</string>
+    <string name="invalid_search_result">該当ユーザは存在しないか、既に友だち登録済みです</string>
     <string name="success_user_request">友だち申請しました</string>
 
     <!-- InterestFragment -->
