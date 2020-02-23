@@ -16,9 +16,10 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
 import com.google.zxing.qrcode.encoder.Encoder
 import com.komugirice.icchat.ICChatApplication.Companion.applicationContext
 import com.komugirice.icchat.databinding.QrCodeDialogBinding
-import com.komugirice.icchat.firebase.firebaseFacade
+import com.komugirice.icchat.firebase.FirebaseFacade
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.firebase.firestore.store.UserStore
+import com.komugirice.icchat.util.DialogUtil
 import kotlinx.android.synthetic.main.activity_add_friend.*
 import kotlinx.android.synthetic.main.activity_chat.backImageView
 import timber.log.Timber
@@ -62,7 +63,7 @@ class AddFriendActivity : BaseActivity() {
                                         ).show()
                                     }
                                     // Users更新
-                                    firebaseFacade.addFriend(targetUserId, onFailed) {
+                                    FirebaseFacade.addFriend(targetUserId, onFailed) {
                                         AlertDialog.Builder(this@AddFriendActivity)
                                             .setMessage("友だち登録が完了しました")
                                             .setPositiveButton("OK", null)

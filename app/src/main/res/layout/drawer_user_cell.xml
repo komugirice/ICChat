@@ -4,16 +4,22 @@
     <data>
 
         <variable
-            name="request"
-            type="com.komugirice.icchat.firebase.firestore.model.Request" />
+            name="user"
+            type="com.komugirice.icchat.firebase.firestore.model.User" />
+
+        <variable
+            name="selected"
+            type="Boolean" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/rootView"
         android:layout_width="match_parent"
+        android:background="@{selected == true ? @color/interest_selected_color : @color/icchat_backgroud_color}"
         android:layout_height="wrap_content"
-        android:layout_margin="4dp">
+        android:layout_marginBottom="4dp"
+        android:layout_marginTop="4dp">
 
         <ImageView
             android:id="@+id/userImage"
@@ -25,7 +31,7 @@
             app:layout_constraintEnd_toStartOf="@+id/nameTextView"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:userIconImageUrl="@{request.beRequestedId}" />
+            app:userIconImageUrl="@{user.userId}" />
 
         <TextView
             android:id="@+id/nameTextView"
@@ -34,23 +40,13 @@
             android:layout_marginEnd="16dp"
             android:ellipsize="end"
             android:gravity="start|center"
-            android:lines="1"
+            android:lines="2"
             android:textColor="@android:color/black"
             android:textSize="15sp"
+            android:text="@{user.name}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/userImage"
-            app:layout_constraintTop_toTopOf="parent"
-            app:setRequesterName="@{request}" />
-
-        <!--
-        <View
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:background="@android:color/black"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/nameTextView" />
-        -->
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

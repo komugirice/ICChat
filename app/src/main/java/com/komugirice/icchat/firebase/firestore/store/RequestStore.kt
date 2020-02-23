@@ -1,7 +1,7 @@
 package com.komugirice.icchat.firebase.firestore.store
 
 import com.google.firebase.firestore.FirebaseFirestore
-import com.komugirice.icchat.enum.RequestStatus
+import com.komugirice.icchat.enums.RequestStatus
 import com.komugirice.icchat.firebase.firestore.manager.RoomManager
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.firebase.firestore.model.GroupRequests
@@ -10,9 +10,13 @@ import java.util.*
 
 class RequestStore {
     companion object {
+        const val ROOMS = "rooms"
+        const val REQUESTS = "requests"
+        const val USERS = "users"
+
         fun getLoginUserRequests(onFailure: () -> Unit, onSuccess: (List<Request>) -> Unit) {
             FirebaseFirestore.getInstance()
-                .collection("users/${UserManager.myUserId}/requests")
+                .collection("$USERS/${UserManager.myUserId}/$REQUESTS")
                 .get()
                 .addOnCompleteListener {
                     if (it.isSuccessful) {
@@ -36,7 +40,7 @@ class RequestStore {
             }
             RoomManager.myRooms.forEach { room ->
                 FirebaseFirestore.getInstance()
-                    .collection("rooms/${room.documentId}/requests")
+                    .collection("$ROOMS/${room.documentId}/$REQUESTS")
                     .get()
                     .addOnCompleteListener {
                         index++
@@ -59,7 +63,7 @@ class RequestStore {
             var index = 0
             UserManager.allUsers.forEach {
                 FirebaseFirestore.getInstance()
-                    .collection("users/${it.userId}/requests")
+                    .collection("$USERS/${it.userId}/$REQUESTS")
                     .document(UserManager.myUserId)
                     .get()
                     .addOnCompleteListener {
@@ -79,11 +83,11 @@ class RequestStore {
         fun getGroupsRequestToMe(onSuccess: (List<GroupRequests>) -> Unit) {
             val groupsRequestToMe = mutableListOf<GroupRequests>()
             var index = 0
-            RoomStore.getAllGroupRooms(){
+            RoomStore.getAllGroupRooms {
                 val allGroup = it
                 allGroup.forEach {room ->
                     FirebaseFirestore.getInstance()
-                        .collection("rooms/${room.documentId}/requests")
+                        .collection("$ROOMS/${room.documentId}/$REQUESTS")
                         .document(UserManager.myUserId)
                         .get()
                         .addOnCompleteListener {
@@ -113,7 +117,7 @@ class RequestStore {
             }
 
             FirebaseFirestore.getInstance()
-                .collection("users/${UserManager.myUserId}/requests")
+                .collection("$USERS/${UserManager.myUserId}/$REQUESTS")
                 .document(request.documentId)
                 .set(request)
                 // 失敗しない
@@ -130,7 +134,7 @@ class RequestStore {
             var index = 0
             gRequest.requests.forEach {
                 FirebaseFirestore.getInstance()
-                    .collection("rooms/${gRequest.room.documentId}/requests")
+                    .collection("$ROOMS/${gRequest.room.documentId}/$REQUESTS")
                     .document(it.documentId)
                     .set(it)
                     // 失敗しない
@@ -150,7 +154,7 @@ class RequestStore {
             var index = 0
             requests.forEach {
                 FirebaseFirestore.getInstance()
-                    .collection("rooms/${roomId}/requests")
+                    .collection("$ROOMS/${roomId}/$REQUESTS")
                     .document(it)
                     .delete()
                     .addOnCompleteListener {
@@ -164,7 +168,7 @@ class RequestStore {
 
         fun denyGroupRequest(roomId: String, userId: String, onComplete: () -> Unit) {
             FirebaseFirestore.getInstance()
-                .collection("rooms/${roomId}/requests")
+                .collection("$ROOMS/${roomId}/$REQUESTS")
                 .document(userId)
                 .update("status", RequestStatus.DENY.id)
                 // データがなければ失敗する可能性もある
@@ -175,7 +179,7 @@ class RequestStore {
 
         fun cancelDenyGroupRequest(roomId: String, userId: String, onComplete: () -> Unit) {
             FirebaseFirestore.getInstance()
-                .collection("rooms/${roomId}/requests")
+                .collection("$ROOMS/${roomId}/$REQUESTS")
                 .document(userId)
                 .delete()
                 // データがなければ失敗する可能性もある
@@ -186,7 +190,7 @@ class RequestStore {
 
         fun acceptGroupRequest(roomId: String, userId: String, onComplete: () -> Unit) {
             FirebaseFirestore.getInstance()
-                .collection("rooms/${roomId}/requests")
+                .collection("$ROOMS/${roomId}/$REQUESTS")
                 .document(userId)
                 .update("status", RequestStatus.ACCEPT.id)
                 // データがなければ失敗する可能性もある
@@ -197,7 +201,7 @@ class RequestStore {
 
         fun acceptUserRequest(requesterId: String, onComplete: () -> Unit) {
             FirebaseFirestore.getInstance()
-                .collection("users/${requesterId}/requests")
+                .collection("$USERS/${requesterId}/$REQUESTS")
                 .document(UserManager.myUserId)
                 .update("status", RequestStatus.ACCEPT.id)
                 // データがなければ失敗する可能性もある
@@ -208,7 +212,7 @@ class RequestStore {
 
         fun denyUserRequest(requesterId: String, onComplete: () -> Unit) {
             FirebaseFirestore.getInstance()
-                .collection("users/${requesterId}/requests")
+                .collection("users/${requesterId}/$REQUESTS")
                 .document(UserManager.myUserId)
                 .update("status", RequestStatus.DENY.id)
                 // データがなければ失敗する可能性もある
@@ -220,7 +224,7 @@ class RequestStore {
 
         fun cancelDenyUserRequest(requesterId: String, onComplete: () -> Unit) {
             FirebaseFirestore.getInstance()
-                .collection("users/${requesterId}/requests")
+                .collection("$USERS/${requesterId}/$REQUESTS")
                 .document(UserManager.myUserId)
                 .delete()
                 // データがなければ失敗する可能性もある
@@ -231,7 +235,7 @@ class RequestStore {
 
         fun deleteUsersRequest(requesterId: String, beRequestedId: String) {
             FirebaseFirestore.getInstance()
-                .collection("users/${requesterId}/requests")
+                .collection("$USERS/${requesterId}/$REQUESTS")
                 .document(beRequestedId)
                 .delete()
         }

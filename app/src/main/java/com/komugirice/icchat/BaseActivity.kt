@@ -4,7 +4,7 @@ import android.content.Context
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
-import com.komugirice.icchat.firebase.firebaseFacade
+import com.komugirice.icchat.firebase.FirebaseFacade
 import com.komugirice.icchat.firebase.firestore.store.UserStore
 import com.komugirice.icchat.util.Prefs
 
@@ -25,7 +25,7 @@ abstract class BaseActivity : AppCompatActivity() {
         UserStore.updateFcmToken(null){
             Prefs().fcmToken.remove()
             Prefs().hasToUpdateFcmToken.put(true)
-            firebaseFacade.clearManager()
+            FirebaseFacade.clearManager()
         }
 
     }

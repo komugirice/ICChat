@@ -13,8 +13,8 @@ import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import com.example.qiitaapplication.extension.getIdFromEmail
-import com.example.qiitaapplication.extension.loggingSize
+import com.komugirice.icchat.extension.getIdFromEmail
+import com.komugirice.icchat.extension.loggingSize
 import com.facebook.AccessToken
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
@@ -32,7 +32,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.komugirice.icchat.extension.afterTextChanged
 import com.komugirice.icchat.extension.loggingSize
-import com.komugirice.icchat.firebase.firebaseFacade
+import com.komugirice.icchat.firebase.FirebaseFacade
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.ui.login.LoginViewModel
 import com.komugirice.icchat.ui.login.LoginViewModelFactory
@@ -303,7 +303,7 @@ class LoginActivity : BaseActivity() {
         // TODO : initiate successful logged in experience
 
         // Manager初期設定
-        firebaseFacade.initManager() {
+            FirebaseFacade.initManager {
             // FCM初期化
             FcmUtil.initFcm()
             val displayName = UserManager.myUser.name

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <import type="android.view.Gravity" />
+
+        <variable
+            name="message"
+            type="com.komugirice.icchat.firebase.firestore.model.Message" />
+
+        <variable
+            name="file"
+            type="com.komugirice.icchat.firebase.firestore.model.FileInfo" />
+
+        <variable
+            name="isOther"
+            type="Boolean" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/overWrap"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <Space
+            android:id="@+id/spaceLeft"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="@{isOther == true ? View.GONE : View.VISIBLE}"
+            app:layout_constraintEnd_toStartOf="@+id/wrapLayout"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/wrapLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toStartOf="@+id/spaceRight"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintStart_toEndOf="@+id/spaceLeft"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/fileInfoView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@{isOther == true ? @drawable/background_chat_left_message : @drawable/background_chat_right_message}"
+                android:paddingStart="12dp"
+                android:paddingTop="5dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="5dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+
+                <TextView
+                    android:id="@+id/fileNameTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="@{isOther == true ? Gravity.LEFT : Gravity.RIGHT}"
+                    android:text="@{file.name}"
+                    android:textColor="@{isOther == true ? @android:color/white : @android:color/black}"
+                    android:textSize="12sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/downloadTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="@{isOther == true ? Gravity.LEFT : Gravity.RIGHT}"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    android:text="@string/download"
+                    android:textColor="@drawable/text_link_color_black"
+                    android:textSize="16sp"
+                    android:visibility="@{isOther == false ? View.VISIBLE : View.GONE}"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/fileNameTextView" />
+
+                <TextView
+                    android:id="@+id/downloadTextView_other"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="@{isOther == true ? Gravity.LEFT : Gravity.RIGHT}"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    android:text="@string/download"
+                    android:textColor="@drawable/text_link_color_white"
+                    android:textSize="16sp"
+                    android:visibility="@{isOther == true ? View.VISIBLE : View.GONE}"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/fileNameTextView" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/dateTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:gravity="end"
+                android:textColor="@android:color/black"
+                android:textSize="10sp"
+                app:dateTime="@{message.createdAt}"
+                app:layout_constraintEnd_toEndOf="@id/fileInfoView"
+                app:layout_constraintTop_toBottomOf="@id/fileInfoView" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <Space
+            android:id="@+id/spaceRight"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="@{isOther == true ? View.VISIBLE : View.GONE}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintStart_toEndOf="@+id/wrapLayout"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

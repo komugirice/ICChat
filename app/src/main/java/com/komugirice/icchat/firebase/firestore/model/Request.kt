@@ -1,6 +1,6 @@
 package com.komugirice.icchat.firebase.firestore.model
 
-import com.komugirice.icchat.enum.RequestStatus
+import com.komugirice.icchat.enums.RequestStatus
 import java.io.Serializable
 import java.util.*
 

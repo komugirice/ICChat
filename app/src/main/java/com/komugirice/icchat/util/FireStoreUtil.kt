@@ -1,6 +1,6 @@
 package com.komugirice.icchat.util
 
-import com.example.qiitaapplication.extension.getIdFromEmail
+import com.komugirice.icchat.extension.getIdFromEmail
 import com.google.firebase.auth.FirebaseAuth
 import com.komugirice.icchat.BuildConfig
 import java.util.*
@@ -22,7 +22,7 @@ class FireStoreUtil {
 
             var userId = UUID.randomUUID().toString()
             if(BuildConfig.DEBUG) {
-                val id = user.email?.getIdFromEmail() + "-" ?: ""
+                val id = user.email?.getIdFromEmail() + "-"
                 userId = userId.replace("^.{${id.length}}".toRegex(), id)
             }
 

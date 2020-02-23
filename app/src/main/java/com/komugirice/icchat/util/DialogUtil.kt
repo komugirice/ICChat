@@ -5,14 +5,11 @@ import android.content.Context
 import android.content.DialogInterface
 import android.widget.Toast
 import com.komugirice.icchat.R
-import com.komugirice.icchat.firebase.firebaseFacade
-import com.komugirice.icchat.firebase.firestore.manager.RequestManager
-import com.komugirice.icchat.firebase.firestore.manager.RoomManager
+import com.komugirice.icchat.firebase.FirebaseFacade
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
+import com.komugirice.icchat.firebase.firestore.model.Interest
 import com.komugirice.icchat.firebase.firestore.model.Request
 import com.komugirice.icchat.firebase.firestore.model.Room
-import com.komugirice.icchat.firebase.firestore.store.RequestStore
-import com.komugirice.icchat.firebase.firestore.store.RoomStore
 import com.komugirice.icchat.firebase.firestore.store.UserStore
 
 class DialogUtil {
@@ -30,7 +27,7 @@ class DialogUtil {
                 .setPositiveButton(R.string.accept, object : DialogInterface.OnClickListener {
                     override fun onClick(dialog: DialogInterface?, which: Int) {
 
-                        firebaseFacade.addFriend(request.requesterId,
+                        FirebaseFacade.addFriend(request.requesterId,
                             { Toast.makeText(context, R.string.alert_already_accept, Toast.LENGTH_LONG).show()}
                         ) {
                             Toast.makeText(
@@ -45,7 +42,7 @@ class DialogUtil {
                 })
                 .setNegativeButton(R.string.deny, object : DialogInterface.OnClickListener {
                     override fun onClick(dialog: DialogInterface?, which: Int) {
-                        firebaseFacade.denyUserRequest(request.requesterId) {
+                        FirebaseFacade.denyUserRequest(request.requesterId) {
                             Toast.makeText(
                                 context,
                                 R.string.alert_deny,
@@ -74,7 +71,7 @@ class DialogUtil {
                 .setPositiveButton(R.string.ok, object: DialogInterface.OnClickListener {
                     override fun onClick(dialog: DialogInterface?, which: Int) {
                         // 友だち申請の拒否をキャンセル
-                        firebaseFacade.cancelDenyUserRequest(request.requesterId){
+                        FirebaseFacade.cancelDenyUserRequest(request.requesterId){
                             Toast.makeText(
                                 context,
                                 R.string.alert_cancel_deny,
@@ -102,7 +99,7 @@ class DialogUtil {
                     override fun onClick(dialog: DialogInterface?, which: Int) {
                         val friendId = room.userIdList.filter{!it.equals(UserManager.myUserId)}.first()
                         // 友だちを解除
-                        firebaseFacade.deleteFriend(friendId, room.documentId) {
+                        FirebaseFacade.deleteFriend(friendId, room.documentId) {
                             Toast.makeText(
                                 context,
                                 context.getString(R.string.success_user_delete),
@@ -128,37 +125,28 @@ class DialogUtil {
                 .setMessage(R.string.confirm_group_request)
                 .setPositiveButton(R.string.accept, object : DialogInterface.OnClickListener {
                     override fun onClick(dialog: DialogInterface?, which: Int) {
-                        RoomStore.acceptGroupMember(room, UserManager.myUserId) {
-                            RequestStore.acceptGroupRequest(
-                                room.documentId,
-                                UserManager.myUserId
-                            ) {
-                                RoomManager.initRoomManager {
-                                    RequestManager.initGroupsRequestToMe {
-                                        Toast.makeText(
-                                            context,
-                                            R.string.alert_accept,
-                                            Toast.LENGTH_LONG
-                                        ).show()
-                                        onSuccess.invoke()
-                                    }
-                                }
-                            }
+                        // 招待されているグループを承認する
+                        FirebaseFacade.acceptGroup(room) {
 
-                        }
+                             Toast.makeText(
+                                 context,
+                                 R.string.alert_accept,
+                                 Toast.LENGTH_LONG
+                             ).show()
+                             onSuccess.invoke()
+
+                         }
                     }
                 })
                 .setNegativeButton(R.string.deny, object : DialogInterface.OnClickListener {
                     override fun onClick(dialog: DialogInterface?, which: Int) {
-                        RequestStore.denyGroupRequest(room.documentId, UserManager.myUserId) {
-                            RequestManager.initGroupsRequestToMe {
-                                Toast.makeText(
-                                    context,
-                                    R.string.alert_deny,
-                                    Toast.LENGTH_LONG
-                                ).show()
-                                onSuccess.invoke()
-                            }
+                        FirebaseFacade.denyGroupRequest(room.documentId, UserManager.myUserId) {
+                            Toast.makeText(
+                                context,
+                                R.string.alert_deny,
+                                Toast.LENGTH_LONG
+                            ).show()
+                            onSuccess.invoke()
                         }
                     }
                 })
@@ -181,7 +169,7 @@ class DialogUtil {
                 .setMessage(R.string.confirm_cancel_group_deny)
                 .setPositiveButton(R.string.ok, object: DialogInterface.OnClickListener {
                     override fun onClick(dialog: DialogInterface?, which: Int) {
-                        firebaseFacade.cancelDenyGroupRequest(room.documentId, UserManager.myUserId){
+                        FirebaseFacade.cancelDenyGroupRequest(room.documentId, UserManager.myUserId){
                             Toast.makeText(
                                 context,
                                 R.string.alert_cancel_deny,
@@ -207,7 +195,7 @@ class DialogUtil {
                 .setMessage(context.getString(R.string.confirm_group_delete))
                 .setPositiveButton("OK", object: DialogInterface.OnClickListener {
                     override fun onClick(dialog: DialogInterface?, which: Int) {
-                        firebaseFacade.deleteRoom(room.documentId) {
+                        FirebaseFacade.deleteRoom(room.documentId) {
                             Toast.makeText(
                                 context,
                                 context.getString(R.string.success_group_delete),
@@ -235,7 +223,7 @@ class DialogUtil {
                 .setPositiveButton(R.string.ok, object: DialogInterface.OnClickListener {
                     override fun onClick(dialog: DialogInterface?, which: Int) {
 
-                        firebaseFacade.removeGroupMember(room, UserManager.myUserId) {
+                        FirebaseFacade.withdrawGroupMember(room, UserManager.myUserId) {
                             // グループを退会しました
                             AlertDialog.Builder(context)
                                 .setMessage(context.getString(R.string.success_group_withdraw))
@@ -279,7 +267,7 @@ class DialogUtil {
                                 ).show()
                             }
                             // Users更新
-                            firebaseFacade.addFriend(targetUserId, onFailed) {
+                            FirebaseFacade.addFriend(targetUserId, onFailed) {
                                 AlertDialog.Builder(context)
                                     .setMessage(R.string.alert_success_add_friend)
                                     .setPositiveButton(R.string.ok, null)
@@ -290,6 +278,32 @@ class DialogUtil {
                     .setNegativeButton(R.string.cancel, null)
                     .show()
             }
+        }
+
+        /**
+         * 興味削除確認ダイアログ
+         * @param context
+         * @param room
+         * @param onSuccess
+         *
+         */
+        fun confirmDeleteInterestDialog(context: Context, interest: Interest, onSuccess: () -> Unit) {
+            AlertDialog.Builder(context)
+                .setMessage(context.getString(R.string.confirm_delete))
+                .setPositiveButton("OK", object: DialogInterface.OnClickListener {
+                    override fun onClick(dialog: DialogInterface?, which: Int) {
+                        FirebaseFacade.deleteInterest(interest) {
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.delete_complete),
+                                Toast.LENGTH_LONG
+                            ).show()
+                            onSuccess.invoke()
+                        }
+                    }
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .show()
         }
 
     }

@@ -4,9 +4,19 @@
 
     <data>
 
+        <import type="android.view.View" />
+
         <variable
             name="message"
             type="com.komugirice.icchat.firebase.firestore.model.Message" />
+
+        <variable
+            name="file"
+            type="com.komugirice.icchat.firebase.firestore.model.FileInfo" />
+
+        <variable
+            name="type"
+            type="com.komugirice.icchat.enums.MessageType" />
 
         <variable
             name="user"
@@ -33,14 +43,14 @@
             android:scaleType="centerCrop"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:userIconImageUrl="@{user.userId}" />
+            app:userIconImageUrl="@{user == null ? null : user.userId}" />
 
         <TextView
             android:id="@+id/userNameTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:text="@{user.name}"
+            android:text="@{user == null ? @string/unknown : user.name}"
             android:textColor="@android:color/black"
             android:textSize="10sp"
             app:layout_constraintBottom_toBottomOf="@+id/userImage"
@@ -48,42 +58,51 @@
             app:layout_constraintTop_toTopOf="@+id/userImage" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/wrapMessage"
-            android:layout_width="wrap_content"
+            android:id="@+id/messageView"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="4dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/userImage">
 
-            <TextView
-                android:id="@+id/messageTextView"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start"
-                android:background="@drawable/background_chat_left_message"
-                android:paddingStart="12dp"
-                android:paddingTop="5dp"
-                android:paddingEnd="12dp"
-                android:paddingBottom="5dp"
-                android:text="@{message.message}"
-                android:textColor="@android:color/black"
-                android:textSize="12sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/dateTextView"
-                android:layout_width="wrap_content"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/wrapMessage"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:gravity="end"
-                android:textColor="@android:color/black"
-                android:textSize="10sp"
-                app:dateTime="@{message.createdAt}"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/messageTextView" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+                <!-- app:layout_constraintEnd_toEndOf="parent"を入れてはいけない -->
+
+                <include
+                    android:id="@+id/textCell"
+                    layout="@layout/chat_type_text_cell"
+                    android:visibility="@{type.isText? View.VISIBLE : View.GONE}"
+                    app:isOther="@{true}"
+                    app:message="@{message}" />
+
+                <include
+                    android:id="@+id/imageCell"
+                    layout="@layout/chat_type_image_cell"
+                    android:visibility="@{type.isImage? View.VISIBLE : View.GONE}"
+                    app:isOther="@{true}"
+                    app:message="@{message}"
+                    app:file="@{file}"/>
+
+                <include
+                    android:id="@+id/fileCell"
+                    layout="@layout/chat_type_file_cell"
+                    android:visibility="@{type.isFile? View.VISIBLE : View.GONE}"
+                    app:isOther="@{true}"
+                    app:message="@{message}"
+                    app:file="@{file}"/>
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

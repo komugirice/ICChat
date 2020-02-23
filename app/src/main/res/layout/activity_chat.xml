@@ -86,7 +86,7 @@
         android:layout_width="0dp"
         android:layout_height="?attr/actionBarSize"
         android:background="@android:color/white"
-        android:paddingStart="16dp"
+        android:paddingStart="8dp"
         android:paddingEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -101,7 +101,7 @@
             android:gravity="left|center"
             android:hint="@string/inputMessageHint"
             android:textSize="15sp"
-            android:paddingLeft="16dp"
+            android:paddingLeft="8dp"
             android:background="@drawable/background_chat_input_edit_text"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -112,11 +112,32 @@
             android:id="@+id/sendImageView"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="48dp"
+            android:layout_marginLeft="12dp"
             android:src="@drawable/ic_send_blue_48dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/inputEditText"
+            app:layout_constraintEnd_toStartOf="@+id/imageImageView"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/imageImageView"
+            android:layout_width="20dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="12dp"
+            android:src="@drawable/ic_image_black_48dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/sendImageView"
+            app:layout_constraintEnd_toStartOf="@+id/fileImageView"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/fileImageView"
+            android:layout_width="20dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="12dp"
+            android:src="@drawable/ic_attach_file_black_48dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/imageImageView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 

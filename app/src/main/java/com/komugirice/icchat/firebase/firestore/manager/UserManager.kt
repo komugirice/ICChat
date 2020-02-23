@@ -8,9 +8,6 @@ import com.komugirice.icchat.firebase.firestore.store.UserStore
 object UserManager {
 
     var myUserId = "" // ここにSharedPreferencesから取得する
-        set(value) {
-            field = value
-        }
 
     var myUser = User()
         set(value) {
@@ -42,13 +39,16 @@ object UserManager {
         return myFriends.filter { it.userId.equals(friendId) }.firstOrNull()
     }
 
-    fun getTargetUser (targetId: String): User?{
-        return allUsers.filter { it.userId.equals(targetId) }.firstOrNull()
-    }
-
     fun removeMyFriends (friendId: String) {
         myUser.friendIdList.remove(friendId)
         myFriends = allUsers.filter { myUser.friendIdList.contains(it.userId) }
+    }
+
+    /**
+     * グループのメンバー画像取得処理で必要になった
+     */
+    fun getTargetUser (userId: String): User?{
+        return allUsers.filter { it.userId.equals(userId) }.firstOrNull()
     }
 
     /**
@@ -62,7 +62,7 @@ object UserManager {
                 it?.also {
                     // ↓なぜかmyUserIdの値が入らない潜在バグ
                     myUser = it
-                    UserStore.getAllUsers(){
+                    UserStore.getAllUsers {
                         it.result?.toObjects(User::class.java)?.also {
                             allUsers = it
                         }

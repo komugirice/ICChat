@@ -16,8 +16,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModelProviders
-import com.example.qiitaapplication.extension.getDateToString
-import com.example.qiitaapplication.extension.toggle
+import com.komugirice.icchat.extension.getDateToString
+import com.komugirice.icchat.extension.toggle
 import com.facebook.AccessToken
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
@@ -168,7 +168,7 @@ class ProfileSettingActivity : AppCompatActivity() {
 
 
         facebookConnectButton.setOnClickListener {
-            LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile", "user_friends"));
+            LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile", "user_friends"))
         }
         googleConnectButton.setOnClickListener{
             googleSignIn()
@@ -219,7 +219,7 @@ class ProfileSettingActivity : AppCompatActivity() {
                         .setTitle(R.string.error)
                         .setMessage(R.string.failed_regist)
                         .setPositiveButton("OK", null)
-                        .show();
+                        .show()
                 }
             }
     }
@@ -393,7 +393,7 @@ class ProfileSettingActivity : AppCompatActivity() {
                     userIconImageView.setRoundedImageView(it) // UIスレッド
                     uCropSrcUri = it
 
-                    // Piccaso onSUccess()はよく失敗するので使うべきではない
+                    // Picasso onSUccess()はよく失敗するので使うべきではない
 //                    Picasso.get().load(it).into(userIconImageView, object: Callback {
 //                        override fun onSuccess() {
 //                            uCropSrcUri = it
@@ -463,7 +463,7 @@ class ProfileSettingActivity : AppCompatActivity() {
             //FirebaseStorage.getInstance().reference.child("${UserManager.myUserId}/${FireStorageUtil.USER_ICON_PATH}/${prevSettingUri}").delete()
             FirebaseStorage.getInstance().getReferenceFromUrl(prevSettingUri).delete()
         val imageUrl = "${System.currentTimeMillis()}.jpg"
-        val ref = FirebaseStorage.getInstance().reference.child("${FireStorageUtil.USER_ICON_PATH}/${UserManager.myUserId?: "noUser"}/${imageUrl}")
+        val ref = FirebaseStorage.getInstance().reference.child("${FireStorageUtil.USER_ICON_PATH}/${UserManager.myUserId}/${imageUrl}")
 
         // RoundedImageViewの不具合修正
         val bitmap = when (userIconImageView) {
@@ -496,7 +496,7 @@ class ProfileSettingActivity : AppCompatActivity() {
         userIconImageView.setRoundedImageView(null)
         //FirebaseStorage.getInstance().reference.child("${UserManager.myUserId}/${FireStorageUtil.USER_ICON_PATH}/${prevSettingUri}").delete()
         FirebaseStorage.getInstance().getReferenceFromUrl(prevSettingUri).delete()
-        prevSettingUri = "";
+        prevSettingUri = ""
         uCropSrcUri = null
         Toast.makeText(this, "プロフィール画像を削除しました", Toast.LENGTH_SHORT).show()
 

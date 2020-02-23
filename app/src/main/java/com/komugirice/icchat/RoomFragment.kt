@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import com.komugirice.icchat.interfaces.Update
 import com.komugirice.icchat.databinding.FragmentRoomBinding
 import com.komugirice.icchat.viewModel.RoomViewModel
 import kotlinx.android.synthetic.main.fragment_friend.*
@@ -15,7 +16,7 @@ import kotlinx.android.synthetic.main.fragment_friend.*
 /**
  * A simple [Fragment] subclass.
  */
-class RoomFragment : Fragment() {
+class RoomFragment : Fragment(), Update {
 
     private lateinit var binding: FragmentRoomBinding
     private lateinit var viewModel: RoomViewModel
@@ -44,12 +45,7 @@ class RoomFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initialize()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        if(viewModel.initFlg == false)
-            viewModel.initData(this)
+        viewModel.initData(this)
     }
 
     private fun initialize() {
@@ -69,6 +65,13 @@ class RoomFragment : Fragment() {
         swipeRefreshLayout.setOnRefreshListener {
             viewModel.initData(this)
         }
+    }
+
+    /**
+     * 遷移先のActivityから戻ってきた場合にリロードする
+     */
+    override fun update() {
+        viewModel.initData(this)
     }
 
 }

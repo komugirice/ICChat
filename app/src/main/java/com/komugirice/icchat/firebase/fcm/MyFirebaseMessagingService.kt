@@ -11,7 +11,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.komugirice.icchat.R
-import com.komugirice.icchat.firebase.firebaseFacade
+import com.komugirice.icchat.firebase.FirebaseFacade
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
@@ -78,7 +78,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         Log.d(TAG, "sendRegistrationTokenToServer($token)")
         // fireStore.usersに保持しているトークンを更新する
         token?.also{
-            firebaseFacade.updateFcmToken(token)
+            FirebaseFacade.updateFcmToken(token)
 
         }
     }

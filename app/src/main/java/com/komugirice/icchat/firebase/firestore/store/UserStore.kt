@@ -2,18 +2,18 @@ package com.komugirice.icchat.firebase.firestore.store
 
 import android.content.Context
 import android.widget.Toast
-import com.example.qiitaapplication.extension.removeAllSpace
+import com.komugirice.icchat.extension.removeAllSpace
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
-import com.komugirice.icchat.firebase.firestore.model.User
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
-import com.komugirice.icchat.R
+import com.komugirice.icchat.firebase.firestore.model.User
 
 class UserStore {
     companion object {
 
+        const val USERS = "users"
         /**
          * ログインユーザのUserオブジェクト取得
          *
@@ -23,7 +23,7 @@ class UserStore {
         fun getLoginUser(onComplete: (Task<QuerySnapshot>) -> Unit) {
             val myDocumentId = FirebaseAuth.getInstance().currentUser?.uid.toString()
             FirebaseFirestore.getInstance()
-                .collection("users")
+                .collection("$USERS")
                 .whereArrayContains("uids",myDocumentId)
                 .get()
                 .addOnCompleteListener {
@@ -39,7 +39,7 @@ class UserStore {
          */
         fun getAllUsers(onComplete: (Task<QuerySnapshot>) -> Unit) {
             FirebaseFirestore.getInstance()
-                .collection("users")
+                .collection("$USERS")
                 .get()
                 .addOnCompleteListener {
                     onComplete.invoke(it)
@@ -63,7 +63,7 @@ class UserStore {
 
             // ログインユーザ側登録
             FirebaseFirestore.getInstance()
-                .collection("users")
+                .collection("$USERS")
                 .document(UserManager.myUser.userId)
                 .update("friendIdList", UserManager.myUser.friendIdList)
 
@@ -79,7 +79,7 @@ class UserStore {
 
                     // 友だち側登録
                     FirebaseFirestore.getInstance()
-                        .collection("users")
+                        .collection("$USERS")
                         .document(friend.userId)
                         .update("friendIdList", friend.friendIdList)
                         .addOnCompleteListener {
@@ -107,7 +107,7 @@ class UserStore {
 
             // ログインユーザ側更新
             FirebaseFirestore.getInstance()
-                .collection("users")
+                .collection("$USERS")
                 .document(UserManager.myUser.userId)
                 .update("friendIdList", UserManager.myUser.friendIdList)
                 .addOnCompleteListener {
@@ -116,7 +116,7 @@ class UserStore {
                     friend.apply {
                         friend.friendIdList.remove(UserManager.myUserId)
                         FirebaseFirestore.getInstance()
-                            .collection("users")
+                            .collection("$USERS")
                             .document(friend.userId)
                             .update("friendIdList", friend.friendIdList)
                             .addOnCompleteListener {
@@ -133,7 +133,7 @@ class UserStore {
          */
         fun registerUser(user: User, onSuccess: (Task<Void>) -> Unit) {
             FirebaseFirestore.getInstance()
-                .collection("users")
+                .collection("$USERS")
                 .document(user.userId)
                 .set(user)
                 .addOnCompleteListener {
@@ -152,7 +152,7 @@ class UserStore {
             if (UserManager.myUser.uids.contains(uid)) {
                 Toast.makeText(
                     context,
-                    R.string.alert_already_connect,
+                    "既に連携済みです。",
                     Toast.LENGTH_LONG
                 ).show()
                 return
@@ -162,7 +162,7 @@ class UserStore {
 
             // ログインユーザ側登録
             FirebaseFirestore.getInstance()
-                .collection("users")
+                .collection("$USERS")
                 .document(UserManager.myUser.userId)
                 .update("uids", UserManager.myUser.uids)
                 .addOnSuccessListener {
@@ -179,7 +179,7 @@ class UserStore {
          */
         fun getTargetUser(userId: String, onSuccess: (User) -> Unit) {
             FirebaseFirestore.getInstance()
-                .collection("users")
+                .collection("$USERS")
                 .document(userId)
                 .get()
                 // エラーになることはまずない
@@ -196,7 +196,7 @@ class UserStore {
         fun searchNotFriendUserEmail(email: String, onFailuer:()->Unit, onSuccess: (List<User>) -> Unit) {
             if (email.isEmpty()) return
             FirebaseFirestore.getInstance()
-                .collection("users")
+                .collection("$USERS")
                 .get()
                 .addOnCompleteListener {
                     if (it.isSuccessful) {
@@ -220,15 +220,15 @@ class UserStore {
         fun searchNotFriendUserName(name: String, onFailuer:()->Unit, onSuccess: (List<User>) -> Unit) {
             if (name.isEmpty()) return
             FirebaseFirestore.getInstance()
-                .collection("users")
+                .collection("$USERS")
                 .get()
                 .addOnCompleteListener {
                     if (it.isSuccessful) {
                         it.result?.toObjects(User::class.java)?.also {
                             val ret = it.filter {
                                 !UserManager.myUserId.equals(it.userId) &&
-                                !UserManager.myUser.friendIdList.contains(it.userId) &&
-                                Regex(name.removeAllSpace()).containsMatchIn(it.name.removeAllSpace())
+                                        !UserManager.myUser.friendIdList.contains(it.userId) &&
+                                        Regex(name.removeAllSpace()).containsMatchIn(it.name.removeAllSpace())
                             }
                             if(ret.size > 0)
                                 onSuccess.invoke(ret)
@@ -250,7 +250,7 @@ class UserStore {
          */
         fun updateFcmToken(token: String?, onSuccess: () -> Unit) {
             FirebaseFirestore.getInstance()
-                .collection("users")
+                .collection("$USERS")
                 .document(UserManager.myUser.userId)
                 .update("fcmToken", token)
                 .addOnSuccessListener {

@@ -1,5 +1,6 @@
-package com.example.qiitaapplication.extension
+package com.komugirice.icchat.extension
 
+import android.util.Patterns
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -277,9 +278,7 @@ fun String.isHan(): Boolean {
  * @return true, 半角数値; false, それ以外
  */
 fun String.isHanNum(): Boolean {
-     return if (!this.matches("^[0-9]+$".toRegex())) {
-          false
-     } else true
+     return this.matches("^[0-9]+$".toRegex())
 }
 
 /**
@@ -289,9 +288,7 @@ fun String.isHanNum(): Boolean {
  * @return true, 半角英数; false, それ以外
  */
 fun String.isHanStr(): Boolean {
-     return if (!this.matches("^[0-9a-zA-Z]+$".toRegex())) {
-          false
-     } else true
+     return this.matches("^[0-9a-zA-Z]+$".toRegex())
 }
 
 /**
@@ -301,9 +298,7 @@ fun String.isHanStr(): Boolean {
  * @return true, 半角英数; false, それ以外
  */
 fun String.isHanStrBigOnly(): Boolean {
-     return if (!this.matches("^[0-9A-Z]+$".toRegex())) {
-          false
-     } else true
+     return this.matches("^[0-9A-Z]+$".toRegex())
 }
 
 /**
@@ -313,9 +308,7 @@ fun String.isHanStrBigOnly(): Boolean {
  * @return true, 半角大文字英字; false, それ以外
  */
 fun String.isHanBigStr(): Boolean {
-     return if (!this.matches("^[A-Z]+$".toRegex())) {
-          false
-     } else true
+     return this.matches("^[A-Z]+$".toRegex())
 }
 
 /**
@@ -325,9 +318,7 @@ fun String.isHanBigStr(): Boolean {
  * @return true, 日付文字; false, それ以外
  */
 fun String.isDateStr(): Boolean {
-     return if (!this.matches("^[/0-9]+$".toRegex())) {
-          false
-     } else true
+     return this.matches("^[/0-9]+$".toRegex())
 }
 
 /**
@@ -337,9 +328,7 @@ fun String.isDateStr(): Boolean {
  * @return true, 全角文字のみ; false, 半角文字が含まれている
  */
 fun String.isZenStr(): Boolean {
-     return if (!this.matches("^[^ -~｡-ﾟ]+$".toRegex())) {
-          false
-     } else true
+     return this.matches("^[^ -~｡-ﾟ]+$".toRegex())
 }
 
 /**
@@ -415,4 +404,49 @@ fun String.getIdFromEmail(): String {
 fun String.removeAllSpace(): String {
      val str = Pattern.compile("[ 　]+").matcher(this).replaceAll("")
      return str
+}
+
+/**
+ * ファイル名から拡張子を取得する
+ * 単純に一番最後の.以降を取得しているだけ。
+ * @return ファイルの拡張子。拡張子がない場合はnull
+ */
+fun String.getSuffix(): String {
+     if (this == null) return ""
+     val point = this.lastIndexOf(".")
+     return if (point != -1) {
+          this.substring(point + 1)
+     } else ""
+}
+
+/**
+ * ファイル名から拡張子を除去する
+ * @param fileName ファイル名
+ * @return ファイル名から拡張子を除去した値
+ */
+fun String.getRemoveSuffixName(): String {
+     if (this == null) return ""
+     val point = this.lastIndexOf(".")
+     return if (point != -1) {
+          this.substring(0, point)
+     } else ""
+}
+
+/**
+ * 文字列からURLを抽出する
+ * @return URL
+ */
+fun String.extractURL(): String? {
+     return Patterns.WEB_URL.toRegex().find(this)?.value
+}
+
+/**
+ * 画像タイプの拡張子チェック
+ * @return 画像拡張子の有無
+ */
+fun String.hasImageExtension(): Boolean {
+     val imageExtensions = listOf("png", "jpg", "jpeg", "PNG", "JPG", "JPEG")
+     if (!this.contains("."))
+          return false
+     return imageExtensions.contains(this.split(".").last())
 }

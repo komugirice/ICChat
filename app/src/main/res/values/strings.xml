@@ -5,13 +5,13 @@
     <string name="create_button">登録</string>
     <string name="buttonRefresh">更新</string>
     <string name="search_button">検索</string>
+    <string name="add_button">追加</string>
     <string name="failed_regist">登録に失敗しました</string>
     <string name="ok">OK</string>
     <string name="cancel">キャンセル</string>
     <string name="error">エラー</string>
 
     <!-- ログイン画面 -->
-    <string name="app_name">ICChat</string>
     <string name="title_activity_login">ログイン</string>
     <string name="prompt_email">メールアドレス</string>
     <string name="prompt_password">パスワード</string>
@@ -79,10 +79,18 @@
     <string name="buttonDelDebugFriend">友だち削除</string>
     <string name="button_fcm_send">FCM通知</string>
 
+
     <!-- ChatActivity -->
     <string name="inputMessageHint">メッセージを入力</string>
     <string name="confirm_group_withdraw">グループを退会しますか？</string>
     <string name="success_group_withdraw">グループを退会しました</string>
+    <string name="unknown">unknown</string>
+    <string name="delete_message">削除</string>
+    <string name="quote_message">引用</string>
+    <string name="download"><u>ダウンロード</u></string>
+    <string name="alert_complete_download">ダウンロードが完了しました</string>
+    <string name="alert_failed_download">ダウンロードに失敗しました</string>
+    <string name="no_file_name">名称未設定</string>
 
     <!-- ProfileSettingActivity -->
     <string name="title_profile_setting">プロフィール設定</string>
@@ -133,6 +141,28 @@
     <string name="invalid_search_result">該当ユーザは存在しません</string>
     <string name="success_user_request">友だち申請しました</string>
 
+    <!-- InterestFragment -->
+    <string name="name_label">ユーザ名</string>
+
+    <!-- InputInterestActivity -->
+    <string name="input_interest_activity_title">興味入力</string>
+    <string name="input_interest_activity_date">yyyy年MM月dd日 HH時mm分</string>
+    <string name="comment">コメント</string>
+    <string name="image">画像</string>
+    <string name="url">URL</string>
+    <string name="change">変更</string>
+    <string name="createdAt">登録日時</string>
+    <string name="url_hint"><font size="10">URLを入力し、チェックボタンを押してください</font></string>
+    <string name="url_error">入力されたURLは解析できませんでした</string>
+    <string name="url_empty">URLが入力されていません</string>
+    <string name="failed_ucrop">画像の加工に失敗しました</string>
+    <string name="regist_complete">登録が完了しました</string>
+    <string name="regist_validate_error">URL、画像、コメントのいづれかを入力してください</string>
+    <string name="regist_zero">登録データが0件です</string>
+
+    <!-- ActionSendActivity -->
+    <string name="failed_action_send">ログインされていません\nICChatの共有に失敗しました</string>
+    <string name="loading_message">ICChatに共有しています</string>
     <!-- ダイアログ関係 -->
     <string name="confirm_add_friend">ユーザを友だち登録しますか？</string>
     <string name="alert_success_add_friend">友だち登録が完了しました</string>
@@ -141,6 +171,7 @@
     <string name="confirm_user_request">友だち申請を承認しますか？</string>
     <string name="accept">承認</string>
     <string name="deny">拒否</string>
+    <string name="edit">編集</string>
     <string name="alert_already_accept">既に登録済みです</string>
     <string name="alert_accept">承認しました</string>
     <string name="alert_deny">拒否しました</string>
@@ -148,6 +179,9 @@
     <string name="alert_cancel_deny">拒否を取り消しました</string>
     <string name="confirm_group_request">招待中のグループを承認しますか？</string>
     <string name="confirm_cancel_group_deny">グループの拒否を取り消しますか？</string>
+    <string name="alert_no_file_size">ファイルサイズが0バイトです</string>
+    <string name="confirm_delete">削除してよろしいですか</string>
+    <string name="delete_complete">削除しました</string>
 
     <!-- FCM -->
     <string name="fcm_friend_request">%1$sさんから友だち申請がありました。</string>
@@ -155,4 +189,8 @@
     <string name="fcm_friend_request_accept">%1$sさんが友だち申請を承認しました。</string>
     <string name="fcm_friend_request_deny">%1$sさんが友だち申請を拒否しました。</string>
     <string name="default_notification_channel_id">ICChat_Notification</string>
+
+    <!-- Message -->
+    <string name="message_group_accept">%1$sさんが参加しました。</string>
+    <string name="message_group_withdraw">%1$sさんが退会しました。</string>
 </resources>

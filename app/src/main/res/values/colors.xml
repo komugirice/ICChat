@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
+<!--    <color name="colorPrimary">#008577</color>-->
+    <color name="colorPrimary">@android:color/holo_blue_dark</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
 
@@ -80,6 +81,7 @@
     <color name="indian_red">#CD5C5C</color>
     <color name="medium_violet_red">#C71585</color>
     <color name="silver">#C0C0C0</color>
+    <color name="silver_gray">#9F9F9F</color>
     <color name="dark_khaki">#BDB76B</color>
     <color name="rosy_brown">#BC8F8F</color>
     <color name="medium_orchid">#BA55D3</color>
@@ -187,4 +189,12 @@
     <color name="Nanko_port_town_Line_Cerulean_Blue">#00a0de</color>
     <!---->
     <color name="facebook">#1877f2</color>
+    <color name="skype_blue">#dcf4fd</color>
+    <color name="skype_gray">#f1f1f4</color>
+    <color name="message_gray">#f2f6f9</color>
+
+    <!-- 機能別 -->
+    <color name="icchat_backgroud_color">@color/white</color>
+    <color name="interest_selected_color">@color/lavender</color>
+    <color name="interest_add_button">#E00099cc</color>
 </resources>

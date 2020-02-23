@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="ogpData"
+            type="com.komugirice.icchat.data.model.OgpData" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/ogpContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/ogpImageView"
+            android:layout_width="240dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/contents_padding"
+            android:background="@drawable/edit_text_border"
+            android:scaleType="centerCrop"
+            app:imageUrlNoImage="@{ogpData.ogpImageUrl}"
+            app:layout_constraintDimensionRatio="4:3"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/ogpTitleLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@color/skype_gray"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            app:layout_constraintEnd_toEndOf="@+id/ogpImageView"
+            app:layout_constraintStart_toStartOf="@+id/ogpImageView"
+            app:layout_constraintTop_toBottomOf="@+id/ogpImageView">
+
+            <TextView
+                android:id="@+id/ogpTitleTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:paddingTop="4dp"
+                android:scrollHorizontally="true"
+                android:text="@{ogpData.ogpTitle}"
+                android:textColor="@android:color/black"
+                android:textSize="15sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/ogpDescriptionTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:paddingBottom="4dp"
+                android:scrollHorizontally="true"
+                android:text="@{ogpData.ogpDescription}"
+                android:textColor="@android:color/black"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="@+id/ogpTitleTextView"
+                app:layout_constraintStart_toStartOf="@+id/ogpTitleTextView"
+                app:layout_constraintTop_toBottomOf="@+id/ogpTitleTextView" />
+
+            <TextView
+                android:id="@+id/ogpUrlTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:paddingBottom="4dp"
+                android:scrollHorizontally="true"
+                android:text="@{ogpData.ogpUrl}"
+                android:textColor="@android:color/black"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="@+id/ogpDescriptionTextView"
+                app:layout_constraintStart_toStartOf="@+id/ogpDescriptionTextView"
+                app:layout_constraintTop_toBottomOf="@+id/ogpDescriptionTextView" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

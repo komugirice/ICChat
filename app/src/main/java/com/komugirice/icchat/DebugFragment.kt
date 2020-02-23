@@ -8,9 +8,10 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.komugirice.icchat.interfaces.Update
 import com.komugirice.icchat.firebase.fcm.FcmApi
+import com.komugirice.icchat.firebase.FirebaseFacade
 import com.komugirice.icchat.firebase.fcm.FcmStore
-import com.komugirice.icchat.firebase.firebaseFacade
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.firebase.firestore.model.Room
 import com.komugirice.icchat.firebase.firestore.model.User
@@ -22,7 +23,7 @@ import kotlinx.android.synthetic.main.fragment_debug.*
 /**
  * A simple [Fragment] subclass.
  */
-class DebugFragment : Fragment() {
+class DebugFragment : Fragment(), Update {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -68,7 +69,7 @@ class DebugFragment : Fragment() {
         buttonAddDebugFriend.setOnClickListener {
             val friendId: String = SpinnerAddUsers.selectedItem.toString()
             var rooms: MutableList<Room> = mutableListOf()
-            firebaseFacade.addFriend(friendId,{}){
+            FirebaseFacade.addFriend(friendId,{}){
                 Toast.makeText(
                     context,
                     "友だち登録が完了しました。",
@@ -86,7 +87,7 @@ class DebugFragment : Fragment() {
             UserStore.delFriend(friendId) {
 
                 // Room削除
-                RoomStore.getLoginUserRooms() {
+                RoomStore.getLoginUserRooms {
                     RoomStore.delSingleUserRooms(it, friendId)
                     Toast.makeText(
                         context,
@@ -114,7 +115,7 @@ class DebugFragment : Fragment() {
         var tmpList: List<User>
 
         // NotFriend
-        DebugUserStore.getDebugNotFriendIdArray() {
+        DebugUserStore.getDebugNotFriendIdArray {
             if (it.isSuccessful) {
                 it.result?.toObjects(User::class.java)?.also {
                     // とりあえずuser全件をnotFriendListに格納
@@ -169,6 +170,10 @@ class DebugFragment : Fragment() {
                 Toast.LENGTH_LONG
             ).show()
         }
+    }
+
+    override fun update() {
+
     }
 
 }

@@ -1,0 +1,21 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+<item android:state_pressed="true">
+    <shape>
+        <solid android:color="@color/gainsboro" />
+    </shape>
+</item>
+
+<item android:state_focused="true">
+    <shape>
+        <solid android:color="@color/gainsboro" />
+    </shape>
+</item>
+
+<item>
+    <shape>
+        <solid android:color="@color/icchat_backgroud_color" />
+    </shape>
+</item>
+
+</selector>

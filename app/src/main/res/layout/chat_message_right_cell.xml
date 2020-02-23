@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <import type="android.view.View"/>
+        <variable
+            name="message"
+            type="com.komugirice.icchat.firebase.firestore.model.Message" />
+
+        <variable
+            name="file"
+            type="com.komugirice.icchat.firebase.firestore.model.FileInfo" />
+
+        <variable
+            name="type"
+            type="com.komugirice.icchat.enums.MessageType"/>
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/rootView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="40dp"
+        android:paddingTop="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="16dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/messageView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <include
+                android:visibility="@{type.isText? View.VISIBLE : View.GONE}"
+                android:id="@+id/textCell"
+                layout="@layout/chat_type_text_cell"
+                app:message="@{message}"
+                app:isOther="@{false}"/>
+
+            <include
+                android:visibility="@{type.isImage? View.VISIBLE : View.GONE}"
+                android:id="@+id/imageCell"
+                layout="@layout/chat_type_image_cell"
+                app:message="@{message}"
+                app:file="@{file}"/>
+                app:isOther="@{false}"/>
+
+            <include
+                android:id="@+id/fileCell"
+                layout="@layout/chat_type_file_cell"
+                android:visibility="@{type.isFile? View.VISIBLE : View.GONE}"
+                app:isOther="@{false}"
+                app:message="@{message}"
+                app:file="@{file}"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

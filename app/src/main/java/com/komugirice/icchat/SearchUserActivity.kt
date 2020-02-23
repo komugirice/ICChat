@@ -13,7 +13,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.komugirice.icchat.databinding.ActivitySearchUserBinding
-import com.komugirice.icchat.firebase.firebaseFacade
+import com.komugirice.icchat.firebase.FirebaseFacade
 import com.komugirice.icchat.firebase.firestore.manager.RequestManager
 import com.komugirice.icchat.firebase.firestore.model.User
 import com.komugirice.icchat.firebase.firestore.store.UserStore
@@ -159,7 +159,7 @@ class SearchUserActivity : BaseActivity() {
     }
 
     fun requestFriend() {
-        firebaseFacade.requestFriend(viewModel._requestUser) {
+        FirebaseFacade.requestFriend(viewModel._requestUser) {
             AlertDialog.Builder(this)
                 .setMessage(R.string.success_user_request)
                 .setPositiveButton(R.string.ok, object : DialogInterface.OnClickListener {

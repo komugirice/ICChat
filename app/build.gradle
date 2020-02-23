@@ -6,6 +6,16 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-kapt'
 
+//def loadProperties(filename) {
+//    def props = new Properties()
+//    file(filename).withInputStream {
+//        props.load(it)
+//    }
+//    return props
+//}
+//
+//def props = loadProperties("$rootDir/secret.properties")
+
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
@@ -17,15 +27,41 @@ android {
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+//    signingConfigs {
+//        debug {
+//            storeFile file("config/keystore")
+//            storePassword props.DEBUG_STORE_KEY
+//            keyAlias props.DEBUG_ALIAS
+//            keyPassword props.DEBUG_ALIAS_KEY
+//        }
+//        release {
+//            storeFile file("config/keystore")
+//            storePassword props.DEBUG_STORE_KEY
+//            keyAlias props.DEBUG_ALIAS
+//            keyPassword props.DEBUG_ALIAS_KEY
+//        }
+//    }
     buildTypes {
         debug {
             debuggable true
+//            signingConfig signingConfigs.debug
         }
 
         release {
             debuggable true
             minifyEnabled false
+//            signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    flavorDimensions 'enviroment'
+    productFlavors {
+        develop {
+            applicationIdSuffix '.dev'
+            dimension 'enviroment'
+        }
+        production {
+            dimension 'enviroment'
         }
     }
     dataBinding {
@@ -87,6 +123,10 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
     implementation "com.squareup.retrofit2:converter-scalars:$retrofit_version"
     implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofit_version"
+    // htmlスクレイピング
+    implementation 'org.jsoup:jsoup:1.12.1'
+    // 動画
+    implementation "com.airbnb.android:lottie:$lottieVersion"
 }
 
 apply plugin: 'com.google.gms.google-services'

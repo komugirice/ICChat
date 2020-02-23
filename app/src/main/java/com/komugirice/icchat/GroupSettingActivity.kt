@@ -10,7 +10,6 @@ import android.os.Bundle
 import android.view.View
 import android.widget.CheckBox
 import android.widget.Toast
-import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.net.toUri
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -18,11 +17,11 @@ import androidx.lifecycle.ViewModelProviders
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.UploadTask
 import com.komugirice.icchat.databinding.ActivityGroupSettingBinding
-import com.komugirice.icchat.enum.ActivityEnum
-import com.komugirice.icchat.enum.RequestStatus
+import com.komugirice.icchat.enums.ActivityEnum
+import com.komugirice.icchat.enums.RequestStatus
 import com.komugirice.icchat.extension.afterTextChanged
 import com.komugirice.icchat.extension.setRoundedImageView
-import com.komugirice.icchat.firebase.firebaseFacade
+import com.komugirice.icchat.firebase.FirebaseFacade
 import com.komugirice.icchat.firebase.firestore.manager.RequestManager
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.firebase.firestore.model.GroupRequests
@@ -213,7 +212,7 @@ class GroupSettingActivity : BaseActivity() {
                     viewModel._requestUser.add(it)
                 }
                 // 未加入、招待中
-                if(beRequesteds?.contains(it.userId) ?: false) {
+                if(beRequesteds?.contains(it.userId) == true) {
                     checkBox.isChecked = true
                     checkBox.text =  "(招待中) " + it.name
                     // とりあえず申請中も変更できるようにしよう
@@ -221,7 +220,7 @@ class GroupSettingActivity : BaseActivity() {
                     viewModel._requestUser.add(it)
                 }
                 // 拒否
-                if(beDenyeds?.contains(it.userId) ?: false) {
+                if(beDenyeds?.contains(it.userId) == true) {
                     checkBox.text = "(拒否) " + it.name
                     checkBox.isEnabled = false
                 }
@@ -326,6 +325,10 @@ class GroupSettingActivity : BaseActivity() {
         // 画像未設定の場合は終了
         if(groupIconImageView.drawable == null) return
 
+        // 前画像削除
+        if(prevSettingUri.isNotEmpty())
+            FirebaseStorage.getInstance().getReferenceFromUrl(prevSettingUri).delete()
+
         val imageUrl = "${System.currentTimeMillis()}.jpg"
         val ref = FirebaseStorage.getInstance().reference.child("${FireStorageUtil.ROOM_PATH}/${room.documentId}/${FireStorageUtil.ROOM_ICON_PATH}/${imageUrl}")
 
@@ -412,7 +415,7 @@ class GroupSettingActivity : BaseActivity() {
                 if(this.room.userIdList.contains(it)) {
                     // 前：userIdListにいる 後：チェック有り
                     userIdList.add(it)
-                } else if(currentrequesterIdList?.contains(it) ?: false){
+                } else if(currentrequesterIdList?.contains(it) == true){
                     // 前：userIdListにいない、requesterIdListにいる 後：チェック有り
                     requesterIdList.add(it)
                 } else {
@@ -458,12 +461,12 @@ class GroupSettingActivity : BaseActivity() {
 
             // 削除リクエストリスト作成
             deleteRequest = currentrequesterIdList?.toMutableList() ?: mutableListOf()
-            deleteRequest?.removeAll(viewModel._requestUser.map{it.userId})
+            deleteRequest.removeAll(viewModel._requestUser.map{it.userId})
 
         }
         val onFailed = {Toast.makeText(this, R.string.failed_group_regist, Toast.LENGTH_SHORT).show()}
         // グループ登録
-        firebaseFacade.registerGroupRoom(tmpRoom, tmpGroupRequest, deleteRequest, onFailed){
+        FirebaseFacade.registerGroupRoom(tmpRoom, tmpGroupRequest, deleteRequest, onFailed){
             // 画像削除／登録
             if(deleteImageFlg == true) {
                 // 前画像削除

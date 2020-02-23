@@ -9,18 +9,32 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.widget.PopupMenu
+import android.widget.TextView
+import androidx.core.view.GravityCompat
+import androidx.databinding.DataBindingUtil
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.fragment.app.FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.viewpager.widget.ViewPager
+import com.komugirice.icchat.databinding.ActivityMainBinding
+import com.komugirice.icchat.firebase.firestore.manager.UserManager
+import com.komugirice.icchat.interfaces.Update
+import com.komugirice.icchat.view.OtherUserView
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.fragment_interest.*
+import kotlinx.android.synthetic.main.item_drawer.*
+import kotlinx.android.synthetic.main.item_drawer.swipeRefreshLayout
+import kotlinx.android.synthetic.main.item_drawer.view.*
 
 class MainActivity : BaseActivity() {
 
     // TabLayoutで使用
     private val customAdapter by lazy { CustomAdapter(this, supportFragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) }
 
+    private lateinit var binding: ActivityMainBinding
     /**
      * onCreateメソッド
      *
@@ -30,16 +44,32 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         initialize()
+
     }
 
     /**
      * 各Activityから戻った時にRoomが更新されていないバグ対応
-     * かといってタブ切り替えでは更新したくない
+     * かといってタブ切り替えでは更新したくないのでonRestart
      *
      */
     override fun onRestart() {
         super.onRestart()
-        initialize()
+        customAdapter.fragments.forEach {
+            if(it.fragment is Update)
+                it.fragment.update()
+        }
+
+    }
+
+    /**
+     * Drawerが表示の時、バックボタンでDrawerを閉じる。画面は閉じない。
+     */
+    override fun onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            closeDrawer()
+            return
+        }
+        super.onBackPressed()
     }
 
     /**
@@ -47,9 +77,25 @@ class MainActivity : BaseActivity() {
      *
      */
     private fun initialize() {
+        initBinding()
         initLayout()
     }
 
+    /**
+     * MVVMのBinding
+     *
+     */
+    private fun initBinding() {
+        binding = DataBindingUtil.setContentView(this,
+            R.layout.activity_main
+        )
+        binding.lifecycleOwner = this
+
+        binding.drawerLayout.otherUsersView.customAdapter.onClickCallBack = {
+            closeDrawer()
+            changeInterestUserId(it)
+        }
+    }
     /**
      * initLayoutメソッド
      *
@@ -58,6 +104,8 @@ class MainActivity : BaseActivity() {
         initClick()
         initViewPager()
         initTabLayout()
+        initDrawerLayout()
+        initDrawerSwipeLayout()
     }
 
     /**
@@ -65,13 +113,30 @@ class MainActivity : BaseActivity() {
      *
      */
     private fun initClick() {
+        // 設定ボタン
         settingImageView.setOnClickListener {
             showSettingMenu(it)
         }
-
+        // 友達追加ボタン
         addFriendsImageView.setOnClickListener {
             showAddFriendsMenu(it)
         }
+        // 興味（編集）ボタン
+        editInterestImageView.setOnClickListener {
+            closeDrawer()
+            changeInterestUserId(UserManager.myUserId)
+
+        }
+        // 興味（閲覧）ボタン
+        showInterestImageView.setOnClickListener {
+            openDrawer()
+        }
+        // ナビゲーション：自分リンク
+        drawerMenuView.findViewById<TextView>(R.id.myTextView).setOnClickListener {
+            closeDrawer()
+            changeInterestUserId(UserManager.myUserId)
+        }
+
     }
 
     /**
@@ -86,7 +151,10 @@ class MainActivity : BaseActivity() {
                 override fun onPageScrollStateChanged(state: Int) {}
                 override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
                 override fun onPageSelected(position: Int) {
-                    headerTextView.text = customAdapter.getPageTitle(position)
+                    binding.fragmentIndex = position    // アイコン切り替えの為
+                    headerTextView?.text = customAdapter.getPageTitle(position) // タイトル
+                    closeDrawer()
+                    drawerLayout.setDrawerLockMode(if (position == VISIBLE_DRAWER_POSITION) DrawerLayout.LOCK_MODE_UNLOCKED else DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
                 }
             })
         }
@@ -99,12 +167,71 @@ class MainActivity : BaseActivity() {
     private fun initTabLayout() {
         tabLayout.setupWithViewPager(viewPager)
         tabLayout.getTabAt(0)?.setCustomView(R.layout.design_fragment_icon_person)
-        tabLayout.getTabAt(0)?.setText("")
+        tabLayout.getTabAt(0)?.text = ""
         tabLayout.getTabAt(1)?.setCustomView(R.layout.design_fragment_icon_chat)
-        tabLayout.getTabAt(1)?.setText("")
+        tabLayout.getTabAt(1)?.text = ""
         tabLayout.getTabAt(2)?.setCustomView(R.layout.design_fragment_icon_interest)
-        tabLayout.getTabAt(2)?.setText("")
+        tabLayout.getTabAt(2)?.text = ""
         tabLayout.getTabAt(3)?.setText(R.string.tab_debug)
+    }
+
+    private fun initDrawerLayout() {
+        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+        // ユーザ一覧更新
+        binding.drawerLayout.otherUsersView.customAdapter.refresh(UserManager.myFriends)
+        // 初回は自分がSelected
+        binding.drawerMyUserSelected = true
+
+    }
+
+    private fun initDrawerSwipeLayout(){
+        val swipeRefreshLayout = drawerMenuView.findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout)
+        swipeRefreshLayout.setOnRefreshListener {
+            swipeRefreshLayout.isRefreshing = false
+            // ユーザ一覧更新
+            binding.drawerLayout.otherUsersView.customAdapter.refresh(UserManager.myFriends)
+        }
+    }
+
+    /**
+     * 興味UserId変更処理
+     * @param newUserId : 新しいUserId
+     */
+    private fun changeInterestUserId(newUserId: String) {
+        customAdapter.fragments.map { it.fragment }.forEach {
+            if (it is InterestFragment) {
+                it.updateUserId(newUserId)
+                // 画面更新
+                it.update()
+                // ナビゲーション更新
+                refreshDrawerLayout(newUserId)
+            }
+        }
+    }
+
+    /**
+     * DrawerLayout更新
+     */
+    private fun refreshDrawerLayout(newUserId: String) {
+
+        val adapter = binding.drawerLayout.otherUsersView.customAdapter
+        // 選択中のユーザID更新
+        adapter.userId = newUserId
+        // ユーザ一覧更新
+        adapter.refresh(UserManager.myFriends)
+        // 「自分」背景色の更新
+        binding.drawerMyUserSelected = adapter.userId == UserManager.myUserId
+    }
+
+    private fun closeDrawer() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START))
+            drawerLayout.closeDrawer(GravityCompat.START)
+    }
+
+    private fun openDrawer() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START))
+            return
+        drawerLayout.openDrawer(GravityCompat.START)
     }
 
     /**
@@ -113,20 +240,23 @@ class MainActivity : BaseActivity() {
      *
      */
     class CustomAdapter(private val context: Context, fragmentManager: FragmentManager, behavor: Int) :
-        FragmentPagerAdapter(fragmentManager, behavor) {
+        FragmentPagerAdapter(fragmentManager, behavor){
 
         inner class Item(val fragment: Fragment, val title:Int)
 
         val fragments = listOf(Item(FriendFragment(), R.string.tab_frient)
             , Item(RoomFragment(), R.string.tab_room)
-            , Item(InterestFragment(), R.string.tab_interest)
+            , Item(InterestFragment().apply {
+                arguments = Bundle().apply {
+                    putString(InterestFragment.KEY_USER_ID, UserManager.myUserId)
+                }
+            }, R.string.tab_interest)
             , Item(DebugFragment(), R.string.tab_debug))
 
         override fun getCount(): Int = fragments.size
 
         override fun getItem(position: Int) = fragments[position].fragment
 
-        // アイコンにするのでコメントアウト
         override fun getPageTitle(position: Int) = context.getString( fragments[position].title )
 
     }
@@ -199,6 +329,7 @@ class MainActivity : BaseActivity() {
 
 
     companion object {
+        private const val VISIBLE_DRAWER_POSITION = 2
         fun start(activity: Activity) = activity.apply {
             startActivity(Intent(activity, MainActivity::class.java))
         }
