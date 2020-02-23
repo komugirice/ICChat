@@ -2,6 +2,14 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <data>
+        <variable
+            name="isFacebookAuth"
+            type="Boolean"/>
+        <variable
+            name="isGoogleAuth"
+            type="Boolean"/>
+    </data>
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -332,7 +340,7 @@
                     android:drawableLeft="@drawable/ic_facebook_24dp"
                     android:drawablePadding="8sp"
                     android:padding="8dp"
-                    android:text="@string/facebook_connect_button"
+                    android:text="@{isFacebookAuth ? @string/facebook_disconnect_button : @string/facebook_connect_button}"
                     android:textColor="@color/white"
                     android:textSize="12sp"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -352,7 +360,7 @@
                     android:drawablePadding="8sp"
                     android:elevation="5dp"
                     android:padding="8dp"
-                    android:text="@string/google_connect_button"
+                    android:text="@{isGoogleAuth ? @string/google_disconnect_button : @string/google_connect_button}"
                     android:textColor="@color/black"
                     android:textSize="12sp"
                     app:layout_constraintEnd_toEndOf="parent"

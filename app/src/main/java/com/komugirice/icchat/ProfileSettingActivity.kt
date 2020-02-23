@@ -13,14 +13,11 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.DatePicker
-import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
-import com.komugirice.icchat.extension.getDateToString
-import com.komugirice.icchat.extension.toggle
 import com.facebook.AccessToken
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
@@ -33,7 +30,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.auth.FacebookAuthCredential
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
@@ -41,8 +37,11 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.komugirice.icchat.ICChatApplication.Companion.isFacebookAuth
 import com.komugirice.icchat.ICChatApplication.Companion.isGoogleAuth
+import com.komugirice.icchat.databinding.ActivityProfileSettingBinding
 import com.komugirice.icchat.databinding.FriendRequestedCellBinding
+import com.komugirice.icchat.extension.getDateToString
 import com.komugirice.icchat.extension.setRoundedImageView
+import com.komugirice.icchat.extension.toggle
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.firebase.firestore.model.Request
 import com.komugirice.icchat.firebase.firestore.store.UserStore
@@ -59,6 +58,7 @@ import java.util.*
 
 class ProfileSettingActivity : BaseActivity() {
 
+    private lateinit var binding: ActivityProfileSettingBinding
     private lateinit var viewModel: ProfileSettingViewModel
 
     private lateinit var googleSignInClient: GoogleSignInClient
@@ -84,6 +84,7 @@ class ProfileSettingActivity : BaseActivity() {
     }
 
     private fun initialize() {
+        initBinding()
         initViewModel()
         initFacebook()
         initGoogle()
@@ -91,6 +92,20 @@ class ProfileSettingActivity : BaseActivity() {
         initData()
         initUserIcon()
         initClick()
+    }
+
+    /**
+     * MVVMのBinding
+     *
+     */
+    private fun initBinding() {
+        binding = DataBindingUtil.setContentView(this,
+            R.layout.activity_profile_setting
+        )
+        binding.lifecycleOwner = this
+
+        binding.isFacebookAuth = isFacebookAuth
+        binding.isGoogleAuth = isGoogleAuth
     }
 
     private fun initViewModel() {
@@ -107,9 +122,6 @@ class ProfileSettingActivity : BaseActivity() {
         email.text = myUser.email
         userName.text = if(myUser.name.isNotEmpty()) myUser.name else getString(R.string.no_setting)
         birthDay.text = myUser.birthDay?.getDateToString() ?: getString(R.string.no_setting)
-        // ログインユーザの連携有無によってボタン名変更
-        if(isFacebookAuth) facebookConnectButton.text = getString(R.string.facebook_disconnect_button)
-        if(isGoogleAuth) googleConnectButton.text = getString(R.string.google_disconnect_button)
     }
 
     private fun initData(){
@@ -282,6 +294,10 @@ class ProfileSettingActivity : BaseActivity() {
                     // Facebook認証成功
                     Log.d(TAG, "signInWithCredential:success")
 
+                    // 連携済みエラーの場合はFacebook連携済みを画面反映
+                    isFacebookAuth = true
+                    binding.isFacebookAuth = isFacebookAuth
+
                     // ※この時点でauth.currentUser.uidがfacebookのuidに変わっている!
                     val onFailure = {
                         // 既に連携済みです。
@@ -290,13 +306,9 @@ class ProfileSettingActivity : BaseActivity() {
                             getString(R.string.alert_already_connect),
                             Toast.LENGTH_LONG
                         ).show()
-
-                        // 連携済みエラーの場合はFacebook連携済みを画面反映
-                        isFacebookAuth = true
-                        facebookConnectButton.text = getString(R.string.facebook_disconnect_button)
                     }
 
-                    UserStore.addUid(this, onFailure){
+                    UserStore.addUid(onFailure){
                         Toast.makeText(
                             this,
                             "Facebookに連携しました",
@@ -353,6 +365,10 @@ class ProfileSettingActivity : BaseActivity() {
                     // 認証成功
                     Log.d(TAG, "signInWithCredential:success")
 
+                    // 連携済みエラーの場合はGoogle連携済みを画面反映
+                    isGoogleAuth = true
+                    binding.isGoogleAuth = isGoogleAuth
+
                     // ※この時点でauth.currentUser.uidがGoogleのuidに変わっている!
                     val onFailure = {
                         // 既に連携済みです。
@@ -361,12 +377,8 @@ class ProfileSettingActivity : BaseActivity() {
                             getString(R.string.alert_already_connect),
                             Toast.LENGTH_LONG
                         ).show()
-
-                        // 連携済みエラーの場合はGoogle連携済みを画面反映
-                        isGoogleAuth = true
-                        googleConnectButton.text = getString(R.string.google_disconnect_button)
                     }
-                    UserStore.addUid(this, onFailure) {
+                    UserStore.addUid(onFailure) {
                         Toast.makeText(
                             this,
                             "Googleに連携しました。",
@@ -394,6 +406,7 @@ class ProfileSettingActivity : BaseActivity() {
      *
      */
     fun disconnectFacebook() {
+        val uid = FirebaseAuth.getInstance().currentUser?.uid
         FirebaseAuth.getInstance().currentUser?.unlink(FacebookAuthProvider.PROVIDER_ID)
             ?.addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
@@ -404,7 +417,10 @@ class ProfileSettingActivity : BaseActivity() {
                         ,Toast.LENGTH_LONG
                     ).show()
                     isFacebookAuth = false
-                    // uid削除処理
+                    binding.isFacebookAuth = isFacebookAuth
+                    // uid削除
+                    UserStore.removeUid(uid){}
+
                 }
             }
     }
@@ -414,6 +430,7 @@ class ProfileSettingActivity : BaseActivity() {
      *
      */
     fun disconnectGoogle() {
+        val uid = FirebaseAuth.getInstance().currentUser?.uid
         FirebaseAuth.getInstance().currentUser?.unlink(GoogleAuthProvider.PROVIDER_ID)
             ?.addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
@@ -424,6 +441,9 @@ class ProfileSettingActivity : BaseActivity() {
                         ,Toast.LENGTH_LONG
                     ).show()
                     isGoogleAuth = false
+                    binding.isGoogleAuth = isGoogleAuth
+                    // uid削除
+                    UserStore.removeUid(uid){}
                 }
             }
     }
