@@ -314,33 +314,29 @@ class LoginActivity : BaseActivity() {
         // TODO : initiate successful logged in experience
 
         // Manager初期設定
-        try {
-            FirebaseFacade.initManager {
-                // FCM初期化
-                FcmUtil.initFcm()
-                val displayName = UserManager.myUser.name
+        FirebaseFacade.initManager {
+            // FCM初期化
+            FcmUtil.initFcm()
+            val displayName = UserManager.myUser.name
 
-                Toast.makeText(
-                    applicationContext,
-                    "$welcome $displayName",
-                    Toast.LENGTH_LONG
-                ).show()
-
-                val uid = FirebaseAuth.getInstance().currentUser?.uid
-                Timber.d("uid:$uid)")
-
-                MainActivity.start(this)
-            }
-        } catch(e: RuntimeException) {
-            // Google, Facebookログインで連携されていず、ボタン押下すると入る
-            Timber.e(e)
-            // ユーザ情報が無いのでログインできませんでした
             Toast.makeText(
                 applicationContext,
-                applicationContext.getString(R.string.login_failed_no_user),
+                "$welcome $displayName",
                 Toast.LENGTH_LONG
             ).show()
+
+            val uid = FirebaseAuth.getInstance().currentUser?.uid
+            Timber.d("uid:$uid)")
+
+            MainActivity.start(this)
         }
+        // Google, Facebookログインで連携されていず、ボタン押下するとonSuccessしないのでここを通過する
+        // ユーザ情報が無いのでログインできませんでした
+        Toast.makeText(
+            applicationContext,
+            applicationContext.getString(R.string.login_failed_no_user),
+            Toast.LENGTH_LONG
+        ).show()
 
     }
 

@@ -29,33 +29,29 @@ object FirebaseFacade {
      * @param onSuccess
      *
      */
-    @Throws(RuntimeException::class)
     fun initManager(onSuccess: () -> Unit) {
-        try {
-            UserManager.initUserManager {
+        UserManager.initUserManager() {
 
-                RoomManager.initRoomManager {
+            RoomManager.initRoomManager {
 
-                    RequestManager.initRequestManager {
+                RequestManager.initRequestManager {
 
-                        // fcmトークン更新処理
-                        if (UserManager.myUser.fcmToken == null) {
-                            FcmStore.getLoginUserToken {
-                                UserStore.updateFcmToken(it) {
-                                    UserManager.myUser.fcmToken = it
-                                    onSuccess.invoke()
-                                }
+                    // fcmトークン更新処理
+                    if (UserManager.myUser.fcmToken == null) {
+                        FcmStore.getLoginUserToken {
+                            UserStore.updateFcmToken(it) {
+                                UserManager.myUser.fcmToken = it
+                                onSuccess.invoke()
                             }
-                        } else {
-                            onSuccess.invoke()
                         }
-
+                    } else {
+                        onSuccess.invoke()
                     }
+
                 }
             }
-        } catch(e: RuntimeException) {
-            throw e
         }
+
     }
 
     fun clearManager() {

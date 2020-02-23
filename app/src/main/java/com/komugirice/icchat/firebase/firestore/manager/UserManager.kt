@@ -4,6 +4,7 @@ import androidx.databinding.library.BuildConfig
 import com.google.firebase.auth.FirebaseAuth
 import com.komugirice.icchat.firebase.firestore.model.User
 import com.komugirice.icchat.firebase.firestore.store.UserStore
+import timber.log.Timber
 
 object UserManager {
 
@@ -56,8 +57,7 @@ object UserManager {
      * FirebaseAuthのcurrentUserが取得出来る前提
      * @param onSuccess: () -> Unit
      */
-    @Throws(RuntimeException::class)
-    fun initUserManager(onSuccess: () -> Unit) {
+    fun initUserManager(onFailed: () -> Unit = {}, onSuccess: () -> Unit) {
         UserStore.getLoginUser {
             it.result?.toObjects(User::class.java)?.firstOrNull().also {
                 it?.also {
@@ -71,7 +71,8 @@ object UserManager {
                     }
                 }
             } ?: run {
-                throw RuntimeException("initUserManager(): currentUserがユーザに紐付いてない")
+                Timber.e("initUserManager(): currentUserがユーザに紐付いてない")
+                onFailed.invoke()
             }
 
         }

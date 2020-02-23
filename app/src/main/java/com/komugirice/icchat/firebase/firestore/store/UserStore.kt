@@ -69,7 +69,7 @@ class UserStore {
                 .update("friendIdList", UserManager.myUser.friendIdList)
 
             // UserManager.myFriendsが更新されていない不具合対応
-            UserManager.initUserManager {
+            UserManager.initUserManager() {
 
                 val friend = UserManager.myFriends.filter {
                     it.userId.equals(friendId)
