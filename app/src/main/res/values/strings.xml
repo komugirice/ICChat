@@ -188,7 +188,7 @@
 
 
     <!-- ActionSendActivity -->
-    <string name="failed_action_send">ログインされていません\nICChatの共有に失敗しました</string>
+    <string name="failed_action_send">ICChatの共有に失敗しました\nログインされていません</string>
     <string name="loading_message">ICChatに共有しています</string>
     <!-- ダイアログ関係 -->
     <string name="confirm_add_friend">ユーザを友だち登録しますか？</string>
