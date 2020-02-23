@@ -4,7 +4,7 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:scrollbarThumbVertical="@color/aqua"
+        android:scrollbarThumbVertical="@color/gainsboro"
         android:fadeScrollbars="false"
         android:layout_height="match_parent">
 
