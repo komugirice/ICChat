@@ -316,18 +316,21 @@ class LoginActivity : BaseActivity() {
 
         // Manager初期設定
             FirebaseFacade.initManager {
-            // FCM初期化
-            FcmUtil.initFcm()
-            val displayName = UserManager.myUser.name
+                // FCM初期化
+                FcmUtil.initFcm()
+                val displayName = UserManager.myUser.name
 
-            Toast.makeText(
-                applicationContext,
-                "$welcome $displayName",
-                Toast.LENGTH_LONG
-            ).show()
+                Toast.makeText(
+                    applicationContext,
+                    "$welcome $displayName",
+                    Toast.LENGTH_LONG
+                ).show()
 
-            MainActivity.start(this)
-        }
+                val uid = FirebaseAuth.getInstance().currentUser?.uid
+                Timber.d("uid:$uid)")
+
+                MainActivity.start(this)
+            }
 
     }
 

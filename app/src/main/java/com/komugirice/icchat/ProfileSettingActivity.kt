@@ -271,13 +271,26 @@ class ProfileSettingActivity : BaseActivity() {
                 if (task.isSuccessful) {
                     // Facebook認証成功
                     Log.d(TAG, "signInWithCredential:success")
-                    UserStore.addUid(this){
 
+                    // ※この時点でauth.currentUser.uidがfacebookのuidに変わっている!
+                    val onFailure = {
+                        // 既に連携済みです。
+                        Toast.makeText(
+                            this,
+                            getString(R.string.alert_already_connect),
+                            Toast.LENGTH_LONG
+                        ).show()
+
+                        // 連携済みエラーの場合はFacebook連携済みを画面反映
+                        isFacebookAuth = true
+                        facebookConnectButton.text = getString(R.string.facebook_disconnect_button)
+                    }
+
+                    UserStore.addUid(this, onFailure){
                         Toast.makeText(
                             this,
                             "Facebookに連携しました",
                             Toast.LENGTH_LONG).show()
-
                     }
 
 
@@ -326,10 +339,23 @@ class ProfileSettingActivity : BaseActivity() {
         FirebaseAuth.getInstance().signInWithCredential(credential)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    // Sign in success, update UI with the signed-in user's information
-                    Log.d(TAG, "signInWithCredential:success")
                     // 認証成功
-                    UserStore.addUid(this) {
+                    Log.d(TAG, "signInWithCredential:success")
+
+                    // ※この時点でauth.currentUser.uidがGoogleのuidに変わっている!
+                    val onFailure = {
+                        // 既に連携済みです。
+                        Toast.makeText(
+                            this,
+                            getString(R.string.alert_already_connect),
+                            Toast.LENGTH_LONG
+                        ).show()
+
+                        // 連携済みエラーの場合はGoogle連携済みを画面反映
+                        isGoogleAuth = true
+                        googleConnectButton.text = getString(R.string.google_disconnect_button)
+                    }
+                    UserStore.addUid(this, onFailure) {
                         Toast.makeText(
                             this,
                             "Googleに連携しました。",

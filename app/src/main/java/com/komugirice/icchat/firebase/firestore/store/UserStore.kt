@@ -7,6 +7,7 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
+import com.komugirice.icchat.R
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.firebase.firestore.model.User
 
@@ -147,14 +148,10 @@ class UserStore {
          * uid追加
          *
          */
-        fun addUid(context: Context?, onSuccess: (Void) -> Unit) {
+        fun addUid(context: Context?, onFailuer: () -> kotlin.Unit, onSuccess: (Void) -> Unit) {
             val uid = FirebaseAuth.getInstance().currentUser?.uid.toString()
             if (UserManager.myUser.uids.contains(uid)) {
-                Toast.makeText(
-                    context,
-                    "既に連携済みです。",
-                    Toast.LENGTH_LONG
-                ).show()
+                onFailuer.invoke()
                 return
             }
 

@@ -29,8 +29,8 @@ class SplashActivity : BaseActivity() {
 
         // TODO ネットワークエラー対応が必要
         if (FirebaseAuth.getInstance().currentUser != null) {
-            val userInfo = FirebaseAuth.getInstance().currentUser?.providerData?.first()?.providerId
-            Timber.d("$userInfo)")
+            val uid = FirebaseAuth.getInstance().currentUser?.uid
+            Timber.d("uid:$uid)")
             // バージョンチェック
             FireStoreUtil.getVersion {
                 val minVersion = it
