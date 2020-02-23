@@ -4,7 +4,7 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:scrollbarThumbVertical="@color/aqua"
+        android:scrollbarThumbVertical="@color/gainsboro"
         android:fadeScrollbars="false"
         android:layout_height="match_parent">
 
@@ -12,6 +12,8 @@
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
