@@ -26,16 +26,18 @@ class InterestViewModel: ViewModel() {
     var mutableUserId = MutableLiveData<String>()
     var isEditMode = MutableLiveData<Boolean>()
     private var interestListener: ListenerRegistration? = null
+    var isNonMove = false
 
-    fun initData() {
-
+    fun initData(isNonMove: Boolean = false) {
         val userId = mutableUserId.value ?: ""
+        this.isNonMove = isNonMove
 
-        // interest情報 昇順ソート済
+        // interest情報
         InterestStore.getInterests(userId) { interests ->
-
+            // 昇順ソート
+            val tmpInterests = interests.sortedBy { it.createdAt }
             // InterestViewData作成
-            val list = createInterestViewData(interests)
+            val list = createInterestViewData(tmpInterests)
             items.postValue(list)
 
             // 監視
@@ -45,6 +47,7 @@ class InterestViewModel: ViewModel() {
             // interest0件の対応
             if (interests.isEmpty()) {
                 // 監視
+                this.isNonMove = false
                 val lastCreatedAt = Date()
                 initSubscribe(lastCreatedAt)
             }
@@ -71,6 +74,7 @@ class InterestViewModel: ViewModel() {
         interestListener = FirebaseFirestore
             .getInstance()
             .collection("users/${mutableUserId.value}/interests")
+            .whereEqualTo(Interest::delFlg.name, false)
             .orderBy(Interest::createdAt.name, Query.Direction.DESCENDING)
             .whereGreaterThan(Interest::createdAt.name, lastCreatedAt)
             .limit(1L)
@@ -83,7 +87,9 @@ class InterestViewModel: ViewModel() {
                 }
                 snapshot?.toObjects(Interest::class.java)?.firstOrNull()?.also {
                     val tmp: MutableList<InterestView.InterestViewData>? = items.value?.toMutableList()
+                    // 取得データを先頭に追加
                     tmp?.add(
+                        0,
                         InterestView.InterestViewData(
                         it,
                         InterestView.VIEW_TYPE_INTEREST

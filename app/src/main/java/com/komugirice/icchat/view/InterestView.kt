@@ -194,7 +194,6 @@ class InterestView : RecyclerView {
             holder.binding.longClickView.setOnLongClickListener(onLongClickListener)
             holder.binding.ogpWrapLayout.setOnLongClickListener(onLongClickListener)
             holder.binding.imageView.setOnLongClickListener(onLongClickListener)
-
             // URL記事クリック
             holder.binding.ogpWrapLayout.setOnClickListener {
                 data.interest?.apply{

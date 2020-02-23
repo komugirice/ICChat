@@ -186,6 +186,10 @@
     <!-- ExplanationActivity -->
     <string name="explanation_activity_title">操作説明</string>
 
+
+    <!-- ActionSendActivity -->
+    <string name="failed_action_send">ログインされていません\nICChatの共有に失敗しました</string>
+    <string name="loading_message">ICChatに共有しています</string>
     <!-- ダイアログ関係 -->
     <string name="confirm_add_friend">ユーザを友だち登録しますか？</string>
     <string name="alert_success_add_friend">友だち登録が完了しました</string>
@@ -204,7 +208,7 @@
     <string name="confirm_cancel_group_deny">グループの拒否を取り消しますか？</string>
     <string name="alert_no_file_size">ファイルサイズが0バイトです</string>
     <string name="confirm_delete">削除してよろしいですか</string>
-    <string name="delete_complete">削除が完了しました</string>
+    <string name="delete_complete">削除しました</string>
 
     <!-- FCM -->
     <string name="fcm_friend_request">%1$sさんから友だち申請がありました。</string>

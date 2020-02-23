@@ -11,6 +11,7 @@ class Interest : OgpData, Serializable {
     var image: String? = null
     var isOgp = false
     var createdAt: Date = Date()
+    var delFlg = false
 
     constructor()
     constructor(ogpData: OgpData): super(ogpData)

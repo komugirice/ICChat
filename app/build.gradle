@@ -6,6 +6,16 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-kapt'
 
+//def loadProperties(filename) {
+//    def props = new Properties()
+//    file(filename).withInputStream {
+//        props.load(it)
+//    }
+//    return props
+//}
+//
+//def props = loadProperties("$rootDir/secret.properties")
+
 // Apply the Crashlytics Gradle plugin
 apply plugin: 'com.google.firebase.crashlytics'
 
@@ -125,6 +135,8 @@ dependencies {
     implementation "androidx.viewpager2:viewpager2:1.0.0-beta04"
     // EventBus
     implementation 'org.greenrobot:eventbus:3.2.0'
+    // 動画
+    implementation "com.airbnb.android:lottie:$lottieVersion"
 }
 
 apply plugin: 'com.google.gms.google-services'
