@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
+import com.google.gson.Gson
 import com.komugirice.icchat.extension.getVersion
 import com.komugirice.icchat.firebase.FirebaseFacade
 import com.komugirice.icchat.util.FireStoreUtil
@@ -17,8 +18,12 @@ class SplashActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 
+
+
         // TODO ネットワークエラー対応が必要
         if (FirebaseAuth.getInstance().currentUser != null) {
+            val userInfo = FirebaseAuth.getInstance().currentUser?.providerData?.first()?.providerId
+            Timber.d("$userInfo)")
             // バージョンチェック
             FireStoreUtil.getVersion {
                 val minVersion = it
