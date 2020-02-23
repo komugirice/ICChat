@@ -28,7 +28,7 @@
     <string name="invalid_email">メールアドレスを入力して下さい</string>
     <string name="invalid_password">パスワードは6文字以上入力して下さい</string>
     <string name="login_failed">"Login failed"</string>
-    <string name="login_failed_no_user">ユーザ情報が無いのでログインできませんでした</string>
+    <string name="login_failed_no_user">ログインできませんでした。ユーザ情報が存在しません</string>
     <string name="text_create_user">アカウントを作成する</string>
 
     <!-- ユーザ登録 -->

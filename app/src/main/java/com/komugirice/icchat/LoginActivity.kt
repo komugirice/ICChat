@@ -330,8 +330,10 @@ class LoginActivity : BaseActivity() {
 
             MainActivity.start(this)
         }
-        // Google, Facebookログインで連携されていず、ボタン押下するとonSuccessしないのでここを通過する
-        // ユーザ情報が無いのでログインできませんでした
+        // Google, FacebookログインでAuthenticationにアカウントはあるがユーザ情報に
+        // 連携されていず、ボタン押下するとonSuccessしないのでここを通過する
+
+        // ログインできませんでした。ユーザ情報が存在しません
         Toast.makeText(
             applicationContext,
             applicationContext.getString(R.string.login_failed_no_user),
@@ -339,10 +341,6 @@ class LoginActivity : BaseActivity() {
         ).show()
 
     }
-
-
-
-
 
 
     private fun showLoginFailed(@StringRes errorString: Int) {
