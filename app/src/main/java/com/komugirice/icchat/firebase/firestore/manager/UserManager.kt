@@ -56,11 +56,12 @@ object UserManager {
      * FirebaseAuthのcurrentUserが取得出来る前提
      * @param onSuccess: () -> Unit
      */
+    @Throws(RuntimeException::class)
     fun initUserManager(onSuccess: () -> Unit) {
         UserStore.getLoginUser {
             it.result?.toObjects(User::class.java)?.firstOrNull().also {
                 it?.also {
-                    // ↓なぜかmyUserIdの値が入らない潜在バグ
+                    // ↓なぜかmyUserIdの値が入らない場合がある（潜在バグ）
                     myUser = it
                     UserStore.getAllUsers {
                         it.result?.toObjects(User::class.java)?.also {
@@ -70,8 +71,7 @@ object UserManager {
                     }
                 }
             } ?: run {
-                if(BuildConfig.DEBUG)
-                    throw RuntimeException("initUserManager(): currentUserがnull")
+                throw RuntimeException("initUserManager(): currentUserがユーザに紐付いてない")
             }
 
         }

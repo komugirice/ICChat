@@ -13,8 +13,6 @@ import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import com.komugirice.icchat.extension.getIdFromEmail
-import com.komugirice.icchat.extension.loggingSize
 import com.facebook.AccessToken
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
@@ -33,6 +31,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.komugirice.icchat.ICChatApplication.Companion.isFacebookAuth
 import com.komugirice.icchat.ICChatApplication.Companion.isGoogleAuth
 import com.komugirice.icchat.extension.afterTextChanged
+import com.komugirice.icchat.extension.getIdFromEmail
 import com.komugirice.icchat.extension.loggingSize
 import com.komugirice.icchat.firebase.FirebaseFacade
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
@@ -42,7 +41,6 @@ import com.komugirice.icchat.util.FcmUtil
 import kotlinx.android.synthetic.main.activity_create_user.*
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.activity_login.container
-import kotlinx.android.synthetic.main.activity_send_password.*
 import timber.log.Timber
 
 
@@ -258,6 +256,7 @@ class LoginActivity : BaseActivity() {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "signInWithCredential:success")
                     val user = FirebaseAuth.getInstance().currentUser
+                    // TODO currentUserは取得出来てるけど、uidを紐付いてない場合がある
                     // プロフィール設定画面で使う
                     isGoogleAuth = true
                     // ログイン成功
@@ -315,6 +314,7 @@ class LoginActivity : BaseActivity() {
         // TODO : initiate successful logged in experience
 
         // Manager初期設定
+        try {
             FirebaseFacade.initManager {
                 // FCM初期化
                 FcmUtil.initFcm()
@@ -331,6 +331,16 @@ class LoginActivity : BaseActivity() {
 
                 MainActivity.start(this)
             }
+        } catch(e: RuntimeException) {
+            // Google, Facebookログインで連携されていず、ボタン押下すると入る
+            Timber.e(e)
+            // ユーザ情報が無いのでログインできませんでした
+            Toast.makeText(
+                applicationContext,
+                applicationContext.getString(R.string.login_failed_no_user),
+                Toast.LENGTH_LONG
+            ).show()
+        }
 
     }
 

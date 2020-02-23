@@ -39,12 +39,23 @@ class SplashActivity : BaseActivity() {
                     Toast.makeText(this, "アプリをアップデートしてください", Toast.LENGTH_LONG).show()
                     return@getVersion
                 }
-
-                FirebaseFacade.initManager() {
-                    Handler().postDelayed({
-                        finishAffinity()
-                        MainActivity.start(this)
-                    }, SPLASH_TIME)
+                try {
+                    FirebaseFacade.initManager() {
+                        Handler().postDelayed({
+                            finishAffinity()
+                            MainActivity.start(this)
+                        }, SPLASH_TIME)
+                    }
+                } catch(e: RuntimeException) {
+                    // uidとユーザが紐付いていない場合に入る
+                    Timber.e(e)
+                    // ユーザ情報が無いのでログインできませんでした
+                    Toast.makeText(
+                        applicationContext,
+                        applicationContext.getString(R.string.login_failed_no_user),
+                        Toast.LENGTH_LONG
+                    ).show()
+                    LoginActivity.start(this)
                 }
             }
         } else {
