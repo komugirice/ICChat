@@ -25,5 +25,7 @@ class ICChatApplication: Application() {
     companion object {
         lateinit var applicationContext: Context
         var isDevelop = BuildConfig.FLAVOR == "develop"
+        var isGoogleAuth = false
+        var isFacebookAuth = false
     }
 }

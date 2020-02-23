@@ -30,6 +30,8 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.komugirice.icchat.ICChatApplication.Companion.isFacebookAuth
+import com.komugirice.icchat.ICChatApplication.Companion.isGoogleAuth
 import com.komugirice.icchat.extension.afterTextChanged
 import com.komugirice.icchat.extension.loggingSize
 import com.komugirice.icchat.firebase.FirebaseFacade
@@ -233,6 +235,8 @@ class LoginActivity : BaseActivity() {
                     // ログイン成功
                     Log.d(TAG, "signInWithCredential:success")
                     val user = auth.currentUser
+                    // プロフィール設定画面で使う
+                    isFacebookAuth = true
                     loginViewModel.loginSuccess(user?.email?.also{it.getIdFromEmail()}, user?.displayName)
                 } else {
                     // If sign in fails, display a message to the user.
@@ -254,6 +258,8 @@ class LoginActivity : BaseActivity() {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "signInWithCredential:success")
                     val user = FirebaseAuth.getInstance().currentUser
+                    // プロフィール設定画面で使う
+                    isGoogleAuth = true
                     // ログイン成功
                     loginViewModel.loginSuccess(user?.email?.also{it.getIdFromEmail()}, user?.displayName)
                 } else {
@@ -357,6 +363,8 @@ class LoginActivity : BaseActivity() {
         }
 
         fun signOut(activity: BaseActivity) {
+            isFacebookAuth = false  // プロフィール設定画面で使う
+            isGoogleAuth = false    // プロフィール設定画面で使う
             FirebaseAuth.getInstance().signOut()
             LoginManager.getInstance().logOut()
             activity.apply {

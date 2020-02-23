@@ -39,6 +39,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import com.komugirice.icchat.ICChatApplication.Companion.isFacebookAuth
+import com.komugirice.icchat.ICChatApplication.Companion.isGoogleAuth
 import com.komugirice.icchat.databinding.FriendRequestedCellBinding
 import com.komugirice.icchat.extension.setRoundedImageView
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
@@ -105,6 +107,9 @@ class ProfileSettingActivity : BaseActivity() {
         email.text = myUser.email
         userName.text = if(myUser.name.isNotEmpty()) myUser.name else getString(R.string.no_setting)
         birthDay.text = myUser.birthDay?.getDateToString() ?: getString(R.string.no_setting)
+        // ログインユーザの連携有無によってボタン名変更
+        if(isFacebookAuth) facebookConnectButton.text = getString(R.string.facebook_disconnect_button)
+        if(isGoogleAuth) googleConnectButton.text = getString(R.string.google_disconnect_button)
     }
 
     private fun initData(){
