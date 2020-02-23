@@ -28,7 +28,7 @@
     <string name="invalid_email">メールアドレスを入力して下さい</string>
     <string name="invalid_password">パスワードは6文字以上入力して下さい</string>
     <string name="login_failed">"Login failed"</string>
-    <string name="login_failed_no_user">ログインできませんでした。ユーザ情報が存在しません</string>
+    <string name="login_failed_no_user">ログインできませんでした。ユーザ情報が存在しません。再度ログインして下さい</string>
     <string name="text_create_user">アカウントを作成する</string>
 
     <!-- ユーザ登録 -->
@@ -113,10 +113,13 @@
     <string name="image_delete_button">写真を削除する</string>
     <string name="facebook_connect_button">Facebookと連携</string>
     <string name="facebook_disconnect_button">Facebookの連携を解除する</string>
+    <string name="success_facebook_disconnect">Facebook連携を解除しました</string>
     <string name="google_connect_button">Googleと連携</string>
     <string name="google_disconnect_button">Googleの連携を解除する</string>
+    <string name="success_google_disconnect">Google連携を解除しました</string>
     <string name="alert_already_connect">既に連携済みです</string>
     <string name="alert_no_profile_image">プロフィール画像が設定されていません</string>
+
 
     <string name="title_user_name">ユーザ名</string>
 

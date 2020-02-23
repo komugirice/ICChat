@@ -26,11 +26,12 @@ object FirebaseFacade {
     /**
      * 全Managerの初期化
      *
+     * @param onFailed
      * @param onSuccess
      *
      */
-    fun initManager(onSuccess: () -> Unit) {
-        UserManager.initUserManager() {
+    fun initManager(onFailed: () -> Unit = {}, onSuccess: () -> Unit) {
+        UserManager.initUserManager({onFailed.invoke()}) {
 
             RoomManager.initRoomManager {
 

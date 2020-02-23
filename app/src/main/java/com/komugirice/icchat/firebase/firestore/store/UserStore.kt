@@ -148,7 +148,7 @@ class UserStore {
          * uid追加
          *
          */
-        fun addUid(context: Context?, onFailuer: () -> kotlin.Unit, onSuccess: (Void) -> Unit) {
+        fun addUid(context: Context?, onFailuer: () -> kotlin.Unit, onSuccess: () -> Unit) {
             val uid = FirebaseAuth.getInstance().currentUser?.uid.toString()
             if (UserManager.myUser.uids.contains(uid)) {
                 onFailuer.invoke()
@@ -163,7 +163,7 @@ class UserStore {
                 .document(UserManager.myUser.userId)
                 .update("uids", UserManager.myUser.uids)
                 .addOnSuccessListener {
-                    onSuccess.invoke(it)
+                    onSuccess.invoke()
                 }
         }
 

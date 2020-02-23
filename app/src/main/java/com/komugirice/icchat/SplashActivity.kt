@@ -40,21 +40,27 @@ class SplashActivity : BaseActivity() {
                     return@getVersion
                 }
 
-                FirebaseFacade.initManager() {
+                // uidとユーザが紐付いていない場合、onSuccessしない場合に通過する処理の定義
+                val onFailed = {
+                    // ユーザ情報が無いのでログインできませんでした
+                    Toast.makeText(
+                        applicationContext,
+                        applicationContext.getString(R.string.login_failed_no_user),
+                        Toast.LENGTH_LONG
+                    ).show()
+                    isGoogleAuth = false
+                    isFacebookAuth = false
+                    FirebaseAuth.getInstance().signOut()
+                    finish()
+                }
+
+                FirebaseFacade.initManager(onFailed) {
                     Handler().postDelayed({
                         finishAffinity()
                         MainActivity.start(this)
                     }, SPLASH_TIME)
                 }
 
-                // uidとユーザが紐付いていない場合、onSuccessしないのでここを通過する
-                // ユーザ情報が無いのでログインできませんでした
-                Toast.makeText(
-                    applicationContext,
-                    applicationContext.getString(R.string.login_failed_no_user),
-                    Toast.LENGTH_LONG
-                ).show()
-                LoginActivity.start(this)
 
             }
         } else {

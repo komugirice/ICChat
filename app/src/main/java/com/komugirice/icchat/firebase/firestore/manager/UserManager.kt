@@ -55,6 +55,8 @@ object UserManager {
     /**
      * UserManager初期化
      * FirebaseAuthのcurrentUserが取得出来る前提
+     *
+     * @param onFailed: () -> Unit
      * @param onSuccess: () -> Unit
      */
     fun initUserManager(onFailed: () -> Unit = {}, onSuccess: () -> Unit) {

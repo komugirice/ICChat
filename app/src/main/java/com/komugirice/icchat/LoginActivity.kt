@@ -311,10 +311,22 @@ class LoginActivity : BaseActivity() {
      */
     private fun updateUiWithUser() {
         val welcome = getString(R.string.welcome)
-        // TODO : initiate successful logged in experience
+
+        // Google, FacebookログインでAuthenticationにアカウントはあるが、
+        // ユーザ情報に 連携されていず、ボタン押下するとonSuccessしないので、onFailureの定義
+        val onFailure = {
+            // ログインできませんでした。ユーザ情報が存在しません。\n再度ログインして下さい
+            Toast.makeText(
+                applicationContext,
+                applicationContext.getString(R.string.login_failed_no_user),
+                Toast.LENGTH_LONG
+            ).show()
+            isGoogleAuth = false
+            isFacebookAuth = false
+        }
 
         // Manager初期設定
-        FirebaseFacade.initManager {
+        FirebaseFacade.initManager(onFailure) {
             // FCM初期化
             FcmUtil.initFcm()
             val displayName = UserManager.myUser.name
@@ -330,15 +342,7 @@ class LoginActivity : BaseActivity() {
 
             MainActivity.start(this)
         }
-        // Google, FacebookログインでAuthenticationにアカウントはあるがユーザ情報に
-        // 連携されていず、ボタン押下するとonSuccessしないのでここを通過する
 
-        // ログインできませんでした。ユーザ情報が存在しません
-        Toast.makeText(
-            applicationContext,
-            applicationContext.getString(R.string.login_failed_no_user),
-            Toast.LENGTH_LONG
-        ).show()
 
     }
 

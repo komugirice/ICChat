@@ -177,10 +177,20 @@ class ProfileSettingActivity : BaseActivity() {
 
 
         facebookConnectButton.setOnClickListener {
-            LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile", "user_friends"))
+            if(isFacebookAuth)
+                // 認証済→解除
+                disconnectFacebook()
+            else
+                // 認証なし→認証
+                LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile", "user_friends"))
         }
         googleConnectButton.setOnClickListener{
-            googleSignIn()
+            if(isGoogleAuth)
+                // 認証済→解除
+                disconnectGoogle()
+            else
+                // 認証なし→認証
+                googleSignIn()
         }
 
         expandLabelView.setOnClickListener {
@@ -304,6 +314,7 @@ class ProfileSettingActivity : BaseActivity() {
             }
     }
 
+
     /**
      * Google連携機能初期化
      *
@@ -375,6 +386,45 @@ class ProfileSettingActivity : BaseActivity() {
                     ).show()
                 }
 
+            }
+    }
+
+    /**
+     * Facebook連携解除
+     *
+     */
+    fun disconnectFacebook() {
+        FirebaseAuth.getInstance().currentUser?.unlink(FacebookAuthProvider.PROVIDER_ID)
+            ?.addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    // Auth provider unlinked from account
+                    Toast.makeText(
+                        this,
+                        getString(R.string.success_facebook_disconnect)
+                        ,Toast.LENGTH_LONG
+                    ).show()
+                    isFacebookAuth = false
+                    // uid削除処理
+                }
+            }
+    }
+
+    /**
+     * Google連携解除
+     *
+     */
+    fun disconnectGoogle() {
+        FirebaseAuth.getInstance().currentUser?.unlink(GoogleAuthProvider.PROVIDER_ID)
+            ?.addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    // Auth provider unlinked from account
+                    Toast.makeText(
+                        this,
+                        getString(R.string.success_google_disconnect)
+                        ,Toast.LENGTH_LONG
+                    ).show()
+                    isGoogleAuth = false
+                }
             }
     }
 
