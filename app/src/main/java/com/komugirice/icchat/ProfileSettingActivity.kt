@@ -52,6 +52,7 @@ import com.komugirice.icchat.viewModel.ProfileSettingViewModel
 import com.makeramen.roundedimageview.RoundedDrawable
 import com.makeramen.roundedimageview.RoundedImageView
 import com.yalantis.ucrop.UCrop
+import kotlinx.android.synthetic.main.activity_header.view.*
 import kotlinx.android.synthetic.main.activity_profile_setting.*
 import timber.log.Timber
 import java.io.ByteArrayOutputStream
@@ -120,6 +121,8 @@ class ProfileSettingActivity : BaseActivity() {
     }
 
     private fun initLayout() {
+        // タイトル
+        binding.header.titleTextView.text =  getString(R.string.title_profile_setting)
         val myUser = UserManager.myUser
         email.text = myUser.email
         userName.text = if(myUser.name.isNotEmpty()) myUser.name else getString(R.string.no_setting)
@@ -148,7 +151,7 @@ class ProfileSettingActivity : BaseActivity() {
 
 
     private fun initClick() {
-        backImageView.setOnClickListener {
+        binding.header.backImageView.setOnClickListener {
             finish()
         }
 

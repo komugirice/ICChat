@@ -19,6 +19,7 @@ import com.komugirice.icchat.firebase.firestore.model.User
 import com.komugirice.icchat.firebase.firestore.store.UserStore
 import com.komugirice.icchat.viewModel.SearchUserViewModel
 import kotlinx.android.synthetic.main.activity_chat.backImageView
+import kotlinx.android.synthetic.main.activity_header.view.*
 import kotlinx.android.synthetic.main.activity_search_user.*
 
 class SearchUserActivity : BaseActivity() {
@@ -30,6 +31,7 @@ class SearchUserActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         initBinding()
         initViewModel()
+        initLayout()
         initEditText()
         initClick()
     }
@@ -56,7 +58,11 @@ class SearchUserActivity : BaseActivity() {
             })
         }
     }
-    fun initEditText() {
+
+    private fun initLayout() {
+        binding.header.titleTextView.text = getString(R.string.user_search_title)
+    }
+    private fun initEditText() {
         // 検索キーワード
         binding.searchEditText.apply{
             // フォーカスアウト
@@ -108,7 +114,7 @@ class SearchUserActivity : BaseActivity() {
 
     fun initClick() {
         // <ボタン
-        backImageView.setOnClickListener {
+        binding.header.backImageView.setOnClickListener {
             this.onBackPressed()
         }
 
@@ -120,6 +126,9 @@ class SearchUserActivity : BaseActivity() {
             requestFriend()
         }
         container.setOnClickListener {
+            hideKeybord(it)
+        }
+        contents.setOnClickListener {
             hideKeybord(it)
         }
     }

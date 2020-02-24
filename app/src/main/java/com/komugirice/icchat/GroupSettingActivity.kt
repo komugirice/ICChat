@@ -33,6 +33,7 @@ import com.makeramen.roundedimageview.RoundedDrawable
 import com.makeramen.roundedimageview.RoundedImageView
 import com.yalantis.ucrop.UCrop
 import kotlinx.android.synthetic.main.activity_group_setting.*
+import kotlinx.android.synthetic.main.activity_header.view.*
 import timber.log.Timber
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -116,7 +117,12 @@ class GroupSettingActivity : BaseActivity() {
 
     private fun initLayout() {
         if(displayFlg == DISPLAY_FLAG_INSERT) {
+            // タイトル
+            binding.header.titleTextView.text = getString(R.string.create_group)
             imageDeleteButton.visibility = View.GONE
+        } else {
+            // タイトル
+            binding.header.titleTextView.text = getString(R.string.group_setting)
         }
 
     }
@@ -154,7 +160,7 @@ class GroupSettingActivity : BaseActivity() {
      */
     private fun initClick() {
         // <ボタン
-        backImageView.setOnClickListener {
+        binding.header.backImageView.setOnClickListener {
             this.onBackPressed()
         }
 
@@ -181,11 +187,14 @@ class GroupSettingActivity : BaseActivity() {
         }
 
 
-        container.setOnClickListener {
+        binding.container.setOnClickListener {
+            hideKeybord(it)
+        }
+        binding.contents.setOnClickListener {
             hideKeybord(it)
         }
 
-        saveButton.setOnClickListener {
+        binding.saveButton.setOnClickListener {
             createGroup()
         }
     }
