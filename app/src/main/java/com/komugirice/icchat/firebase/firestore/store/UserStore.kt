@@ -10,6 +10,7 @@ import com.google.firebase.firestore.QuerySnapshot
 import com.komugirice.icchat.R
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.firebase.firestore.model.User
+import timber.log.Timber
 
 class UserStore {
     companion object {
@@ -255,6 +256,37 @@ class UserStore {
                     }
                 }
         }
+
+        fun isExistUidInOtherUser(uid: String?, onSuccess: (Boolean) -> Unit) {
+            val myDocumentId = FirebaseAuth.getInstance().currentUser?.uid.toString()
+            FirebaseFirestore.getInstance()
+                .collection("$USERS")
+                .whereArrayContains("uids",myDocumentId)
+                .get()
+                .addOnCompleteListener {
+                    it.result?.toObjects(User::class.java)?.firstOrNull().also {
+                        it?.also {
+                            it.uids.forEach { uid ->
+                                if(UserManager.myUser.uids.contains(uid)) {
+                                    // 自ユーザが保持
+                                    onSuccess.invoke(false)
+                                    return@addOnCompleteListener
+                                }
+                                if(uid == it.uids.last()) {
+                                    // 他ユーザが保持
+                                    onSuccess.invoke(true)
+                                }
+
+                            }
+
+                        }
+                    } ?: run {
+                        // 誰も保持していない
+                        onSuccess.invoke(false)
+                    }
+                }
+        }
+
 
         /**
          * FCMトークンの更新

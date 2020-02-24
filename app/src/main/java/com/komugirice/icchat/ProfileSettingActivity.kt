@@ -299,8 +299,10 @@ class ProfileSettingActivity : BaseActivity() {
      *
      */
     private fun handleFacebookAccessToken(token: AccessToken) {
-        Log.d(TAG, "handleFacebookAccessToken:$token")
+        // 連携失敗用に退避
+        val tmpIdToken = auth.currentUser?.getIdToken(true)
 
+        Log.d(TAG, "handleFacebookAccessToken:$token")
         val credential = FacebookAuthProvider.getCredential(token.token)
 
         auth.signInWithCredential(credential)
@@ -309,25 +311,45 @@ class ProfileSettingActivity : BaseActivity() {
                     // Facebook認証成功
                     Log.d(TAG, "signInWithCredential:success")
 
-                    // 連携済みエラーの場合はFacebook連携済みを画面反映
-                    isFacebookAuth = true
-                    binding.isFacebookAuth = isFacebookAuth
-
                     // ※この時点でauth.currentUser.uidがfacebookのuidに変わっている!
-                    val onFailure = {
-                        // 既に連携済みです。
-                        Toast.makeText(
-                            this,
-                            getString(R.string.alert_already_connect),
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
+                    val uid = auth.currentUser?.uid
+                    // 他ユーザチェック
+                    UserStore.isExistUidInOtherUser(uid) {
 
-                    UserStore.addUid(onFailure){
-                        Toast.makeText(
-                            this,
-                            "Facebookに連携しました",
-                            Toast.LENGTH_LONG).show()
+                        if (it) {
+                            // 既に他のユーザに連携されています
+                            Toast.makeText(
+                                this,
+                                getString(R.string.alert_already_connect_other),
+                                Toast.LENGTH_LONG
+                            ).show()
+//                            tmpIdToken?.result?.token?.apply{
+//                                auth.signInWithCustomToken(this)
+//                            }
+                            return@isExistUidInOtherUser
+                        }
+
+                        UserStore.addUid(
+                            {
+                                // 既に連携済みです。
+                                Toast.makeText(
+                                    this,
+                                    getString(R.string.alert_already_connect),
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
+                        ) {
+                            // Facebookに連携しました
+                            Toast.makeText(
+                                this,
+                                getString(R.string.success_facebook_connect),
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+
+                        // 自ユーザに連携済みエラー、新しく連携の場合はFacebook連携済みを画面反映
+                        isFacebookAuth = true
+                        binding.isFacebookAuth = isFacebookAuth
                     }
 
 
@@ -371,8 +393,10 @@ class ProfileSettingActivity : BaseActivity() {
      *
      */
     private fun firebaseAuthWithGoogle(acct: GoogleSignInAccount) {
-        Log.d(TAG, "firebaseAuthWithGoogle:" + acct.id!!)
+        // 連携失敗用に退避
+        val tmpCurrentUser = auth.currentUser
 
+        Log.d(TAG, "firebaseAuthWithGoogle:" + acct.id!!)
         val credential = GoogleAuthProvider.getCredential(acct.idToken, null)
         FirebaseAuth.getInstance().signInWithCredential(credential)
             .addOnCompleteListener(this) { task ->
@@ -385,20 +409,39 @@ class ProfileSettingActivity : BaseActivity() {
                     binding.isGoogleAuth = isGoogleAuth
 
                     // ※この時点でauth.currentUser.uidがGoogleのuidに変わっている!
-                    val onFailure = {
-                        // 既に連携済みです。
-                        Toast.makeText(
-                            this,
-                            getString(R.string.alert_already_connect),
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
-                    UserStore.addUid(onFailure) {
-                        Toast.makeText(
-                            this,
-                            "Googleに連携しました。",
-                            Toast.LENGTH_LONG
-                        ).show()
+                    val uid = auth.currentUser?.uid
+                    // 他ユーザチェック
+                    UserStore.isExistUidInOtherUser(uid) {
+
+                        if(it) {
+                            // 既に他のユーザに連携されています
+                            Toast.makeText(
+                                this,
+                                getString(R.string.alert_already_connect_other),
+                                Toast.LENGTH_LONG
+                            ).show()
+                            return@isExistUidInOtherUser
+                        }
+
+                        // 登録
+                        UserStore.addUid(
+                            {
+                                // 既に連携済みです。
+                                Toast.makeText(
+                                    this,
+                                    getString(R.string.alert_already_connect),
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
+                        ) {
+                            // Googleに連携しました
+                            Toast.makeText(
+                                this,
+                                getString(R.string.success_google_connect),
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+
                     }
 
 

@@ -167,6 +167,7 @@ class LoginActivity : BaseActivity() {
         facebookLoginButton.registerCallback(callbackManager,
             object: FacebookCallback<LoginResult> {
                 override fun onSuccess(loginResult: LoginResult ) {
+                    loading.visibility = View.VISIBLE
                     handleFacebookAccessToken(loginResult.accessToken)
                 }
 
@@ -241,6 +242,7 @@ class LoginActivity : BaseActivity() {
                     Log.w(TAG, "signInWithCredential:failure", task.exception)
                     Toast.makeText(baseContext, "Authentication failed.",
                         Toast.LENGTH_SHORT).show()
+                    loading.visibility = View.GONE
                     //updateUI(null)
                 }
             }
@@ -256,7 +258,7 @@ class LoginActivity : BaseActivity() {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "signInWithCredential:success")
                     val user = FirebaseAuth.getInstance().currentUser
-                    // TODO currentUserは取得出来てるけど、uidを紐付いてない場合がある
+                    // currentUserは取得出来てるけど、uidを紐付いてない場合がある
                     // プロフィール設定画面で使う
                     isGoogleAuth = true
                     // ログイン成功
@@ -270,6 +272,7 @@ class LoginActivity : BaseActivity() {
                         "ログインに失敗しました。",
                         Toast.LENGTH_LONG
                     ).show()
+                    loading.visibility = View.GONE
                 }
 
             }
@@ -290,6 +293,7 @@ class LoginActivity : BaseActivity() {
         }
 
         googleLoginButton.setOnClickListener{
+            loading.visibility = View.VISIBLE
             googleSignIn()
         }
         container.setOnClickListener {
@@ -315,7 +319,7 @@ class LoginActivity : BaseActivity() {
         // Google, FacebookログインでAuthenticationにアカウントはあるが、
         // ユーザ情報に 連携されていず、ボタン押下するとonSuccessしないので、onFailureの定義
         val onFailure = {
-            // ログインできませんでした。ユーザ情報が存在しません。\n再度ログインして下さい
+            // ログインできませんでした。ユーザ情報が存在しません。\n別の方法でログインして下さい
             Toast.makeText(
                 applicationContext,
                 applicationContext.getString(R.string.login_failed_no_user),
@@ -323,6 +327,7 @@ class LoginActivity : BaseActivity() {
             ).show()
             isGoogleAuth = false
             isFacebookAuth = false
+            loading.visibility = View.GONE
         }
 
         // Manager初期設定
