@@ -71,7 +71,9 @@ class FriendFragment : Fragment(), Update {
 
     private fun initSwipeRefreshLayout() {
         swipeRefreshLayout.setOnRefreshListener {
-            friendsViewModel.initData(this@FriendFragment)
+            FirebaseFacade.initManager {
+                friendsViewModel.initData(this@FriendFragment)
+            }
         }
     }
 

@@ -55,6 +55,7 @@ import kotlinx.android.synthetic.main.activity_profile_setting.*
 import timber.log.Timber
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.time.LocalDate
 import java.util.*
 
 class ProfileSettingActivity : BaseActivity() {
@@ -193,6 +194,10 @@ class ProfileSettingActivity : BaseActivity() {
             showDateDialog()
         }
 
+        birthDayClear.setOnClickListener {
+            updateBirthDay(null)
+        }
+
 
         facebookConnectButton.setOnClickListener {
             // 認証済→解除
@@ -260,6 +265,25 @@ class ProfileSettingActivity : BaseActivity() {
             time
         }
 
+        FirebaseFirestore.getInstance()
+            .collection("users")
+            .document(UserManager.myUser.userId)
+            .update("birthDay", birthDay)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    UserManager.myUser.birthDay = birthDay
+                    initLayout()
+                } else {
+                    AlertDialog.Builder(this)
+                        .setTitle(R.string.error)
+                        .setMessage(R.string.failed_regist)
+                        .setPositiveButton("OK", null)
+                        .show()
+                }
+            }
+    }
+
+    fun updateBirthDay(birthDay: Date?) {
         FirebaseFirestore.getInstance()
             .collection("users")
             .document(UserManager.myUser.userId)

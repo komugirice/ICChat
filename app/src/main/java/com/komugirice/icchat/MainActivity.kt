@@ -25,6 +25,7 @@ import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.interfaces.Update
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.item_drawer.view.*
+import timber.log.Timber
 
 class MainActivity : BaseActivity() {
 
@@ -49,6 +50,7 @@ class MainActivity : BaseActivity() {
      *
      */
     override fun onRestart() {
+        Timber.d("myUserId:${UserManager.myUserId}")
         super.onRestart()
         customAdapter.fragments.forEach {
             if(it.fragment is Update)
@@ -73,6 +75,7 @@ class MainActivity : BaseActivity() {
      *
      */
     private fun initialize() {
+        Timber.d("myUserId:${UserManager.myUserId}")
         initBinding()
         initLayout()
     }

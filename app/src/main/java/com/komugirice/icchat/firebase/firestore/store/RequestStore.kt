@@ -90,7 +90,11 @@ class RequestStore {
                 val allGroup = it
                 allGroup.forEach {room ->
                     FirebaseFirestore.getInstance()
-                        .collection("$ROOMS/${room.documentId}/$REQUESTS")
+                        // エラーでる。java.lang.IllegalArgumentException: Invalid document reference. Document references must have an even number of segments, but rooms/3ded0e18-2c76-4438-8dec-ca5720bdbf29/requests has 3
+                        //.collection("$ROOMS/${room.documentId}/$REQUESTS")
+                        .collection(ROOMS)
+                        .document(room.documentId)
+                        .collection(REQUESTS)
                         .document(UserManager.myUserId)
                         .get()
                         .addOnCompleteListener {
