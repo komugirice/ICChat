@@ -9,6 +9,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.komugirice.icchat.databinding.ActivityGroupInfoBinding
 import com.komugirice.icchat.enums.ActivityEnum
+import com.komugirice.icchat.enums.RequestStatus
 import com.komugirice.icchat.firebase.firestore.manager.RequestManager
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.firebase.firestore.model.GroupRequests
@@ -57,7 +58,6 @@ class GroupInfoActivity : BaseActivity() {
                 this@GroupInfoActivity.room = it
                 initGroupRequests(it)
                 initGroupMemberRecyclerView()
-                initInviteUserRecyclerView()
             })
         }
     }
@@ -87,35 +87,26 @@ class GroupInfoActivity : BaseActivity() {
     }
 
     /**
-     * グループメンバー
+     * GroupMemberRecyclerView設定
      *
      */
     private fun initGroupMemberRecyclerView() {
 
-        val userList = mutableListOf<User>()
-        val memberList = room.userIdList
+        val memberList = mutableListOf<User>()
+        val inviteList = mutableListOf<User>()
 
-        memberList.forEach { memberId ->
+        //グループメンバー
+        room.userIdList.forEach { memberId ->
             val user = UserManager.allUsers.filter{it.userId == memberId}.firstOrNull()
-            if(user != null) userList.add(user)
+            if(user != null) memberList.add(user)
         }
-
-        groupMemberRecyclerView.customAdapter.refresh(userList)
-    }
-
-    /**
-     * 招待中
-     *
-     */
-    private fun initInviteUserRecyclerView() {
-        val userList = mutableListOf<User>()
-
+        // 招待中
         groupRequests?.requests?.forEach { request ->
-            val user = UserManager.allUsers.filter { it.userId == request.beRequestedId }.firstOrNull()
-            if (user != null) userList.add(user)
+            val user = UserManager.allUsers.filter { it.userId == request.beRequestedId && request.status == RequestStatus.REQUEST.id }.firstOrNull()
+            if (user != null) inviteList.add(user)
         }
-        inviteUserRecyclerView.customAdapter.refresh(userList)
 
+        groupMemberRecyclerView.customAdapter.refresh(memberList, inviteList)
     }
 
     companion object {
