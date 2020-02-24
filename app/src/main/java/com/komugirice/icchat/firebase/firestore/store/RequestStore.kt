@@ -59,11 +59,14 @@ class RequestStore {
         }
 
         fun getUsersRequestToMe(onSuccess: (List<Request>) -> Unit) {
+            // エラーでる。Document references must have an even number of segments, but users/00000037-cedc-45ff-8b6f-1589c393c3ef/requests has 3
             var usersRequestToMe = mutableListOf<Request>()
             var index = 0
             UserManager.allUsers.forEach {
                 FirebaseFirestore.getInstance()
-                    .collection("$USERS/${it.userId}/$REQUESTS")
+                    .collection(USERS)
+                    .document(it.userId)
+                    .collection(REQUESTS)
                     .document(UserManager.myUserId)
                     .get()
                     .addOnCompleteListener {

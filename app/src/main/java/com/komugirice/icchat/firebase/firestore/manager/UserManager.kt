@@ -68,8 +68,8 @@ object UserManager {
                     UserStore.getAllUsers {
                         it.result?.toObjects(User::class.java)?.also {
                             allUsers = it
+                            onSuccess.invoke()
                         }
-                        onSuccess.invoke()
                     }
                 }
             } ?: run {

@@ -96,8 +96,8 @@ class LoginActivity : BaseActivity() {
         loginViewModel.loginResult.observe(this@LoginActivity, Observer {
             val loginResult = it ?: return@Observer
 
-            loading.visibility = View.GONE
             if (loginResult.error != null) {
+                loading.visibility = View.GONE
                 showLoginFailed(loginResult.error)
                 return@Observer
             }
@@ -340,6 +340,7 @@ class LoginActivity : BaseActivity() {
             val uid = FirebaseAuth.getInstance().currentUser?.uid
             Timber.d("uid:$uid)")
 
+            loading.visibility = View.GONE
             MainActivity.start(this)
         }
 
@@ -374,14 +375,12 @@ class LoginActivity : BaseActivity() {
         }
 
         fun signOut(activity: BaseActivity) {
-            isFacebookAuth = false  // プロフィール設定画面で使う
-            isGoogleAuth = false    // プロフィール設定画面で使う
             FirebaseAuth.getInstance().signOut()
             LoginManager.getInstance().logOut()
             activity.apply {
                 logout()
                 finishAffinity()
-                activity.startActivity(Intent(activity, LoginActivity::class.java))
+                activity.startActivity(Intent(activity, SplashActivity::class.java))
             }
         }
     }

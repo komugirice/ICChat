@@ -37,6 +37,8 @@ abstract class BaseActivity : AppCompatActivity() {
             Prefs().fcmToken.remove()
             Prefs().hasToUpdateFcmToken.put(true)
             FirebaseFacade.clearManager()
+            ICChatApplication.isFacebookAuth = false  // プロフィール設定画面で使う
+            ICChatApplication.isGoogleAuth = false    // プロフィール設定画面で使う
         }
 
     }

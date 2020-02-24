@@ -3,6 +3,7 @@ package com.komugirice.icchat
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.DatePickerDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
@@ -42,6 +43,7 @@ import com.komugirice.icchat.databinding.FriendRequestedCellBinding
 import com.komugirice.icchat.extension.getDateToString
 import com.komugirice.icchat.extension.setRoundedImageView
 import com.komugirice.icchat.extension.toggle
+import com.komugirice.icchat.firebase.FirebaseFacade
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.firebase.firestore.model.Request
 import com.komugirice.icchat.firebase.firestore.store.UserStore
@@ -189,18 +191,31 @@ class ProfileSettingActivity : BaseActivity() {
 
 
         facebookConnectButton.setOnClickListener {
-            if(isFacebookAuth)
-                // 認証済→解除
-                disconnectFacebook()
-            else
+            // 認証済→解除
+            if(isFacebookAuth) {
+                // Facebook連携を解除しますか？\n※解除する場合は解除後に再度ログインして下さい
+                AlertDialog.Builder(this)
+                    .setMessage(R.string.confirm_facebook_disconnect)
+                    .setPositiveButton(R.string.ok, object : DialogInterface.OnClickListener {
+                        override fun onClick(dialog: DialogInterface?, which: Int) {
+                            // 解除
+                            disconnectFacebook()
+                        }
+                    })
+                    .setNeutralButton(R.string.cancel, object : DialogInterface.OnClickListener {
+                        override fun onClick(dialog: DialogInterface?, which: Int) {
+                        }
+                    }).show()
+
+            } else
                 // 認証なし→認証
                 LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile", "user_friends"))
         }
         googleConnectButton.setOnClickListener{
-            if(isGoogleAuth)
+            if(isGoogleAuth) {
                 // 認証済→解除
                 disconnectGoogle()
-            else
+            } else
                 // 認証なし→認証
                 googleSignIn()
         }
@@ -416,10 +431,11 @@ class ProfileSettingActivity : BaseActivity() {
                         getString(R.string.success_facebook_disconnect)
                         ,Toast.LENGTH_LONG
                     ).show()
-                    isFacebookAuth = false
-                    binding.isFacebookAuth = isFacebookAuth
                     // uid削除
-                    UserStore.removeUid(uid){}
+                    UserStore.removeUid(uid){
+                        FirebaseAuth.getInstance().currentUser?.delete()
+                        LoginActivity.signOut(this)
+                    }
 
                 }
             }

@@ -113,6 +113,7 @@
     <string name="image_delete_button">写真を削除する</string>
     <string name="facebook_connect_button">Facebookと連携</string>
     <string name="facebook_disconnect_button">Facebookの連携を解除する</string>
+    <string name="confirm_facebook_disconnect">Facebook連携を解除しますか？\n※解除後にログアウトします</string>
     <string name="success_facebook_disconnect">Facebook連携を解除しました</string>
     <string name="google_connect_button">Googleと連携</string>
     <string name="google_disconnect_button">Googleの連携を解除する</string>
@@ -197,7 +198,7 @@
     <!-- ダイアログ関係 -->
     <string name="confirm_add_friend">ユーザを友だち登録しますか？</string>
     <string name="alert_success_add_friend">友だち登録が完了しました</string>
-    <string name="alert_failed_qr_read">QRコードの読み取りに失敗しました？</string>
+    <string name="alert_failed_qr_read">QRコードの読み取りに失敗しました</string>
     <string name="already_exist">既に登録済みです。</string>
     <string name="confirm_user_request">友だち申請を承認しますか？</string>
     <string name="accept">承認</string>
