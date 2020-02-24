@@ -40,9 +40,7 @@ import com.komugirice.icchat.ICChatApplication.Companion.isFacebookAuth
 import com.komugirice.icchat.ICChatApplication.Companion.isGoogleAuth
 import com.komugirice.icchat.databinding.ActivityProfileSettingBinding
 import com.komugirice.icchat.databinding.FriendRequestedCellBinding
-import com.komugirice.icchat.extension.getDateToString
-import com.komugirice.icchat.extension.setRoundedImageView
-import com.komugirice.icchat.extension.toggle
+import com.komugirice.icchat.extension.*
 import com.komugirice.icchat.firebase.FirebaseFacade
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.firebase.firestore.model.Request
@@ -74,6 +72,10 @@ class ProfileSettingActivity : BaseActivity() {
     private var uCropSrcUri: Uri? = null
 
     private var prevSettingUri: String = ""
+
+    var tmpYear: Int = UserManager.myUser.birthDay?.getYearEx() ?: 2000
+    var tmpMonth: Int = UserManager.myUser.birthDay?.getMonthEx() ?: 0
+    var tmpDayOfMonth: Int = UserManager.myUser.birthDay?.getDayOfMonthEx() ?: 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -238,14 +240,18 @@ class ProfileSettingActivity : BaseActivity() {
     private fun showDateDialog() {
         val dialog = DatePickerDialog(this, object: DatePickerDialog.OnDateSetListener{
             override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
+                tmpYear = year
+                tmpMonth = month
+                tmpDayOfMonth = dayOfMonth
                 updateBirthDay(year, month, dayOfMonth)
             }
-        }, 2000, 0, 1)
+        }, tmpYear, tmpMonth, tmpDayOfMonth)
         dialog.show()
     }
 
     /**
      * 誕生日更新
+     *
      *
      */
     fun updateBirthDay(year: Int, month: Int, dayOfMonth: Int) {
