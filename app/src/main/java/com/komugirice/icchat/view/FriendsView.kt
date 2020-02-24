@@ -13,7 +13,7 @@ import com.komugirice.icchat.ChatActivity
 import com.komugirice.icchat.GroupSettingActivity
 import com.komugirice.icchat.R
 import com.komugirice.icchat.databinding.FriendCellBinding
-import com.komugirice.icchat.databinding.FriendRequestedCellBinding
+import com.komugirice.icchat.databinding.FriendRequesterCellBinding
 import com.komugirice.icchat.databinding.TitleCellBinding
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.firebase.firestore.model.Request
@@ -95,7 +95,7 @@ class FriendsView : RecyclerView {
             // databindingにRequestを使うタイプ
             if ( viewType <= VIEW_TYPE_ITEM_DENY_FRIEND) {
                 return RequestCellViewHolder(
-                    FriendRequestedCellBinding.inflate(
+                    FriendRequesterCellBinding.inflate(
                         LayoutInflater.from(context),
                         parent,
                         false
@@ -348,7 +348,7 @@ class FriendsView : RecyclerView {
     class FriendCellViewHolder(val binding: FriendCellBinding) :
         RecyclerView.ViewHolder(binding.root)
 
-    class RequestCellViewHolder(val binding: FriendRequestedCellBinding) :
+    class RequestCellViewHolder(val binding: FriendRequesterCellBinding) :
         RecyclerView.ViewHolder(binding.root)
 
     class TitleCellViewHolder(val binding: TitleCellBinding) :
