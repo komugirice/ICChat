@@ -139,7 +139,6 @@ class ProfileSettingActivity : BaseActivity() {
      *
      */
     private fun initUserIcon() {
-        val myUser = UserManager.myUser
 
         FireStorageUtil.getUserIconImage(UserManager.myUserId) {
                 userIconImageView.setRoundedImageView(it) // UIスレッド

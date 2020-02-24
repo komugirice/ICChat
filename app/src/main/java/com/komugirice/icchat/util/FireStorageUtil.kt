@@ -29,7 +29,7 @@ class FireStorageUtil {
          * @param onSuccess
          *
          */
-        fun getUserIconImage(userId: String, onSuccess: (Uri) -> Unit) {
+        fun getUserIconImage(userId: String, onSuccess: (Uri?) -> Unit) {
             val url = "${USER_ICON_PATH}/${userId}"
             FirebaseStorage.getInstance().getReference(url).list(1)
                 .addOnCompleteListener {
@@ -37,6 +37,8 @@ class FireStorageUtil {
                         it.result?.items?.firstOrNull()?.downloadUrl.apply {
                             this?.addOnSuccessListener {
                                 onSuccess.invoke(it)
+                            } ?: run {
+                                onSuccess.invoke(null)
                             }
                         }
                     } else {
@@ -53,7 +55,7 @@ class FireStorageUtil {
          * @param onSuccess
          *
          */
-        fun getGroupIconImage(roomId: String, onSuccess: (Uri) -> Unit) {
+        fun getGroupIconImage(roomId: String, onSuccess: (Uri?) -> Unit) {
             val url = "${ROOM_PATH}/${roomId}/${ROOM_ICON_PATH}"
             FirebaseStorage.getInstance().getReference(url).list(1)
                 .addOnCompleteListener {
@@ -61,6 +63,8 @@ class FireStorageUtil {
                         it.result?.items?.firstOrNull()?.downloadUrl.apply {
                             this?.addOnSuccessListener {
                                 onSuccess.invoke(it)
+                            } ?: run {
+                                onSuccess.invoke(null)
                             }
                         }
                     } else {
