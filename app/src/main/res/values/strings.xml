@@ -67,6 +67,7 @@
     <string name="group_withdraw">グループ退会</string>
     <string name="user_info">ユーザ情報</string>
     <string name="group_info">グループ情報</string>
+    <string name="group_info_display">グループ情報表示</string>
     <string name="explanation_item">説明を見る</string>
 
     <!-- FriendFragment -->

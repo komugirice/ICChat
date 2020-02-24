@@ -6,6 +6,7 @@ import com.komugirice.icchat.firebase.firestore.manager.RoomManager
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.firebase.firestore.model.GroupRequests
 import com.komugirice.icchat.firebase.firestore.model.Request
+import com.komugirice.icchat.firebase.firestore.model.Room
 import java.util.*
 
 class RequestStore {
@@ -112,6 +113,24 @@ class RequestStore {
                         }
                 }
             }
+        }
+
+        // 友だち画面の招待グループの長押しの「グループ情報表示」で必要になった
+        fun getGroupRequests(room: Room, onSuccess: (GroupRequests) -> Unit) {
+            FirebaseFirestore.getInstance()
+                .collection("$ROOMS/${room.documentId}/$REQUESTS")
+                .get()
+                .addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        it.result?.toObjects(Request::class.java)?.also {
+                            val ret = GroupRequests().apply {
+                                this.room = room
+                                this.requests = it
+                            }
+                            onSuccess.invoke(ret)
+                        }
+                    }
+                }
         }
 
         fun requestFriend(userId: String, onSuccess: () -> Unit) {

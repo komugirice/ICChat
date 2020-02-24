@@ -12,7 +12,6 @@ import com.komugirice.icchat.enums.ActivityEnum
 import com.komugirice.icchat.enums.RequestStatus
 import com.komugirice.icchat.firebase.firestore.manager.RequestManager
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
-import com.komugirice.icchat.firebase.firestore.model.GroupRequests
 import com.komugirice.icchat.firebase.firestore.model.Room
 import com.komugirice.icchat.firebase.firestore.model.User
 import com.komugirice.icchat.viewModel.GroupInfoViewModel
@@ -22,8 +21,7 @@ class GroupInfoActivity : BaseActivity() {
 
     private lateinit var binding: ActivityGroupInfoBinding
     private lateinit var viewModel: GroupInfoViewModel
-    private lateinit var room: Room
-    private var groupRequests: GroupRequests? = null
+    //private lateinit var room: Room
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,12 +49,20 @@ class GroupInfoActivity : BaseActivity() {
      */
     private fun initViewModel() {
         viewModel = ViewModelProviders.of(this).get(GroupInfoViewModel::class.java).apply {
-            room.observe(this@GroupInfoActivity, Observer {
+//            room.observe(this@GroupInfoActivity, Observer {
+//                binding.apply {
+//                    room = it
+//                }
+                //this@GroupInfoActivity.room = it
+//                initGroupRequests(it)
+
+//            })
+            groupRequests.observe(this@GroupInfoActivity, Observer {
                 binding.apply {
-                    room = it
+                    room = it.room
                 }
-                this@GroupInfoActivity.room = it
-                initGroupRequests(it)
+                //this@GroupInfoActivity.room = it
+                //initGroupRequests(it)
                 initGroupMemberRecyclerView()
             })
         }
@@ -67,11 +73,10 @@ class GroupInfoActivity : BaseActivity() {
             finish()
     }
 
-    private fun initGroupRequests(room: Room) {
-        groupRequests = RequestManager.myGroupsRequests
-            .filter{ it.room.documentId == room.documentId}.firstOrNull()
-
-    }
+//    private fun initGroupRequests(room: Room) {
+//        groupRequests = RequestManager.myGroupsRequests
+//            .filter{ it.room.documentId == room.documentId}.firstOrNull()
+//    }
 
 
     /**
@@ -96,12 +101,12 @@ class GroupInfoActivity : BaseActivity() {
         val inviteList = mutableListOf<User>()
 
         //グループメンバー
-        room.userIdList.forEach { memberId ->
+        viewModel.groupRequests.value?.room?.userIdList?.forEach { memberId ->
             val user = UserManager.allUsers.filter{it.userId == memberId}.firstOrNull()
             if(user != null) memberList.add(user)
         }
         // 招待中
-        groupRequests?.requests?.forEach { request ->
+        viewModel.groupRequests.value?.requests?.forEach { request ->
             val user = UserManager.allUsers.filter { it.userId == request.beRequestedId && request.status == RequestStatus.REQUEST.id }.firstOrNull()
             if (user != null) inviteList.add(user)
         }
