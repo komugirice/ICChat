@@ -93,8 +93,10 @@ class GroupInfoActivity : BaseActivity() {
             val user = UserManager.allUsers.filter { it.userId == request.beRequestedId && request.status == RequestStatus.REQUEST.id }.firstOrNull()
             if (user != null) inviteList.add(user)
         }
+        // オーナーID
+        val ownerId = viewModel.groupRequests.value?.room?.ownerId
 
-        groupMemberRecyclerView.customAdapter.refresh(memberList, inviteList)
+        groupMemberRecyclerView.customAdapter.refresh(memberList, inviteList, ownerId)
     }
 
     companion object {

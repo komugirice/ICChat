@@ -38,6 +38,7 @@ class GroupMemberView : RecyclerView {
 
         private val groupUsers = mutableListOf<User>()
         private val inviteUsers = mutableListOf<User>()
+        private var ownerId: String? = null
 
         private fun getGroupUsersPositionOffset(): Int = 1
 
@@ -47,7 +48,7 @@ class GroupMemberView : RecyclerView {
             return result
         }
 
-        fun refresh(members: List<User>, invites: List<User>) {
+        fun refresh(members: List<User>, invites: List<User>, newOwnerId: String? = null) {
             groupUsers.apply {
                 clear()
                 addAll(members)
@@ -56,6 +57,7 @@ class GroupMemberView : RecyclerView {
                 clear()
                 addAll(invites)
             }
+            ownerId = newOwnerId
             notifyDataSetChanged()
         }
 
@@ -144,6 +146,7 @@ class GroupMemberView : RecyclerView {
         private fun onBindViewHolder(holder: GroupMemberCellViewHolder, position: Int) {
             val data = groupUsers[position - getGroupUsersPositionOffset()]
             holder.binding.user = data
+            holder.binding.isOwner = ownerId == data.userId
         }
 
         private fun onBindViewHolder(holder: InviteUserCellViewHolder, position: Int) {
