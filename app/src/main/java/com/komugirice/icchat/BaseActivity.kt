@@ -33,12 +33,12 @@ abstract class BaseActivity : AppCompatActivity() {
     }
 
     fun logout(){
+        ICChatApplication.isFacebookAuth = false  // プロフィール設定画面で使う
+        ICChatApplication.isGoogleAuth = false    // プロフィール設定画面で使う
         UserStore.updateFcmToken(null){
             Prefs().fcmToken.remove()
             Prefs().hasToUpdateFcmToken.put(true)
             FirebaseFacade.clearManager()
-            ICChatApplication.isFacebookAuth = false  // プロフィール設定画面で使う
-            ICChatApplication.isGoogleAuth = false    // プロフィール設定画面で使う
         }
 
     }
