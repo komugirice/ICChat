@@ -10,7 +10,6 @@ import androidx.lifecycle.ViewModelProviders
 import com.komugirice.icchat.databinding.ActivityGroupInfoBinding
 import com.komugirice.icchat.enums.ActivityEnum
 import com.komugirice.icchat.enums.RequestStatus
-import com.komugirice.icchat.firebase.firestore.manager.RequestManager
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.firebase.firestore.model.Room
 import com.komugirice.icchat.firebase.firestore.model.User
@@ -49,20 +48,10 @@ class GroupInfoActivity : BaseActivity() {
      */
     private fun initViewModel() {
         viewModel = ViewModelProviders.of(this).get(GroupInfoViewModel::class.java).apply {
-//            room.observe(this@GroupInfoActivity, Observer {
-//                binding.apply {
-//                    room = it
-//                }
-                //this@GroupInfoActivity.room = it
-//                initGroupRequests(it)
-
-//            })
             groupRequests.observe(this@GroupInfoActivity, Observer {
                 binding.apply {
                     room = it.room
                 }
-                //this@GroupInfoActivity.room = it
-                //initGroupRequests(it)
                 initGroupMemberRecyclerView()
             })
         }
@@ -72,12 +61,6 @@ class GroupInfoActivity : BaseActivity() {
         if(!viewModel.initRoom(intent))
             finish()
     }
-
-//    private fun initGroupRequests(room: Room) {
-//        groupRequests = RequestManager.myGroupsRequests
-//            .filter{ it.room.documentId == room.documentId}.firstOrNull()
-//    }
-
 
     /**
      * initClickメソッド
