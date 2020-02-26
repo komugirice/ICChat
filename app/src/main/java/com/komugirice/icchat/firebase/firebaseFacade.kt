@@ -4,6 +4,7 @@ import android.content.ContentResolver
 import android.content.Context
 import android.net.Uri
 import android.webkit.MimeTypeMap
+import com.google.firebase.firestore.FirebaseFirestore
 import com.komugirice.icchat.extension.getSuffix
 import com.komugirice.icchat.ICChatApplication.Companion.applicationContext
 import com.komugirice.icchat.R
@@ -468,6 +469,32 @@ object FirebaseFacade {
                 }
             else
                 onSuccess.invoke()
+
+        }
+    }
+
+    /**
+     * プロフィール設定画面で他ユーザのuidを削除する
+     * @param uid
+     * @param onSuccess
+     *
+     */
+    fun removeUidIfOtherUserHas(uid: String?, onSuccess: () -> Unit) {
+        UserStore.isExistUidInOtherUser(uid) { isExist, user ->
+            if (isExist) {
+                user?.apply {
+                    user.uids.remove(uid)
+                    // uid削除
+                    UserStore.removeOtherUserUid(uid, user){
+                        onSuccess.invoke()
+                    }
+                } ?: run {
+                    // 通らないとは思うが、一応の保険
+                    onSuccess.invoke()
+                }
+            } else {
+                onSuccess.invoke()
+            }
 
         }
     }

@@ -36,6 +36,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import com.google.gson.Gson
 import com.komugirice.icchat.ICChatApplication.Companion.isFacebookAuth
 import com.komugirice.icchat.ICChatApplication.Companion.isGoogleAuth
 import com.komugirice.icchat.databinding.ActivityProfileSettingBinding
@@ -331,9 +332,7 @@ class ProfileSettingActivity : BaseActivity() {
      *
      */
     private fun handleFacebookAccessToken(token: AccessToken) {
-        // 連携失敗用に退避
-        val tmpIdToken = auth.currentUser?.getIdToken(true)
-
+        Timber.d("user:${Gson().toJson(UserManager.myUser)}")
         Log.d(TAG, "handleFacebookAccessToken:$token")
         val credential = FacebookAuthProvider.getCredential(token.token)
 
@@ -343,24 +342,12 @@ class ProfileSettingActivity : BaseActivity() {
                     // Facebook認証成功
                     Log.d(TAG, "signInWithCredential:success")
 
+                    Timber.d("user:${Gson().toJson(UserManager.myUser)}")
                     // ※この時点でauth.currentUser.uidがfacebookのuidに変わっている!
                     val uid = auth.currentUser?.uid
-                    // 他ユーザチェック
-                    UserStore.isExistUidInOtherUser(uid) {
-
-                        if (it) {
-                            // 既に他のユーザに連携されています
-                            Toast.makeText(
-                                this,
-                                getString(R.string.alert_already_connect_other),
-                                Toast.LENGTH_LONG
-                            ).show()
-//                            tmpIdToken?.result?.token?.apply{
-//                                auth.signInWithCustomToken(this)
-//                            }
-                            return@isExistUidInOtherUser
-                        }
-
+                    // 他ユーザに同じuidが設定されてあるならば強制削除
+                    FirebaseFacade.removeUidIfOtherUserHas(uid) {
+                        Timber.d("user:${Gson().toJson(UserManager.myUser)}")
                         UserStore.addUid(
                             {
                                 // 既に連携済みです。
@@ -379,7 +366,7 @@ class ProfileSettingActivity : BaseActivity() {
                             ).show()
                         }
 
-                        // 自ユーザに連携済みエラー、新しく連携の場合はFacebook連携済みを画面反映
+                        // 自ユーザに連携済みエラーor新しく連携の場合もFacebook連携済みを画面反映
                         isFacebookAuth = true
                         binding.isFacebookAuth = isFacebookAuth
                     }
@@ -443,9 +430,9 @@ class ProfileSettingActivity : BaseActivity() {
                     // ※この時点でauth.currentUser.uidがGoogleのuidに変わっている!
                     val uid = auth.currentUser?.uid
                     // 他ユーザチェック
-                    UserStore.isExistUidInOtherUser(uid) {
+                    UserStore.isExistUidInOtherUser(uid) { isExist, user->
 
-                        if(it) {
+                        if(isExist) {
                             // 既に他のユーザに連携されています
                             Toast.makeText(
                                 this,
@@ -612,7 +599,6 @@ class ProfileSettingActivity : BaseActivity() {
             UCrop.RESULT_ERROR -> {
                 uCropSrcUri = null
                 Timber.d(UCrop.getError(data))
-                // TODO エラーダイアログ
                 Toast.makeText(this@ProfileSettingActivity, "画像の加工に失敗しました", Toast.LENGTH_SHORT).show()
             }
 

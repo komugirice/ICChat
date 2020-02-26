@@ -93,6 +93,7 @@ class LoginActivity : BaseActivity() {
             }
         })
 
+        // loginViewModel.loginSuccess更新後
         loginViewModel.loginResult.observe(this@LoginActivity, Observer {
             val loginResult = it ?: return@Observer
 

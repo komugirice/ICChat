@@ -257,11 +257,10 @@ class UserStore {
                 }
         }
 
-        fun isExistUidInOtherUser(uid: String?, onSuccess: (Boolean) -> Unit) {
-            val myDocumentId = FirebaseAuth.getInstance().currentUser?.uid.toString()
+        fun isExistUidInOtherUser(uid: String?, onSuccess: (Boolean, User?) -> Unit) {
             FirebaseFirestore.getInstance()
                 .collection("$USERS")
-                .whereArrayContains("uids",myDocumentId)
+                .whereArrayContains("uids",uid.toString())
                 .get()
                 .addOnCompleteListener {
                     it.result?.toObjects(User::class.java)?.firstOrNull().also {
@@ -269,12 +268,12 @@ class UserStore {
                             it.uids.forEach { uid ->
                                 if(UserManager.myUser.uids.contains(uid)) {
                                     // 自ユーザが保持
-                                    onSuccess.invoke(false)
+                                    onSuccess.invoke(false, null)
                                     return@addOnCompleteListener
                                 }
                                 if(uid == it.uids.last()) {
                                     // 他ユーザが保持
-                                    onSuccess.invoke(true)
+                                    onSuccess.invoke(true, it)
                                 }
 
                             }
@@ -282,9 +281,21 @@ class UserStore {
                         }
                     } ?: run {
                         // 誰も保持していない
-                        onSuccess.invoke(false)
+                        onSuccess.invoke(false, null)
                     }
                 }
+        }
+
+        fun removeOtherUserUid(uid: String?, user: User, onSuccess: () -> Unit) {
+            user.uids.remove(uid)
+            // uid削除
+            FirebaseFirestore.getInstance()
+                .collection("$USERS")
+                .document(user.userId)
+                .update("uids", user.uids)
+                .addOnSuccessListener {
+                    onSuccess.invoke()
+            }
         }
 
 
