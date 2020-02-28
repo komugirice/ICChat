@@ -33,6 +33,22 @@ class UserStore {
                 }
         }
 
+        fun isAlreadyLogin(onFailuer: () -> kotlin.Unit, onSuccess: (Boolean) -> Unit) {
+            getLoginUser {
+                it.result?.toObjects(User::class.java)?.firstOrNull().also {
+                    it?.also {
+                        if(it.fcmToken == null)
+                            onSuccess.invoke(false)
+                        else
+                            onSuccess.invoke(true)
+                    }
+                } ?: run {
+                    Timber.e("isAlreadyLogin(): currentUserがユーザに紐付いてない")
+                    onFailuer.invoke()
+                }
+            }
+        }
+
         /**
          * 全Userオブジェクト取得
          * UserManagerに反映する

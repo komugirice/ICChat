@@ -36,9 +36,11 @@ import com.komugirice.icchat.extension.getIdFromEmail
 import com.komugirice.icchat.extension.loggingSize
 import com.komugirice.icchat.firebase.FirebaseFacade
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
+import com.komugirice.icchat.firebase.firestore.store.UserStore
 import com.komugirice.icchat.ui.login.LoginViewModel
 import com.komugirice.icchat.ui.login.LoginViewModelFactory
 import com.komugirice.icchat.util.FcmUtil
+import com.komugirice.icchat.util.Prefs
 import kotlinx.android.synthetic.main.activity_create_user.*
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.activity_login.container
@@ -103,20 +105,19 @@ class LoginActivity : BaseActivity() {
                 showLoginFailed(loginResult.error)
                 return@Observer
             }
+
             // 認証成功
             if (loginResult.success != null) {
 
-                // 次の画面に遷移
-                updateUiWithUser()
+                // ログインユーザチェック
+                isValidLoginUser()
 
                 setResult(Activity.RESULT_OK)
 
                 //Complete and destroy login activity once successful
                 // 一瞬アプリが消えるバグの為、削除
                 //finish()
-
             }
-
 
         })
 
@@ -312,11 +313,10 @@ class LoginActivity : BaseActivity() {
     }
 
     /**
-     * ログイン成功したら呼ばれる
+     * ログインユーザチェック
      * @param user: User
      */
-    private fun updateUiWithUser() {
-        val welcome = getString(R.string.welcome)
+    private fun isValidLoginUser() {
 
         // Google, FacebookログインでAuthenticationにアカウントはあるが、
         // ユーザ情報に 連携されていず、ボタン押下するとonSuccessしないので、onFailureの定義
@@ -331,8 +331,38 @@ class LoginActivity : BaseActivity() {
             loading.visibility = View.GONE
         }
 
+        // 多重ログインチェック
+        UserStore.isAlreadyLogin(onFailure) {
+            if (it) {
+                // 別のユーザがログイン済みです
+                Toast.makeText(
+                    this,
+                    getString(R.string.login_failed_already),
+                    Toast.LENGTH_LONG
+                ).show()
+                loading.visibility = View.GONE
+                FirebaseAuth.getInstance().signOut()
+                signOutProvider()
+                return@isAlreadyLogin
+            }
+
+            // 次の画面に遷移
+            updateUiWithUser()
+
+        }
+
+    }
+
+
+    /**
+     * ログイン成功したら呼ばれる
+     * @param user: User
+     */
+    private fun updateUiWithUser() {
+        val welcome = getString(R.string.welcome)
+
         // Manager初期設定
-        FirebaseFacade.initManager(onFailure) {
+        FirebaseFacade.initManager({}) {
             // FCM初期化
             FcmUtil.initFcm()
             val displayName = UserManager.myUser.name
@@ -349,7 +379,6 @@ class LoginActivity : BaseActivity() {
             loading.visibility = View.GONE
             MainActivity.start(this)
         }
-
 
     }
 
@@ -381,12 +410,19 @@ class LoginActivity : BaseActivity() {
         }
 
         fun signOut(activity: BaseActivity) {
-            signOutProvider()
-            FirebaseAuth.getInstance().signOut()
             activity.apply {
-                logout()
-                finishAffinity()
-                activity.startActivity(Intent(activity, SplashActivity::class.java))
+                UserStore.updateFcmToken(null){
+                    Prefs().fcmToken.remove()
+                    Prefs().hasToUpdateFcmToken.put(true)
+
+                    signOutProvider()
+                    FirebaseAuth.getInstance().signOut()
+
+                    FirebaseFacade.clearManager()
+
+                    finishAffinity()
+                    activity.startActivity(Intent(activity, SplashActivity::class.java))
+                }
             }
         }
 
