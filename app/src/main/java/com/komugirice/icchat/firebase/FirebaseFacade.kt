@@ -16,6 +16,7 @@ import com.komugirice.icchat.firebase.firestore.manager.RoomManager
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.firebase.firestore.model.*
 import com.komugirice.icchat.firebase.firestore.store.*
+import com.komugirice.icchat.util.FcmUtil
 import com.komugirice.icchat.util.FireStorageUtil
 
 /**
@@ -79,11 +80,11 @@ object FirebaseFacade {
                 RequestStore.deleteUsersRequest(UserManager.myUserId, targetUserId)
                 // Request target→自分 削除
                 RequestStore.deleteUsersRequest(targetUserId, UserManager.myUserId)
+                // FCM通知
+                FcmUtil.sendAcceptFriendFcm(targetUserId)
 
                 initManager {
-
                     onSuccess.invoke()
-
                 }
 
             }
@@ -103,6 +104,8 @@ object FirebaseFacade {
         list.forEach {
             index++
             RequestStore.requestFriend(it.userId) {
+                // FCM通知
+                FcmUtil.sendRequestFriendFcm(it.userId)
                 if (list.size == index) {
                     // 再設定
                     RequestManager.initMyUserRequests {
@@ -136,6 +139,10 @@ object FirebaseFacade {
             if (it.isSuccessful) {
                 //チェックありのRequest登録
                 RequestStore.registerGroupRequest(groupRequest) {
+                    // Request登録へのFCM通知
+                    groupRequest?.requests?.forEach {
+                        FcmUtil.sendRequestGroupFcm(it.beRequestedId, room.name)
+                    }
                     // チェックを外したRequest削除
                     RequestStore.deleteGroupRequest(room.documentId, delRequests) {
                         // RoomManager更新
@@ -163,6 +170,8 @@ object FirebaseFacade {
     fun denyUserRequest(requesterId: String, onSuccess: () -> Unit) {
         // Request更新
         RequestStore.denyUserRequest(requesterId) {
+            // FCM通知
+            // FcmUtil.sendDenyFriendFcm(requesterId)
             RequestManager.initUsersRequestToMe {
                 onSuccess.invoke()
             }
