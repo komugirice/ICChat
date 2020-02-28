@@ -124,6 +124,7 @@
     <string name="alert_already_connect">既に連携済みです</string>
     <string name="alert_already_connect_other">既に他のユーザに連携されています</string>
     <string name="alert_no_profile_image">プロフィール画像が設定されていません</string>
+    <string name="invalid_gmail_account">連携に使用するGMailアドレスと登録メールアドレスは同じにして下さい</string>
 
 
     <string name="title_user_name">ユーザ名</string>

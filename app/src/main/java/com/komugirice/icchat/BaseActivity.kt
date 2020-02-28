@@ -38,7 +38,8 @@ abstract class BaseActivity : AppCompatActivity() {
         UserStore.updateFcmToken(null){
             Prefs().fcmToken.remove()
             Prefs().hasToUpdateFcmToken.put(true)
-            FirebaseFacade.clearManager()
+            // TODO プロフィール設定画面のFacebook連携処理でおかしくなるので応急処置
+            // FirebaseFacade.clearManager()
         }
 
     }

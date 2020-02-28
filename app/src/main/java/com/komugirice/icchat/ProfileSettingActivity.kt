@@ -412,8 +412,18 @@ class ProfileSettingActivity : BaseActivity() {
      *
      */
     private fun firebaseAuthWithGoogle(acct: GoogleSignInAccount) {
-        // 連携失敗用に退避
-        val tmpCurrentUser = auth.currentUser
+        val currentMail = FirebaseAuth.getInstance().currentUser?.email
+        val gmail = acct.email
+
+        if(gmail != currentMail) {
+            // 連携に使用するGMailアドレスと登録メールアドレスは同じにして下さい
+            Toast.makeText(
+                this,
+                getString(R.string.invalid_gmail_account),
+                Toast.LENGTH_LONG
+            ).show()
+            return
+        }
 
         Log.d(TAG, "firebaseAuthWithGoogle:" + acct.id!!)
         val credential = GoogleAuthProvider.getCredential(acct.idToken, null)
@@ -423,46 +433,38 @@ class ProfileSettingActivity : BaseActivity() {
                     // 認証成功
                     Log.d(TAG, "signInWithCredential:success")
 
-                    // 連携済みエラーの場合はGoogle連携済みを画面反映
+                    // ※この時点でauth.currentUser.uidがGoogleのuidに変わっている!
+
+                    // Google連携はメール登録済み前提なのでuid登録は行わない
+                    // 登録
+//                    UserStore.addUid(
+//                        {
+//                            // 既に連携済みです。
+//                            Toast.makeText(
+//                                this,
+//                                getString(R.string.alert_already_connect),
+//                                Toast.LENGTH_LONG
+//                            ).show()
+//                        }
+//                    ) {
+//                        // Googleに連携しました
+//                        Toast.makeText(
+//                            this,
+//                            getString(R.string.success_google_connect),
+//                            Toast.LENGTH_LONG
+//                        ).show()
+//                    }
+
+                    // Googleに連携しました
+                    Toast.makeText(
+                        this,
+                        getString(R.string.success_google_connect),
+                        Toast.LENGTH_LONG
+                    ).show()
+
+                    // 既に連携済みエラーの場合もGoogle連携済みを画面反映
                     isGoogleAuth = true
                     binding.isGoogleAuth = isGoogleAuth
-
-                    // ※この時点でauth.currentUser.uidがGoogleのuidに変わっている!
-                    val uid = auth.currentUser?.uid
-                    // 他ユーザチェック
-                    UserStore.isExistUidInOtherUser(uid) { isExist, user->
-
-                        if(isExist) {
-                            // 既に他のユーザに連携されています
-                            Toast.makeText(
-                                this,
-                                getString(R.string.alert_already_connect_other),
-                                Toast.LENGTH_LONG
-                            ).show()
-                            return@isExistUidInOtherUser
-                        }
-
-                        // 登録
-                        UserStore.addUid(
-                            {
-                                // 既に連携済みです。
-                                Toast.makeText(
-                                    this,
-                                    getString(R.string.alert_already_connect),
-                                    Toast.LENGTH_LONG
-                                ).show()
-                            }
-                        ) {
-                            // Googleに連携しました
-                            Toast.makeText(
-                                this,
-                                getString(R.string.success_google_connect),
-                                Toast.LENGTH_LONG
-                            ).show()
-                        }
-
-                    }
-
 
                 } else {
                     // If sign in fails, display a message to the user.
@@ -520,8 +522,8 @@ class ProfileSettingActivity : BaseActivity() {
                     ).show()
                     isGoogleAuth = false
                     binding.isGoogleAuth = isGoogleAuth
-                    // uid削除
-                    UserStore.removeUid(uid){}
+                    // uid削除しない（Googleの場合は「Gとメール」はuidが同一なのでメール側も消えてしまうから）
+                    //UserStore.removeUid(uid){}
                 }
             }
     }
