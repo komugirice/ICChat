@@ -112,11 +112,6 @@ class LoginActivity : BaseActivity() {
                 // ログインユーザチェック
                 isValidLoginUser()
 
-                setResult(Activity.RESULT_OK)
-
-                //Complete and destroy login activity once successful
-                // 一瞬アプリが消えるバグの為、削除
-                //finish()
             }
 
         })
@@ -378,6 +373,12 @@ class LoginActivity : BaseActivity() {
 
             loading.visibility = View.GONE
             MainActivity.start(this)
+
+            setResult(Activity.RESULT_OK)
+
+            //Complete and destroy login activity once successful
+            // 一瞬アプリが消えるバグの為、削除
+            //finish()
         }
 
     }
