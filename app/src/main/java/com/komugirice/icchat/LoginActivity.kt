@@ -28,6 +28,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.komugirice.icchat.ICChatApplication.Companion.applicationContext
 import com.komugirice.icchat.ICChatApplication.Companion.isFacebookAuth
 import com.komugirice.icchat.ICChatApplication.Companion.isGoogleAuth
 import com.komugirice.icchat.extension.afterTextChanged
@@ -326,8 +327,7 @@ class LoginActivity : BaseActivity() {
                 applicationContext.getString(R.string.login_failed_no_user),
                 Toast.LENGTH_LONG
             ).show()
-            isGoogleAuth = false
-            isFacebookAuth = false
+            signOutProvider()
             loading.visibility = View.GONE
         }
 
@@ -381,13 +381,26 @@ class LoginActivity : BaseActivity() {
         }
 
         fun signOut(activity: BaseActivity) {
+            signOutProvider()
             FirebaseAuth.getInstance().signOut()
-            LoginManager.getInstance().logOut()
             activity.apply {
                 logout()
                 finishAffinity()
                 activity.startActivity(Intent(activity, SplashActivity::class.java))
             }
+        }
+
+        fun signOutProvider() {
+            val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(applicationContext.getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build()
+            GoogleSignIn.getClient(applicationContext, gso).signOut()
+
+            LoginManager.getInstance().logOut()
+
+            isFacebookAuth = false  // プロフィール設定画面で使う
+            isGoogleAuth = false    // プロフィール設定画面で使う
         }
     }
 }

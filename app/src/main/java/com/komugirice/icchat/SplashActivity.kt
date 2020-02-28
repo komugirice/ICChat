@@ -45,11 +45,10 @@ class SplashActivity : BaseActivity() {
                     // ユーザ情報が無いのでログインできませんでした
                     Toast.makeText(
                         applicationContext,
-                        applicationContext.getString(R.string.login_failed_no_user),
+                        applicationContext.getString(R.string.login_failed_no_user_splash),
                         Toast.LENGTH_LONG
                     ).show()
-                    isGoogleAuth = false
-                    isFacebookAuth = false
+                    LoginActivity.signOutProvider()
                     FirebaseAuth.getInstance().signOut()
                     finish()
                 }
