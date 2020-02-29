@@ -198,11 +198,36 @@
 
     <!-- ExplanationActivity -->
     <string name="explanation_activity_title">操作説明</string>
-
+    <string name="ex1_text_title">友だち画面</string>
+    <string name="ex1_text_1">登録済みの友だち、グループの一覧を表示します。\nセルをクリックするとチャット画面へ遷移します。</string>
+    <string name="ex1_text_2">「友だち申請」や「招待中グループ」のセルをクリックし、承認もしくは拒否を選択します。\n</string>
+    <string name="ex2_text_title">トーク画面</string>
+    <string name="ex2_text_1">チャットの更新が新しい順に、ユーザ、グループ一覧が表示されます。セルをクリックするとチャット画面へ遷移します。</string>
+    <string name="ex3_text_title">興味画面</string>
+    <string name="ex3_text_1">ユーザの興味がある内容を「記事、画像、コメント」形式で登録しておき、タイムラインで表示します。</string>
+    <string name="ex3_text_2">「閲覧ボタン」を押下すると友だちの興味データの閲覧が出来ます。</string>
+    <string name="ex3_text_3">追加ボタン押下で興味入力画面に遷移します。\n興味データを登録できます。</string>
+    <string name="ex4_text_title">他のアプリからデータを連携する</string>
+    <string name="ex4_text_1">他のアプリの記事や動画を「興味データ」としてICChatに連携することが出来ます</string>
+    <string name="ex4_text_2">「グノシー」から記事を連携する</string>
+    <string name="ex4_text_3">「︙」ボタン→「その他でシェアする」→\n「ICChat」を選択します。</string>
+    <string name="ex4_text_4">「スマートニュース」から記事を連携する</string>
+    <string name="ex4_text_5">「シェア」ボタン→「共有…」→「ICChat」\nを選択します。</string>
+    <string name="ex4_text_6">「Youtube」から動画を連携する</string>
+    <string name="ex4_text_7">「共有」ボタン→「ICChat」を選択します。</string>
+    <string name="ex5_text_title">チャット画面</string>
+    <string name="ex5_text_1">チャットを行います。画像添付、ファイル添付も行うことが出来ます。</string>
+    <string name="ex6_text_title">ユーザ追加ボタン</string>
+    <string name="ex6_text_1">「友だち追加」「グループ作成」が行えます。</string>
+    <string name="ex7_text_title">設定ボタン</string>
+    <string name="ex7_text_1">「プロフィール設定」などが行えます。</string>
+    <string name="ex8_text_title">プロフィール設定画面</string>
+    <string name="ex8_text_1">ユーザ情報の更新と、FACEBOOKもしくはGOOGLEアカウントとの連携が出来ます。</string>
 
     <!-- ActionSendActivity -->
     <string name="failed_action_send">ICChatの共有に失敗しました\nログインされていません</string>
     <string name="loading_message">ICChatに共有しています</string>
+
     <!-- ダイアログ関係 -->
     <string name="confirm_add_friend">ユーザを友だち登録しますか？</string>
     <string name="alert_success_add_friend">友だち登録が完了しました</string>
@@ -233,4 +258,6 @@
     <!-- Message -->
     <string name="message_group_accept">%1$sさんが参加しました。</string>
     <string name="message_group_withdraw">%1$sさんが退会しました。</string>
+
+
 </resources>
