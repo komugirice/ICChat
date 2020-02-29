@@ -5,6 +5,7 @@ import android.content.Context
 import android.net.Uri
 import android.webkit.MimeTypeMap
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import com.komugirice.icchat.extension.getSuffix
 import com.komugirice.icchat.ICChatApplication.Companion.applicationContext
 import com.komugirice.icchat.R
@@ -18,6 +19,7 @@ import com.komugirice.icchat.firebase.firestore.model.*
 import com.komugirice.icchat.firebase.firestore.store.*
 import com.komugirice.icchat.util.FcmUtil
 import com.komugirice.icchat.util.FireStorageUtil
+import java.io.File
 
 /**
  * FireStoreのCRUDとManagerの更新をまとめたFunctionを提供する
@@ -416,6 +418,19 @@ object FirebaseFacade {
             }
 
         }
+    }
+
+    fun registChatMessageFile(context: Context, roomId: String, file: File, onSuccess: () -> Unit){
+        FirebaseStorage.getInstance().reference.child("${FireStorageUtil.ROOM_PATH}/${roomId}/${FireStorageUtil.FILE_PATH}/${file.name}")
+            .putBytes(file.readBytes())
+            .addOnCompleteListener{
+                FileInfoStore.registerFile(roomId, file.name, file.name){
+                    MessageStore.registerMessage(roomId, UserManager.myUserId, file.name, MessageType.FILE.id){
+                        onSuccess.invoke()
+                    }
+
+                }
+            }
     }
 
     /**

@@ -297,23 +297,33 @@ class ChatActivity : BaseActivity() {
             }
             // ファイルボタンから
             RC_CHOOSE_FILE -> {
-
                 data.data?.also {
-                    val path = ICChatFileUtil.getPathFromUri(this, it)
-                    val tmpFile = File(path)
-                    // ファイルサイズが0バイトなら終了
-                    if(tmpFile.readBytes().size == 0){
-                        Toast.makeText(
-                            this@ChatActivity,
-                            R.string.alert_no_file_size,
-                            Toast.LENGTH_LONG).show()
-                        return
+                    val file = it.makeTempFile()
+                    if (file == null) {
+                        // TODO:アップロードできませんでしたError
+                        return@also
                     }
-                    // ファイル登録
-                    Timber.d(it.toString())
-                    FirebaseFacade.registChatMessageFile(this, room.documentId, it){
+
+                    FirebaseFacade.registChatMessageFile(this, room.documentId, file) {
                         Timber.d("ファイルアップロード成功")
+                        file.delete()
                     }
+
+//                    val path = ICChatFileUtil.getPathFromUri(this, it)
+//                    val tmpFile = File(path)
+//                    // ファイルサイズが0バイトなら終了
+//                    if(tmpFile.readBytes().size == 0){
+//                        Toast.makeText(
+//                            this@ChatActivity,
+//                            R.string.alert_no_file_size,
+//                            Toast.LENGTH_LONG).show()
+//                        return
+//                    }
+//                    // ファイル登録
+//                    Timber.d(it.toString())
+//                    FirebaseFacade.registChatMessageFile(this, room.documentId, it){
+//                        Timber.d("ファイルアップロード成功")
+//                    }
                 }
 
             }
