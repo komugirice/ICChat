@@ -41,3 +41,4 @@ app/develop/release/output.json
 app/signingConfigs/debug.gradle
 app/signingConfigs/keystore
 app/signingConfigs/release.gradle
+key.properties
