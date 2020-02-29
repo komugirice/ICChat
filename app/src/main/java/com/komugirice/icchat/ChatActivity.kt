@@ -304,6 +304,13 @@ class ChatActivity : BaseActivity() {
                         return@also
                     }
 
+                    var fileSize = file.length() / 1024.0 / 1024.0 // メガバイト
+
+                    if (fileSize >= 20) {
+                        // TODO:ファイルサイズオーバーです
+                        return@also
+                    }
+
                     FirebaseFacade.registChatMessageFile(this, room.documentId, file) {
                         Timber.d("ファイルアップロード成功")
                         file.delete()
