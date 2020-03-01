@@ -13,6 +13,7 @@ import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.firebase.firestore.model.Message
 import timber.log.Timber
 import java.io.File
+import java.io.FileOutputStream
 
 class FireStorageUtil {
     companion object {
@@ -197,6 +198,17 @@ class FireStorageUtil {
                 onComplete.invoke()
             }
 
+        }
+
+        fun downloadFile(message: Message, tempFile: File, onComplete: () -> Unit, onError: () -> Unit) {
+            var path = "${ROOM_PATH}/${message.roomId}/"
+            path += FILE_PATH
+            path += "/${message.message}"
+            FirebaseStorage.getInstance().reference.child(path).getFile(tempFile).addOnSuccessListener {
+                onComplete.invoke()
+            }.addOnFailureListener {
+                onError.invoke()
+            }
         }
 
         /**

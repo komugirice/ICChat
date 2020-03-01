@@ -36,9 +36,14 @@ import com.komugirice.icchat.util.ICChatFileUtil
 import com.komugirice.icchat.util.FireStorageUtil
 import com.komugirice.icchat.viewModel.ChatViewModel
 import com.squareup.picasso.Picasso
+import io.reactivex.Observable
+import io.reactivex.Scheduler
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_chat.*
 import timber.log.Timber
 import java.io.File
+import java.io.FileOutputStream
 
 
 class ChatActivity : BaseActivity() {
@@ -49,6 +54,8 @@ class ChatActivity : BaseActivity() {
     private lateinit var room: Room
     private var tempImageViewForDownload: ImageView? = null
     private var tempFileForDownload: File? = null
+
+    private var tempDownloadPair : Pair<Message, FileInfo?>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -91,7 +98,9 @@ class ChatActivity : BaseActivity() {
             // storageのファイルを削除済だとexceptionが発生するバグ対応
             tempImageViewForDownload = null
             tempFileForDownload = null
-            getFireStorageFile(it.first)
+            tempDownloadPair = it
+            if (it.first.type == MessageType.IMAGE.id)
+                getFireStorageFile(it.first)
             createFile(it.first, it.second)
         }
     }
@@ -336,19 +345,28 @@ class ChatActivity : BaseActivity() {
             }
             // ダウンロードリンクから
             RC_WRITE_FILE -> {
-
                 data.data?.also {
+
                     Timber.d("ダウンロード先URL：$it")
                     val takeFlags: Int = intent.flags and
                             (Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
                     // Check for the freshest data.
                     contentResolver.takePersistableUriPermission(it, takeFlags)
-                    if(tempImageViewForDownload != null) {
-                        downloadImage(it)
-                    } else if(tempFileForDownload != null) {
-                        downloadFile(it)
+                    tempDownloadPair?.also { pair ->
+                        if (pair.first.type == MessageType.IMAGE.id)
+                            downloadImage(it)
+                        else
+                            downloadFile(pair.first, it)
                     }
+//
+//                    if(tempImageViewForDownload != null) {
+//                        downloadImage(it)
+//                    } else if(tempFileForDownload != null) {
+//                        downloadFile(it)
+//                    }
 
+                } ?: run {
+                    // TODO:ダウンロード失敗
                 }
             }
             else -> {
@@ -400,7 +418,7 @@ class ChatActivity : BaseActivity() {
             addCategory(Intent.CATEGORY_OPENABLE)
 
             // Create a file with the requested MIME type.
-            type = fileInfo?.mimeType   // TODO NULLで落ちるか調査が必要
+            type = fileInfo?.mimeType ?: "*/*"  // TODO NULLで落ちるか調査が必要
             putExtra(Intent.EXTRA_TITLE, fileName)
         }
 
@@ -464,13 +482,55 @@ class ChatActivity : BaseActivity() {
             Toast.LENGTH_LONG).show()
     }
 
+    private fun downloadFile(message: Message, uri: Uri) {
+        Timber.d("ここから書き込み開始　結構長いです---------------------------------------------------")
+        // まずはtempFileを作ってそこにFileのDownload
+        val tempFile = File.createTempFile("${System.currentTimeMillis()}", "temp", cacheDir)
+        FireStorageUtil.downloadFile(message, tempFile, { // tempFileに保存成功
+            Timber.d("donloadFile complete")
+            // uriから保存用のoutputStreamの生成
+            Observable.just(uri)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .map {// uriからParcelFileDescriptor生成
+                    contentResolver.openFileDescriptor(it, "w")
+                }.map { // OutPutStream生成
+                    FileOutputStream(it!!.fileDescriptor)
+                }.map {
+                    val inputStream = tempFile.inputStream() // 書き込みソースのstream
+                    while(true) { // ひたすら書き込む
+                        val data = inputStream.read()
+                        if (data == -1)
+                            break
+                        it.write(data)
+                    }
+                    inputStream.close()
+                    it
+                }.map {
+                    it.close()
+                    true
+                }.subscribe({
+                    // 書き込み成功
+                    Timber.d("書き込み成功---------------------------------------------------")
+                }, {
+                    // 書き込み失敗
+                    Timber.d("書き込み失敗---------------------------------------------------")
+                }, { // どっちにしろtempFileは消す
+                    tempFile.delete()
+                })
+
+        }, {
+            // 失敗
+            Timber.d("downloadFile Error")
+        })
+    }
+
     /**
      * ファイルタイプ ダウンロード
      *
      * @param uri ダウンロード先のローカルストレージのuri
      */
     private fun downloadFile(uri: Uri) {
-
         if(tempFileForDownload == null) {
             Toast.makeText(
                 this@ChatActivity,
