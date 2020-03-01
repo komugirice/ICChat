@@ -276,10 +276,12 @@ class ChatActivity : BaseActivity() {
             RC_CHOOSE_IMAGE -> {
 
                 data.data?.also {
-                    val path = ICChatFileUtil.getPathFromUri(this, it)
-                    val tmpFile = File(path)
+                    //val path = ICChatFileUtil.getPathFromUri(this, it)
+                    //val tmpFile = File(path)
+
+                    val tmpFile = it.makeTempFile()
                     // ファイルサイズが0バイトなら終了
-                    if(tmpFile.readBytes().size == 0){
+                    if(tmpFile == null || tmpFile.readBytes()?.size == 0){
                         Toast.makeText(
                             this@ChatActivity,
                             R.string.alert_no_file_size,
@@ -291,6 +293,7 @@ class ChatActivity : BaseActivity() {
                     Timber.d(it.toString())
                     FirebaseFacade.registChatMessageImage(room.documentId, it){
                         Timber.d("画像アップロード成功")
+                        tmpFile.delete()
                     }
                 }
 
@@ -300,18 +303,27 @@ class ChatActivity : BaseActivity() {
                 data.data?.also {
                     val file = it.makeTempFile()
                     if (file == null) {
-                        // TODO:アップロードできませんでしたError
+                        Toast.makeText(
+                            this,
+                            R.string.alert_failed_upload,
+                            Toast.LENGTH_LONG
+                        ).show()
                         return@also
                     }
 
                     var fileSize = file.length() / 1024.0 / 1024.0 // メガバイト
 
-                    if (fileSize >= 20) {
-                        // TODO:ファイルサイズオーバーです
+                    if (fileSize > 20) {
+                        Toast.makeText(
+                            this,
+                            R.string.invalid_uplode_file_size,
+                            Toast.LENGTH_LONG
+                        ).show()
+                        file.delete()
                         return@also
                     }
 
-                    FirebaseFacade.registChatMessageFile(this, room.documentId, file) {
+                    FirebaseFacade.registChatMessageFile(this, room.documentId, file, it) {
                         Timber.d("ファイルアップロード成功")
                         file.delete()
                     }

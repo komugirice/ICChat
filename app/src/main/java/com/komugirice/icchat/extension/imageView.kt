@@ -81,6 +81,7 @@ fun ImageView.loadMessageImage(message: Message) {
 
     FireStorageUtil.getRoomMessageImage(message){
         Picasso.get().load(it).into(this)
+
     }
 }
 

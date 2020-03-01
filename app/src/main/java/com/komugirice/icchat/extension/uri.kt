@@ -70,14 +70,17 @@ fun Uri.makeTempFile(context: Context, filename: String, suffix: String): File? 
  * Uriで指定されたFileをAppのCacheに保存する
  */
 fun Uri.makeTempFile(): File? {
-    val cursor = applicationContext.contentResolver.query(this, null, null, null, null)
-    var fileName = ""
-    if (cursor != null && cursor.moveToFirst())
-        cursor.columnNames.firstOrNull { it == MediaStore.MediaColumns.DISPLAY_NAME }?.also {
-            fileName = cursor.getString(cursor.getColumnIndex(it))
-        }
-    if (fileName.isEmpty())
-        fileName = "${System.currentTimeMillis()}"
+    var fileName = "${System.currentTimeMillis()}"
+
+// 下記の処理でfileNameを取得してもFile.createTempFile()のTempDirectory.generateFile()が、String name = prefix + Long.toString(n) + suffix;なのでfileNameが使えない
+//    val cursor = applicationContext.contentResolver.query(this, null, null, null, null)
+//    if (cursor != null && cursor.moveToFirst())
+//        cursor.columnNames.firstOrNull { it == MediaStore.MediaColumns.DISPLAY_NAME }?.also {
+//            fileName = cursor.getString(cursor.getColumnIndex(it))
+//        }
+//    if (fileName.isEmpty())
+//        fileName = "${System.currentTimeMillis()}"
+
     val file = File.createTempFile(fileName, "", applicationContext.cacheDir)
     val inputStream = applicationContext.contentResolver.openInputStream(this)
     if (inputStream != null) {

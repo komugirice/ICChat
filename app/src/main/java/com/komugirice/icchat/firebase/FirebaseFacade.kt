@@ -422,12 +422,19 @@ object FirebaseFacade {
         }
     }
 
-    fun registChatMessageFile(context: Context, roomId: String, file: File, onSuccess: () -> Unit){
-        FirebaseStorage.getInstance().reference.child("${FireStorageUtil.ROOM_PATH}/${roomId}/${FireStorageUtil.FILE_PATH}/${file.name}")
+    fun registChatMessageFile(context: Context, roomId: String, file: File, uri: Uri, onSuccess: () -> Unit){
+        // 元ファイル名
+        var fileName = uri.getFileNameFromUri() ?: ""
+        // 拡張子
+        var extension = fileName.getSuffix()
+        // 変換後ファイル名
+        val convertName = "${System.currentTimeMillis()}.${extension}"
+
+        FirebaseStorage.getInstance().reference.child("${FireStorageUtil.ROOM_PATH}/${roomId}/${FireStorageUtil.FILE_PATH}/${fileName}")
             .putBytes(file.readBytes())
             .addOnCompleteListener{
-                FileInfoStore.registerFile(roomId, file.name, file.name){
-                    MessageStore.registerMessage(roomId, UserManager.myUserId, file.name, MessageType.FILE.id){
+                FileInfoStore.registerFile(roomId, fileName, convertName){
+                    MessageStore.registerMessage(roomId, UserManager.myUserId, convertName, MessageType.FILE.id){
                         onSuccess.invoke()
                     }
 
