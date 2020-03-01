@@ -45,6 +45,7 @@ import kotlinx.android.synthetic.main.activity_create_user.*
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.activity_login.container
 import timber.log.Timber
+import java.util.*
 
 
 class LoginActivity : BaseActivity() {
@@ -342,12 +343,14 @@ class LoginActivity : BaseActivity() {
                 signOutProvider()
                 return@isAlreadyLogin
             }
+            // ログイン日時更新
+            UserStore.updateLoginDateTime(Date()){
+                // 正常
+                updateUiWithUser()
+            }
 
-            // 次の画面に遷移
-            updateUiWithUser()
 
         }
-
     }
 
 
@@ -414,17 +417,19 @@ class LoginActivity : BaseActivity() {
 
         fun signOut(activity: BaseActivity) {
             activity.apply {
-                UserStore.updateFcmToken(null){
-                    Prefs().fcmToken.remove()
-                    Prefs().hasToUpdateFcmToken.put(true)
+                UserStore.updateLoginDateTime(null){
+                    UserStore.updateFcmToken(null){
+                        Prefs().fcmToken.remove()
+                        Prefs().hasToUpdateFcmToken.put(true)
 
-                    signOutProvider()
-                    FirebaseAuth.getInstance().signOut()
+                        signOutProvider()
+                        FirebaseAuth.getInstance().signOut()
 
-                    FirebaseFacade.clearManager()
+                        FirebaseFacade.clearManager()
 
-                    finishAffinity()
-                    activity.startActivity(Intent(activity, SplashActivity::class.java))
+                        finishAffinity()
+                        activity.startActivity(Intent(activity, SplashActivity::class.java))
+                    }
                 }
             }
         }

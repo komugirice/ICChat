@@ -12,4 +12,5 @@ class User: Serializable {
     var uids = mutableListOf<String>()
     var friendIdList = mutableListOf<String>()
     var fcmToken: String? = null
+    var loginDateTime: Date? = null
 }

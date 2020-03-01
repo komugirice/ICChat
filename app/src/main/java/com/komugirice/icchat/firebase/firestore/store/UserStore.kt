@@ -11,11 +11,13 @@ import com.komugirice.icchat.R
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.firebase.firestore.model.User
 import timber.log.Timber
+import java.util.*
 
 class UserStore {
     companion object {
 
         const val USERS = "users"
+
         /**
          * ログインユーザのUserオブジェクト取得
          *
@@ -33,14 +35,31 @@ class UserStore {
                 }
         }
 
+        /**
+         * ログイン済みチェック
+         *
+         */
         fun isAlreadyLogin(onFailuer: () -> kotlin.Unit, onSuccess: (Boolean) -> Unit) {
             getLoginUser {
                 it.result?.toObjects(User::class.java)?.firstOrNull().also {
                     it?.also {
-                        if(it.fcmToken == null)
+                        // 現在時刻 - 1日
+                        val cal = Calendar.getInstance()
+                        cal.add(Calendar.DAY_OF_MONTH, -1)
+                        it.loginDateTime?.also {
+                            // 現在時刻 - 1日 > loginDateTIme ならばログイン許可
+                            if (cal.time.after(it)) {
+                                Timber.d("isAlreadyLogin:現在時刻 - 1日 > loginDateTIme ログイン可")
+                                onSuccess.invoke(false)
+                            } else {
+                                Timber.d("isAlreadyLogin:現在時刻 - 1日 <= loginDateTIme ログイン可")
+                                onSuccess.invoke(true)
+                            }
+                        } ?: run {
+                            // loginDateTime == null ならばログイン許可
+                            Timber.d("loginDateTime == null ログイン可")
                             onSuccess.invoke(false)
-                        else
-                            onSuccess.invoke(true)
+                        }
                     }
                 } ?: run {
                     Timber.e("isAlreadyLogin(): currentUserがユーザに紐付いてない")
@@ -49,10 +68,31 @@ class UserStore {
             }
         }
 
+
+        /**
+         * ログイン日時更新
+         * @param date ログイン日時
+         *
+         */
+        fun updateLoginDateTime(date: Date?, onSuccess: () -> Unit) {
+            getLoginUser {
+                it.result?.toObjects(User::class.java)?.firstOrNull().also {
+                    it?.also {
+                        FirebaseFirestore.getInstance()
+                            .collection("$USERS")
+                            .document(it.userId)
+                            .update("loginDateTime", date)
+                            .addOnSuccessListener {
+                                onSuccess.invoke()
+                            }
+                    }
+                }
+            }
+        }
+
         /**
          * 全Userオブジェクト取得
          * UserManagerに反映する
-         *
          *
          */
         fun getAllUsers(onComplete: (Task<QuerySnapshot>) -> Unit) {
