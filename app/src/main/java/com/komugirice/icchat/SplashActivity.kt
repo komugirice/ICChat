@@ -36,7 +36,7 @@ class SplashActivity : BaseActivity() {
             Timber.d("uid:$uid)")
 
             // 多重ログインチェックが必要
-            // TODO isAlreadyLoginするには、アプリ消されたらloginDateをnullにする処理が必要
+            // TODO isAlreadyLoginを実装するには、アプリ消されたらloginDateをnullにする処理が必要
 //            UserStore.isAlreadyLogin(onFailed()) {
 //                if (it) {
 //                    // 別のユーザがログイン済みです
