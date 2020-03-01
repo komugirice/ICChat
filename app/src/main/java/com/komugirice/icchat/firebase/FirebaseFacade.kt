@@ -395,6 +395,24 @@ object FirebaseFacade {
         }
     }
 
+    fun registChatMessageImage(roomId: String, uri: Uri, fileName: String, onSuccess: () -> Unit){
+        // 拡張子
+        var extension = fileName.getSuffix()
+        // 変換後ファイル名
+        val convertName = "${System.currentTimeMillis()}.${extension}"
+
+        FireStorageUtil.registRoomMessageImage(roomId, uri, convertName){
+            // initSubscribeの呼び出しの関係からFile先→Message後の登録順にすること
+            FileInfoStore.registerFile(roomId, fileName, convertName){
+                MessageStore.registerMessage(roomId, UserManager.myUserId, convertName, MessageType.IMAGE.id){
+                    onSuccess.invoke()
+                }
+
+            }
+
+        }
+    }
+
     /**
      * チャット画面 ファイル投稿
      * @param roomId

@@ -15,6 +15,7 @@ import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.net.toFile
+import androidx.core.net.toUri
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -36,6 +37,7 @@ import com.komugirice.icchat.util.ICChatFileUtil
 import com.komugirice.icchat.util.FireStorageUtil
 import com.komugirice.icchat.viewModel.ChatViewModel
 import com.squareup.picasso.Picasso
+import com.yalantis.ucrop.UCrop
 import kotlinx.android.synthetic.main.activity_chat.*
 import timber.log.Timber
 import java.io.File
@@ -49,6 +51,7 @@ class ChatActivity : BaseActivity() {
     private lateinit var room: Room
     private var tempImageViewForDownload: ImageView? = null
     private var tempFileForDownload: File? = null
+    private var mFileName: String = ""  // uCropからファイル名を引き継げないのでやむを得ず
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -276,6 +279,14 @@ class ChatActivity : BaseActivity() {
             RC_CHOOSE_IMAGE -> {
 
                 data.data?.also {
+                    // uCrop実行
+                    startUCrop(it)
+                }
+
+            }
+            UCrop.REQUEST_CROP -> {
+                val resultUri = UCrop.getOutput(data)
+                resultUri?.also {
                     //val path = ICChatFileUtil.getPathFromUri(this, it)
                     //val tmpFile = File(path)
 
@@ -291,7 +302,7 @@ class ChatActivity : BaseActivity() {
 
                     // 画像登録
                     Timber.d(it.toString())
-                    FirebaseFacade.registChatMessageImage(room.documentId, it){
+                    FirebaseFacade.registChatMessageImage(room.documentId, it, mFileName){
                         Timber.d("画像アップロード成功")
                         tmpFile.delete()
                     }
@@ -378,6 +389,29 @@ class ChatActivity : BaseActivity() {
             .addCategory(Intent.CATEGORY_OPENABLE)
             .setType("image/*")
         startActivityForResult(intent, RC_CHOOSE_IMAGE)
+    }
+
+    /**
+     * uCropActivity表示
+     *
+     */
+    private fun startUCrop(srcUri: Uri?) {
+        mFileName = srcUri.getFileNameFromUri() ?: ""
+        var file = File.createTempFile("${System.currentTimeMillis()}", "temp", cacheDir)
+        srcUri?.apply {
+            UCrop.of(this, file.toUri())
+//                .withAspectRatio(1f, 1f)
+                .withOptions(UCrop.Options().apply {
+//                    setHideBottomControls(true)
+//                    setCircleDimmedLayer(false)
+//                    setShowCropGrid(false)
+//                    setShowCropFrame(false)
+//                    withAspectRatio(
+//                        4f, 3f
+//                    )
+                })
+                .start(this@ChatActivity)
+        }
     }
 
     /**
