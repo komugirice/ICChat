@@ -8,6 +8,7 @@ import com.komugirice.icchat.extension.extractURL
 import com.google.firebase.auth.FirebaseAuth
 import com.google.gson.Gson
 import com.komugirice.icchat.data.model.OgpData
+import com.komugirice.icchat.firebase.FirebaseFacade
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.firebase.firestore.model.Interest
 import com.komugirice.icchat.firebase.firestore.store.InterestStore
@@ -73,9 +74,8 @@ class ActionSendActivity: BaseActivity() {
                     Timber.d("myUserId:${UserManager.myUserId}")
 
                     // FireStoreに登録
-                    InterestStore.registerInterestWithOgp(ogpData){
+                    FirebaseFacade.registerInterestWithOgp(ogpData){
                         finish()
-
                     }
 
 

@@ -61,7 +61,7 @@ class InterestStore {
          * @param onSuccess
          *
          */
-        fun registerInterestWithOgp(ogpData: OgpData, onSuccess: () -> Unit) {
+        fun registerInterestWithOgp(userId: String, ogpData: OgpData, onSuccess: () -> Unit) {
 
             val interest = Interest(ogpData).apply{
                 this.documentId = UUID.randomUUID().toString()
@@ -69,7 +69,7 @@ class InterestStore {
             }
 
             FirebaseFirestore.getInstance()
-                .collection("$USERS/${UserManager.myUserId}/$INTERESTS")
+                .collection("$USERS/$userId/$INTERESTS")
                 .document(interest.documentId)
                 .set(interest)
                 .addOnSuccessListener {

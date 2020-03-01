@@ -9,6 +9,7 @@ import com.google.firebase.storage.FirebaseStorage
 import com.komugirice.icchat.extension.getSuffix
 import com.komugirice.icchat.ICChatApplication.Companion.applicationContext
 import com.komugirice.icchat.R
+import com.komugirice.icchat.data.model.OgpData
 import com.komugirice.icchat.enums.MessageType
 import com.komugirice.icchat.extension.getFileNameFromUri
 import com.komugirice.icchat.firebase.fcm.FcmStore
@@ -20,6 +21,7 @@ import com.komugirice.icchat.firebase.firestore.store.*
 import com.komugirice.icchat.util.FcmUtil
 import com.komugirice.icchat.util.FireStorageUtil
 import java.io.File
+import java.util.*
 
 /**
  * FireStoreのCRUDとManagerの更新をまとめたFunctionを提供する
@@ -520,6 +522,27 @@ object FirebaseFacade {
                 onSuccess.invoke()
             }
 
+        }
+    }
+
+    /**
+     * Interest登録（別サイトからIntent.ACTION_SEND）
+     * (ログインユーザからのみ登録可能）
+     * @param ogpData
+     * @param onSuccess
+     *
+     */
+    fun registerInterestWithOgp(ogpData: OgpData, onSuccess: () -> Unit) {
+
+        // UserManager.userIdだとExceptionになったので再度取得
+        UserStore.getLoginUser {
+            it.result?.toObjects(User::class.java)?.firstOrNull().also {
+                it?.also {
+                    InterestStore.registerInterestWithOgp(it.userId, ogpData) {
+                        onSuccess.invoke()
+                    }
+                }
+            }
         }
     }
 
