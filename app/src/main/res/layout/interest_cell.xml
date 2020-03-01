@@ -139,8 +139,9 @@
             <ImageView
                 android:id="@+id/imageView"
                 android:layout_width="180dp"
-                android:layout_height="135dp"
+                android:layout_height="0dp"
                 android:scaleType="centerCrop"
+                app:layout_constraintDimensionRatio="3:4"
                 app:userIdForInterestImage="@{userId}"
                 app:interestImageFileName="@{interest.image}"
                 android:visibility="@{interest.image != null ? View.VISIBLE : View.GONE}"
