@@ -4,6 +4,8 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -51,7 +53,7 @@ class ChatActivity : BaseActivity() {
     private lateinit var room: Room
     private var tempImageViewForDownload: ImageView? = null
     private var tempFileForDownload: File? = null
-    private var mFileName: String = ""  // uCropからファイル名を引き継げないのでやむを得ず
+    private var mImageFileName: String = ""  // uCropからファイル名を引き継げないのでやむを得ず
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -302,7 +304,7 @@ class ChatActivity : BaseActivity() {
 
                     // 画像登録
                     Timber.d(it.toString())
-                    FirebaseFacade.registChatMessageImage(room.documentId, it, mFileName){
+                    FirebaseFacade.registChatMessageImage(room.documentId, it, mImageFileName){
                         Timber.d("画像アップロード成功")
                         tmpFile.delete()
                     }
@@ -396,7 +398,7 @@ class ChatActivity : BaseActivity() {
      *
      */
     private fun startUCrop(srcUri: Uri?) {
-        mFileName = srcUri.getFileNameFromUri() ?: ""
+        mImageFileName = srcUri.getFileNameFromUri() ?: ""
         var file = File.createTempFile("${System.currentTimeMillis()}", "temp", cacheDir)
         srcUri?.apply {
             UCrop.of(this, file.toUri())
@@ -461,13 +463,35 @@ class ChatActivity : BaseActivity() {
     private fun getFireStorageFile(message: Message) {
 
         if(message.type == MessageType.IMAGE.id) {
-            FireStorageUtil.downloadRoomMessageFileUri(message) {
+            //FireStorageUtil.downloadRoomMessageFileUri(message) {
+            var tmpFile = File.createTempFile("file", "temp", cacheDir)
+            // TODO storageからのファイル取得は↓で成功しているのか？？
+            FireStorageUtil.downloadRoomMessageFile(this@ChatActivity, message, tmpFile) {
 
-                it?.apply {
+                //it?.apply {
+                tmpFile?.apply {
+
+                    // 元画像サイズを取得したい
+                    var options = BitmapFactory.Options()
+                    options.inJustDecodeBounds = true
+                    BitmapFactory.decodeFile(File(this.path).absolutePath, options)
+                    val imageHeight = options.outHeight
+                    val imageWidth = options.outWidth
+
 
                     // 画像タイプ
-                    tempImageViewForDownload = ImageView(this@ChatActivity)
+                    // TODO ダウンロード時の画像サイズがおかしくなる
+                    tempImageViewForDownload = ImageView(this@ChatActivity).apply {
+                        layoutParams.height = imageHeight
+                        layoutParams.width = imageWidth
+                    }
                     Picasso.get().load(this).into(tempImageViewForDownload)
+
+                    //tempFileForDownload = this.makeTempFile()
+//                    tempFileForDownload = File.createTempFile("file", "temp", cacheDir)
+//                    // TODO storageからのファイル取得は↓で成功しているのか？？
+//                    FireStorageUtil.downloadRoomMessageFile(this@ChatActivity, message, tempFileForDownload) {
+//                    }
                 }
             }
         } else {
