@@ -143,7 +143,20 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/imageRadioButton">
 
+<!--
                         <ImageView
+                            android:id="@+id/interestImageView"
+                            android:layout_width="250dp"
+                            android:layout_height="0dp"
+                            android:background="@drawable/edit_text_border"
+                            android:scaleType="centerCrop"
+                            android:layout_marginBottom="8dp"
+                            app:layout_constraintDimensionRatio="3:4"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+-->
+                        <!-- uCropなしでは横になるのでどうちらでも変わらない-->
+                        <com.yalantis.ucrop.view.TransformImageView
                             android:id="@+id/interestImageView"
                             android:layout_width="250dp"
                             android:layout_height="0dp"

@@ -31,7 +31,6 @@ import kotlinx.android.synthetic.main.activity_header.view.*
 import timber.log.Timber
 import java.io.File
 import java.util.*
-import kotlin.time.hours
 
 class InputInterestActivity : BaseActivity() {
 

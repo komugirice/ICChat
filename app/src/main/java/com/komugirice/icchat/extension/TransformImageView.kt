@@ -1,5 +1,6 @@
 package com.komugirice.icchat.extension
 
+import android.net.Uri
 import android.widget.ImageView
 import androidx.core.net.toUri
 import androidx.databinding.BindingAdapter
@@ -28,5 +29,14 @@ fun TransformImageView.loadMessageImage(message: Message) {
         setImageUri(it, file.toUri())
         Picasso.get().load(file.toUri()).into(this)
     }
+
+}
+
+fun TransformImageView.loadImageFromUri(uri: Uri?) {
+    // 画像タイプ判定
+    if(uri == null) return
+    var file = File.createTempFile("${System.currentTimeMillis()}", ".temp", ICChatApplication.applicationContext.cacheDir)
+    setImageUri(uri, file.toUri())
+    Picasso.get().load(file.toUri()).into(this)
 
 }
