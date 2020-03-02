@@ -154,53 +154,14 @@ class FireStorageUtil {
         }
 
         /**
-         * チャット画面の画像投稿をダウンロード
+         * チャット画面の画像・ファイル投稿をダウンロード
          * @param message: Message
-         * @param onSuccess
+         * @param tempFile
+         * @param onComplete
+         * @param onError
          *
          */
-        fun downloadRoomMessageFileUri(message: Message, onComplete: (Uri?) -> Unit) {
-            var path = "${ROOM_PATH}/${message.roomId}/"
-            path += if(message.type == MessageType.IMAGE.id) IMAGE_PATH else FILE_PATH
-            path += "/${message.message}"
-
-            FirebaseStorage.getInstance().reference.child(path)
-                // storage内のファイルが削除済だとdownloadUrlが必ずexceptionが発生する
-                .downloadUrl
-                .addOnCompleteListener{
-
-                    onComplete.invoke(it.result)
-                }
-        }
-
-        /**
-         * チャット画面のファイル投稿をinputStream使用でファイルにputする
-         * @param context: Context
-         * @param message: Message
-         * @param destFile: File
-         * @param onSuccess
-         *
-         */
-        fun downloadRoomMessageFile(context: Context, message: Message, destFile: File?, onComplete: () -> Unit) {
-            var path = "${ROOM_PATH}/${message.roomId}/"
-            path += if(message.type == MessageType.IMAGE.id) IMAGE_PATH else FILE_PATH
-            path += "/${message.message}"
-
-            val uri = Uri.fromFile(destFile)
-            val inputStream = context.contentResolver.openInputStream(uri)
-            inputStream?.apply{
-                FirebaseStorage.getInstance().reference.child(path)
-                    .putStream(inputStream)
-                    .addOnCompleteListener{
-                        onComplete.invoke()
-                    }
-            } ?: run{
-                onComplete.invoke()
-            }
-
-        }
-
-        fun downloadFile(message: Message, tempFile: File, onComplete: () -> Unit, onError: () -> Unit) {
+        fun downloadRoomMessageFile(message: Message, tempFile: File, onComplete: () -> Unit, onError: () -> Unit) {
             var path = "${ROOM_PATH}/${message.roomId}/"
             path += if(message.type == MessageType.IMAGE.id) IMAGE_PATH else FILE_PATH
             path += "/${message.message}"

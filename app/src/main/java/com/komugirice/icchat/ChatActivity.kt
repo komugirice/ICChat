@@ -134,11 +134,6 @@ class ChatActivity : BaseActivity() {
                     viewModel.isNonMove = false
                 }
             })
-//            users.observe(this@ChatActivity, Observer {
-//                binding.apply {
-//                    chatView.customAdapter.setUsers(it)
-//                }
-//            })
         }
     }
 
@@ -347,21 +342,6 @@ class ChatActivity : BaseActivity() {
                         file.delete()
                     }
 
-//                    val path = ICChatFileUtil.getPathFromUri(this, it)
-//                    val tmpFile = File(path)
-//                    // ファイルサイズが0バイトなら終了
-//                    if(tmpFile.readBytes().size == 0){
-//                        Toast.makeText(
-//                            this@ChatActivity,
-//                            R.string.alert_no_file_size,
-//                            Toast.LENGTH_LONG).show()
-//                        return
-//                    }
-//                    // ファイル登録
-//                    Timber.d(it.toString())
-//                    FirebaseFacade.registChatMessageFile(this, room.documentId, it){
-//                        Timber.d("ファイルアップロード成功")
-//                    }
                 }
 
             }
@@ -376,10 +356,7 @@ class ChatActivity : BaseActivity() {
                     // Check for the freshest data.
                     contentResolver.takePersistableUriPermission(it, takeFlags)
                     tempDownloadPair?.also { pair ->
-//                        if (pair.first.type == MessageType.IMAGE.id)
-//                            downloadImage(it)
-//                        else
-                            downloadFile(pair.first, it)
+                        downloadFile(pair.first, it)
                     }
 
                 } ?: run {
@@ -445,12 +422,6 @@ class ChatActivity : BaseActivity() {
      */
     private fun createFile(message: Message, fileInfo: FileInfo?) {
         val fileName = fileInfo?.name ?: getString(R.string.no_file_name)
-//        var mimeType = ""
-//        when(message.type) {
-//            MessageType.IMAGE.id -> mimeType = "image/${fileName.getSuffix()}"
-//            MessageType.FILE.id -> mimeType = ""
-//            else-> mimeType = ""
-//        }
 
         val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
             // Filter to only show results that can be "opened", such as
@@ -463,60 +434,6 @@ class ChatActivity : BaseActivity() {
         }
 
         startActivityForResult(intent, RC_WRITE_FILE)
-    }
-
-    /**
-     * FireStorageFile取得
-     * message
-     *
-     */
-    private fun getFireStorageFile(message: Message) {
-
-        if(message.type == MessageType.IMAGE.id) {
-            //FireStorageUtil.downloadRoomMessageFileUri(message) {
-            var tmpFile = File.createTempFile("file", "temp", cacheDir)
-            // TODO storageからのファイル取得は↓で成功しているのか？？
-            FireStorageUtil.downloadRoomMessageFile(this@ChatActivity, message, tmpFile) {
-
-                //it?.apply {
-                tmpFile?.apply {
-
-                    // 元画像サイズを取得したい
-                    var options = BitmapFactory.Options()
-                    options.inJustDecodeBounds = true
-                    BitmapFactory.decodeFile(File(this.path).absolutePath, options)
-                    val imageHeight = options.outHeight
-                    val imageWidth = options.outWidth
-
-
-                    // 画像タイプ
-                    // TODO ダウンロード時の画像サイズがおかしくなる
-                    tempImageViewForDownload = ImageView(this@ChatActivity).apply {
-                        layoutParams.height = imageHeight
-                        layoutParams.width = imageWidth
-                    }
-                    Picasso.get().load(this).into(tempImageViewForDownload)
-
-                    //tempFileForDownload = this.makeTempFile()
-//                    tempFileForDownload = File.createTempFile("file", "temp", cacheDir)
-//                    // TODO storageからのファイル取得は↓で成功しているのか？？
-//                    FireStorageUtil.downloadRoomMessageFile(this@ChatActivity, message, tempFileForDownload) {
-//                    }
-                }
-            }
-        } else {
-            // ファイルタイプ
-            tempFileForDownload = File.createTempFile("file", "temp", cacheDir)
-            // TODO storageからのファイル取得は↓で成功しているのか？？
-            FireStorageUtil.downloadRoomMessageFile(this@ChatActivity, message, tempFileForDownload) {
-            }
-
-            //↓fireStorageからの取得データは失敗する
-            //val fileName = message.message
-            //tempFileForDownload = this.makeTempFile(this@ChatActivity, fileName.getRemoveSuffixName(), fileName.getSuffix())
-
-        }
-
     }
 
     /**
@@ -553,7 +470,7 @@ class ChatActivity : BaseActivity() {
         Timber.d("ここから書き込み開始　結構長いです---------------------------------------------------")
         // まずはtempFileを作ってそこにFileのDownload
         val tempFile = File.createTempFile("${System.currentTimeMillis()}", "temp", cacheDir)
-        FireStorageUtil.downloadFile(message, tempFile, { // tempFileに保存成功
+        FireStorageUtil.downloadRoomMessageFile(message, tempFile, { // tempFileに保存成功
             Timber.d("donloadFile complete")
             // uriから保存用のoutputStreamの生成
                     Observable.just(uri)
