@@ -3,8 +3,6 @@ package com.komugirice.icchat
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -14,17 +12,11 @@ import android.view.inputmethod.EditorInfo
 import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.Toast
-import androidx.core.graphics.drawable.toBitmap
-import androidx.core.net.toUri
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.komugirice.icchat.databinding.ActivityChatBinding
 import com.komugirice.icchat.enums.ActivityEnum
-import com.komugirice.icchat.enums.MessageType
-import com.komugirice.icchat.extension.getFileNameFromUri
-import com.komugirice.icchat.extension.getRemoveSuffixName
-import com.komugirice.icchat.extension.getSuffix
 import com.komugirice.icchat.extension.makeTempFile
 import com.komugirice.icchat.firebase.FirebaseFacade
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
@@ -34,10 +26,7 @@ import com.komugirice.icchat.firebase.firestore.model.Room
 import com.komugirice.icchat.firebase.firestore.store.MessageStore
 import com.komugirice.icchat.util.DialogUtil
 import com.komugirice.icchat.util.FireStorageUtil
-import com.komugirice.icchat.util.ICChatFileUtil
 import com.komugirice.icchat.viewModel.ChatViewModel
-import com.squareup.picasso.Picasso
-import com.yalantis.ucrop.UCrop
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -55,8 +44,6 @@ class ChatActivity : BaseActivity() {
     private lateinit var room: Room
     private var tempImageViewForDownload: ImageView? = null
     private var tempFileForDownload: File? = null
-    private var mImageFileName: String = ""  // uCropからファイル名を引き継げないのでやむを得ず
-
     private var tempDownloadPair : Pair<Message, FileInfo?>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -282,16 +269,6 @@ class ChatActivity : BaseActivity() {
             RC_CHOOSE_IMAGE -> {
 
                 data.data?.also {
-                    // uCrop実行
-                    startUCrop(it)
-                }
-
-            }
-            UCrop.REQUEST_CROP -> {
-                val resultUri = UCrop.getOutput(data)
-                resultUri?.also {
-                    //val path = ICChatFileUtil.getPathFromUri(this, it)
-                    //val tmpFile = File(path)
 
                     val tmpFile = it.makeTempFile()
                     // ファイルサイズが0バイトなら終了
@@ -305,7 +282,7 @@ class ChatActivity : BaseActivity() {
 
                     // 画像登録
                     Timber.d(it.toString())
-                    FirebaseFacade.registChatMessageImage(room.documentId, it, mImageFileName){
+                    FirebaseFacade.registChatMessageImage(room.documentId, it){
                         Timber.d("画像アップロード成功")
                         tmpFile.delete()
                     }
@@ -381,29 +358,6 @@ class ChatActivity : BaseActivity() {
     }
 
     /**
-     * uCropActivity表示
-     *
-     */
-    private fun startUCrop(srcUri: Uri?) {
-        mImageFileName = srcUri.getFileNameFromUri() ?: ""
-        var file = File.createTempFile("${System.currentTimeMillis()}", "temp", cacheDir)
-        srcUri?.apply {
-            UCrop.of(this, file.toUri())
-//                .withAspectRatio(1f, 1f)
-                .withOptions(UCrop.Options().apply {
-//                    setHideBottomControls(true)
-//                    setCircleDimmedLayer(false)
-//                    setShowCropGrid(false)
-//                    setShowCropFrame(false)
-//                    withAspectRatio(
-//                        4f, 3f
-//                    )
-                })
-                .start(this@ChatActivity)
-        }
-    }
-
-    /**
      * ファイル選択
      *
      */
@@ -434,32 +388,6 @@ class ChatActivity : BaseActivity() {
         }
 
         startActivityForResult(intent, RC_WRITE_FILE)
-    }
-
-    /**
-     * 画像タイプ ダウンロード
-     *
-     * @param uri ダウンロード先のローカルストレージのuri
-     */
-    private fun downloadImage(uri: Uri) {
-
-        if(tempImageViewForDownload == null) {
-            Toast.makeText(
-                this@ChatActivity,
-                R.string.alert_failed_download,
-                Toast.LENGTH_LONG).show()
-            return
-        }
-
-        val bmp = tempImageViewForDownload?.drawable?.toBitmap()
-        val outputStream = contentResolver.openOutputStream(uri)
-        bmp?.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
-
-        Toast.makeText(
-            this@ChatActivity,
-            R.string.alert_complete_download,
-            Toast.LENGTH_LONG).show()
-        dismissProgressDialog()
     }
 
     /**
@@ -521,38 +449,6 @@ class ChatActivity : BaseActivity() {
                 Toast.LENGTH_LONG).show()
             dismissProgressDialog()
         })
-    }
-
-    /**
-     * ファイルタイプ ダウンロード
-     *
-     * @param uri ダウンロード先のローカルストレージのuri
-     */
-    private fun downloadFile(uri: Uri) {
-        if(tempFileForDownload == null) {
-            Toast.makeText(
-                this@ChatActivity,
-                R.string.alert_failed_download,
-                Toast.LENGTH_LONG).show()
-            return
-        }
-        val filename = uri.getFileNameFromUri() ?: ""
-        //val path = FIleUtil.getPathFromUri(context, uri)
-        //val destFile = File(path)
-        val destFile = uri.makeTempFile(this@ChatActivity, filename.getRemoveSuffixName(), filename.getSuffix())
-        destFile?.apply{
-            ICChatFileUtil.copy(tempFileForDownload, destFile)
-            Toast.makeText(
-                this@ChatActivity,
-                R.string.alert_complete_download,
-                Toast.LENGTH_LONG).show()
-        } ?: run {
-            Toast.makeText(
-                this@ChatActivity,
-                R.string.alert_failed_download,
-                Toast.LENGTH_LONG).show()
-        }
-
     }
 
     companion object {

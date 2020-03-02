@@ -413,33 +413,6 @@ object FirebaseFacade {
         }
     }
 
-    /**
-     * チャット画面 ファイル投稿
-     * @param roomId
-     * @param uri　ローカルストレージから選択したファイルのUri
-     * @param onSuccess
-     *
-     */
-    fun registChatMessageFile(context: Context, roomId: String, uri: Uri, onSuccess: () -> Unit){
-        // 元ファイル名
-        var fileName = uri.getFileNameFromUri() ?: ""
-        // 拡張子
-        var extension = fileName.getSuffix()
-        // 変換後ファイル名
-        val convertName = "${System.currentTimeMillis()}.${extension}"
-
-        FireStorageUtil.registRoomMessageFile(context, roomId, uri, convertName){
-            // initSubscribeの呼び出しの関係からFile先→Message後の登録順にすること
-            FileInfoStore.registerFile(roomId, fileName, convertName){
-                MessageStore.registerMessage(roomId, UserManager.myUserId, convertName, MessageType.FILE.id){
-                    onSuccess.invoke()
-                }
-
-            }
-
-        }
-    }
-
     fun registChatMessageFile(context: Context, roomId: String, file: File, uri: Uri, onSuccess: () -> Unit){
         // 元ファイル名
         var fileName = uri.getFileNameFromUri() ?: ""
