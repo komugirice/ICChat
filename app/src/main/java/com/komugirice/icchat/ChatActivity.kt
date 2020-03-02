@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -16,17 +15,16 @@ import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.core.graphics.drawable.toBitmap
-import androidx.core.net.toFile
 import androidx.core.net.toUri
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import com.komugirice.icchat.extension.getRemoveSuffixName
-import com.komugirice.icchat.extension.getSuffix
 import com.komugirice.icchat.databinding.ActivityChatBinding
 import com.komugirice.icchat.enums.ActivityEnum
 import com.komugirice.icchat.enums.MessageType
 import com.komugirice.icchat.extension.getFileNameFromUri
+import com.komugirice.icchat.extension.getRemoveSuffixName
+import com.komugirice.icchat.extension.getSuffix
 import com.komugirice.icchat.extension.makeTempFile
 import com.komugirice.icchat.firebase.FirebaseFacade
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
@@ -35,14 +33,18 @@ import com.komugirice.icchat.firebase.firestore.model.Message
 import com.komugirice.icchat.firebase.firestore.model.Room
 import com.komugirice.icchat.firebase.firestore.store.MessageStore
 import com.komugirice.icchat.util.DialogUtil
-import com.komugirice.icchat.util.ICChatFileUtil
 import com.komugirice.icchat.util.FireStorageUtil
+import com.komugirice.icchat.util.ICChatFileUtil
 import com.komugirice.icchat.viewModel.ChatViewModel
 import com.squareup.picasso.Picasso
 import com.yalantis.ucrop.UCrop
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_chat.*
 import timber.log.Timber
 import java.io.File
+import java.io.FileOutputStream
 
 
 class ChatActivity : BaseActivity() {
@@ -54,6 +56,8 @@ class ChatActivity : BaseActivity() {
     private var tempImageViewForDownload: ImageView? = null
     private var tempFileForDownload: File? = null
     private var mImageFileName: String = ""  // uCropからファイル名を引き継げないのでやむを得ず
+
+    private var tempDownloadPair : Pair<Message, FileInfo?>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -96,7 +100,9 @@ class ChatActivity : BaseActivity() {
             // storageのファイルを削除済だとexceptionが発生するバグ対応
             tempImageViewForDownload = null
             tempFileForDownload = null
-            getFireStorageFile(it.first)
+            tempDownloadPair = it
+//            if (it.first.type == MessageType.IMAGE.id)
+//                getFireStorageFile(it.first)
             createFile(it.first, it.second)
         }
     }
@@ -361,19 +367,23 @@ class ChatActivity : BaseActivity() {
             }
             // ダウンロードリンクから
             RC_WRITE_FILE -> {
-
                 data.data?.also {
+
                     Timber.d("ダウンロード先URL：$it")
+                    showProgressDialog(this)
                     val takeFlags: Int = intent.flags and
                             (Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
                     // Check for the freshest data.
                     contentResolver.takePersistableUriPermission(it, takeFlags)
-                    if(tempImageViewForDownload != null) {
-                        downloadImage(it)
-                    } else if(tempFileForDownload != null) {
-                        downloadFile(it)
+                    tempDownloadPair?.also { pair ->
+//                        if (pair.first.type == MessageType.IMAGE.id)
+//                            downloadImage(it)
+//                        else
+                            downloadFile(pair.first, it)
                     }
 
+                } ?: run {
+                    // TODO:ダウンロード失敗
                 }
             }
             else -> {
@@ -448,7 +458,7 @@ class ChatActivity : BaseActivity() {
             addCategory(Intent.CATEGORY_OPENABLE)
 
             // Create a file with the requested MIME type.
-            type = fileInfo?.mimeType   // TODO NULLで落ちるか調査が必要
+            type = fileInfo?.mimeType ?: "*/*"  // TODO NULLで落ちるか調査が必要
             putExtra(Intent.EXTRA_TITLE, fileName)
         }
 
@@ -532,6 +542,68 @@ class ChatActivity : BaseActivity() {
             this@ChatActivity,
             R.string.alert_complete_download,
             Toast.LENGTH_LONG).show()
+        dismissProgressDialog()
+    }
+
+    /**
+     * downloadFile
+     * CreateBy Jane
+     */
+    private fun downloadFile(message: Message, uri: Uri) {
+        Timber.d("ここから書き込み開始　結構長いです---------------------------------------------------")
+        // まずはtempFileを作ってそこにFileのDownload
+        val tempFile = File.createTempFile("${System.currentTimeMillis()}", "temp", cacheDir)
+        FireStorageUtil.downloadFile(message, tempFile, { // tempFileに保存成功
+            Timber.d("donloadFile complete")
+            // uriから保存用のoutputStreamの生成
+                    Observable.just(uri)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .map {// uriからParcelFileDescriptor生成
+                    contentResolver.openFileDescriptor(it, "w")
+                }.map { // OutPutStream生成
+                    FileOutputStream(it!!.fileDescriptor)
+                }.map {
+                    val inputStream = tempFile.inputStream() // 書き込みソースのstream
+                    while(true) { // ひたすら書き込む
+                        val data = inputStream.read()
+                        if (data == -1)
+                            break
+                        it.write(data)
+                    }
+                    inputStream.close()
+                    it
+                }.map {
+                    it.close()
+                    true
+                }.subscribe({
+                    // 書き込み成功
+                    Toast.makeText(
+                        this@ChatActivity,
+                        R.string.alert_complete_download,
+                        Toast.LENGTH_LONG).show()
+                    Timber.d("書き込み成功---------------------------------------------------")
+                }, {
+                    Toast.makeText(
+                        this@ChatActivity,
+                        R.string.alert_failed_download,
+                        Toast.LENGTH_LONG).show()
+                    // 書き込み失敗
+                    Timber.d("書き込み失敗---------------------------------------------------")
+                }, { // どっちにしろtempFileは消す
+                    tempFile.delete()
+                    dismissProgressDialog()
+                })
+
+        }, {
+            // 失敗
+            Timber.d("downloadFile Error")
+            Toast.makeText(
+                this@ChatActivity,
+                R.string.alert_failed_download,
+                Toast.LENGTH_LONG).show()
+            dismissProgressDialog()
+        })
     }
 
     /**
@@ -540,7 +612,6 @@ class ChatActivity : BaseActivity() {
      * @param uri ダウンロード先のローカルストレージのuri
      */
     private fun downloadFile(uri: Uri) {
-
         if(tempFileForDownload == null) {
             Toast.makeText(
                 this@ChatActivity,

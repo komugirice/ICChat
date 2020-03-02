@@ -448,7 +448,7 @@ object FirebaseFacade {
         // 変換後ファイル名
         val convertName = "${System.currentTimeMillis()}.${extension}"
 
-        FirebaseStorage.getInstance().reference.child("${FireStorageUtil.ROOM_PATH}/${roomId}/${FireStorageUtil.FILE_PATH}/${fileName}")
+        FirebaseStorage.getInstance().reference.child("${FireStorageUtil.ROOM_PATH}/${roomId}/${FireStorageUtil.FILE_PATH}/${convertName}")
             .putBytes(file.readBytes())
             .addOnCompleteListener{
                 FileInfoStore.registerFile(roomId, fileName, convertName){
