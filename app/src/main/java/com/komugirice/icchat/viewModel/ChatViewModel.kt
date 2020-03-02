@@ -90,6 +90,7 @@ class ChatViewModel: ViewModel() {
                 }
                 // message0件の不具合対応
                 if(getMessages.isEmpty()) {
+                    items.postValue(listOf())
                     // 監視
                     this.isNonMove = false
                     val lastCreatedAt = Date()
