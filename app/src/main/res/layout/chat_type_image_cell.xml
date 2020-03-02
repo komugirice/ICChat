@@ -108,9 +108,9 @@
             <com.yalantis.ucrop.view.TransformImageView
                 android:id="@+id/image"
                 android:layout_width="200dp"
-                android:layout_height="150dp"
+                android:layout_height="wrap_content"
                 android:padding="4dp"
-                android:scaleType="centerInside"
+                android:scaleType="centerCrop"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/imageInfoView"
                 app:messageImageUrl="@{message}" />
@@ -124,7 +124,7 @@
                 android:textColor="@android:color/black"
                 android:textSize="10sp"
                 app:time="@{message.createdAt}"
-                app:layout_constraintEnd_toEndOf="@id/imageInfoView"
+                app:layout_constraintEnd_toEndOf="@id/image"
                 app:layout_constraintTop_toBottomOf="@id/image" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

@@ -17,6 +17,7 @@ import com.komugirice.icchat.firebase.FirebaseFacade
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.firebase.firestore.model.FileInfo
 import com.komugirice.icchat.firebase.firestore.model.Message
+import kotlinx.android.synthetic.main.chat_type_image_cell.view.*
 
 
 class ChatView : RecyclerView {
@@ -165,6 +166,26 @@ class ChatView : RecyclerView {
             holder.binding.file = file
             holder.binding.type = MessageType.getValue(message.type)
 
+            // 画像クリック
+            holder.binding.root.setOnClickListener {
+                if(message.type == MessageType.IMAGE.id) {
+                    // 画像プレビュー表示
+                    MaterialDialog(context).apply {
+                        cancelable(true)
+                        val dialogBinding = ImageViewDialogBinding.inflate(
+                            LayoutInflater.from(context),
+                            null,
+                            false
+                        )
+                        dialogBinding.imageView.setImageDrawable(holder.binding.root.image.drawable)
+                        dialogBinding.imageView.setOnClickListener {
+                            this.cancel()
+                        }
+                        setContentView(dialogBinding.root)
+                    }.show()
+                }
+            }
+
             // 長押し
             holder.binding.root.setOnLongClickListener(object : View.OnLongClickListener {
                 override fun onLongClick(v: View?): Boolean {
@@ -228,6 +249,27 @@ class ChatView : RecyclerView {
             // 退会したらgroup.userListから消えるのでusresMapが使えないバグの対応
             // holder.binding.user = usersMap[data.userId]
             holder.binding.user = UserManager.getTargetUser(message.userId)
+
+            // 画像クリック
+            holder.binding.root.setOnClickListener {
+                if(message.type == MessageType.IMAGE.id) {
+                    // 画像プレビュー表示
+                    MaterialDialog(context).apply {
+                        cancelable(true)
+                        val dialogBinding = ImageViewDialogBinding.inflate(
+                            LayoutInflater.from(context),
+                            null,
+                            false
+                        )
+                        dialogBinding.imageView.setImageDrawable(holder.binding.root.image.drawable)
+                        dialogBinding.imageView.setOnClickListener {
+                            this.cancel()
+                        }
+                        setContentView(dialogBinding.root)
+
+                    }.show()
+                }
+            }
 
             // 画像タイプ ダウンロードクリック
             holder.binding.imageCell.downloadTextViewOther.setOnClickListener {
