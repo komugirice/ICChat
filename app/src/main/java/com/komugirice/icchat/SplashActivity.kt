@@ -14,6 +14,7 @@ import com.komugirice.icchat.extension.getVersion
 import com.komugirice.icchat.firebase.FirebaseFacade
 import com.komugirice.icchat.firebase.firestore.store.UserStore
 import com.komugirice.icchat.util.FireStoreUtil
+import com.komugirice.icchat.util.ICChatUtil
 import kotlinx.android.synthetic.main.activity_login.*
 import timber.log.Timber
 import java.util.*
@@ -30,6 +31,9 @@ class SplashActivity : BaseActivity() {
         val prividerIdList = FirebaseAuth.getInstance().currentUser?.providerData?.map { it.providerId } ?: listOf()
         isGoogleAuth = prividerIdList.contains(GoogleAuthProvider.PROVIDER_ID)
         isFacebookAuth = prividerIdList.contains(FacebookAuthProvider.PROVIDER_ID)
+
+        // キャッシュディレクトリ
+        ICChatUtil.deleteCacheDir()
 
         if (FirebaseAuth.getInstance().currentUser != null) {
             val uid = FirebaseAuth.getInstance().currentUser?.uid
