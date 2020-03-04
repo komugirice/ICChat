@@ -363,14 +363,20 @@ class UserStore {
          *
          */
         fun updateFcmToken(token: String?, onSuccess: () -> Unit) {
-            FirebaseFirestore.getInstance()
-                .collection("$USERS")
-                .document(UserManager.myUser.userId)
-                .update("fcmToken", token)
-                .addOnSuccessListener {
-                    onSuccess.invoke()
+            // Managerでエラーが出るのでgetLoginUserに修正
+            getLoginUser {
+                it.result?.toObjects(User::class.java)?.firstOrNull().also {
+                    it?.also {
+                        FirebaseFirestore.getInstance()
+                            .collection("$USERS")
+                            .document(it.userId)
+                            .update("fcmToken", token)
+                            .addOnSuccessListener {
+                                onSuccess.invoke()
+                            }
+                    }
                 }
+            }
         }
-
     }
 }
