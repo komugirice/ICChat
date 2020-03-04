@@ -2,6 +2,7 @@ package com.komugirice.icchat.extension
 
 import android.graphics.*
 import android.net.Uri
+import android.view.View
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
@@ -79,10 +80,12 @@ fun ImageView.loadMessageImage(message: Message) {
     // 画像タイプ判定
     if(!MessageType.getValue(message.type).isImage) return
 
-    FireStorageUtil.getRoomMessageImage(message){
+    FireStorageUtil.getRoomMessageImage(message, {
         Picasso.get().load(it).into(this)
-
-    }
+    }, {
+        // 取得失敗
+        this.visibility = View.GONE
+    })
 }
 
 /**

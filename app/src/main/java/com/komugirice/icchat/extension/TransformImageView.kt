@@ -1,11 +1,13 @@
 package com.komugirice.icchat.extension
 
 import android.net.Uri
+import android.view.View
 import android.widget.ImageView
 import androidx.core.net.toUri
 import androidx.databinding.BindingAdapter
 import com.google.gson.Gson
 import com.komugirice.icchat.ICChatApplication
+import com.komugirice.icchat.R
 import com.komugirice.icchat.enums.MessageType
 import com.komugirice.icchat.firebase.firestore.model.Message
 import com.komugirice.icchat.util.FireStorageUtil
@@ -25,10 +27,15 @@ fun TransformImageView.loadMessageImage(message: Message) {
     // 画像タイプ判定
     if(!MessageType.getValue(message.type).isImage) return
     var file = File.createTempFile("${System.currentTimeMillis()}", ".temp", ICChatApplication.applicationContext.cacheDir)
-    FireStorageUtil.getRoomMessageImage(message) {
+    FireStorageUtil.getRoomMessageImage(message, {
+        // 取得成功
         setImageUri(it, file.toUri())
         Picasso.get().load(file.toUri()).into(this)
-    }
+    }, {
+        // 取得失敗
+        this.visibility = View.GONE
+        this.isClickable = false
+    })
 
 }
 

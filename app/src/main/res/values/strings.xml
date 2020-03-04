@@ -100,7 +100,7 @@
     <string name="quote_message">引用</string>
     <string name="download"><u>ダウンロード</u></string>
     <string name="alert_complete_download">ダウンロードが完了しました</string>
-    <string name="alert_failed_download">ダウンロードに失敗しました</string>
+    <string name="alert_failed_download">ダウンロードに失敗しました。\nファイルが削除された可能性があります。</string>
     <string name="alert_failed_upload">アップロードに失敗しました</string>
     <string name="no_file_name">名称未設定</string>
     <string name="invalid_uplode_file_size">アップロードファイルサイズは20MB以下にして下さい</string>
