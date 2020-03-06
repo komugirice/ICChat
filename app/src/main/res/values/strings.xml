@@ -5,6 +5,7 @@
     <string name="create_button">登録</string>
     <string name="buttonRefresh">更新</string>
     <string name="search_button">検索</string>
+    <string name="delete_button">削除</string>
     <string name="add_button">追加</string>
     <string name="back_button">戻る</string>
     <string name="clear_button">クリア</string>
@@ -229,6 +230,10 @@
     <!-- ActionSendActivity -->
     <string name="failed_action_send">ICChatの共有に失敗しました\nログインされていません</string>
     <string name="loading_message">ICChatに共有しています</string>
+
+    <!-- DeleteInterestActivity -->
+    <string name="delete_interest_activity_title">興味（ゴミ箱）</string>
+    <string name="restore">復元</string>
 
     <!-- ダイアログ関係 -->
     <string name="confirm_add_friend">ユーザを友だち登録しますか？</string>

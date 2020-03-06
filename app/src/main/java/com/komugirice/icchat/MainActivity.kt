@@ -123,12 +123,17 @@ class MainActivity : BaseActivity() {
         // 興味（編集）ボタン
         editInterestImageView.setOnClickListener {
             closeDrawer()
-            changeInterestUserId(UserManager.myUserId)
+            //changeInterestUserId(UserManager.myUserId)
+            InputInterestActivity.start(this)
 
         }
         // 興味（閲覧）ボタン
         showInterestImageView.setOnClickListener {
             openDrawer()
+        }
+        // 興味（ゴミ箱）ボタン
+        deleteInterestImageView.setOnClickListener {
+            DeleteInterestActivity.start(this)
         }
         // ナビゲーション：自分リンク
         drawerMenuView.findViewById<TextView>(R.id.myTextView).setOnClickListener {

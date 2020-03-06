@@ -37,6 +37,29 @@ class InterestStore {
         }
 
         /**
+         * Interest取得
+         * @param userId
+         * @param onSuccess
+         *
+         */
+        fun getDeleteInterests(userId: String, onSuccess: (List<Interest>) -> Unit) {
+            FirebaseFirestore.getInstance()
+                .collection("$USERS/$userId/$INTERESTS")
+                .whereEqualTo(Interest::delFlg.name, true)
+                .get()
+                .addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        it.result?.toObjects(Interest::class.java)?.also {
+                            onSuccess.invoke(it)
+                        }
+                    } else {
+                        // 0件の場合はこっち
+                        onSuccess.invoke(mutableListOf())
+                    }
+                }
+        }
+
+        /**
          * Interest登録
          * (ログインユーザからのみ登録可能）
          * @param interest
