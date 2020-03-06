@@ -52,6 +52,15 @@ class InterestView : RecyclerView {
         // スワイプ更新中に「検索結果が0件です」を出さない為の対応
         private var hasCompletedFirstRefresh = false
 
+        fun getViewTypeDateOffset(position: Int): Int {
+            var result = 0
+            for (i in 0 until position ) {
+                if(items[i].viewType == VIEW_TYPE_DATE)
+                    result++
+            }
+            return result
+        }
+
         fun refresh(list: List<InterestViewData>) {
             // リフレッシュ実行フラグON
             hasCompletedFirstRefresh = true
@@ -148,7 +157,7 @@ class InterestView : RecyclerView {
             val data = items[position]
             holder.binding.interest = data.interest
             holder.binding.userId = this.userId
-            holder.binding.isLeft = position % 2 == 0
+            holder.binding.isLeft = (position - getViewTypeDateOffset(position)) % 2 == 0
 
             // 長押しのClickListener
             val onLongClickListener = object: View.OnLongClickListener {
