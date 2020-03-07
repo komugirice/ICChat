@@ -19,6 +19,7 @@ import com.komugirice.icchat.databinding.DateBorderCellBinding
 import com.komugirice.icchat.databinding.DeleteInterestCellBinding
 import com.komugirice.icchat.databinding.ImageViewDialogBinding
 import com.komugirice.icchat.databinding.InterestCellBinding
+import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.firebase.firestore.model.Interest
 import com.komugirice.icchat.util.DialogUtil
 import java.util.*
@@ -33,7 +34,7 @@ class DeleteInterestView : RecyclerView {
     )
 
     val customAdapter by lazy {
-        DeleteInterestView.Adapter(
+        Adapter(
             context
         )
     }
@@ -46,8 +47,7 @@ class DeleteInterestView : RecyclerView {
     class Adapter(val context: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         lateinit var onClickDeleteCallBack: () -> Unit
         lateinit var onClickUrlCallBack: (uri: Uri) -> Unit
-        private val items = mutableListOf<InterestView.InterestViewData>()
-        private var userId = ""
+        private val items = mutableListOf<DeleteInterestViewData>()
         private var isEditMode = true
 
         // スワイプ更新中に「検索結果が0件です」を出さない為の対応
@@ -62,7 +62,7 @@ class DeleteInterestView : RecyclerView {
             return result
         }
 
-        fun refresh(list: List<InterestView.InterestViewData>) {
+        fun refresh(list: List<DeleteInterestViewData>) {
             // リフレッシュ実行フラグON
             hasCompletedFirstRefresh = true
             items.apply {
@@ -149,8 +149,20 @@ class DeleteInterestView : RecyclerView {
         private fun onBindViewHolder(holder: InterestCellViewHolder, position: Int) {
             val data = items[position]
             holder.binding.interest = data.interest
-            holder.binding.userId = this.userId
+            holder.binding.userId = UserManager.myUserId
             holder.binding.isLeft = (position - getViewTypeDateOffset(position)) % 2 == 0
+            holder.binding.checkbox.isChecked = false
+
+            // チェックボックスの切り替え
+            holder.binding.checkbox.setOnCheckedChangeListener { v, isChecked ->
+                data.apply {
+                    if(isChecked) {
+                        data.isChecked = true
+                    } else {
+                        data.isChecked = false
+                    }
+                }
+            }
 
             // 長押しのClickListener
             val onLongClickListener = object: View.OnLongClickListener {
@@ -258,6 +270,14 @@ class DeleteInterestView : RecyclerView {
      */
     class EmptyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         var searchZeroText = itemView.findViewById(R.id.registZeroText) as TextView
+    }
+
+    class DeleteInterestViewData: InterestView.InterestViewData {
+        var isChecked = false
+
+        constructor(interest: Interest, viewType: Int): super(interest, viewType)
+        constructor(date: Date, viewType: Int): super(date, viewType)
+        constructor(viewType: Int): super(viewType)
     }
 
     companion object {

@@ -234,6 +234,7 @@
     <!-- DeleteInterestActivity -->
     <string name="delete_interest_activity_title">興味（ゴミ箱）</string>
     <string name="restore">復元</string>
+    <string name="invalid_check">データが選択されていません</string>
 
     <!-- ダイアログ関係 -->
     <string name="confirm_add_friend">ユーザを友だち登録しますか？</string>

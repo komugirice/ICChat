@@ -21,7 +21,7 @@ import timber.log.Timber
 import java.util.*
 
 class DeleteInterestViewModel: ViewModel() {
-    val items = MutableLiveData<List<InterestView.InterestViewData>>()
+    val items = MutableLiveData<List<DeleteInterestView.DeleteInterestViewData>>()
     val isException = MutableLiveData<Throwable>()
 
     private var interestListener: ListenerRegistration? = null
@@ -35,7 +35,7 @@ class DeleteInterestViewModel: ViewModel() {
             // 昇順ソート
             val tmpInterests = interests.sortedBy { it.createdAt }
             // InterestViewData作成
-            val list = createInterestViewData(tmpInterests)
+            val list = createDeleteInterestViewData(tmpInterests)
             items.postValue(list)
 
             // 監視
@@ -73,29 +73,29 @@ class DeleteInterestViewModel: ViewModel() {
                     return@addSnapshotListener
                 }
                 snapshot?.toObjects(Interest::class.java)?.firstOrNull()?.also {
-                    val tmp: MutableList<InterestView.InterestViewData>? = items.value?.toMutableList()
+                    val tmp: MutableList<DeleteInterestView.DeleteInterestViewData>? = items.value?.toMutableList()
                     // 取得データを先頭に追加
                     tmp?.add(
                         0,
-                        InterestView.InterestViewData(
+                        DeleteInterestView.DeleteInterestViewData(
                         it,
-                        InterestView.VIEW_TYPE_INTEREST
+                            DeleteInterestView.VIEW_TYPE_INTEREST
                     ))
                     items.postValue(tmp)
                 }
             }
     }
 
-    private fun createInterestViewData(interests: List<Interest>): List<InterestView.InterestViewData>{
-        val interestViewData = mutableListOf<InterestView.InterestViewData>()
+    private fun createDeleteInterestViewData(interests: List<Interest>): List<DeleteInterestView.DeleteInterestViewData>{
+        val interestViewData = mutableListOf<DeleteInterestView.DeleteInterestViewData>()
 
         // interestsを詰め込む
-        val onlyInterestList = mutableListOf<InterestView.InterestViewData>()
+        val onlyInterestList = mutableListOf<DeleteInterestView.DeleteInterestViewData>()
         interests.forEach {
             onlyInterestList.add(
-                InterestView.InterestViewData(
+                DeleteInterestView.DeleteInterestViewData(
                     it,
-                    InterestView.VIEW_TYPE_INTEREST
+                    DeleteInterestView.VIEW_TYPE_INTEREST
                 )
             )
         }
@@ -113,9 +113,9 @@ class DeleteInterestViewModel: ViewModel() {
                 targetDate = thisDate // targetDate更新
                 // 違いがあった場合、日付データを追加
                 interestViewData.add(
-                    InterestView.InterestViewData(
+                    DeleteInterestView.DeleteInterestViewData(
                         thisDate,
-                        InterestView.VIEW_TYPE_DATE
+                        DeleteInterestView.VIEW_TYPE_DATE
                     )
                 )
             }

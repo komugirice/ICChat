@@ -263,7 +263,7 @@ class InterestView : RecyclerView {
         var searchZeroText = itemView.findViewById(R.id.registZeroText) as TextView
     }
 
-    class InterestViewData {
+    open class InterestViewData {
         var interest: Interest? = null
         var date: Date? = null
         var viewType: Int
