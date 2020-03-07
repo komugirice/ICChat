@@ -119,5 +119,43 @@ class InterestStore {
                 }
         }
 
+        /**
+         * Interest削除（物理削除）
+         * (ログインユーザからのみ削除可能）
+         * @param interest
+         * @param onComplete
+         *
+         */
+        fun deleteCompleteInterest(interest: Interest, onComplete: () -> Unit) {
+            // 削除フラグON
+            interest.delFlg = true
+            FirebaseFirestore.getInstance()
+                .collection("$USERS/${UserManager.myUserId}/$INTERESTS")
+                .document(interest.documentId)
+                .delete()
+                .addOnCompleteListener {
+                    onComplete.invoke()
+                }
+        }
+
+        /**
+         * Interest復元
+         * (ログインユーザからのみ可能）
+         * @param interest
+         * @param onComplete
+         *
+         */
+        fun restoreInterest(interest: Interest, onComplete: () -> Unit) {
+            // 削除フラグOFF
+            interest.delFlg = false
+            FirebaseFirestore.getInstance()
+                .collection("$USERS/${UserManager.myUserId}/$INTERESTS")
+                .document(interest.documentId)
+                .set(interest)
+                .addOnCompleteListener {
+                    onComplete.invoke()
+                }
+        }
+
     }
 }

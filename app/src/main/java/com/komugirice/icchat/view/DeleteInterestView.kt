@@ -77,14 +77,6 @@ class DeleteInterestView : RecyclerView {
             notifyDataSetChanged()
         }
 
-        fun updateUserId(newUserId: String) {
-            userId = newUserId
-        }
-
-        fun updateEditMode(isEdit: Boolean) {
-            isEditMode = isEdit
-        }
-
         override fun getItemCount(): Int {
             // リストデータ中の件数をリターン。
             return if (items.isEmpty()) {
@@ -181,11 +173,16 @@ class DeleteInterestView : RecyclerView {
                                     when (index) {
                                         menuList.get(0).first -> {
                                             // 復元
+                                            data.interest?.apply{
+                                                DialogUtil.confirmRestoreInterestDialog(context, this) {
+                                                    onClickDeleteCallBack.invoke()
+                                                }
+                                            }
                                         }
                                         menuList.get(1).first -> {
                                             // 削除
                                             data.interest?.apply{
-                                                DialogUtil.confirmDeleteInterestDialog(context, this) {
+                                                DialogUtil.confirmDeleteCompleteInterestDialog(context, this) {
                                                     onClickDeleteCallBack.invoke()
                                                 }
                                             }

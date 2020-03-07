@@ -254,6 +254,8 @@
     <string name="alert_no_file_size">ファイルサイズが0バイトです</string>
     <string name="confirm_delete">削除してよろしいですか</string>
     <string name="delete_complete">削除しました</string>
+    <string name="confirm_restore">復元しますか</string>
+    <string name="restore_complete">復元しました</string>
 
     <!-- FCM -->
     <string name="fcm_friend_request">%1$sさんから友だち申請がありました。</string>

@@ -40,6 +40,16 @@ class DeleteInterestActivity : AppCompatActivity() {
             R.layout.activity_delete_interest
         )
         binding.lifecycleOwner = this
+
+        // 削除メニュー押下
+        binding.deleteInterestView.customAdapter.onClickDeleteCallBack = {
+            viewModel.initData(isNonMove = true)
+        }
+        // URL記事押下
+        binding.deleteInterestView.customAdapter.onClickUrlCallBack = {
+            val intent = Intent(Intent.ACTION_VIEW, it)
+            startActivity(intent)
+        }
     }
 
     private fun initViewModel() {
