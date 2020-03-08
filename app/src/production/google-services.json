@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "514323271426-li4a7t8fajfjbm50ia2nerkmbo4j4drl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.komugirice.icchat",
+            "certificate_hash": "635ff5f728de965ebf26624703cb911c64d7a85b"
+          }
+        },
+        {
           "client_id": "514323271426-93o3f47foqjm1246vi8v1obbufgham48.apps.googleusercontent.com",
           "client_type": 3
         }
