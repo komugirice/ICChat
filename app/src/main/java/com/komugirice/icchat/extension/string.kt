@@ -402,6 +402,15 @@ fun String.getIdFromEmail(): String {
      return this.substringBefore("@")
 }
 
+/**
+ * メールアドレスの@より手前の文字列を取得
+ *
+ * @return
+ */
+fun String.getDomainFromEmail(): String {
+     return this.substringAfter("@")
+}
+
 fun String.removeAllSpace(): String {
      val str = Pattern.compile("[ 　]+").matcher(this).replaceAll("")
      return str

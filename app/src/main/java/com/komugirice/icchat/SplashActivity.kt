@@ -10,6 +10,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.gson.Gson
 import com.komugirice.icchat.ICChatApplication.Companion.isFacebookAuth
 import com.komugirice.icchat.ICChatApplication.Companion.isGoogleAuth
+import com.komugirice.icchat.extension.getDomainFromEmail
 import com.komugirice.icchat.extension.getVersion
 import com.komugirice.icchat.firebase.FirebaseFacade
 import com.komugirice.icchat.firebase.firestore.store.UserStore
@@ -40,27 +41,31 @@ class SplashActivity : BaseActivity() {
             Timber.d("uid:$uid)")
 
             // 多重ログインチェックが必要
-            // TODO isAlreadyLoginを実装するには、アプリ消されたらloginDateをnullにする処理が必要
-//            UserStore.isAlreadyLogin(onFailed()) {
+//            // TODO isAlreadyLoginを実装するには、アプリ消されたらloginDateをnullにする処理が必要
+//            UserStore.isAlreadyLogin(onFailed(), {
 //                if (it) {
-//                    // 別のユーザがログイン済みです
-//                    Toast.makeText(
-//                        this,
-//                        getString(R.string.login_failed_already),
-//                        Toast.LENGTH_LONG
-//                    ).show()
-//                    FirebaseAuth.getInstance().signOut()
-//                    LoginActivity.signOutProvider()
-//                    startLoginActivity()
-//                    return@isAlreadyLogin
-//                }
-                // ログイン日時更新
-                UserStore.updateLoginDateTime(Date()){
-                    // 次の画面に遷移
-                    startMainActivity()
+//                    val mail = FirebaseAuth.getInstance().currentUser?.email
+//                    // 暫定対応としてテストユーザのみ多重ログイン制御
+//                    if (mail?.getDomainFromEmail() == "example.com") {
+//                        // 別のユーザがログイン済みです
+//                        Toast.makeText(
+//                            this,
+//                            getString(R.string.login_failed_already),
+//                            Toast.LENGTH_LONG
+//                        ).show()
+//                        FirebaseAuth.getInstance().signOut()
+//                        LoginActivity.signOutProvider()
+//                        startLoginActivity()
+//                        return@isAlreadyLogin
+//                    }
+                    // ログイン日時更新
+                    UserStore.updateLoginDateTime(Date()) {
+                        // 次の画面に遷移
+                        startMainActivity()
 
-                }
-//            }
+                    }
+//                }
+//            })
 
 
         } else {
