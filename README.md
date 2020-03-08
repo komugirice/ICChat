@@ -1,4 +1,4 @@
-# Interest Connect Chat（制作中）
+# Interest Connect Chat
 
 ## 概要
 Androidモバイルアプリ<br>
@@ -12,7 +12,11 @@ Androidモバイルアプリ<br>
 ・チャット画面<br>
 ・興味画面<br>
 ・ユーザプロフィール設定画面<br>
-・友だち追加画面
+・友だち追加画面<br>
+・グループ作成画面<br>
+・パスワード変更画面<br>
+・説明画面
+
 
 ## 使用している技術
 ・Kotlin<br>
