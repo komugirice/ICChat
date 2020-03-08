@@ -145,9 +145,11 @@ class ProfileSettingActivity : BaseActivity() {
     private fun initUserIcon() {
 
         FireStorageUtil.getUserIconImage(UserManager.myUserId) {
+            it?.apply {
                 userIconImageView.setRoundedImageView(it) // UIスレッド
                 uCropSrcUri = it
                 prevSettingUri = it.toString()
+            }
         }
 
     }
