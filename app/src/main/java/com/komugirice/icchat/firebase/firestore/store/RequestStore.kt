@@ -88,6 +88,11 @@ class RequestStore {
             val groupsRequestToMe = mutableListOf<GroupRequests>()
             var index = 0
             RoomStore.getAllGroupRooms(){
+                if(it.isEmpty()){
+                    onSuccess.invoke(listOf())
+                    return@getAllGroupRooms
+                }
+
                 val allGroup = it
                 allGroup.forEach {room ->
                     FirebaseFirestore.getInstance()
