@@ -130,6 +130,8 @@ class SearchUserActivity : BaseActivity() {
         }
         contents.setOnClickListener {
             hideKeybord(it)
+
+            if(binding.searchEditText.text.isNotEmpty()) search()
         }
     }
 

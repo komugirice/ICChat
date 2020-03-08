@@ -32,6 +32,7 @@ import com.komugirice.icchat.ICChatApplication.Companion.applicationContext
 import com.komugirice.icchat.ICChatApplication.Companion.isFacebookAuth
 import com.komugirice.icchat.ICChatApplication.Companion.isGoogleAuth
 import com.komugirice.icchat.extension.afterTextChanged
+import com.komugirice.icchat.extension.getDomainFromEmail
 import com.komugirice.icchat.extension.getIdFromEmail
 import com.komugirice.icchat.extension.loggingSize
 import com.komugirice.icchat.firebase.FirebaseFacade
@@ -331,17 +332,22 @@ class LoginActivity : BaseActivity() {
 
         // 多重ログインチェック
         UserStore.isAlreadyLogin(onFailure) {
+
             if (it) {
-                // 別のユーザがログイン済みです
-                Toast.makeText(
-                    this,
-                    getString(R.string.login_failed_already),
-                    Toast.LENGTH_LONG
-                ).show()
-                loading.visibility = View.GONE
-                FirebaseAuth.getInstance().signOut()
-                signOutProvider()
-                return@isAlreadyLogin
+                val mail = FirebaseAuth.getInstance().currentUser?.email
+                // 暫定対応としてテストユーザのみ多重ログイン制御
+                if(mail?.getDomainFromEmail() == "example.com") {
+                    // 別のユーザがログイン済みです
+                    Toast.makeText(
+                        this,
+                        getString(R.string.login_failed_already),
+                        Toast.LENGTH_LONG
+                    ).show()
+                    loading.visibility = View.GONE
+                    FirebaseAuth.getInstance().signOut()
+                    signOutProvider()
+                    return@isAlreadyLogin
+                }
             }
             // ログイン日時更新
             UserStore.updateLoginDateTime(Date()){

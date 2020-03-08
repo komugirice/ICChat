@@ -167,23 +167,21 @@ class ChatView : RecyclerView {
             holder.binding.type = MessageType.getValue(message.type)
 
             // 画像クリック
-            holder.binding.root.setOnClickListener {
-                if(message.type == MessageType.IMAGE.id) {
-                    // 画像プレビュー表示
-                    MaterialDialog(context).apply {
-                        cancelable(true)
-                        val dialogBinding = ImageViewDialogBinding.inflate(
-                            LayoutInflater.from(context),
-                            null,
-                            false
-                        )
-                        dialogBinding.imageView.setImageDrawable(holder.binding.root.image.drawable)
-                        dialogBinding.imageView.setOnClickListener {
-                            this.cancel()
-                        }
-                        setContentView(dialogBinding.root)
-                    }.show()
-                }
+            holder.binding.imageCell.image.setOnClickListener {
+                // 画像プレビュー表示
+                MaterialDialog(context).apply {
+                    cancelable(true)
+                    val dialogBinding = ImageViewDialogBinding.inflate(
+                        LayoutInflater.from(context),
+                        null,
+                        false
+                    )
+                    dialogBinding.imageView.setImageDrawable(holder.binding.root.image.drawable)
+                    dialogBinding.imageView.setOnClickListener {
+                        this.cancel()
+                    }
+                    setContentView(dialogBinding.root)
+                }.show()
             }
 
             // 長押し
@@ -251,31 +249,29 @@ class ChatView : RecyclerView {
             holder.binding.user = UserManager.getTargetUser(message.userId)
 
             // 画像クリック
-            holder.binding.root.setOnClickListener {
-                if(message.type == MessageType.IMAGE.id) {
-                    // 画像プレビュー表示
-                    MaterialDialog(context).apply {
-                        cancelable(true)
-                        val dialogBinding = ImageViewDialogBinding.inflate(
-                            LayoutInflater.from(context),
-                            null,
-                            false
-                        )
-                        dialogBinding.imageView.setImageDrawable(holder.binding.root.image.drawable)
-                        dialogBinding.imageView.setOnClickListener {
-                            this.cancel()
-                        }
-                        setContentView(dialogBinding.root)
+            holder.binding.imageCell.image.setOnClickListener {
+                // 画像プレビュー表示
+                MaterialDialog(context).apply {
+                    cancelable(true)
+                    val dialogBinding = ImageViewDialogBinding.inflate(
+                        LayoutInflater.from(context),
+                        null,
+                        false
+                    )
+                    dialogBinding.imageView.setImageDrawable(holder.binding.root.image.drawable)
+                    dialogBinding.imageView.setOnClickListener {
+                        this.cancel()
+                    }
+                    setContentView(dialogBinding.root)
 
-                    }.show()
-                }
+                }.show()
             }
 
             // 画像タイプ ダウンロードクリック
             holder.binding.imageCell.downloadTextViewOther.setOnClickListener {
                 onClickDownloadCallBack.invoke(Pair(message, file))
             }
-            holder.binding.fileCell.downloadTextView.setOnClickListener {
+            holder.binding.fileCell.downloadTextViewOther.setOnClickListener {
                 onClickDownloadCallBack.invoke(Pair(message, file))
             }
         }

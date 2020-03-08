@@ -124,8 +124,8 @@
                 android:textColor="@android:color/black"
                 android:textSize="10sp"
                 app:time="@{message.createdAt}"
-                app:layout_constraintEnd_toEndOf="@id/image"
-                app:layout_constraintTop_toBottomOf="@id/image" />
+                app:layout_constraintEnd_toEndOf="@id/imageInfoView"
+                app:layout_constraintTop_toBottomOf="@id/imageInfoView" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

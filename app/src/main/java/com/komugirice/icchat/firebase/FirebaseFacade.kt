@@ -479,7 +479,7 @@ object FirebaseFacade {
     }
 
     /**
-     * 興味データ削除
+     * 興味データ論理削除
      * (ログインユーザのみ可能なのでuserIdを引数に指定しない)
      * @param interest
      * @param onSuccess
@@ -487,6 +487,19 @@ object FirebaseFacade {
      */
     fun deleteInterest(interest: Interest, onSuccess: () -> Unit) {
         InterestStore.deleteInterest(interest){
+            onSuccess.invoke()
+        }
+    }
+
+    /**
+     * 興味データ物理削除
+     * (ログインユーザのみ可能なのでuserIdを引数に指定しない)
+     * @param interest
+     * @param onSuccess
+     *
+     */
+    fun deleteCompleteInterest(interest: Interest, onSuccess: () -> Unit) {
+        InterestStore.deleteCompleteInterest(interest){
             if(interest.image != null)
                 FireStorageUtil.deleteInterestImage(interest.image){
                     onSuccess.invoke()

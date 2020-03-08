@@ -179,7 +179,7 @@ class FireStorageUtil {
          * @param onSuccess
          *
          */
-        fun getRoomMessageImage(message: Message, onSuccess: (Uri) -> Unit) {
+        fun getRoomMessageImage(message: Message, onSuccess: (Uri) -> Unit, onFailure: () -> Unit) {
             FirebaseStorage.getInstance().reference.child("${ROOM_PATH}/${message.roomId}/${IMAGE_PATH}/${message.message}")
                 .downloadUrl
                 .addOnCompleteListener {
@@ -190,6 +190,7 @@ class FireStorageUtil {
                     } else {
                         Timber.e(it.exception)
                         Timber.d("getRoomMessageImage Failed")
+                        onFailure.invoke()
                     }
                 }
 

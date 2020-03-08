@@ -16,13 +16,15 @@ import com.afollestad.materialdialogs.list.listItems
 import com.komugirice.icchat.InputInterestActivity
 import com.komugirice.icchat.R
 import com.komugirice.icchat.databinding.DateBorderCellBinding
+import com.komugirice.icchat.databinding.DeleteInterestCellBinding
 import com.komugirice.icchat.databinding.ImageViewDialogBinding
 import com.komugirice.icchat.databinding.InterestCellBinding
+import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.firebase.firestore.model.Interest
 import com.komugirice.icchat.util.DialogUtil
 import java.util.*
 
-class InterestView : RecyclerView {
+class DeleteInterestView : RecyclerView {
     constructor(ctx: Context) : super(ctx)
     constructor(ctx: Context, attrs: AttributeSet?) : super(ctx, attrs)
     constructor(ctx: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
@@ -32,7 +34,7 @@ class InterestView : RecyclerView {
     )
 
     val customAdapter by lazy {
-        InterestView.Adapter(
+        Adapter(
             context
         )
     }
@@ -45,8 +47,7 @@ class InterestView : RecyclerView {
     class Adapter(val context: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         lateinit var onClickDeleteCallBack: () -> Unit
         lateinit var onClickUrlCallBack: (uri: Uri) -> Unit
-        private val items = mutableListOf<InterestViewData>()
-        private var userId = ""
+        private val items = mutableListOf<DeleteInterestViewData>()
         private var isEditMode = true
 
         // スワイプ更新中に「検索結果が0件です」を出さない為の対応
@@ -61,7 +62,7 @@ class InterestView : RecyclerView {
             return result
         }
 
-        fun refresh(list: List<InterestViewData>) {
+        fun refresh(list: List<DeleteInterestViewData>) {
             // リフレッシュ実行フラグON
             hasCompletedFirstRefresh = true
             items.apply {
@@ -74,14 +75,6 @@ class InterestView : RecyclerView {
         fun clear() {
             items.clear()
             notifyDataSetChanged()
-        }
-
-        fun updateUserId(newUserId: String) {
-            userId = newUserId
-        }
-
-        fun updateEditMode(isEdit: Boolean) {
-            isEditMode = isEdit
         }
 
         override fun getItemCount(): Int {
@@ -110,7 +103,7 @@ class InterestView : RecyclerView {
             // 興味セル
             if(viewType == VIEW_TYPE_INTEREST) {
                 return InterestCellViewHolder(
-                    InterestCellBinding.inflate(
+                    DeleteInterestCellBinding.inflate(
                         LayoutInflater.from(context),
                         parent,
                         false
@@ -156,8 +149,20 @@ class InterestView : RecyclerView {
         private fun onBindViewHolder(holder: InterestCellViewHolder, position: Int) {
             val data = items[position]
             holder.binding.interest = data.interest
-            holder.binding.userId = this.userId
+            holder.binding.userId = UserManager.myUserId
             holder.binding.isLeft = (position - getViewTypeDateOffset(position)) % 2 == 0
+            holder.binding.checkbox.isChecked = false
+
+            // チェックボックスの切り替え
+            holder.binding.checkbox.setOnCheckedChangeListener { v, isChecked ->
+                data.apply {
+                    if(isChecked) {
+                        data.isChecked = true
+                    } else {
+                        data.isChecked = false
+                    }
+                }
+            }
 
             // 長押しのClickListener
             val onLongClickListener = object: View.OnLongClickListener {
@@ -165,7 +170,7 @@ class InterestView : RecyclerView {
                 override fun onLongClick(v: View?): Boolean {
 
                     val menuList = listOf(
-                        Pair(0, R.string.edit),
+                        Pair(0, R.string.restore),
                         Pair(1, R.string.delete_message)
                     )
 
@@ -179,13 +184,17 @@ class InterestView : RecyclerView {
                                 selection = { dialog, index, text ->
                                     when (index) {
                                         menuList.get(0).first -> {
-                                            // 編集
-                                            InputInterestActivity.update(context, data.interest)
+                                            // 復元
+                                            data.interest?.apply{
+                                                DialogUtil.confirmRestoreInterestDialog(context, this) {
+                                                    onClickDeleteCallBack.invoke()
+                                                }
+                                            }
                                         }
                                         menuList.get(1).first -> {
                                             // 削除
                                             data.interest?.apply{
-                                                DialogUtil.confirmDeleteInterestDialog(context, this) {
+                                                DialogUtil.confirmDeleteCompleteInterestDialog(context, this) {
                                                     onClickDeleteCallBack.invoke()
                                                 }
                                             }
@@ -249,7 +258,7 @@ class InterestView : RecyclerView {
     }
 
     // 興味セル
-    class InterestCellViewHolder(val binding: InterestCellBinding) : RecyclerView.ViewHolder(binding.root)
+    class InterestCellViewHolder(val binding: DeleteInterestCellBinding) : RecyclerView.ViewHolder(binding.root)
     // 日付セル
     class DateBorderCellViewHolder(val binding: DateBorderCellBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -263,22 +272,12 @@ class InterestView : RecyclerView {
         var searchZeroText = itemView.findViewById(R.id.registZeroText) as TextView
     }
 
-    open class InterestViewData {
-        var interest: Interest? = null
-        var date: Date? = null
-        var viewType: Int
+    class DeleteInterestViewData: InterestView.InterestViewData {
+        var isChecked = false
 
-        constructor(interest: Interest, viewType: Int) {
-            this.interest = interest
-            this.viewType = viewType
-        }
-        constructor(date: Date, viewType: Int) {
-            this.date = date
-            this.viewType = viewType
-        }
-        constructor(viewType: Int) {
-            this.viewType = viewType
-        }
+        constructor(interest: Interest, viewType: Int): super(interest, viewType)
+        constructor(date: Date, viewType: Int): super(date, viewType)
+        constructor(viewType: Int): super(viewType)
     }
 
     companion object {

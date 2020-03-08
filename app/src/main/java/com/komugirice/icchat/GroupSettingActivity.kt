@@ -144,9 +144,11 @@ class GroupSettingActivity : BaseActivity() {
      */
     private fun initGroupIcon() {
         FireStorageUtil.getGroupIconImage(this.room.documentId) {
-            groupIconImageView.setRoundedImageView(it) // UIスレッド
-            uCropSrcUri = it
-            prevSettingUri = it.toString()
+            it?.apply {
+                groupIconImageView.setRoundedImageView(it) // UIスレッド
+                uCropSrcUri = it
+                prevSettingUri = it.toString()
+            }
         }
 
     }
@@ -302,7 +304,7 @@ class GroupSettingActivity : BaseActivity() {
     private fun selectImage() {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
             .addCategory(Intent.CATEGORY_OPENABLE)
-            .setType("image/jpeg")
+            .setType("image/*")
         startActivityForResult(intent, RC_CHOOSE_IMAGE)
     }
 

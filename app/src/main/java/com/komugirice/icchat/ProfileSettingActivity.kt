@@ -614,7 +614,7 @@ class ProfileSettingActivity : BaseActivity() {
     private fun selectImage() {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
             .addCategory(Intent.CATEGORY_OPENABLE)
-            .setType("image/jpeg")
+            .setType("image/*")
         startActivityForResult(intent, RC_CHOOSE_IMAGE)
     }
 

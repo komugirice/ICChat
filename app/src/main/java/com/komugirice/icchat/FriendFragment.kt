@@ -17,7 +17,7 @@ import kotlinx.android.synthetic.main.fragment_friend.*
 /**
  * A simple [Fragment] subclass.
  */
-class FriendFragment : Fragment(), Update {
+class FriendFragment : BaseFragment(), Update {
 
     private lateinit var binding: FragmentFriendBinding
     private lateinit var friendsViewModel: FriendViewModel
@@ -71,9 +71,7 @@ class FriendFragment : Fragment(), Update {
 
     private fun initSwipeRefreshLayout() {
         swipeRefreshLayout.setOnRefreshListener {
-            FirebaseFacade.initManager {
-                friendsViewModel.initData(this@FriendFragment)
-            }
+            initManager()
         }
     }
 
@@ -81,8 +79,16 @@ class FriendFragment : Fragment(), Update {
      * 遷移先のActivityから戻ってきた場合にリロードする
      */
     override fun update() {
-        FirebaseFacade.initManager {
-            friendsViewModel.initData(this@FriendFragment)
+        initManager()
+    }
+
+    private fun initManager() {
+        context?.apply {
+            showProgressDialog(this)
+            FirebaseFacade.initManager {
+                friendsViewModel.initData(this@FriendFragment)
+                dismissProgressDialog()
+            }
         }
     }
 

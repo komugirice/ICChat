@@ -5,6 +5,7 @@
     <string name="create_button">登録</string>
     <string name="buttonRefresh">更新</string>
     <string name="search_button">検索</string>
+    <string name="delete_button">削除</string>
     <string name="add_button">追加</string>
     <string name="back_button">戻る</string>
     <string name="clear_button">クリア</string>
@@ -100,7 +101,7 @@
     <string name="quote_message">引用</string>
     <string name="download"><u>ダウンロード</u></string>
     <string name="alert_complete_download">ダウンロードが完了しました</string>
-    <string name="alert_failed_download">ダウンロードに失敗しました</string>
+    <string name="alert_failed_download">ダウンロードに失敗しました。\nファイルが削除された可能性があります。</string>
     <string name="alert_failed_upload">アップロードに失敗しました</string>
     <string name="no_file_name">名称未設定</string>
     <string name="invalid_uplode_file_size">アップロードファイルサイズは20MB以下にして下さい</string>
@@ -207,8 +208,9 @@
     <string name="ex2_text_1">チャットの更新が新しい順に、ユーザ、グループ一覧が表示されます。セルをクリックするとチャット画面へ遷移します。</string>
     <string name="ex3_text_title">興味画面</string>
     <string name="ex3_text_1">ユーザの興味がある内容を「記事、画像、コメント」形式で登録しておき、タイムラインで表示します。</string>
-    <string name="ex3_text_2">「閲覧ボタン」を押下すると友だちの興味データの閲覧が出来ます。</string>
-    <string name="ex3_text_3">追加ボタン押下で興味入力画面に遷移します。\n興味データを登録できます。</string>
+    <string name="ex3_text_2">「閲覧ボタン」を押下すると友だちの興味データの閲覧ができます。</string>
+    <string name="ex3_text_3">「追加ボタン」を押下すると興味入力画面に遷移します。興味データの登録ができます。</string>
+    <string name="ex3_text_4">「ゴミ箱ボタン」を押下すると興味（ゴミ箱）画面に遷移します。\n削除した興味データの物理削除、復元ができます。</string>
     <string name="ex4_text_title">他のアプリからデータを連携する</string>
     <string name="ex4_text_1">他のアプリの記事や動画を「興味データ」としてICChatに連携することが出来ます</string>
     <string name="ex4_text_2">「グノシー」から記事を連携する</string>
@@ -218,7 +220,7 @@
     <string name="ex4_text_6">「Youtube」から動画を連携する</string>
     <string name="ex4_text_7">「共有」ボタン→「ICChat」を選択します。</string>
     <string name="ex5_text_title">チャット画面</string>
-    <string name="ex5_text_1">チャットを行います。画像添付、ファイル添付も行うことが出来ます。</string>
+    <string name="ex5_text_1">チャットを行います。画像添付、ファイル添付も行うことができます。</string>
     <string name="ex6_text_title">ユーザ追加ボタン</string>
     <string name="ex6_text_1">「友だち追加」「グループ作成」が行えます。</string>
     <string name="ex7_text_title">設定ボタン</string>
@@ -229,6 +231,11 @@
     <!-- ActionSendActivity -->
     <string name="failed_action_send">ICChatの共有に失敗しました\nログインされていません</string>
     <string name="loading_message">ICChatに共有しています</string>
+
+    <!-- DeleteInterestActivity -->
+    <string name="delete_interest_activity_title">興味（ゴミ箱）</string>
+    <string name="restore">復元</string>
+    <string name="invalid_check">データが選択されていません</string>
 
     <!-- ダイアログ関係 -->
     <string name="confirm_add_friend">ユーザを友だち登録しますか？</string>
@@ -249,6 +256,8 @@
     <string name="alert_no_file_size">ファイルサイズが0バイトです</string>
     <string name="confirm_delete">削除してよろしいですか</string>
     <string name="delete_complete">削除しました</string>
+    <string name="confirm_restore">復元しますか</string>
+    <string name="restore_complete">復元しました</string>
 
     <!-- FCM -->
     <string name="fcm_friend_request">%1$sさんから友だち申請がありました。</string>
