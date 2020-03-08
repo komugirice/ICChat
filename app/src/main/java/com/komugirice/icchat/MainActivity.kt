@@ -325,7 +325,9 @@ class MainActivity : BaseActivity() {
             override fun onMenuItemClick(item: MenuItem?): Boolean {
                 when (item?.itemId) {
                     R.id.addFriends -> {
-                        AddFriendActivity.start(this@MainActivity)
+                        //AddFriendActivity.start(this@MainActivity)
+                        // FIXME プライバシーポリシーを作成するまでの暫定対応
+                        SearchUserActivity.start(this@MainActivity)
                         return true
                     }
                     R.id.groupSetting -> {
