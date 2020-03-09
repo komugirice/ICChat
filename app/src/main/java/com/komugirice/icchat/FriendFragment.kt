@@ -17,7 +17,7 @@ import kotlinx.android.synthetic.main.fragment_friend.*
 /**
  * A simple [Fragment] subclass.
  */
-class FriendFragment : BaseFragment(), Update {
+class FriendFragment : Fragment(), Update {
 
     private lateinit var binding: FragmentFriendBinding
     private lateinit var friendsViewModel: FriendViewModel
@@ -84,10 +84,10 @@ class FriendFragment : BaseFragment(), Update {
 
     private fun initManager() {
         context?.apply {
-            showProgressDialog(this)
+            swipeRefreshLayout.isRefreshing = true
             FirebaseFacade.initManager {
                 friendsViewModel.initData(this@FriendFragment)
-                dismissProgressDialog()
+                swipeRefreshLayout.isRefreshing = false
             }
         }
     }
