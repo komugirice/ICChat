@@ -227,6 +227,7 @@
     <string name="ex7_text_1">「プロフィール設定」などが行えます。</string>
     <string name="ex8_text_title">プロフィール設定画面</string>
     <string name="ex8_text_1">ユーザ情報の更新と、FACEBOOKもしくはGOOGLEアカウントとの連携が出来ます。</string>
+    <string name="ex8_text_2">「友だち申請中リスト」のセルをクリックすると申請の取り消しが行えます。</string>
 
     <!-- ActionSendActivity -->
     <string name="failed_action_send">ICChatの共有に失敗しました\nログインされていません</string>
