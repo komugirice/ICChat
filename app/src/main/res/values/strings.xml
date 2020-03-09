@@ -243,6 +243,7 @@
     <string name="alert_failed_qr_read">QRコードの読み取りに失敗しました</string>
     <string name="already_exist">既に登録済みです。</string>
     <string name="confirm_user_request">友だち申請を承認しますか？</string>
+    <string name="confirm_cancel_user_request">友だち申請を取り消しますか？</string>
     <string name="accept">承認</string>
     <string name="deny">拒否</string>
     <string name="edit">編集</string>
@@ -251,6 +252,7 @@
     <string name="alert_deny">拒否しました</string>
     <string name="confirm_cancel_user_deny">友だち申請の拒否を取り消しますか？</string>
     <string name="alert_cancel_deny">拒否を取り消しました</string>
+    <string name="alert_cancel_user_request">友だち申請を取り消しました</string>
     <string name="confirm_group_request">招待中のグループを承認しますか？</string>
     <string name="confirm_cancel_group_deny">グループの拒否を取り消しますか？</string>
     <string name="alert_no_file_size">ファイルサイズが0バイトです</string>

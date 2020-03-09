@@ -46,6 +46,7 @@ import com.komugirice.icchat.firebase.FirebaseFacade
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.firebase.firestore.model.Request
 import com.komugirice.icchat.firebase.firestore.store.UserStore
+import com.komugirice.icchat.util.DialogUtil
 import com.komugirice.icchat.util.FireStorageUtil
 import com.komugirice.icchat.viewModel.ProfileSettingViewModel
 import com.makeramen.roundedimageview.RoundedDrawable
@@ -699,10 +700,25 @@ class ProfileSettingActivity : BaseActivity() {
      */
     private fun displayRequestFriend(list : List<Request>) {
         requestFriendsParentView.removeAllViews()
-        list.forEach {
+        list.forEach {request->
             val cellBindable =
                 FriendRequestedCellBinding.inflate(LayoutInflater.from(this), null, false)
-            cellBindable.request = it
+            cellBindable.request = request
+            cellBindable.root.setOnClickListener {
+                // 友だち申請を取消しますか？
+                DialogUtil.confirmCancelUserRequestDialog(this, request){
+                    initData()
+                }
+            }
+            cellBindable.root.setOnLongClickListener (object: View.OnLongClickListener {
+                override fun onLongClick(v: View?): Boolean {
+                    // 友だち申請を取消しますか？
+                    DialogUtil.confirmCancelUserRequestDialog(this@ProfileSettingActivity, request) {
+                        initData()
+                    }
+                    return true
+                }
+            })
             requestFriendsParentView.addView(cellBindable.root)
         }
         if(list.isEmpty()) {

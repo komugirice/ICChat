@@ -81,9 +81,9 @@ object FirebaseFacade {
             // Room登録
             RoomStore.registerSingleRoom(targetUserId, onFailed) {
                 // Request 自分→target 削除
-                RequestStore.deleteUsersRequest(UserManager.myUserId, targetUserId)
+                RequestStore.deleteUsersRequest(UserManager.myUserId, targetUserId){}
                 // Request target→自分 削除
-                RequestStore.deleteUsersRequest(targetUserId, UserManager.myUserId)
+                RequestStore.deleteUsersRequest(targetUserId, UserManager.myUserId){}
                 // FCM通知
                 FcmUtil.sendAcceptFriendFcm(targetUserId)
 
@@ -197,6 +197,22 @@ object FirebaseFacade {
             }
         }
     }
+    /**
+     * 友だち申請をキャンセルする
+     *
+     * @param request
+     * @param onSuccess
+     *
+     */
+    fun cancelUserRequest(request: Request, onSuccess: () -> Unit) {
+        // Request更新
+        RequestStore.deleteUsersRequest(request.requesterId, request.beRequestedId) {
+            RequestManager.initUsersRequestToMe {
+                onSuccess.invoke()
+            }
+        }
+    }
+
 
     /**
      * 友だちを解除

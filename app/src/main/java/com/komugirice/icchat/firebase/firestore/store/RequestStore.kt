@@ -264,11 +264,15 @@ class RequestStore {
                 }
         }
 
-        fun deleteUsersRequest(requesterId: String, beRequestedId: String) {
+
+        fun deleteUsersRequest(requesterId: String, beRequestedId: String, onComplete: () -> Unit) {
             FirebaseFirestore.getInstance()
                 .collection("$USERS/${requesterId}/$REQUESTS")
                 .document(beRequestedId)
                 .delete()
+                .addOnCompleteListener {
+                    onComplete.invoke()
+                }
         }
     }
 }

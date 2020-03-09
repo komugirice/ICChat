@@ -294,6 +294,36 @@ class DialogUtil {
         }
 
         /**
+         * 友だち申請の取消し
+         * @param context
+         * @param request
+         *
+         */
+        fun confirmCancelUserRequestDialog(context: Context, request: Request, onSuccess: () -> Unit) {
+            AlertDialog.Builder(context)
+                .setMessage(R.string.confirm_cancel_user_request)
+                .setPositiveButton(R.string.ok, object : DialogInterface.OnClickListener {
+                    override fun onClick(dialog: DialogInterface?, which: Int) {
+
+                        FirebaseFacade.cancelUserRequest(request) {
+                            Toast.makeText(
+                                context,
+                                R.string.alert_cancel_user_request,
+                                Toast.LENGTH_LONG
+                            ).show()
+                            onSuccess.invoke()
+                        }
+
+                    }
+                })
+                .setNeutralButton(R.string.cancel, object : DialogInterface.OnClickListener {
+                    override fun onClick(dialog: DialogInterface?, which: Int) {
+
+                    }
+                }).show()
+        }
+
+        /**
          * 興味削除確認ダイアログ
          * @param context
          * @param room
