@@ -383,5 +383,29 @@ class DialogUtil {
                 .show()
         }
 
+
+        /**
+         * 汎用的な確認ダイアログ
+         * @param context
+         * @param room
+         * @param onSuccess
+         *
+         */
+        fun confirmDialog(
+            context: Context,
+            message: String,
+            onSuccess: () -> Unit
+        ) {
+            AlertDialog.Builder(context)
+                .setMessage(message)
+                .setPositiveButton("OK", object : DialogInterface.OnClickListener {
+                    override fun onClick(dialog: DialogInterface?, which: Int) {
+                        onSuccess.invoke()
+                    }
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .show()
+        }
+
     }
 }

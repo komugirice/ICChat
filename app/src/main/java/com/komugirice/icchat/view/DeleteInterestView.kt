@@ -48,7 +48,6 @@ class DeleteInterestView : RecyclerView {
         lateinit var onClickDeleteCallBack: () -> Unit
         lateinit var onClickUrlCallBack: (uri: Uri) -> Unit
         private val items = mutableListOf<DeleteInterestViewData>()
-        private var isEditMode = true
 
         // スワイプ更新中に「検索結果が0件です」を出さない為の対応
         private var hasCompletedFirstRefresh = false
@@ -151,17 +150,13 @@ class DeleteInterestView : RecyclerView {
             holder.binding.interest = data.interest
             holder.binding.userId = UserManager.myUserId
             holder.binding.isLeft = (position - getViewTypeDateOffset(position)) % 2 == 0
-            holder.binding.checkbox.isChecked = false
+
+            // チェックボックス復元
+            holder.binding.isChecked = data.isChecked
 
             // チェックボックスの切り替え
             holder.binding.checkbox.setOnCheckedChangeListener { v, isChecked ->
-                data.apply {
-                    if(isChecked) {
-                        data.isChecked = true
-                    } else {
-                        data.isChecked = false
-                    }
-                }
+                data.isChecked = isChecked
             }
 
             // 長押しのClickListener
@@ -174,36 +169,34 @@ class DeleteInterestView : RecyclerView {
                         Pair(1, R.string.delete_message)
                     )
 
-                    // 編集モードの場合のみ表示
-                    if(isEditMode) {
-                        MaterialDialog(context).apply {
-                            listItems(items = listOf(
-                                context.getString(menuList.get(0).second),
-                                context.getString(menuList.get(1).second)
-                            ),
-                                selection = { dialog, index, text ->
-                                    when (index) {
-                                        menuList.get(0).first -> {
-                                            // 復元
-                                            data.interest?.apply{
-                                                DialogUtil.confirmRestoreInterestDialog(context, this) {
-                                                    onClickDeleteCallBack.invoke()
-                                                }
+
+                    MaterialDialog(context).apply {
+                        listItems(items = listOf(
+                            context.getString(menuList.get(0).second),
+                            context.getString(menuList.get(1).second)
+                        ),
+                            selection = { dialog, index, text ->
+                                when (index) {
+                                    menuList.get(0).first -> {
+                                        // 復元
+                                        data.interest?.apply{
+                                            DialogUtil.confirmRestoreInterestDialog(context, this) {
+                                                onClickDeleteCallBack.invoke()
                                             }
                                         }
-                                        menuList.get(1).first -> {
-                                            // 削除
-                                            data.interest?.apply{
-                                                DialogUtil.confirmDeleteCompleteInterestDialog(context, this) {
-                                                    onClickDeleteCallBack.invoke()
-                                                }
-                                            }
-                                        }
-                                        else -> return@listItems
                                     }
-                                })
-                        }.show()
-                    }
+                                    menuList.get(1).first -> {
+                                        // 削除
+                                        data.interest?.apply{
+                                            DialogUtil.confirmDeleteCompleteInterestDialog(context, this) {
+                                                onClickDeleteCallBack.invoke()
+                                            }
+                                        }
+                                    }
+                                    else -> return@listItems
+                                }
+                            })
+                    }.show()
                     return true
                 }
             }

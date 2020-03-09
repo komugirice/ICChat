@@ -220,6 +220,9 @@ class InterestView : RecyclerView {
                         null,
                         false
                     )
+                    dialogBinding.imageView.setOnClickListener {
+                        this.cancel()
+                    }
                     dialogBinding.imageView.setImageDrawable(holder.binding.imageView.drawable)
                     setContentView(dialogBinding.root)
                 }.show()

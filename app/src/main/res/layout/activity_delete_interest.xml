@@ -15,40 +15,36 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <!--
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/contents"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/swipeRefreshLayout"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
--->
         <include
             android:id="@+id/header"
             layout="@layout/activity_header" />
 
-        <!--
-        </androidx.constraintlayout.widget.ConstraintLayout>
--->
-
-        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-            android:id="@+id/swipeRefreshLayout"
-            android:layout_width="match_parent"
+        <ScrollView
+            android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintBottom_toTopOf="@+id/footer"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/header">
 
-            <com.komugirice.icchat.view.DeleteInterestView
-                android:id="@+id/deleteInterestView"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/contents"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:padding="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+                <com.komugirice.icchat.view.DeleteInterestView
+                    android:id="@+id/deleteInterestView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </ScrollView>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/footer"
