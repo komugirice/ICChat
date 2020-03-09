@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProviders
 import com.komugirice.icchat.databinding.ActivityDeleteInterestBinding
 import com.komugirice.icchat.firebase.FirebaseFacade
 import com.komugirice.icchat.firebase.firestore.store.InterestStore
+import com.komugirice.icchat.util.DialogUtil
 import com.komugirice.icchat.viewModel.DeleteInterestViewModel
 import kotlinx.android.synthetic.main.activity_delete_interest.*
 import kotlinx.android.synthetic.main.activity_header.view.*
@@ -34,7 +35,7 @@ class DeleteInterestActivity : AppCompatActivity() {
         initViewModel()
         initLayout()
         initClick()
-        initSwipeRefreshLayout()
+        //initSwipeRefreshLayout()
         initData()
     }
 
@@ -67,7 +68,7 @@ class DeleteInterestActivity : AppCompatActivity() {
                         handler.postDelayed({
                             deleteInterestView.scrollToPosition(deleteInterestView.customAdapter.itemCount - 1)
                         }, 500L)
-                    swipeRefreshLayout.isRefreshing = false
+                    //swipeRefreshLayout.isRefreshing = false
                 }
             })
         }
@@ -95,11 +96,12 @@ class DeleteInterestActivity : AppCompatActivity() {
 
     }
 
-    private fun initSwipeRefreshLayout() {
-        swipeRefreshLayout.setOnRefreshListener {
-            viewModel.initData()
-        }
-    }
+//    private fun initSwipeRefreshLayout() {
+//        swipeRefreshLayout.setOnRefreshListener {
+//            //viewModel.initData()
+//            swipeRefreshLayout.isRefreshing = false
+//        }
+//    }
 
     private fun initData(){
         viewModel.initData()
@@ -119,26 +121,33 @@ class DeleteInterestActivity : AppCompatActivity() {
             return
         }
 
-        targets?.forEach {
-            // 物理削除
-            it.interest?.apply {
-                FirebaseFacade.deleteCompleteInterest(this) {
-                    completeCnt.postValue(completeCnt.value?.plus(1))
+        DialogUtil.confirmDialog(this,
+            // n件のアイテムを削除してよろしいですか
+            getString(R.string.confirm_delete_num, targets.size)){
+
+            targets?.forEach {
+                // 物理削除
+                it.interest?.apply {
+                    FirebaseFacade.deleteCompleteInterest(this) {
+                        completeCnt.postValue(completeCnt.value?.plus(1))
+                    }
                 }
             }
+
+            completeCnt.observe(this@DeleteInterestActivity, Observer {
+                if (completeCnt.value == targets?.size) {
+                    // 完了メッセージ
+                    Toast.makeText(
+                        this,
+                        getString(R.string.delete_complete),
+                        Toast.LENGTH_LONG
+                    ).show()
+                    initData()
+                }
+            })
         }
 
-        completeCnt.observe(this@DeleteInterestActivity, Observer {
-            if (completeCnt.value == targets?.size) {
-                // 完了メッセージ
-                Toast.makeText(
-                    this,
-                    getString(R.string.delete_complete),
-                    Toast.LENGTH_LONG
-                ).show()
-                initData()
-            }
-        })
+
     }
 
     private fun restore() {
@@ -155,27 +164,32 @@ class DeleteInterestActivity : AppCompatActivity() {
             return
         }
 
-        targets?.forEach {
-            // 復元
-            it.interest?.apply {
-                InterestStore.restoreInterest(this) {
-                    completeCnt.postValue(completeCnt.value?.plus(1))
+
+        DialogUtil.confirmDialog(this,
+            // n件のアイテムを復元しますか
+            getString(R.string.confirm_restore_num, targets.size)){
+                targets?.forEach {
+                    // 復元
+                    it.interest?.apply {
+                        InterestStore.restoreInterest(this) {
+                            completeCnt.postValue(completeCnt.value?.plus(1))
+                        }
+                    }
+
                 }
-            }
 
+                completeCnt.observe(this@DeleteInterestActivity, Observer {
+                    if (completeCnt.value == targets?.size) {
+                        // 完了メッセージ
+                        Toast.makeText(
+                            this,
+                            getString(R.string.restore_complete),
+                            Toast.LENGTH_LONG
+                        ).show()
+                        initData()
+                    }
+                })
         }
-
-        completeCnt.observe(this@DeleteInterestActivity, Observer {
-            if (completeCnt.value == targets?.size) {
-                // 完了メッセージ
-                Toast.makeText(
-                    this,
-                    getString(R.string.restore_complete),
-                    Toast.LENGTH_LONG
-                ).show()
-                initData()
-            }
-        })
     }
 
 

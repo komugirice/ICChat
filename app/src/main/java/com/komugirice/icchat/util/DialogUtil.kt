@@ -294,6 +294,36 @@ class DialogUtil {
         }
 
         /**
+         * 友だち申請の取消し
+         * @param context
+         * @param request
+         *
+         */
+        fun confirmCancelUserRequestDialog(context: Context, request: Request, onSuccess: () -> Unit) {
+            AlertDialog.Builder(context)
+                .setMessage(R.string.confirm_cancel_user_request)
+                .setPositiveButton(R.string.ok, object : DialogInterface.OnClickListener {
+                    override fun onClick(dialog: DialogInterface?, which: Int) {
+
+                        FirebaseFacade.cancelUserRequest(request) {
+                            Toast.makeText(
+                                context,
+                                R.string.alert_cancel_user_request,
+                                Toast.LENGTH_LONG
+                            ).show()
+                            onSuccess.invoke()
+                        }
+
+                    }
+                })
+                .setNeutralButton(R.string.cancel, object : DialogInterface.OnClickListener {
+                    override fun onClick(dialog: DialogInterface?, which: Int) {
+
+                    }
+                }).show()
+        }
+
+        /**
          * 興味削除確認ダイアログ
          * @param context
          * @param room
@@ -377,6 +407,30 @@ class DialogUtil {
                             ).show()
                             onSuccess.invoke()
                         }
+                    }
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .show()
+        }
+
+
+        /**
+         * 汎用的な確認ダイアログ
+         * @param context
+         * @param room
+         * @param onSuccess
+         *
+         */
+        fun confirmDialog(
+            context: Context,
+            message: String,
+            onSuccess: () -> Unit
+        ) {
+            AlertDialog.Builder(context)
+                .setMessage(message)
+                .setPositiveButton("OK", object : DialogInterface.OnClickListener {
+                    override fun onClick(dialog: DialogInterface?, which: Int) {
+                        onSuccess.invoke()
                     }
                 })
                 .setNegativeButton(R.string.cancel, null)
