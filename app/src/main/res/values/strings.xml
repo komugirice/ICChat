@@ -19,6 +19,10 @@
     <string name="today">今日</string>
     <string name="yesterday">昨日</string>
 
+    <!-- SplashActivity -->
+    <string name="alert_version_up">アプリをアップデートしてください</string>
+    <string name="install">インストール</string>
+    <string name="confirm_version_up">このアプリには、最新バージョンのGoogle Play アプリが必要です。</string>
     <!-- ログイン画面 -->
     <string name="title_activity_login">ログイン</string>
     <string name="prompt_email">メールアドレス</string>
