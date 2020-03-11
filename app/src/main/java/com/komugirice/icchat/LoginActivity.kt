@@ -13,8 +13,6 @@ import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import com.komugirice.icchat.extension.getIdFromEmail
-import com.komugirice.icchat.extension.loggingSize
 import com.facebook.AccessToken
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
@@ -30,17 +28,25 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.komugirice.icchat.ICChatApplication.Companion.applicationContext
+import com.komugirice.icchat.ICChatApplication.Companion.isFacebookAuth
+import com.komugirice.icchat.ICChatApplication.Companion.isGoogleAuth
 import com.komugirice.icchat.extension.afterTextChanged
+import com.komugirice.icchat.extension.getDomainFromEmail
+import com.komugirice.icchat.extension.getIdFromEmail
 import com.komugirice.icchat.extension.loggingSize
 import com.komugirice.icchat.firebase.FirebaseFacade
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
+import com.komugirice.icchat.firebase.firestore.store.UserStore
 import com.komugirice.icchat.ui.login.LoginViewModel
 import com.komugirice.icchat.ui.login.LoginViewModelFactory
 import com.komugirice.icchat.util.FcmUtil
+import com.komugirice.icchat.util.Prefs
 import kotlinx.android.synthetic.main.activity_create_user.*
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.activity_login.container
 import timber.log.Timber
+import java.util.*
 
 
 class LoginActivity : BaseActivity() {
@@ -92,28 +98,23 @@ class LoginActivity : BaseActivity() {
             }
         })
 
+        // loginViewModel.loginSuccess更新後
         loginViewModel.loginResult.observe(this@LoginActivity, Observer {
             val loginResult = it ?: return@Observer
 
-            loading.visibility = View.GONE
             if (loginResult.error != null) {
+                loading.visibility = View.GONE
                 showLoginFailed(loginResult.error)
                 return@Observer
             }
+
             // 認証成功
             if (loginResult.success != null) {
 
-                // 次の画面に遷移
-                updateUiWithUser()
-
-                setResult(Activity.RESULT_OK)
-
-                //Complete and destroy login activity once successful
-                // 一瞬アプリが消えるバグの為、削除
-                //finish()
+                // ログインユーザチェック
+                isValidLoginUser()
 
             }
-
 
         })
 
@@ -166,6 +167,7 @@ class LoginActivity : BaseActivity() {
         facebookLoginButton.registerCallback(callbackManager,
             object: FacebookCallback<LoginResult> {
                 override fun onSuccess(loginResult: LoginResult ) {
+                    loading.visibility = View.VISIBLE
                     handleFacebookAccessToken(loginResult.accessToken)
                 }
 
@@ -214,6 +216,8 @@ class LoginActivity : BaseActivity() {
             } catch (e: ApiException) {
                 // Google Sign In failed, update UI appropriately
                 Log.w(TAG, "Google sign in failed", e)
+                loading.visibility = View.GONE
+                signOutProvider()
                 //updateUI(null)
             }
         } else {
@@ -232,12 +236,15 @@ class LoginActivity : BaseActivity() {
                     // ログイン成功
                     Log.d(TAG, "signInWithCredential:success")
                     val user = auth.currentUser
+                    // プロフィール設定画面で使う
+                    isFacebookAuth = true
                     loginViewModel.loginSuccess(user?.email?.also{it.getIdFromEmail()}, user?.displayName)
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "signInWithCredential:failure", task.exception)
                     Toast.makeText(baseContext, "Authentication failed.",
                         Toast.LENGTH_SHORT).show()
+                    loading.visibility = View.GONE
                     //updateUI(null)
                 }
             }
@@ -253,6 +260,9 @@ class LoginActivity : BaseActivity() {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "signInWithCredential:success")
                     val user = FirebaseAuth.getInstance().currentUser
+                    // currentUserは取得出来てるけど、uidを紐付いてない場合がある
+                    // プロフィール設定画面で使う
+                    isGoogleAuth = true
                     // ログイン成功
                     loginViewModel.loginSuccess(user?.email?.also{it.getIdFromEmail()}, user?.displayName)
                 } else {
@@ -264,6 +274,7 @@ class LoginActivity : BaseActivity() {
                         "ログインに失敗しました。",
                         Toast.LENGTH_LONG
                     ).show()
+                    loading.visibility = View.GONE
                 }
 
             }
@@ -284,15 +295,70 @@ class LoginActivity : BaseActivity() {
         }
 
         googleLoginButton.setOnClickListener{
+            loading.visibility = View.VISIBLE
             googleSignIn()
         }
         container.setOnClickListener {
             hideKeybord(it)
         }
+        // ユーザ新規作成
         createUserTextView.setOnClickListener {
             CreateUserActivity.start(this)
         }
+        // パスワードを忘れた方へ
+        SendPasswordActivityTextView.setOnClickListener{
+            SendPasswordActivity.start(this)
+        }
     }
+
+    /**
+     * ログインユーザチェック
+     * @param user: User
+     */
+    private fun isValidLoginUser() {
+
+        // Google, FacebookログインでAuthenticationにアカウントはあるが、
+        // ユーザ情報に 連携されていず、ボタン押下するとonSuccessしないので、onFailureの定義
+        val onFailure = {
+            // ログインできませんでした。ユーザ情報が存在しません。\n別の方法でログインして下さい
+            Toast.makeText(
+                applicationContext,
+                applicationContext.getString(R.string.login_failed_no_user),
+                Toast.LENGTH_LONG
+            ).show()
+            signOutProvider()
+            loading.visibility = View.GONE
+        }
+
+        // 多重ログインチェック
+        UserStore.isAlreadyLogin(onFailure) {
+
+            if (it) {
+                val mail = FirebaseAuth.getInstance().currentUser?.email
+                // 暫定対応としてテストユーザのみ多重ログイン制御
+                if(mail?.getDomainFromEmail() == "example.com") {
+                    // 別のユーザがログイン済みです
+                    Toast.makeText(
+                        this,
+                        getString(R.string.login_failed_already),
+                        Toast.LENGTH_LONG
+                    ).show()
+                    loading.visibility = View.GONE
+                    FirebaseAuth.getInstance().signOut()
+                    signOutProvider()
+                    return@isAlreadyLogin
+                }
+            }
+            // ログイン日時更新
+            UserStore.updateLoginDateTime(Date()){
+                // 正常
+                updateUiWithUser()
+            }
+
+
+        }
+    }
+
 
     /**
      * ログイン成功したら呼ばれる
@@ -300,10 +366,9 @@ class LoginActivity : BaseActivity() {
      */
     private fun updateUiWithUser() {
         val welcome = getString(R.string.welcome)
-        // TODO : initiate successful logged in experience
 
         // Manager初期設定
-            FirebaseFacade.initManager {
+        FirebaseFacade.initManager({}) {
             // FCM初期化
             FcmUtil.initFcm()
             val displayName = UserManager.myUser.name
@@ -314,14 +379,20 @@ class LoginActivity : BaseActivity() {
                 Toast.LENGTH_LONG
             ).show()
 
+            val uid = FirebaseAuth.getInstance().currentUser?.uid
+            Timber.d("uid:$uid)")
+
+            loading.visibility = View.GONE
             MainActivity.start(this)
+
+            setResult(Activity.RESULT_OK)
+
+            //Complete and destroy login activity once successful
+            // 一瞬アプリが消えるバグの為、削除
+            //finish()
         }
 
     }
-
-
-
-
 
 
     private fun showLoginFailed(@StringRes errorString: Int) {
@@ -351,13 +422,35 @@ class LoginActivity : BaseActivity() {
         }
 
         fun signOut(activity: BaseActivity) {
-            FirebaseAuth.getInstance().signOut()
-            LoginManager.getInstance().logOut()
             activity.apply {
-                logout()
-                finishAffinity()
-                activity.startActivity(Intent(activity, LoginActivity::class.java))
+                UserStore.updateLoginDateTime(null){
+                    UserStore.updateFcmToken(null){
+                        Prefs().fcmToken.remove()
+                        Prefs().hasToUpdateFcmToken.put(true)
+
+                        signOutProvider()
+                        FirebaseAuth.getInstance().signOut()
+
+                        FirebaseFacade.clearManager()
+
+                        finishAffinity()
+                        activity.startActivity(Intent(activity, SplashActivity::class.java))
+                    }
+                }
             }
+        }
+
+        fun signOutProvider() {
+            val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(applicationContext.getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build()
+            GoogleSignIn.getClient(applicationContext, gso).signOut()
+
+            LoginManager.getInstance().logOut()
+
+            isFacebookAuth = false  // プロフィール設定画面で使う
+            isGoogleAuth = false    // プロフィール設定画面で使う
         }
     }
 }

@@ -2,64 +2,50 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <data>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+        <variable
+            name="isFacebookAuth"
+            type="Boolean" />
+
+        <variable
+            name="isGoogleAuth"
+            type="Boolean" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:descendantFocusability="beforeDescendants"
+        android:focusableInTouchMode="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <include
+            android:id="@+id/header"
+            layout="@layout/activity_header" />
+
+        <ScrollView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/header"
-                android:layout_width="0dp"
-                android:layout_height="?attr/actionBarSize"
-                android:background="@android:color/holo_blue_dark"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <ImageView
-                    android:id="@+id/backImageView"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:src="@drawable/ic_keyboard_arrow_left_black_24dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-
-                <TextView
-                    android:id="@+id/chatTitleTextView"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:gravity="left"
-                    android:text="@string/title_profile_setting"
-                    android:textColor="@android:color/white"
-                    android:textSize="16sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/backImageView"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            app:layout_constraintTop_toBottomOf="@+id/header">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/contents"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
                 android:paddingBottom="16dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/header">
+                app:layout_constraintTop_toTopOf="parent">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/userImageField"
@@ -239,8 +225,20 @@
                     android:text="@string/birthday_label"
                     android:textColor="@android:color/black"
                     android:textSize="18sp"
-                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/birthDayClear"
                     app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/emailLine" />
+
+                <TextView
+                    android:id="@+id/birthDayClear"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/royal_blue"
+                    android:layout_marginTop="8dp"
+                    android:textSize="16sp"
+                    android:text="@string/clear_button"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/birthDayLabel"
                     app:layout_constraintTop_toBottomOf="@+id/emailLine" />
 
                 <TextView
@@ -275,9 +273,9 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="友達申請中リスト"
                         android:layout_marginTop="8dp"
                         android:layout_marginBottom="8dp"
+                        android:text="@string/friend_request_label"
                         android:textColor="@android:color/black"
                         android:textSize="18sp"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -288,8 +286,8 @@
                         android:id="@+id/expandableImageView"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:layout_marginEnd="16dp"
                         android:layout_marginTop="8dp"
+                        android:layout_marginEnd="16dp"
                         android:layout_marginBottom="8dp"
                         android:src="@drawable/ic_arrow_down"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -332,7 +330,7 @@
                     android:drawableLeft="@drawable/ic_facebook_24dp"
                     android:drawablePadding="8sp"
                     android:padding="8dp"
-                    android:text="@string/facebook_connect_button"
+                    android:text="@{isFacebookAuth ? @string/facebook_disconnect_button : @string/facebook_connect_button}"
                     android:textColor="@color/white"
                     android:textSize="12sp"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -352,7 +350,7 @@
                     android:drawablePadding="8sp"
                     android:elevation="5dp"
                     android:padding="8dp"
-                    android:text="@string/google_connect_button"
+                    android:text="@{isGoogleAuth ? @string/google_disconnect_button : @string/google_connect_button}"
                     android:textColor="@color/black"
                     android:textSize="12sp"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -361,6 +359,7 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </ScrollView>
+        </ScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 </layout>

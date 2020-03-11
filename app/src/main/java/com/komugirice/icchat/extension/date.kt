@@ -18,3 +18,20 @@ fun Date.HHmmToString(): String =
 fun Date.compareDate(target: Date): Boolean =
     this.getDateToString().equals(target.getDateToString())
 
+fun Date.getYearEx(): Int {
+    val calendar = Calendar.getInstance()
+    calendar.time = this
+    return calendar.get(Calendar.YEAR)
+}
+
+fun Date.getMonthEx(): Int {
+    val calendar = Calendar.getInstance()
+    calendar.time = this
+    return calendar.get(Calendar.MONTH)
+}
+
+fun Date.getDayOfMonthEx(): Int {
+    val calendar = Calendar.getInstance()
+    calendar.time = this
+    return calendar.get(Calendar.DAY_OF_MONTH)
+}

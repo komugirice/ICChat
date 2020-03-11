@@ -10,10 +10,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItems
 import com.komugirice.icchat.ChatActivity
+import com.komugirice.icchat.GroupInfoActivity
 import com.komugirice.icchat.GroupSettingActivity
 import com.komugirice.icchat.R
 import com.komugirice.icchat.databinding.FriendCellBinding
-import com.komugirice.icchat.databinding.FriendRequestedCellBinding
+import com.komugirice.icchat.databinding.FriendRequesterCellBinding
 import com.komugirice.icchat.databinding.TitleCellBinding
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.firebase.firestore.model.Request
@@ -95,7 +96,7 @@ class FriendsView : RecyclerView {
             // databindingにRequestを使うタイプ
             if ( viewType <= VIEW_TYPE_ITEM_DENY_FRIEND) {
                 return RequestCellViewHolder(
-                    FriendRequestedCellBinding.inflate(
+                    FriendRequesterCellBinding.inflate(
                         LayoutInflater.from(context),
                         parent,
                         false
@@ -234,16 +235,26 @@ class FriendsView : RecyclerView {
                         }.show()
                     }
                     // 招待中のグループの場合
-                    if(data.viewType == VIEW_TYPE_ITEM_REQUEST_GROUP) {
-                        DialogUtil.confirmGroupRequestDialog(context, data.room){
-                            onClickCallBack.invoke()
-                        }
-                    }
-                    // 拒否グループの場合
-                    if(data.viewType == VIEW_TYPE_ITEM_DENY_GROUP) {
-                        DialogUtil.cancelGroupDenyDialog(context, data.room){
-                            onClickCallBack.invoke()
-                        }
+                    if(data.viewType == VIEW_TYPE_ITEM_REQUEST_GROUP
+                        || data.viewType == VIEW_TYPE_ITEM_DENY_GROUP) {
+                        MaterialDialog(context).apply {
+                            listItems(items = listOf(
+                                context.getString(R.string.group_info_display)
+                            ),
+                                selection = { dialog, index, text ->
+                                    when (index) {
+                                        menuList.get(0).first -> {
+                                            GroupInfoActivity.start(context, data.room)
+                                        }
+                                        else -> return@listItems
+                                    }
+                                }
+                            )
+                        }.show()
+//                        DialogUtil.confirmGroupRequestDialog(context, data.room){
+//                            onClickCallBack.invoke()
+//                        }
+
                     }
                     return true
                 }
@@ -348,7 +359,7 @@ class FriendsView : RecyclerView {
     class FriendCellViewHolder(val binding: FriendCellBinding) :
         RecyclerView.ViewHolder(binding.root)
 
-    class RequestCellViewHolder(val binding: FriendRequestedCellBinding) :
+    class RequestCellViewHolder(val binding: FriendRequesterCellBinding) :
         RecyclerView.ViewHolder(binding.root)
 
     class TitleCellViewHolder(val binding: TitleCellBinding) :

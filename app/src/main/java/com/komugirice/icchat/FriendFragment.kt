@@ -71,7 +71,7 @@ class FriendFragment : Fragment(), Update {
 
     private fun initSwipeRefreshLayout() {
         swipeRefreshLayout.setOnRefreshListener {
-            friendsViewModel.initData(this@FriendFragment)
+            initManager()
         }
     }
 
@@ -79,8 +79,16 @@ class FriendFragment : Fragment(), Update {
      * 遷移先のActivityから戻ってきた場合にリロードする
      */
     override fun update() {
-        FirebaseFacade.initManager {
-            friendsViewModel.initData(this@FriendFragment)
+        initManager()
+    }
+
+    private fun initManager() {
+        context?.apply {
+            swipeRefreshLayout.isRefreshing = true
+            FirebaseFacade.initManager {
+                friendsViewModel.initData(this@FriendFragment)
+                swipeRefreshLayout.isRefreshing = false
+            }
         }
     }
 

@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <import type="android.view.Gravity" />
+
+        <variable
+            name="interest"
+            type="com.komugirice.icchat.firebase.firestore.model.Interest" />
+
+        <variable
+            name="userId"
+            type="String" />
+        <variable
+            name="isLeft"
+            type="Boolean" />
+        <variable
+            name="isChecked"
+            type="Boolean" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/overWrap"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <View
+            android:id="@+id/longClickView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:checked="@{isChecked}"
+            app:buttonTint="@color/red"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <Space
+            android:id="@+id/spaceLeft"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="@{isLeft == true ? View.GONE : View.VISIBLE}"
+            app:layout_constraintEnd_toStartOf="@+id/wrapLayout"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintStart_toEndOf="@+id/checkbox"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/wrapLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="4dp"
+            app:layout_constraintEnd_toStartOf="@+id/spaceRight"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintStart_toEndOf="@+id/spaceLeft"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/ogpWrapLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="@{interest.isOgp == true ? View.VISIBLE : View.GONE}"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/ogpImageView"
+                    android:layout_width="180dp"
+                    android:layout_height="135dp"
+                    android:scaleType="centerCrop"
+                    app:imageUrl="@{interest.ogpImageUrl}"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/ogpTitleLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="@color/skype_gray"
+                    android:paddingLeft="4dp"
+                    android:paddingRight="4dp"
+                    app:layout_constraintEnd_toEndOf="@+id/ogpImageView"
+                    app:layout_constraintStart_toStartOf="@+id/ogpImageView"
+                    app:layout_constraintTop_toBottomOf="@+id/ogpImageView">
+
+                    <TextView
+                        android:id="@+id/ogpTitleTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="2"
+                        android:paddingTop="4dp"
+                        android:scrollHorizontally="true"
+                        android:text="@{interest.ogpTitle}"
+                        android:textColor="@android:color/black"
+                        android:textSize="15sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/ogpDescriptionTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="2"
+                        android:paddingBottom="4dp"
+                        android:scrollHorizontally="true"
+                        android:text="@{interest.ogpDescription}"
+                        android:textColor="@android:color/black"
+                        android:textSize="12sp"
+                        app:layout_constraintEnd_toEndOf="@+id/ogpTitleTextView"
+                        app:layout_constraintStart_toStartOf="@+id/ogpTitleTextView"
+                        app:layout_constraintTop_toBottomOf="@+id/ogpTitleTextView" />
+
+                    <TextView
+                        android:id="@+id/ogpUrlTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="2"
+                        android:paddingBottom="4dp"
+                        android:scrollHorizontally="true"
+                        android:text="@{interest.ogpUrl}"
+                        android:textColor="@android:color/black"
+                        android:textSize="12sp"
+                        app:layout_constraintEnd_toEndOf="@+id/ogpDescriptionTextView"
+                        app:layout_constraintStart_toStartOf="@+id/ogpDescriptionTextView"
+                        app:layout_constraintTop_toBottomOf="@+id/ogpDescriptionTextView" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="180dp"
+                android:layout_height="0dp"
+                android:scaleType="centerCrop"
+                app:layout_constraintDimensionRatio="3:4"
+                app:userIdForInterestImage="@{userId}"
+                app:interestImageFileName="@{interest.image}"
+                android:visibility="@{interest.image != null ? View.VISIBLE : View.GONE}"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ogpWrapLayout"
+                app:layout_constraintBottom_toTopOf="@+id/commentTextView"/>
+
+            <TextView
+                android:id="@+id/commentTextView"
+                android:layout_width="180dp"
+                android:layout_height="wrap_content"
+                android:paddingStart="12dp"
+                android:paddingTop="5dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="5dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/background_interest_comment"
+                android:text="@{interest.comment}"
+                android:visibility="@{interest.comment != null ? View.VISIBLE : View.GONE}"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imageView" />
+
+            <TextView
+                android:id="@+id/timeTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:gravity="end"
+                android:textColor="@android:color/black"
+                android:textSize="10sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/commentTextView"
+                app:time="@{interest.createdAt}" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <Space
+            android:id="@+id/spaceRight"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="@{isLeft == true ? View.VISIBLE : View.GONE}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintStart_toEndOf="@+id/wrapLayout"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

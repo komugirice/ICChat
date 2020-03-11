@@ -19,3 +19,14 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# java.lang.ClassNotFoundException: Didn't find class "androidx.core.app.CoreComponentFactory"
+-keep class androidx.core.app.CoreComponentFactory { *; }
+
+# java.lang.IllegalArgumentException: Invalid document reference. Document references must have an even number of segments, but users has 1
+-keep class com.komugirice.icchat.firebase.** { *; }
+
+-keep public class org.jsoup.** {
+public *;
+}
+

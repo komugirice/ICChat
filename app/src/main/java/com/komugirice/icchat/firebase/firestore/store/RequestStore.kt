@@ -6,6 +6,7 @@ import com.komugirice.icchat.firebase.firestore.manager.RoomManager
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.firebase.firestore.model.GroupRequests
 import com.komugirice.icchat.firebase.firestore.model.Request
+import com.komugirice.icchat.firebase.firestore.model.Room
 import java.util.*
 
 class RequestStore {
@@ -59,11 +60,14 @@ class RequestStore {
         }
 
         fun getUsersRequestToMe(onSuccess: (List<Request>) -> Unit) {
+            // エラーでる。Document references must have an even number of segments, but users/00000037-cedc-45ff-8b6f-1589c393c3ef/requests has 3
             var usersRequestToMe = mutableListOf<Request>()
             var index = 0
             UserManager.allUsers.forEach {
                 FirebaseFirestore.getInstance()
-                    .collection("$USERS/${it.userId}/$REQUESTS")
+                    .collection(USERS)
+                    .document(it.userId)
+                    .collection(REQUESTS)
                     .document(UserManager.myUserId)
                     .get()
                     .addOnCompleteListener {
@@ -83,11 +87,20 @@ class RequestStore {
         fun getGroupsRequestToMe(onSuccess: (List<GroupRequests>) -> Unit) {
             val groupsRequestToMe = mutableListOf<GroupRequests>()
             var index = 0
-            RoomStore.getAllGroupRooms {
+            RoomStore.getAllGroupRooms(){
+                if(it.isEmpty()){
+                    onSuccess.invoke(listOf())
+                    return@getAllGroupRooms
+                }
+
                 val allGroup = it
                 allGroup.forEach {room ->
                     FirebaseFirestore.getInstance()
-                        .collection("$ROOMS/${room.documentId}/$REQUESTS")
+                        // エラーでる。java.lang.IllegalArgumentException: Invalid document reference. Document references must have an even number of segments, but rooms/3ded0e18-2c76-4438-8dec-ca5720bdbf29/requests has 3
+                        //.collection("$ROOMS/${room.documentId}/$REQUESTS")
+                        .collection(ROOMS)
+                        .document(room.documentId)
+                        .collection(REQUESTS)
                         .document(UserManager.myUserId)
                         .get()
                         .addOnCompleteListener {
@@ -105,6 +118,24 @@ class RequestStore {
                         }
                 }
             }
+        }
+
+        // 友だち画面の招待グループの長押しの「グループ情報表示」で必要になった
+        fun getGroupRequests(room: Room, onSuccess: (GroupRequests) -> Unit) {
+            FirebaseFirestore.getInstance()
+                .collection("$ROOMS/${room.documentId}/$REQUESTS")
+                .get()
+                .addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        it.result?.toObjects(Request::class.java)?.also {
+                            val ret = GroupRequests().apply {
+                                this.room = room
+                                this.requests = it
+                            }
+                            onSuccess.invoke(ret)
+                        }
+                    }
+                }
         }
 
         fun requestFriend(userId: String, onSuccess: () -> Unit) {
@@ -233,11 +264,15 @@ class RequestStore {
                 }
         }
 
-        fun deleteUsersRequest(requesterId: String, beRequestedId: String) {
+
+        fun deleteUsersRequest(requesterId: String, beRequestedId: String, onComplete: () -> Unit) {
             FirebaseFirestore.getInstance()
                 .collection("$USERS/${requesterId}/$REQUESTS")
                 .document(beRequestedId)
                 .delete()
+                .addOnCompleteListener {
+                    onComplete.invoke()
+                }
         }
     }
 }

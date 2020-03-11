@@ -15,13 +15,18 @@ import com.komugirice.icchat.extension.toDate
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.komugirice.icchat.databinding.ActivityCreateUserBinding
+import com.komugirice.icchat.extension.afterTextChanged
 import com.komugirice.icchat.firebase.firestore.model.User
 import com.komugirice.icchat.firebase.firestore.store.UserStore
 import com.komugirice.icchat.ui.createUser.CreateUserViewModel
 import com.komugirice.icchat.util.FireStoreUtil
 import kotlinx.android.synthetic.main.activity_chat.backImageView
 import kotlinx.android.synthetic.main.activity_create_user.*
+import kotlinx.android.synthetic.main.activity_create_user.saveButton
+import kotlinx.android.synthetic.main.activity_create_user.userNameEditText
+import kotlinx.android.synthetic.main.activity_create_user.userNameLength
 import kotlinx.android.synthetic.main.activity_login.container
+import kotlinx.android.synthetic.main.activity_user_name.*
 import timber.log.Timber
 import java.util.*
 
@@ -108,7 +113,10 @@ class CreateUserActivity : BaseActivity() {
     private fun initLayout() {
         // ユーザ名の文字数の初期値設定
         userNameLength.text = "${userNameEditText.length()}/20"
-
+        userNameEditText.afterTextChanged {
+            userNameLength.text = "${userNameEditText.length()}/20"
+        }
+        
         initClick()
         //initTextChange()
     }
@@ -218,6 +226,7 @@ class CreateUserActivity : BaseActivity() {
         val email = emailEditText.text.toString().trim()
         val password = passwordEditText.text.toString()
 
+        showProgressDialog(this)
         FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener{
                 if(it.isSuccessful) {
@@ -234,6 +243,7 @@ class CreateUserActivity : BaseActivity() {
                             errorMsg.postValue(getString(R.string.invalid_unknown_exception))
                         }
                     }
+                    dismissProgressDialog()
                 }
             }
     }
@@ -252,6 +262,8 @@ class CreateUserActivity : BaseActivity() {
         }
 
         UserStore.registerUser(user){
+            dismissProgressDialog()
+
             // ユーザ登録完了画面に遷移
             CreateUserCompleteActivity.start(this)
         }

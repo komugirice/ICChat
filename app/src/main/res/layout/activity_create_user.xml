@@ -259,13 +259,19 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/passwordConfirmLabel" />
 
-                <Button
+                <TextView
                     android:id="@+id/saveButton"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:enabled="@{canSubmit}"
                     android:text="@string/create_button"
+                    android:textColor="@{canSubmit == true ? @color/white : @color/button_disabled_text_color}"
+                    android:gravity="center"
+                    android:shadowDx="2.0"
+                    android:shadowDy="2.0"
+                    android:shadowRadius="-2.0"
+                    android:background="@drawable/background_button_gradation_blue"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/passwordConfirmEditText" />

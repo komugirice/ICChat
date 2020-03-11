@@ -10,6 +10,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.PopupMenu
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.drawerlayout.widget.DrawerLayout
@@ -22,12 +23,9 @@ import androidx.viewpager.widget.ViewPager
 import com.komugirice.icchat.databinding.ActivityMainBinding
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.interfaces.Update
-import com.komugirice.icchat.view.OtherUserView
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_interest.*
-import kotlinx.android.synthetic.main.item_drawer.*
-import kotlinx.android.synthetic.main.item_drawer.swipeRefreshLayout
 import kotlinx.android.synthetic.main.item_drawer.view.*
+import timber.log.Timber
 
 class MainActivity : BaseActivity() {
 
@@ -44,7 +42,6 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         initialize()
-
     }
 
     /**
@@ -53,6 +50,7 @@ class MainActivity : BaseActivity() {
      *
      */
     override fun onRestart() {
+        Timber.d("myUserId:${UserManager.myUserId}")
         super.onRestart()
         customAdapter.fragments.forEach {
             if(it.fragment is Update)
@@ -77,6 +75,7 @@ class MainActivity : BaseActivity() {
      *
      */
     private fun initialize() {
+        Timber.d("myUserId:${UserManager.myUserId}")
         initBinding()
         initLayout()
     }
@@ -124,12 +123,17 @@ class MainActivity : BaseActivity() {
         // 興味（編集）ボタン
         editInterestImageView.setOnClickListener {
             closeDrawer()
-            changeInterestUserId(UserManager.myUserId)
+            //changeInterestUserId(UserManager.myUserId)
+            InputInterestActivity.start(this)
 
         }
         // 興味（閲覧）ボタン
         showInterestImageView.setOnClickListener {
             openDrawer()
+        }
+        // 興味（ゴミ箱）ボタン
+        deleteInterestImageView.setOnClickListener {
+            DeleteInterestActivity.start(this)
         }
         // ナビゲーション：自分リンク
         drawerMenuView.findViewById<TextView>(R.id.myTextView).setOnClickListener {
@@ -172,7 +176,7 @@ class MainActivity : BaseActivity() {
         tabLayout.getTabAt(1)?.text = ""
         tabLayout.getTabAt(2)?.setCustomView(R.layout.design_fragment_icon_interest)
         tabLayout.getTabAt(2)?.text = ""
-        tabLayout.getTabAt(3)?.setText(R.string.tab_debug)
+        //tabLayout.getTabAt(3)?.setText(R.string.tab_debug)
     }
 
     private fun initDrawerLayout() {
@@ -251,7 +255,8 @@ class MainActivity : BaseActivity() {
                     putString(InterestFragment.KEY_USER_ID, UserManager.myUserId)
                 }
             }, R.string.tab_interest)
-            , Item(DebugFragment(), R.string.tab_debug))
+            //, Item(DebugFragment(), R.string.tab_debug)
+        )
 
         override fun getCount(): Int = fragments.size
 
@@ -276,6 +281,14 @@ class MainActivity : BaseActivity() {
                 when (item?.itemId) {
                     R.id.profile_setting -> {
                         ProfileSettingActivity.start(this@MainActivity)
+                        return true
+                    }
+                    R.id.explanation -> {
+                        ExplanationActivity.start(this@MainActivity)
+                        return true
+                    }
+                    R.id.change_password -> {
+                        ChangePasswordActivity.start(this@MainActivity)
                         return true
                     }
                     R.id.logout_setting -> {
@@ -312,7 +325,9 @@ class MainActivity : BaseActivity() {
             override fun onMenuItemClick(item: MenuItem?): Boolean {
                 when (item?.itemId) {
                     R.id.addFriends -> {
-                        AddFriendActivity.start(this@MainActivity)
+                        //AddFriendActivity.start(this@MainActivity)
+                        // FIXME プライバシーポリシーを作成するまでの暫定対応
+                        SearchUserActivity.start(this@MainActivity)
                         return true
                     }
                     R.id.groupSetting -> {

@@ -33,6 +33,7 @@ import com.makeramen.roundedimageview.RoundedDrawable
 import com.makeramen.roundedimageview.RoundedImageView
 import com.yalantis.ucrop.UCrop
 import kotlinx.android.synthetic.main.activity_group_setting.*
+import kotlinx.android.synthetic.main.activity_header.view.*
 import timber.log.Timber
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -116,7 +117,12 @@ class GroupSettingActivity : BaseActivity() {
 
     private fun initLayout() {
         if(displayFlg == DISPLAY_FLAG_INSERT) {
+            // タイトル
+            binding.header.titleTextView.text = getString(R.string.create_group)
             imageDeleteButton.visibility = View.GONE
+        } else {
+            // タイトル
+            binding.header.titleTextView.text = getString(R.string.group_setting)
         }
 
     }
@@ -138,9 +144,11 @@ class GroupSettingActivity : BaseActivity() {
      */
     private fun initGroupIcon() {
         FireStorageUtil.getGroupIconImage(this.room.documentId) {
-            groupIconImageView.setRoundedImageView(it) // UIスレッド
-            uCropSrcUri = it
-            prevSettingUri = it.toString()
+            it?.apply {
+                groupIconImageView.setRoundedImageView(it) // UIスレッド
+                uCropSrcUri = it
+                prevSettingUri = it.toString()
+            }
         }
 
     }
@@ -154,7 +162,7 @@ class GroupSettingActivity : BaseActivity() {
      */
     private fun initClick() {
         // <ボタン
-        backImageView.setOnClickListener {
+        binding.header.backImageView.setOnClickListener {
             this.onBackPressed()
         }
 
@@ -181,11 +189,14 @@ class GroupSettingActivity : BaseActivity() {
         }
 
 
-        container.setOnClickListener {
+        binding.container.setOnClickListener {
+            hideKeybord(it)
+        }
+        binding.contents.setOnClickListener {
             hideKeybord(it)
         }
 
-        saveButton.setOnClickListener {
+        binding.saveButton.setOnClickListener {
             createGroup()
         }
     }
@@ -293,7 +304,7 @@ class GroupSettingActivity : BaseActivity() {
     private fun selectImage() {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
             .addCategory(Intent.CATEGORY_OPENABLE)
-            .setType("image/jpeg")
+            .setType("image/*")
         startActivityForResult(intent, RC_CHOOSE_IMAGE)
     }
 
@@ -375,6 +386,9 @@ class GroupSettingActivity : BaseActivity() {
         var tmpRoom: Room = Room()
         var tmpGroupRequest: GroupRequests? = null
         var deleteRequest = mutableListOf<String>()
+
+        // プログレスバー表示
+        showProgressDialog(this)
 
         // Room作成
         if(displayFlg == DISPLAY_FLAG_INSERT) {
@@ -464,7 +478,7 @@ class GroupSettingActivity : BaseActivity() {
             deleteRequest.removeAll(viewModel._requestUser.map{it.userId})
 
         }
-        val onFailed = {Toast.makeText(this, R.string.failed_group_regist, Toast.LENGTH_SHORT).show()}
+        val onFailed = {Toast.makeText(this, R.string.failed_group_regist, Toast.LENGTH_SHORT).show(); dismissProgressDialog()}
         // グループ登録
         FirebaseFacade.registerGroupRoom(tmpRoom, tmpGroupRequest, deleteRequest, onFailed){
             // 画像削除／登録
@@ -481,6 +495,7 @@ class GroupSettingActivity : BaseActivity() {
             Timber.tag(TAG)
             Timber.d("グループ登録成功：${tmpRoom.documentId}")
             setResult(Activity.RESULT_OK, intent)
+            dismissProgressDialog()
             // 画面終了
             finish()
         }

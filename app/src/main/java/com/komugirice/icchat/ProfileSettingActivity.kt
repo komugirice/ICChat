@@ -3,21 +3,22 @@ package com.komugirice.icchat
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.DatePickerDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.DatePicker
+import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
-import com.komugirice.icchat.extension.getDateToString
-import com.komugirice.icchat.extension.toggle
 import com.facebook.AccessToken
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
@@ -35,24 +36,33 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import com.google.gson.Gson
+import com.komugirice.icchat.ICChatApplication.Companion.isFacebookAuth
+import com.komugirice.icchat.ICChatApplication.Companion.isGoogleAuth
+import com.komugirice.icchat.databinding.ActivityProfileSettingBinding
 import com.komugirice.icchat.databinding.FriendRequestedCellBinding
-import com.komugirice.icchat.extension.setRoundedImageView
+import com.komugirice.icchat.extension.*
+import com.komugirice.icchat.firebase.FirebaseFacade
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.firebase.firestore.model.Request
 import com.komugirice.icchat.firebase.firestore.store.UserStore
+import com.komugirice.icchat.util.DialogUtil
 import com.komugirice.icchat.util.FireStorageUtil
 import com.komugirice.icchat.viewModel.ProfileSettingViewModel
 import com.makeramen.roundedimageview.RoundedDrawable
 import com.makeramen.roundedimageview.RoundedImageView
 import com.yalantis.ucrop.UCrop
+import kotlinx.android.synthetic.main.activity_header.view.*
 import kotlinx.android.synthetic.main.activity_profile_setting.*
 import timber.log.Timber
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.time.LocalDate
 import java.util.*
 
-class ProfileSettingActivity : AppCompatActivity() {
+class ProfileSettingActivity : BaseActivity() {
 
+    private lateinit var binding: ActivityProfileSettingBinding
     private lateinit var viewModel: ProfileSettingViewModel
 
     private lateinit var googleSignInClient: GoogleSignInClient
@@ -66,6 +76,10 @@ class ProfileSettingActivity : AppCompatActivity() {
 
     private var prevSettingUri: String = ""
 
+    var tmpYear: Int = UserManager.myUser.birthDay?.getYearEx() ?: 2000
+    var tmpMonth: Int = UserManager.myUser.birthDay?.getMonthEx() ?: 0
+    var tmpDayOfMonth: Int = UserManager.myUser.birthDay?.getDayOfMonthEx() ?: 1
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile_setting)
@@ -78,6 +92,7 @@ class ProfileSettingActivity : AppCompatActivity() {
     }
 
     private fun initialize() {
+        initBinding()
         initViewModel()
         initFacebook()
         initGoogle()
@@ -85,6 +100,20 @@ class ProfileSettingActivity : AppCompatActivity() {
         initData()
         initUserIcon()
         initClick()
+    }
+
+    /**
+     * MVVMのBinding
+     *
+     */
+    private fun initBinding() {
+        binding = DataBindingUtil.setContentView(this,
+            R.layout.activity_profile_setting
+        )
+        binding.lifecycleOwner = this
+
+        binding.isFacebookAuth = isFacebookAuth
+        binding.isGoogleAuth = isGoogleAuth
     }
 
     private fun initViewModel() {
@@ -97,10 +126,12 @@ class ProfileSettingActivity : AppCompatActivity() {
     }
 
     private fun initLayout() {
+        // タイトル
+        binding.header.titleTextView.text =  getString(R.string.title_profile_setting)
         val myUser = UserManager.myUser
         email.text = myUser.email
-        userName.text = if(myUser.name.isNotEmpty()) myUser.name else "設定なし"
-        birthDay.text = myUser.birthDay?.getDateToString() ?: "設定なし"
+        userName.text = if(myUser.name.isNotEmpty()) myUser.name else getString(R.string.no_setting)
+        birthDay.text = myUser.birthDay?.getDateToString() ?: getString(R.string.no_setting)
     }
 
     private fun initData(){
@@ -113,19 +144,20 @@ class ProfileSettingActivity : AppCompatActivity() {
      *
      */
     private fun initUserIcon() {
-        val myUser = UserManager.myUser
 
         FireStorageUtil.getUserIconImage(UserManager.myUserId) {
+            it?.apply {
                 userIconImageView.setRoundedImageView(it) // UIスレッド
                 uCropSrcUri = it
                 prevSettingUri = it.toString()
+            }
         }
 
     }
 
 
     private fun initClick() {
-        backImageView.setOnClickListener {
+        binding.header.backImageView.setOnClickListener {
             finish()
         }
 
@@ -166,12 +198,39 @@ class ProfileSettingActivity : AppCompatActivity() {
             showDateDialog()
         }
 
+        birthDayClear.setOnClickListener {
+            updateBirthDay(null)
+        }
+
 
         facebookConnectButton.setOnClickListener {
-            LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile", "user_friends"))
+            // 認証済→解除
+            if(isFacebookAuth) {
+                // Facebook連携を解除しますか？\n※解除する場合は解除後に再度ログインして下さい
+                AlertDialog.Builder(this)
+                    .setMessage(R.string.confirm_facebook_disconnect)
+                    .setPositiveButton(R.string.ok, object : DialogInterface.OnClickListener {
+                        override fun onClick(dialog: DialogInterface?, which: Int) {
+                            // 解除
+                            disconnectFacebook()
+                        }
+                    })
+                    .setNeutralButton(R.string.cancel, object : DialogInterface.OnClickListener {
+                        override fun onClick(dialog: DialogInterface?, which: Int) {
+                        }
+                    }).show()
+
+            } else
+                // 認証なし→認証
+                LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile", "user_friends"))
         }
         googleConnectButton.setOnClickListener{
-            googleSignIn()
+            if(isGoogleAuth) {
+                // 認証済→解除
+                disconnectGoogle()
+            } else
+                // 認証なし→認証
+                googleSignIn()
         }
 
         expandLabelView.setOnClickListener {
@@ -190,14 +249,18 @@ class ProfileSettingActivity : AppCompatActivity() {
     private fun showDateDialog() {
         val dialog = DatePickerDialog(this, object: DatePickerDialog.OnDateSetListener{
             override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
+                tmpYear = year
+                tmpMonth = month
+                tmpDayOfMonth = dayOfMonth
                 updateBirthDay(year, month, dayOfMonth)
             }
-        }, 2000, 1, 1)
+        }, tmpYear, tmpMonth, tmpDayOfMonth)
         dialog.show()
     }
 
     /**
      * 誕生日更新
+     *
      *
      */
     fun updateBirthDay(year: Int, month: Int, dayOfMonth: Int) {
@@ -206,6 +269,25 @@ class ProfileSettingActivity : AppCompatActivity() {
             time
         }
 
+        FirebaseFirestore.getInstance()
+            .collection("users")
+            .document(UserManager.myUser.userId)
+            .update("birthDay", birthDay)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    UserManager.myUser.birthDay = birthDay
+                    initLayout()
+                } else {
+                    AlertDialog.Builder(this)
+                        .setTitle(R.string.error)
+                        .setMessage(R.string.failed_regist)
+                        .setPositiveButton("OK", null)
+                        .show()
+                }
+            }
+    }
+
+    fun updateBirthDay(birthDay: Date?) {
         FirebaseFirestore.getInstance()
             .collection("users")
             .document(UserManager.myUser.userId)
@@ -253,21 +335,43 @@ class ProfileSettingActivity : AppCompatActivity() {
      *
      */
     private fun handleFacebookAccessToken(token: AccessToken) {
+        Timber.d("user:${Gson().toJson(UserManager.myUser)}")
         Log.d(TAG, "handleFacebookAccessToken:$token")
-
         val credential = FacebookAuthProvider.getCredential(token.token)
+
         auth.signInWithCredential(credential)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     // Facebook認証成功
                     Log.d(TAG, "signInWithCredential:success")
-                    UserStore.addUid(this){
 
-                        Toast.makeText(
-                            this,
-                            "Facebookに連携しました",
-                            Toast.LENGTH_LONG).show()
+                    Timber.d("user:${Gson().toJson(UserManager.myUser)}")
+                    // ※この時点でauth.currentUser.uidがfacebookのuidに変わっている!
+                    val uid = auth.currentUser?.uid
+                    // 他ユーザに同じuidが設定されてあるならば強制削除
+                    FirebaseFacade.removeUidIfOtherUserHas(uid) {
+                        Timber.d("user:${Gson().toJson(UserManager.myUser)}")
+                        UserStore.addUid(
+                            {
+                                // 既に連携済みです。
+                                Toast.makeText(
+                                    this,
+                                    getString(R.string.alert_already_connect),
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
+                        ) {
+                            // Facebookに連携しました
+                            Toast.makeText(
+                                this,
+                                getString(R.string.success_facebook_connect),
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
 
+                        // 自ユーザに連携済みエラーor新しく連携の場合もFacebook連携済みを画面反映
+                        isFacebookAuth = true
+                        binding.isFacebookAuth = isFacebookAuth
                     }
 
 
@@ -280,6 +384,7 @@ class ProfileSettingActivity : AppCompatActivity() {
                 }
             }
     }
+
 
     /**
      * Google連携機能初期化
@@ -310,23 +415,59 @@ class ProfileSettingActivity : AppCompatActivity() {
      *
      */
     private fun firebaseAuthWithGoogle(acct: GoogleSignInAccount) {
-        Log.d(TAG, "firebaseAuthWithGoogle:" + acct.id!!)
+        val currentMail = FirebaseAuth.getInstance().currentUser?.email
+        val gmail = acct.email
 
+        if(gmail != currentMail) {
+            // 連携に使用するGMailアドレスと登録メールアドレスは同じにして下さい
+            Toast.makeText(
+                this,
+                getString(R.string.invalid_gmail_account),
+                Toast.LENGTH_LONG
+            ).show()
+            return
+        }
+
+        Log.d(TAG, "firebaseAuthWithGoogle:" + acct.id!!)
         val credential = GoogleAuthProvider.getCredential(acct.idToken, null)
         FirebaseAuth.getInstance().signInWithCredential(credential)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    // Sign in success, update UI with the signed-in user's information
-                    Log.d(TAG, "signInWithCredential:success")
                     // 認証成功
-                    UserStore.addUid(this) {
-                        Toast.makeText(
-                            this,
-                            "Googleに連携しました。",
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
+                    Log.d(TAG, "signInWithCredential:success")
 
+                    // ※この時点でauth.currentUser.uidがGoogleのuidに変わっている!
+
+                    // Google連携はメール登録済み前提なのでuid登録は行わない
+                    // 登録
+//                    UserStore.addUid(
+//                        {
+//                            // 既に連携済みです。
+//                            Toast.makeText(
+//                                this,
+//                                getString(R.string.alert_already_connect),
+//                                Toast.LENGTH_LONG
+//                            ).show()
+//                        }
+//                    ) {
+//                        // Googleに連携しました
+//                        Toast.makeText(
+//                            this,
+//                            getString(R.string.success_google_connect),
+//                            Toast.LENGTH_LONG
+//                        ).show()
+//                    }
+
+                    // Googleに連携しました
+                    Toast.makeText(
+                        this,
+                        getString(R.string.success_google_connect),
+                        Toast.LENGTH_LONG
+                    ).show()
+
+                    // 既に連携済みエラーの場合もGoogle連携済みを画面反映
+                    isGoogleAuth = true
+                    binding.isGoogleAuth = isGoogleAuth
 
                 } else {
                     // If sign in fails, display a message to the user.
@@ -339,6 +480,54 @@ class ProfileSettingActivity : AppCompatActivity() {
                     ).show()
                 }
 
+            }
+    }
+
+    /**
+     * Facebook連携解除
+     *
+     */
+    fun disconnectFacebook() {
+        val uid = FirebaseAuth.getInstance().currentUser?.uid
+        FirebaseAuth.getInstance().currentUser?.unlink(FacebookAuthProvider.PROVIDER_ID)
+            ?.addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    // Auth provider unlinked from account
+                    Toast.makeText(
+                        this,
+                        getString(R.string.success_facebook_disconnect)
+                        ,Toast.LENGTH_LONG
+                    ).show()
+                    // uid削除
+                    UserStore.removeUid(uid){
+                        FirebaseAuth.getInstance().currentUser?.delete()
+                        LoginActivity.signOut(this)
+                    }
+
+                }
+            }
+    }
+
+    /**
+     * Google連携解除
+     *
+     */
+    fun disconnectGoogle() {
+        val uid = FirebaseAuth.getInstance().currentUser?.uid
+        FirebaseAuth.getInstance().currentUser?.unlink(GoogleAuthProvider.PROVIDER_ID)
+            ?.addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    // Auth provider unlinked from account
+                    Toast.makeText(
+                        this,
+                        getString(R.string.success_google_disconnect)
+                        ,Toast.LENGTH_LONG
+                    ).show()
+                    isGoogleAuth = false
+                    binding.isGoogleAuth = isGoogleAuth
+                    // uid削除しない（Googleの場合は「Gとメール」はuidが同一なのでメール側も消えてしまうから）
+                    //UserStore.removeUid(uid){}
+                }
             }
     }
 
@@ -415,7 +604,6 @@ class ProfileSettingActivity : AppCompatActivity() {
             UCrop.RESULT_ERROR -> {
                 uCropSrcUri = null
                 Timber.d(UCrop.getError(data))
-                // TODO エラーダイアログ
                 Toast.makeText(this@ProfileSettingActivity, "画像の加工に失敗しました", Toast.LENGTH_SHORT).show()
             }
 
@@ -429,7 +617,7 @@ class ProfileSettingActivity : AppCompatActivity() {
     private fun selectImage() {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
             .addCategory(Intent.CATEGORY_OPENABLE)
-            .setType("image/jpeg")
+            .setType("image/*")
         startActivityForResult(intent, RC_CHOOSE_IMAGE)
     }
 
@@ -458,6 +646,8 @@ class ProfileSettingActivity : AppCompatActivity() {
      */
     private fun upload() {
 
+        showProgressDialog(this)
+
         // 前画像削除
         if(prevSettingUri.isNotEmpty())
             //FirebaseStorage.getInstance().reference.child("${UserManager.myUserId}/${FireStorageUtil.USER_ICON_PATH}/${prevSettingUri}").delete()
@@ -477,12 +667,14 @@ class ProfileSettingActivity : AppCompatActivity() {
             .addOnFailureListener {
                 Toast.makeText(this, "Uploadに失敗しました", Toast.LENGTH_SHORT).show()
                 bitmap.recycle()
+                dismissProgressDialog()
             }
             .addOnSuccessListener {
                 prevSettingUri = ref.toString()
 
                 Toast.makeText(this, "プロフィール画像を設定しました", Toast.LENGTH_SHORT).show()
                 Timber.d("Upload成功：${imageUrl}")
+                dismissProgressDialog()
                 // ImageViewのbitmapだとなぜか落ちる
                 //bitmap.recycle()
             }
@@ -502,15 +694,43 @@ class ProfileSettingActivity : AppCompatActivity() {
 
     }
 
+    /**
+     * 友だち申請中リスト表示
+     *
+     */
     private fun displayRequestFriend(list : List<Request>) {
         requestFriendsParentView.removeAllViews()
-        list.forEach {
+        list.forEach {request->
             val cellBindable =
                 FriendRequestedCellBinding.inflate(LayoutInflater.from(this), null, false)
-            cellBindable.request = it
+            cellBindable.request = request
+            cellBindable.root.setOnClickListener {
+                // 友だち申請を取消しますか？
+                DialogUtil.confirmCancelUserRequestDialog(this, request){
+                    initData()
+                }
+            }
+            cellBindable.root.setOnLongClickListener (object: View.OnLongClickListener {
+                override fun onLongClick(v: View?): Boolean {
+                    // 友だち申請を取消しますか？
+                    DialogUtil.confirmCancelUserRequestDialog(this@ProfileSettingActivity, request) {
+                        initData()
+                    }
+                    return true
+                }
+            })
             requestFriendsParentView.addView(cellBindable.root)
         }
-        if(list.isEmpty()) expandableImageView.visibility = View.GONE
+        if(list.isEmpty()) {
+            expandableImageView.visibility = View.GONE
+            requestFriendsParentView.visibility = View.VISIBLE
+            requestFriendsParentView.addView(TextView(this).apply{
+                text = getString(R.string.none)
+                gravity = Gravity.START
+                textSize = 16.0f
+
+            })
+        }
     }
 
     companion object {

@@ -9,9 +9,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.komugirice.icchat.databinding.ActivityGroupInfoBinding
 import com.komugirice.icchat.enums.ActivityEnum
-import com.komugirice.icchat.firebase.firestore.manager.RequestManager
+import com.komugirice.icchat.enums.RequestStatus
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
-import com.komugirice.icchat.firebase.firestore.model.GroupRequests
 import com.komugirice.icchat.firebase.firestore.model.Room
 import com.komugirice.icchat.firebase.firestore.model.User
 import com.komugirice.icchat.viewModel.GroupInfoViewModel
@@ -21,8 +20,7 @@ class GroupInfoActivity : BaseActivity() {
 
     private lateinit var binding: ActivityGroupInfoBinding
     private lateinit var viewModel: GroupInfoViewModel
-    private lateinit var room: Room
-    private var groupRequests: GroupRequests? = null
+    //private lateinit var room: Room
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,14 +48,11 @@ class GroupInfoActivity : BaseActivity() {
      */
     private fun initViewModel() {
         viewModel = ViewModelProviders.of(this).get(GroupInfoViewModel::class.java).apply {
-            room.observe(this@GroupInfoActivity, Observer {
+            groupRequests.observe(this@GroupInfoActivity, Observer {
                 binding.apply {
-                    room = it
+                    room = it.room
                 }
-                this@GroupInfoActivity.room = it
-                initGroupRequests(it)
                 initGroupMemberRecyclerView()
-                initInviteUserRecyclerView()
             })
         }
     }
@@ -66,13 +61,6 @@ class GroupInfoActivity : BaseActivity() {
         if(!viewModel.initRoom(intent))
             finish()
     }
-
-    private fun initGroupRequests(room: Room) {
-        groupRequests = RequestManager.myGroupsRequests
-            .filter{ it.room.documentId == room.documentId}.firstOrNull()
-
-    }
-
 
     /**
      * initClickメソッド
@@ -87,35 +75,28 @@ class GroupInfoActivity : BaseActivity() {
     }
 
     /**
-     * グループメンバー
+     * GroupMemberRecyclerView設定
      *
      */
     private fun initGroupMemberRecyclerView() {
 
-        val userList = mutableListOf<User>()
-        val memberList = room.userIdList
+        val memberList = mutableListOf<User>()
+        val inviteList = mutableListOf<User>()
 
-        memberList.forEach { memberId ->
+        //グループメンバー
+        viewModel.groupRequests.value?.room?.userIdList?.forEach { memberId ->
             val user = UserManager.allUsers.filter{it.userId == memberId}.firstOrNull()
-            if(user != null) userList.add(user)
+            if(user != null) memberList.add(user)
         }
-
-        groupMemberRecyclerView.customAdapter.refresh(userList)
-    }
-
-    /**
-     * 招待中
-     *
-     */
-    private fun initInviteUserRecyclerView() {
-        val userList = mutableListOf<User>()
-
-        groupRequests?.requests?.forEach { request ->
-            val user = UserManager.allUsers.filter { it.userId == request.beRequestedId }.firstOrNull()
-            if (user != null) userList.add(user)
+        // 招待中
+        viewModel.groupRequests.value?.requests?.forEach { request ->
+            val user = UserManager.allUsers.filter { it.userId == request.beRequestedId && request.status == RequestStatus.REQUEST.id }.firstOrNull()
+            if (user != null) inviteList.add(user)
         }
-        inviteUserRecyclerView.customAdapter.refresh(userList)
+        // オーナーID
+        val ownerId = viewModel.groupRequests.value?.room?.ownerId
 
+        groupMemberRecyclerView.customAdapter.refresh(memberList, inviteList, ownerId)
     }
 
     companion object {

@@ -4,9 +4,12 @@ import android.content.ContentResolver
 import android.content.Context
 import android.net.Uri
 import android.webkit.MimeTypeMap
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import com.komugirice.icchat.extension.getSuffix
 import com.komugirice.icchat.ICChatApplication.Companion.applicationContext
 import com.komugirice.icchat.R
+import com.komugirice.icchat.data.model.OgpData
 import com.komugirice.icchat.enums.MessageType
 import com.komugirice.icchat.extension.getFileNameFromUri
 import com.komugirice.icchat.firebase.fcm.FcmStore
@@ -15,7 +18,10 @@ import com.komugirice.icchat.firebase.firestore.manager.RoomManager
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.firebase.firestore.model.*
 import com.komugirice.icchat.firebase.firestore.store.*
+import com.komugirice.icchat.util.FcmUtil
 import com.komugirice.icchat.util.FireStorageUtil
+import java.io.File
+import java.util.*
 
 /**
  * FireStoreのCRUDとManagerの更新をまとめたFunctionを提供する
@@ -26,12 +32,12 @@ object FirebaseFacade {
     /**
      * 全Managerの初期化
      *
+     * @param onFailed
      * @param onSuccess
      *
      */
-    fun initManager(onSuccess: () -> Unit) {
-
-        UserManager.initUserManager {
+    fun initManager(onFailed: () -> Unit = {}, onSuccess: () -> Unit) {
+        UserManager.initUserManager({onFailed.invoke()}) {
 
             RoomManager.initRoomManager {
 
@@ -52,6 +58,7 @@ object FirebaseFacade {
                 }
             }
         }
+
     }
 
     fun clearManager() {
@@ -74,14 +81,14 @@ object FirebaseFacade {
             // Room登録
             RoomStore.registerSingleRoom(targetUserId, onFailed) {
                 // Request 自分→target 削除
-                RequestStore.deleteUsersRequest(UserManager.myUserId, targetUserId)
+                RequestStore.deleteUsersRequest(UserManager.myUserId, targetUserId){}
                 // Request target→自分 削除
-                RequestStore.deleteUsersRequest(targetUserId, UserManager.myUserId)
+                RequestStore.deleteUsersRequest(targetUserId, UserManager.myUserId){}
+                // FCM通知
+                FcmUtil.sendAcceptFriendFcm(targetUserId)
 
                 initManager {
-
                     onSuccess.invoke()
-
                 }
 
             }
@@ -101,6 +108,8 @@ object FirebaseFacade {
         list.forEach {
             index++
             RequestStore.requestFriend(it.userId) {
+                // FCM通知
+                FcmUtil.sendRequestFriendFcm(it.userId)
                 if (list.size == index) {
                     // 再設定
                     RequestManager.initMyUserRequests {
@@ -134,6 +143,10 @@ object FirebaseFacade {
             if (it.isSuccessful) {
                 //チェックありのRequest登録
                 RequestStore.registerGroupRequest(groupRequest) {
+                    // Request登録へのFCM通知
+                    groupRequest?.requests?.forEach {
+                        FcmUtil.sendRequestGroupFcm(it.beRequestedId, room.name)
+                    }
                     // チェックを外したRequest削除
                     RequestStore.deleteGroupRequest(room.documentId, delRequests) {
                         // RoomManager更新
@@ -161,6 +174,8 @@ object FirebaseFacade {
     fun denyUserRequest(requesterId: String, onSuccess: () -> Unit) {
         // Request更新
         RequestStore.denyUserRequest(requesterId) {
+            // FCM通知
+            // FcmUtil.sendDenyFriendFcm(requesterId)
             RequestManager.initUsersRequestToMe {
                 onSuccess.invoke()
             }
@@ -182,6 +197,22 @@ object FirebaseFacade {
             }
         }
     }
+    /**
+     * 友だち申請をキャンセルする
+     *
+     * @param request
+     * @param onSuccess
+     *
+     */
+    fun cancelUserRequest(request: Request, onSuccess: () -> Unit) {
+        // Request更新
+        RequestStore.deleteUsersRequest(request.requesterId, request.beRequestedId) {
+            RequestManager.initUsersRequestToMe {
+                onSuccess.invoke()
+            }
+        }
+    }
+
 
     /**
      * 友だちを解除
@@ -380,14 +411,25 @@ object FirebaseFacade {
         }
     }
 
-    /**
-     * チャット画面 ファイル投稿
-     * @param roomId
-     * @param uri　ローカルストレージから選択したファイルのUri
-     * @param onSuccess
-     *
-     */
-    fun registChatMessageFile(context: Context, roomId: String, uri: Uri, onSuccess: () -> Unit){
+    fun registChatMessageImage(roomId: String, uri: Uri, fileName: String, onSuccess: () -> Unit){
+        // 拡張子
+        var extension = fileName.getSuffix()
+        // 変換後ファイル名
+        val convertName = "${System.currentTimeMillis()}.${extension}"
+
+        FireStorageUtil.registRoomMessageImage(roomId, uri, convertName){
+            // initSubscribeの呼び出しの関係からFile先→Message後の登録順にすること
+            FileInfoStore.registerFile(roomId, fileName, convertName){
+                MessageStore.registerMessage(roomId, UserManager.myUserId, convertName, MessageType.IMAGE.id){
+                    onSuccess.invoke()
+                }
+
+            }
+
+        }
+    }
+
+    fun registChatMessageFile(context: Context, roomId: String, file: File, uri: Uri, onSuccess: () -> Unit){
         // 元ファイル名
         var fileName = uri.getFileNameFromUri() ?: ""
         // 拡張子
@@ -395,16 +437,16 @@ object FirebaseFacade {
         // 変換後ファイル名
         val convertName = "${System.currentTimeMillis()}.${extension}"
 
-        FireStorageUtil.registRoomMessageFile(context, roomId, uri, convertName){
-            // initSubscribeの呼び出しの関係からFile先→Message後の登録順にすること
-            FileInfoStore.registerFile(roomId, fileName, convertName){
-                MessageStore.registerMessage(roomId, UserManager.myUserId, convertName, MessageType.FILE.id){
-                    onSuccess.invoke()
+        FirebaseStorage.getInstance().reference.child("${FireStorageUtil.ROOM_PATH}/${roomId}/${FireStorageUtil.FILE_PATH}/${convertName}")
+            .putBytes(file.readBytes())
+            .addOnCompleteListener{
+                FileInfoStore.registerFile(roomId, fileName, convertName){
+                    MessageStore.registerMessage(roomId, UserManager.myUserId, convertName, MessageType.FILE.id){
+                        onSuccess.invoke()
+                    }
+
                 }
-
             }
-
-        }
     }
 
     /**
@@ -453,7 +495,7 @@ object FirebaseFacade {
     }
 
     /**
-     * 興味データ削除
+     * 興味データ論理削除
      * (ログインユーザのみ可能なのでuserIdを引数に指定しない)
      * @param interest
      * @param onSuccess
@@ -461,6 +503,19 @@ object FirebaseFacade {
      */
     fun deleteInterest(interest: Interest, onSuccess: () -> Unit) {
         InterestStore.deleteInterest(interest){
+            onSuccess.invoke()
+        }
+    }
+
+    /**
+     * 興味データ物理削除
+     * (ログインユーザのみ可能なのでuserIdを引数に指定しない)
+     * @param interest
+     * @param onSuccess
+     *
+     */
+    fun deleteCompleteInterest(interest: Interest, onSuccess: () -> Unit) {
+        InterestStore.deleteCompleteInterest(interest){
             if(interest.image != null)
                 FireStorageUtil.deleteInterestImage(interest.image){
                     onSuccess.invoke()
@@ -468,6 +523,53 @@ object FirebaseFacade {
             else
                 onSuccess.invoke()
 
+        }
+    }
+
+    /**
+     * プロフィール設定画面で他ユーザのuidを削除する
+     * @param uid
+     * @param onSuccess
+     *
+     */
+    fun removeUidIfOtherUserHas(uid: String?, onSuccess: () -> Unit) {
+        UserStore.isExistUidInOtherUser(uid) { isExist, user ->
+            if (isExist) {
+                user?.apply {
+                    user.uids.remove(uid)
+                    // uid削除
+                    UserStore.removeOtherUserUid(uid, user){
+                        onSuccess.invoke()
+                    }
+                } ?: run {
+                    // 通らないとは思うが、一応の保険
+                    onSuccess.invoke()
+                }
+            } else {
+                onSuccess.invoke()
+            }
+
+        }
+    }
+
+    /**
+     * Interest登録（別サイトからIntent.ACTION_SEND）
+     * (ログインユーザからのみ登録可能）
+     * @param ogpData
+     * @param onSuccess
+     *
+     */
+    fun registerInterestWithOgp(ogpData: OgpData, onSuccess: () -> Unit) {
+
+        // UserManager.userIdだとExceptionになったので再度取得
+        UserStore.getLoginUser {
+            it.result?.toObjects(User::class.java)?.firstOrNull().also {
+                it?.also {
+                    InterestStore.registerInterestWithOgp(it.userId, ogpData) {
+                        onSuccess.invoke()
+                    }
+                }
+            }
         }
     }
 

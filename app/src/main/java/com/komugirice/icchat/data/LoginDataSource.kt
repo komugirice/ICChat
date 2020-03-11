@@ -16,7 +16,6 @@ class LoginDataSource {
 
     fun login(email: String, password: String, _loginResult: MutableLiveData<LoginResult>) {
         try {
-            // TODO: handle loggedInUser authentication
             var user: LoggedInUser?
             FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener {
@@ -46,7 +45,6 @@ class LoginDataSource {
     }
 
     fun logout() {
-        // TODO: revoke authentication
         FirebaseAuth.getInstance().signOut()
     }
 }

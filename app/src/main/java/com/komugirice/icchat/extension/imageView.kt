@@ -2,6 +2,7 @@ package com.komugirice.icchat.extension
 
 import android.graphics.*
 import android.net.Uri
+import android.view.View
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
@@ -37,7 +38,7 @@ fun ImageView.loadImage(url: String?) {
 fun ImageView.loadUserIconImage(userId: String?) {
     if(userId == null) return
     FireStorageUtil.getUserIconImage(userId) {
-        this.setRoundedImageView(it)
+        this.decorateRoundedImageView(it)
     }
 }
 
@@ -58,12 +59,12 @@ fun ImageView.loadRoomIconImage(room: Room?) {
         // シングルルームの場合
         val friendId  = room.userIdList.filter{ !it.equals(UserManager.myUserId) }.first()
         FireStorageUtil.getUserIconImage(friendId) {
-            this.setRoundedImageView(it)
+            this.decorateRoundedImageView(it)
         }
     } else {
         // グループルームの場合
         FireStorageUtil.getGroupIconImage(room.documentId) {
-            this.setRoundedImageView(it)
+            this.decorateRoundedImageView(it)
         }
     }
 }
@@ -79,9 +80,12 @@ fun ImageView.loadMessageImage(message: Message) {
     // 画像タイプ判定
     if(!MessageType.getValue(message.type).isImage) return
 
-    FireStorageUtil.getRoomMessageImage(message){
+    FireStorageUtil.getRoomMessageImage(message, {
         Picasso.get().load(it).into(this)
-    }
+    }, {
+        // 取得失敗
+        this.visibility = View.GONE
+    })
 }
 
 /**
@@ -96,6 +100,15 @@ fun ImageView.loadInterestImage(userId: String?, fileName: String?) {
 
     FireStorageUtil.getInterestImage(userId, fileName){
         Picasso.get().load(it).into(this)
+    }
+}
+
+fun ImageView.decorateRoundedImageView(uri: Uri?) {
+    if(uri != null) {
+        this.setRoundedImageView(uri)
+    } else {
+        // nullの場合、背景画像
+        this.setImageResource(R.drawable.background_icon_image)
     }
 }
 

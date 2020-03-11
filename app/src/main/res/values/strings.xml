@@ -5,11 +5,19 @@
     <string name="create_button">登録</string>
     <string name="buttonRefresh">更新</string>
     <string name="search_button">検索</string>
+    <string name="delete_button">削除</string>
     <string name="add_button">追加</string>
+    <string name="back_button">戻る</string>
+    <string name="clear_button">クリア</string>
+    <string name="send_button">送信</string>
     <string name="failed_regist">登録に失敗しました</string>
     <string name="ok">OK</string>
     <string name="cancel">キャンセル</string>
     <string name="error">エラー</string>
+    <string name="no_setting">設定なし</string>
+    <string name="none">なし</string>
+    <string name="today">今日</string>
+    <string name="yesterday">昨日</string>
 
     <!-- ログイン画面 -->
     <string name="title_activity_login">ログイン</string>
@@ -21,7 +29,9 @@
     <string name="invalid_email">メールアドレスを入力して下さい</string>
     <string name="invalid_password">パスワードは6文字以上入力して下さい</string>
     <string name="login_failed">"Login failed"</string>
-    <string name="login_failed_no_user">ユーザ情報が無いのでログインできませんでした</string>
+    <string name="login_failed_already">別のユーザがログイン済みです</string>
+    <string name="login_failed_no_user">ログインできませんでした。ユーザ情報が存在しません。別の方法でログインして下さい</string>
+    <string name="login_failed_no_user_splash">ログインできませんでした。ユーザ情報が存在しません。再度ログインして下さい</string>
     <string name="text_create_user">アカウントを作成する</string>
 
     <!-- ユーザ登録 -->
@@ -60,6 +70,8 @@
     <string name="group_withdraw">グループ退会</string>
     <string name="user_info">ユーザ情報</string>
     <string name="group_info">グループ情報</string>
+    <string name="group_info_display">グループ情報表示</string>
+    <string name="explanation_item">説明を見る</string>
 
     <!-- FriendFragment -->
     <string name="title_friend">友だち</string>
@@ -89,8 +101,10 @@
     <string name="quote_message">引用</string>
     <string name="download"><u>ダウンロード</u></string>
     <string name="alert_complete_download">ダウンロードが完了しました</string>
-    <string name="alert_failed_download">ダウンロードに失敗しました</string>
+    <string name="alert_failed_download">ダウンロードに失敗しました。\nファイルが削除された可能性があります。</string>
+    <string name="alert_failed_upload">アップロードに失敗しました</string>
     <string name="no_file_name">名称未設定</string>
+    <string name="invalid_uplode_file_size">アップロードファイルサイズは20MB以下にして下さい</string>
 
     <!-- ProfileSettingActivity -->
     <string name="title_profile_setting">プロフィール設定</string>
@@ -104,11 +118,20 @@
     <string name="u_crop_button">写真を加工する</string>
     <string name="image_delete_button">写真を削除する</string>
     <string name="facebook_connect_button">Facebookと連携</string>
+    <string name="facebook_disconnect_button">Facebookの連携を解除する</string>
+    <string name="confirm_facebook_disconnect">Facebook連携を解除しますか？\n※解除後にログアウトします</string>
+    <string name="success_facebook_disconnect">Facebook連携を解除しました</string>
+    <string name="success_facebook_connect">Facebookに連携しました</string>
     <string name="google_connect_button">Googleと連携</string>
+    <string name="google_disconnect_button">Googleの連携を解除する</string>
+    <string name="success_google_connect">Googleに連携しました</string>
+    <string name="success_google_disconnect">Google連携を解除しました</string>
     <string name="alert_already_connect">既に連携済みです</string>
+    <string name="alert_already_connect_other">既に他のユーザに連携されています</string>
     <string name="alert_no_profile_image">プロフィール画像が設定されていません</string>
+    <string name="invalid_gmail_account">連携に使用するGMailアドレスと登録メールアドレスは同じにして下さい</string>
 
-    <!-- UserNameActivity -->
+
     <string name="title_user_name">ユーザ名</string>
 
     <!-- Facebookログイン-->
@@ -129,6 +152,7 @@
     <!-- GroupInfoActivity -->
     <string name="group_member_label">メンバー</string>
     <string name="invite_user_label">招待中</string>
+    <string name="owner_caption">（オーナー）</string>
 
     <!-- AddFriendActivity -->
     <string name="read_qrcode_button">友だちのQRコードを読み取る</string>
@@ -138,7 +162,7 @@
     <!-- UserSearchActivity -->
     <string name="user_search_title">ユーザ検索</string>
     <string name="friend_request_button">友だち申請する</string>
-    <string name="invalid_search_result">該当ユーザは存在しません</string>
+    <string name="invalid_search_result">該当ユーザは存在しないか、既に友だち登録済みです</string>
     <string name="success_user_request">友だち申請しました</string>
 
     <!-- InterestFragment -->
@@ -160,15 +184,67 @@
     <string name="regist_validate_error">URL、画像、コメントのいづれかを入力してください</string>
     <string name="regist_zero">登録データが0件です</string>
 
+    <!-- ChangePasswordActivity -->
+    <string name="change_password_activity_title">パスワード変更</string>
+    <string name="new_password_label">新パスワード</string>
+    <string name="new_password_confirm_label">新パスワード（確認用）</string>
+    <string name="invalid_input">%1$sを入力して下さい</string>
+    <string name="invalid_match_input">%1$sが一致していません</string>
+    <string name="success_change_password">パスワードを変更しました</string>
+    <string name="failed_change_password">パスワードの変更に失敗しました</string>
+
+    <!-- SendPasswordActivity -->
+    <string name="send_password_activity_title">パスワードを忘れた方へ</string>
+    <string name="send_password_info">※パスワード再設定メールを送信します。\n\nメールアドレスと誕生日を入力し、送信ボタンを押して下さい。</string>
+    <string name="succsess_send_password_mail">パスワード再設定メールを送信しました</string>
+    <string name="failed_send_password_mail">送信に失敗しました</string>
+
+    <!-- ExplanationActivity -->
+    <string name="explanation_activity_title">操作説明</string>
+    <string name="ex1_text_title">友だち画面</string>
+    <string name="ex1_text_1">登録済みの友だち、グループの一覧を表示します。\nセルをクリックするとチャット画面へ遷移します。</string>
+    <string name="ex1_text_2">「友だち申請」や「招待中グループ」のセルをクリックし、承認もしくは拒否を選択します。\n</string>
+    <string name="ex2_text_title">トーク画面</string>
+    <string name="ex2_text_1">チャットの更新が新しい順に、ユーザ、グループ一覧が表示されます。セルをクリックするとチャット画面へ遷移します。</string>
+    <string name="ex3_text_title">興味画面</string>
+    <string name="ex3_text_1">ユーザの興味がある内容を「記事、画像、コメント」形式で登録しておき、タイムラインで表示します。</string>
+    <string name="ex3_text_2">「閲覧ボタン」を押下すると友だちの興味データの閲覧ができます。</string>
+    <string name="ex3_text_3">「追加ボタン」を押下すると興味入力画面に遷移します。興味データの登録ができます。</string>
+    <string name="ex3_text_4">「ゴミ箱ボタン」を押下すると興味（ゴミ箱）画面に遷移します。\n削除した興味データの物理削除、復元ができます。</string>
+    <string name="ex4_text_title">他のアプリからデータを連携する</string>
+    <string name="ex4_text_1">他のアプリの記事や動画を「興味データ」としてICChatに連携することが出来ます</string>
+    <string name="ex4_text_2">「グノシー」から記事を連携する</string>
+    <string name="ex4_text_3">「︙」ボタン→「その他でシェアする」→\n「ICChat」を選択します。</string>
+    <string name="ex4_text_4">「スマートニュース」から記事を連携する</string>
+    <string name="ex4_text_5">「シェア」ボタン→「共有…」→「ICChat」\nを選択します。</string>
+    <string name="ex4_text_6">「Youtube」から動画を連携する</string>
+    <string name="ex4_text_7">「共有」ボタン→「ICChat」を選択します。</string>
+    <string name="ex5_text_title">チャット画面</string>
+    <string name="ex5_text_1">チャットを行います。画像添付、ファイル添付も行うことができます。</string>
+    <string name="ex6_text_title">ユーザ追加ボタン</string>
+    <string name="ex6_text_1">「友だち追加」「グループ作成」が行えます。</string>
+    <string name="ex7_text_title">設定ボタン</string>
+    <string name="ex7_text_1">「プロフィール設定」などが行えます。</string>
+    <string name="ex8_text_title">プロフィール設定画面</string>
+    <string name="ex8_text_1">ユーザ情報の更新と、FACEBOOKもしくはGOOGLEアカウントとの連携が出来ます。</string>
+    <string name="ex8_text_2">「友だち申請中リスト」のセルをクリックすると申請の取り消しが行えます。</string>
+
     <!-- ActionSendActivity -->
-    <string name="failed_action_send">ログインされていません\nICChatの共有に失敗しました</string>
+    <string name="failed_action_send">ICChatの共有に失敗しました\nログインされていません</string>
     <string name="loading_message">ICChatに共有しています</string>
+
+    <!-- DeleteInterestActivity -->
+    <string name="delete_interest_activity_title">興味（ゴミ箱）</string>
+    <string name="restore">復元</string>
+    <string name="invalid_check">データが選択されていません</string>
+
     <!-- ダイアログ関係 -->
     <string name="confirm_add_friend">ユーザを友だち登録しますか？</string>
     <string name="alert_success_add_friend">友だち登録が完了しました</string>
-    <string name="alert_failed_qr_read">QRコードの読み取りに失敗しました？</string>
+    <string name="alert_failed_qr_read">QRコードの読み取りに失敗しました</string>
     <string name="already_exist">既に登録済みです。</string>
     <string name="confirm_user_request">友だち申請を承認しますか？</string>
+    <string name="confirm_cancel_user_request">友だち申請を取り消しますか？</string>
     <string name="accept">承認</string>
     <string name="deny">拒否</string>
     <string name="edit">編集</string>
@@ -177,11 +253,16 @@
     <string name="alert_deny">拒否しました</string>
     <string name="confirm_cancel_user_deny">友だち申請の拒否を取り消しますか？</string>
     <string name="alert_cancel_deny">拒否を取り消しました</string>
+    <string name="alert_cancel_user_request">友だち申請を取り消しました</string>
     <string name="confirm_group_request">招待中のグループを承認しますか？</string>
     <string name="confirm_cancel_group_deny">グループの拒否を取り消しますか？</string>
     <string name="alert_no_file_size">ファイルサイズが0バイトです</string>
     <string name="confirm_delete">削除してよろしいですか</string>
+    <string name="confirm_delete_num">%1$d件のアイテムを削除しますか</string>
     <string name="delete_complete">削除しました</string>
+    <string name="confirm_restore">復元しますか</string>
+    <string name="confirm_restore_num">%1$d件のアイテムを復元しますか</string>
+    <string name="restore_complete">復元しました</string>
 
     <!-- FCM -->
     <string name="fcm_friend_request">%1$sさんから友だち申請がありました。</string>
@@ -193,4 +274,6 @@
     <!-- Message -->
     <string name="message_group_accept">%1$sさんが参加しました。</string>
     <string name="message_group_withdraw">%1$sさんが退会しました。</string>
+
+
 </resources>

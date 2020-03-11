@@ -7,13 +7,17 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
+import com.komugirice.icchat.R
 import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.firebase.firestore.model.User
+import timber.log.Timber
+import java.util.*
 
 class UserStore {
     companion object {
 
         const val USERS = "users"
+
         /**
          * ログインユーザのUserオブジェクト取得
          *
@@ -32,9 +36,63 @@ class UserStore {
         }
 
         /**
+         * ログイン済みチェック
+         *
+         */
+        fun isAlreadyLogin(onFailuer: () -> kotlin.Unit, onSuccess: (Boolean) -> Unit) {
+            getLoginUser {
+                it.result?.toObjects(User::class.java)?.firstOrNull().also {
+                    it?.also {
+                        // 現在時刻 - 1日
+                        val cal = Calendar.getInstance()
+                        cal.add(Calendar.DAY_OF_MONTH, -1)
+                        it.loginDateTime?.also {
+                            // 現在時刻 - 1日 > loginDateTIme ならばログイン許可
+                            if (cal.time.after(it)) {
+                                Timber.d("isAlreadyLogin:現在時刻 - 1日 > loginDateTIme ログイン可")
+                                onSuccess.invoke(false)
+                            } else {
+                                Timber.d("isAlreadyLogin:現在時刻 - 1日 <= loginDateTIme ログイン可")
+                                onSuccess.invoke(true)
+                            }
+                        } ?: run {
+                            // loginDateTime == null ならばログイン許可
+                            Timber.d("loginDateTime == null ログイン可")
+                            onSuccess.invoke(false)
+                        }
+                    }
+                } ?: run {
+                    Timber.e("isAlreadyLogin(): currentUserがユーザに紐付いてない")
+                    onFailuer.invoke()
+                }
+            }
+        }
+
+
+        /**
+         * ログイン日時更新
+         * @param date ログイン日時
+         *
+         */
+        fun updateLoginDateTime(date: Date?, onSuccess: () -> Unit) {
+            getLoginUser {
+                it.result?.toObjects(User::class.java)?.firstOrNull().also {
+                    it?.also {
+                        FirebaseFirestore.getInstance()
+                            .collection("$USERS")
+                            .document(it.userId)
+                            .update("loginDateTime", date)
+                            .addOnSuccessListener {
+                                onSuccess.invoke()
+                            }
+                    }
+                }
+            }
+        }
+
+        /**
          * 全Userオブジェクト取得
          * UserManagerに反映する
-         *
          *
          */
         fun getAllUsers(onComplete: (Task<QuerySnapshot>) -> Unit) {
@@ -68,7 +126,7 @@ class UserStore {
                 .update("friendIdList", UserManager.myUser.friendIdList)
 
             // UserManager.myFriendsが更新されていない不具合対応
-            UserManager.initUserManager {
+            UserManager.initUserManager() {
 
                 val friend = UserManager.myFriends.filter {
                     it.userId.equals(friendId)
@@ -147,14 +205,10 @@ class UserStore {
          * uid追加
          *
          */
-        fun addUid(context: Context?, onSuccess: (Void) -> Unit) {
+        fun addUid(onFailuer: () -> Unit, onSuccess: () -> Unit) {
             val uid = FirebaseAuth.getInstance().currentUser?.uid.toString()
             if (UserManager.myUser.uids.contains(uid)) {
-                Toast.makeText(
-                    context,
-                    "既に連携済みです。",
-                    Toast.LENGTH_LONG
-                ).show()
+                onFailuer.invoke()
                 return
             }
 
@@ -166,7 +220,25 @@ class UserStore {
                 .document(UserManager.myUser.userId)
                 .update("uids", UserManager.myUser.uids)
                 .addOnSuccessListener {
-                    onSuccess.invoke(it)
+                    onSuccess.invoke()
+                }
+        }
+
+        /**
+         * uid削除
+         *
+         */
+        fun removeUid(uid: String?, onSuccess: () -> Unit) {
+
+
+            UserManager.myUser.uids.remove(uid)
+            // ログインユーザ側登録
+            FirebaseFirestore.getInstance()
+                .collection("$USERS")
+                .document(UserManager.myUser.userId)
+                .update("uids", UserManager.myUser.uids)
+                .addOnSuccessListener {
+                    onSuccess.invoke()
                 }
         }
 
@@ -241,6 +313,48 @@ class UserStore {
                 }
         }
 
+        fun isExistUidInOtherUser(uid: String?, onSuccess: (Boolean, User?) -> Unit) {
+            FirebaseFirestore.getInstance()
+                .collection("$USERS")
+                .whereArrayContains("uids",uid.toString())
+                .get()
+                .addOnCompleteListener {
+                    it.result?.toObjects(User::class.java)?.firstOrNull().also {
+                        it?.also {
+                            it.uids.forEach { uid ->
+                                if(UserManager.myUser.uids.contains(uid)) {
+                                    // 自ユーザが保持
+                                    onSuccess.invoke(false, null)
+                                    return@addOnCompleteListener
+                                }
+                                if(uid == it.uids.last()) {
+                                    // 他ユーザが保持
+                                    onSuccess.invoke(true, it)
+                                }
+
+                            }
+
+                        }
+                    } ?: run {
+                        // 誰も保持していない
+                        onSuccess.invoke(false, null)
+                    }
+                }
+        }
+
+        fun removeOtherUserUid(uid: String?, user: User, onSuccess: () -> Unit) {
+            user.uids.remove(uid)
+            // uid削除
+            FirebaseFirestore.getInstance()
+                .collection("$USERS")
+                .document(user.userId)
+                .update("uids", user.uids)
+                .addOnSuccessListener {
+                    onSuccess.invoke()
+            }
+        }
+
+
         /**
          * FCMトークンの更新
          *
@@ -249,14 +363,20 @@ class UserStore {
          *
          */
         fun updateFcmToken(token: String?, onSuccess: () -> Unit) {
-            FirebaseFirestore.getInstance()
-                .collection("$USERS")
-                .document(UserManager.myUser.userId)
-                .update("fcmToken", token)
-                .addOnSuccessListener {
-                    onSuccess.invoke()
+            // Managerでエラーが出るのでgetLoginUserに修正
+            getLoginUser {
+                it.result?.toObjects(User::class.java)?.firstOrNull().also {
+                    it?.also {
+                        FirebaseFirestore.getInstance()
+                            .collection("$USERS")
+                            .document(it.userId)
+                            .update("fcmToken", token)
+                            .addOnSuccessListener {
+                                onSuccess.invoke()
+                            }
+                    }
                 }
+            }
         }
-
     }
 }

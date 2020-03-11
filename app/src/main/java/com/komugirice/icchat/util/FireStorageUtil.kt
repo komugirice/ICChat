@@ -13,6 +13,7 @@ import com.komugirice.icchat.firebase.firestore.manager.UserManager
 import com.komugirice.icchat.firebase.firestore.model.Message
 import timber.log.Timber
 import java.io.File
+import java.io.FileOutputStream
 
 class FireStorageUtil {
     companion object {
@@ -29,7 +30,7 @@ class FireStorageUtil {
          * @param onSuccess
          *
          */
-        fun getUserIconImage(userId: String, onSuccess: (Uri) -> Unit) {
+        fun getUserIconImage(userId: String, onSuccess: (Uri?) -> Unit) {
             val url = "${USER_ICON_PATH}/${userId}"
             FirebaseStorage.getInstance().getReference(url).list(1)
                 .addOnCompleteListener {
@@ -37,6 +38,8 @@ class FireStorageUtil {
                         it.result?.items?.firstOrNull()?.downloadUrl.apply {
                             this?.addOnSuccessListener {
                                 onSuccess.invoke(it)
+                            } ?: run {
+                                onSuccess.invoke(null)
                             }
                         }
                     } else {
@@ -53,7 +56,7 @@ class FireStorageUtil {
          * @param onSuccess
          *
          */
-        fun getGroupIconImage(roomId: String, onSuccess: (Uri) -> Unit) {
+        fun getGroupIconImage(roomId: String, onSuccess: (Uri?) -> Unit) {
             val url = "${ROOM_PATH}/${roomId}/${ROOM_ICON_PATH}"
             FirebaseStorage.getInstance().getReference(url).list(1)
                 .addOnCompleteListener {
@@ -61,6 +64,8 @@ class FireStorageUtil {
                         it.result?.items?.firstOrNull()?.downloadUrl.apply {
                             this?.addOnSuccessListener {
                                 onSuccess.invoke(it)
+                            } ?: run {
+                                onSuccess.invoke(null)
                             }
                         }
                     } else {
@@ -149,50 +154,22 @@ class FireStorageUtil {
         }
 
         /**
-         * チャット画面の画像投稿をダウンロード
+         * チャット画面の画像・ファイル投稿をダウンロード
          * @param message: Message
-         * @param onSuccess
+         * @param tempFile
+         * @param onComplete
+         * @param onError
          *
          */
-        fun downloadRoomMessageFileUri(message: Message, onComplete: (Uri?) -> Unit) {
+        fun downloadRoomMessageFile(message: Message, tempFile: File, onComplete: () -> Unit, onError: () -> Unit) {
             var path = "${ROOM_PATH}/${message.roomId}/"
             path += if(message.type == MessageType.IMAGE.id) IMAGE_PATH else FILE_PATH
             path += "/${message.message}"
-
-            FirebaseStorage.getInstance().reference.child(path)
-                // storage内のファイルが削除済だとdownloadUrlが必ずexceptionが発生する
-                .downloadUrl
-                .addOnCompleteListener{
-
-                    onComplete.invoke(it.result)
-                }
-        }
-
-        /**
-         * チャット画面のファイル投稿をinputStream使用でファイルにputする
-         * @param context: Context
-         * @param message: Message
-         * @param destFile: File
-         * @param onSuccess
-         *
-         */
-        fun downloadRoomMessageFile(context: Context, message: Message, destFile: File?, onComplete: () -> Unit) {
-            var path = "${ROOM_PATH}/${message.roomId}/"
-            path += if(message.type == MessageType.IMAGE.id) IMAGE_PATH else FILE_PATH
-            path += "/${message.message}"
-
-            val uri = Uri.fromFile(destFile)
-            val inputStream = context.contentResolver.openInputStream(uri)
-            inputStream?.apply{
-                FirebaseStorage.getInstance().reference.child(path)
-                    .putStream(inputStream)
-                    .addOnCompleteListener{
-                        onComplete.invoke()
-                    }
-            } ?: run{
+            FirebaseStorage.getInstance().reference.child(path).getFile(tempFile).addOnSuccessListener {
                 onComplete.invoke()
+            }.addOnFailureListener {
+                onError.invoke()
             }
-
         }
 
         /**
@@ -202,7 +179,7 @@ class FireStorageUtil {
          * @param onSuccess
          *
          */
-        fun getRoomMessageImage(message: Message, onSuccess: (Uri) -> Unit) {
+        fun getRoomMessageImage(message: Message, onSuccess: (Uri) -> Unit, onFailure: () -> Unit) {
             FirebaseStorage.getInstance().reference.child("${ROOM_PATH}/${message.roomId}/${IMAGE_PATH}/${message.message}")
                 .downloadUrl
                 .addOnCompleteListener {
@@ -213,6 +190,7 @@ class FireStorageUtil {
                     } else {
                         Timber.e(it.exception)
                         Timber.d("getRoomMessageImage Failed")
+                        onFailure.invoke()
                     }
                 }
 

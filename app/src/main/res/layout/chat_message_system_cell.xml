@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:textColor="@android:color/black"
             android:textSize="12sp"
-            app:dateTime="@{message.createdAt}"
+            app:time="@{message.createdAt}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

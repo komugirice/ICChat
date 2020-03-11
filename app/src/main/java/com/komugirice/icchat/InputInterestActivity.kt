@@ -31,7 +31,6 @@ import kotlinx.android.synthetic.main.activity_header.view.*
 import timber.log.Timber
 import java.io.File
 import java.util.*
-import kotlin.time.hours
 
 class InputInterestActivity : BaseActivity() {
 
@@ -178,7 +177,7 @@ class InputInterestActivity : BaseActivity() {
     private fun selectImage() {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
             .addCategory(Intent.CATEGORY_OPENABLE)
-            .setType("image/jpeg")
+            .setType("image/*")
         startActivityForResult(intent, RC_CHOOSE_IMAGE)
     }
 
@@ -405,6 +404,8 @@ class InputInterestActivity : BaseActivity() {
     private fun registInterest() {
         val data = viewModel.interestData
 
+        showProgressDialog(this)
+
         // documentId
         if (data.documentId.isEmpty()) data.documentId = UUID.randomUUID().toString()
 
@@ -461,6 +462,7 @@ class InputInterestActivity : BaseActivity() {
                 }
             }
             Toast.makeText(this, R.string.regist_complete, Toast.LENGTH_SHORT).show()
+            dismissProgressDialog()
             finish()
 
 

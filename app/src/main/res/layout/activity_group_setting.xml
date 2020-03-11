@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="name"
             type="androidx.lifecycle.MutableLiveData&lt;String>" />
@@ -17,59 +18,32 @@
             type="Boolean" />
     </data>
 
-    <ScrollView
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:descendantFocusability="beforeDescendants"
+        android:focusableInTouchMode="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:descendantFocusability="beforeDescendants"
-            android:focusableInTouchMode="true"
+        <include
+            android:id="@+id/header"
+            layout="@layout/activity_header" />
+
+        <ScrollView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/header"
-                android:layout_width="0dp"
-                android:layout_height="?attr/actionBarSize"
-                android:background="@android:color/holo_blue_dark"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <ImageView
-                    android:id="@+id/backImageView"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:src="@drawable/ic_keyboard_arrow_left_black_24dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-
-                <TextView
-                    android:id="@+id/groupTitleTextView"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:gravity="left"
-                    android:text="@string/title_create_group"
-                    android:textColor="@android:color/white"
-                    android:textSize="16sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/backImageView"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            app:layout_constraintTop_toBottomOf="@+id/header">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/contents"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
                 android:paddingBottom="16dp"
@@ -248,13 +222,19 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/inviteCheckBoxContainer" />
 
-                <Button
+                <TextView
                     android:id="@+id/saveButton"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
+                    android:background="@drawable/background_button_gradation_blue"
                     android:enabled="@{canSubmit}"
+                    android:gravity="center"
+                    android:shadowDx="2.0"
+                    android:shadowDy="2.0"
+                    android:shadowRadius="-2.0"
                     android:text="@string/create_button"
+                    android:textColor="@{canSubmit == true ? @color/white : @color/button_disabled_text_color}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/inviteLine" />
@@ -262,6 +242,7 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </ScrollView>
+        </ScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 </layout>

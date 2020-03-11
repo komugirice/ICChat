@@ -5,6 +5,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.komugirice.icchat.ICChatApplication
+import com.komugirice.icchat.ICChatApplication.Companion.applicationContext
 import com.komugirice.icchat.extension.isDateStr
 import com.komugirice.icchat.extension.toDate
 import com.komugirice.icchat.R
