@@ -125,8 +125,9 @@ class SplashActivity : BaseActivity() {
             val minVersion = it
             Timber.d("checkVersionUp minVersion:${minVersion.getVersion()} currentVersion:${BuildConfig.VERSION_NAME.getVersion()}")
             if (minVersion.getVersion() > BuildConfig.VERSION_NAME.getVersion()) {
-//              // バージョン更新画面へ遷移させる
+              // バージョン更新画面へ遷移させる
                 VersionUpActivity.start(this)
+                //promptVersionUp()
             } else {
                 onSuccess.invoke()
             }
@@ -142,10 +143,10 @@ class SplashActivity : BaseActivity() {
 //
 //        // Checks that the platform will allow the specified type of update.
 //        appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
-//            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
-//                // For a flexible update, use AppUpdateType.FLEXIBLE
-//                && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
-//            ) {
+////            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
+////                // For a flexible update, use AppUpdateType.FLEXIBLE
+////                && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
+////            ) {
 //                // Request the update.
 //                appUpdateManager.startUpdateFlowForResult(
 //                    // Pass the intent that is returned by 'getAppUpdateInfo()'.
@@ -157,9 +158,24 @@ class SplashActivity : BaseActivity() {
 //                    // Include a request code to later monitor this update request.
 //                    MY_REQUEST_CODE)
 //
-//            }
+////            }
 //        }
 //
+//    }
+//
+//    override fun onResume() {
+//        super.onResume()
+//
+//        val appUpdateManager = AppUpdateManagerFactory.create(this)
+//
+//        appUpdateManager.appUpdateInfo.addOnCompleteListener{task ->
+//            val appUpdateInfo = task.result
+//
+//            if(appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
+//                // 既に更新処理が走っている場合、更新をresumeする
+//                appUpdateManager.startUpdateFlowForResult(appUpdateInfo, AppUpdateType.IMMEDIATE, this, MY_REQUEST_CODE)
+//            }
+//        }
 //    }
 //
 //    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
