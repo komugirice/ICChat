@@ -1,30 +1,20 @@
 package com.komugirice.icchat
 
-import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import android.view.View
 import android.widget.Toast
-import com.google.android.play.core.appupdate.AppUpdateManagerFactory
-import com.google.android.play.core.install.model.AppUpdateType
-import com.google.android.play.core.install.model.UpdateAvailability
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
-import com.google.gson.Gson
 import com.komugirice.icchat.ICChatApplication.Companion.isFacebookAuth
 import com.komugirice.icchat.ICChatApplication.Companion.isGoogleAuth
-import com.komugirice.icchat.extension.getDomainFromEmail
 import com.komugirice.icchat.extension.getVersion
 import com.komugirice.icchat.firebase.FirebaseFacade
 import com.komugirice.icchat.firebase.firestore.store.UserStore
 import com.komugirice.icchat.util.FireStoreUtil
 import com.komugirice.icchat.util.ICChatUtil
-import kotlinx.android.synthetic.main.activity_login.*
 import timber.log.Timber
-import java.lang.Math.log
 import java.util.*
-import kotlin.math.log
 
 class SplashActivity : BaseActivity() {
 
@@ -127,6 +117,7 @@ class SplashActivity : BaseActivity() {
             if (minVersion.getVersion() > BuildConfig.VERSION_NAME.getVersion()) {
 //              // バージョン更新画面へ遷移させる
                 VersionUpActivity.start(this)
+                //promptVersionUp()
             } else {
                 onSuccess.invoke()
             }
@@ -142,10 +133,10 @@ class SplashActivity : BaseActivity() {
 //
 //        // Checks that the platform will allow the specified type of update.
 //        appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
-//            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
-//                // For a flexible update, use AppUpdateType.FLEXIBLE
-//                && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
-//            ) {
+////            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
+////                // For a flexible update, use AppUpdateType.FLEXIBLE
+////                && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
+////            ) {
 //                // Request the update.
 //                appUpdateManager.startUpdateFlowForResult(
 //                    // Pass the intent that is returned by 'getAppUpdateInfo()'.
@@ -157,9 +148,24 @@ class SplashActivity : BaseActivity() {
 //                    // Include a request code to later monitor this update request.
 //                    MY_REQUEST_CODE)
 //
-//            }
+////            }
 //        }
 //
+//    }
+//
+//    override fun onResume() {
+//        super.onResume()
+//
+//        val appUpdateManager = AppUpdateManagerFactory.create(this)
+//
+//        appUpdateManager.appUpdateInfo.addOnCompleteListener{task ->
+//            val appUpdateInfo = task.result
+//
+//            if(appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
+//                // 既に更新処理が走っている場合、更新をresumeする
+//                appUpdateManager.startUpdateFlowForResult(appUpdateInfo, AppUpdateType.IMMEDIATE, this, MY_REQUEST_CODE)
+//            }
+//        }
 //    }
 //
 //    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
