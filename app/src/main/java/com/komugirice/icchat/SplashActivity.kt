@@ -99,8 +99,7 @@ class SplashActivity : BaseActivity() {
         val adminPassword = BuildConfig.ADMIN_PASSWORD
         FirebaseAuth.getInstance().signInWithEmailAndPassword(adminMail, adminPassword)
             .addOnCompleteListener {
-                checkVersion(){
-                    FirebaseAuth.getInstance().signOut()
+                checkVersion(true){
                     LoginActivity.start(this)
                 }
         }
@@ -118,13 +117,14 @@ class SplashActivity : BaseActivity() {
         }
     }
 
-    private fun checkVersion(onSuccess: () -> Unit ) {
+    private fun checkVersion(isAdmin: Boolean = false, onSuccess: () -> Unit ) {
 
         // バージョンチェック
         FireStoreUtil.getVersion {
             val minVersion = it
             Timber.d("checkVersionUp minVersion:${minVersion.getVersion()} currentVersion:${BuildConfig.VERSION_NAME.getVersion()}")
             if (minVersion.getVersion() > BuildConfig.VERSION_NAME.getVersion()) {
+                if(isAdmin) FirebaseAuth.getInstance().signOut()
               // バージョン更新画面へ遷移させる
                 VersionUpActivity.start(this)
                 //promptVersionUp()
@@ -134,65 +134,65 @@ class SplashActivity : BaseActivity() {
         }
     }
 
-//    private fun promptVersionUp() {
-//        // Creates instance of the manager.
-//        val appUpdateManager = AppUpdateManagerFactory.create(this)
-//
-//        // Returns an intent object that you use to check for an update.
-//        val appUpdateInfoTask = appUpdateManager.appUpdateInfo
-//
-//        // Checks that the platform will allow the specified type of update.
-//        appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
-////            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
-////                // For a flexible update, use AppUpdateType.FLEXIBLE
-////                && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
-////            ) {
-//                // Request the update.
-//                appUpdateManager.startUpdateFlowForResult(
-//                    // Pass the intent that is returned by 'getAppUpdateInfo()'.
-//                    appUpdateInfo,
-//                    // Or 'AppUpdateType.FLEXIBLE' for flexible updates.
-//                    AppUpdateType.IMMEDIATE,
-//                    // The current activity making the update request.
-//                    this,
-//                    // Include a request code to later monitor this update request.
-//                    MY_REQUEST_CODE)
-//
-////            }
-//        }
-//
-//    }
-//
-//    override fun onResume() {
-//        super.onResume()
-//
-//        val appUpdateManager = AppUpdateManagerFactory.create(this)
-//
-//        appUpdateManager.appUpdateInfo.addOnCompleteListener{task ->
-//            val appUpdateInfo = task.result
-//
-//            if(appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
-//                // 既に更新処理が走っている場合、更新をresumeする
-//                appUpdateManager.startUpdateFlowForResult(appUpdateInfo, AppUpdateType.IMMEDIATE, this, MY_REQUEST_CODE)
-//            }
-//        }
-//    }
-//
-//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-//        super.onActivityResult(requestCode, resultCode, data)
-//        if (requestCode == MY_REQUEST_CODE) {
-//            if (resultCode != RESULT_OK) {
-//                Timber.d("Update flow failed! Result code: $resultCode")
-//                // If the update is cancelled or fails,
-//                // you can request to start the update again.
-//            }
-//        }
-//    }
-//
-//
-//
-//    companion object {
-//        const val MY_REQUEST_CODE = 1001
-//    }
+    private fun promptVersionUp() {
+        // Creates instance of the manager.
+        val appUpdateManager = AppUpdateManagerFactory.create(this)
+
+        // Returns an intent object that you use to check for an update.
+        val appUpdateInfoTask = appUpdateManager.appUpdateInfo
+
+        // Checks that the platform will allow the specified type of update.
+        appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
+            Timber.d("appUpdateInfo.updateAvailability() :${appUpdateInfo.updateAvailability() }")
+            Timber.d("appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE) :${appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)}")
+            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
+                // For a flexible update, use AppUpdateType.FLEXIBLE
+                && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
+            ) {
+                // Request the update.
+                appUpdateManager.startUpdateFlowForResult(
+                    // Pass the intent that is returned by 'getAppUpdateInfo()'.
+                    appUpdateInfo,
+                    // Or 'AppUpdateType.FLEXIBLE' for flexible updates.
+                    AppUpdateType.IMMEDIATE,
+                    // The current activity making the update request.
+                    this,
+                    // Include a request code to later monitor this update request.
+                    MY_REQUEST_CODE)
+
+            }
+        }
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        val appUpdateManager = AppUpdateManagerFactory.create(this)
+
+        appUpdateManager.appUpdateInfo.addOnCompleteListener{task ->
+            val appUpdateInfo = task.result
+
+            if(appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
+                // 既に更新処理が走っている場合、更新をresumeする
+                appUpdateManager.startUpdateFlowForResult(appUpdateInfo, AppUpdateType.IMMEDIATE, this, MY_REQUEST_CODE)
+            }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == MY_REQUEST_CODE) {
+            if (resultCode != RESULT_OK) {
+                Timber.d("Update flow failed! Result code: $resultCode")
+                // If the update is cancelled or fails,
+                // you can request to start the update again.
+            }
+        }
+    }
+
+    companion object {
+        const val MY_REQUEST_CODE = 1001
+    }
 }
 

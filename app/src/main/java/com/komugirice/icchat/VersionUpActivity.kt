@@ -16,6 +16,7 @@ class VersionUpActivity : AppCompatActivity() {
         setContentView(R.layout.activity_version_up)
 
         AlertDialog.Builder(this)
+            .setCancelable(false)
             .setMessage(getString(R.string.confirm_version_up))
             .setPositiveButton(R.string.install, object: DialogInterface.OnClickListener {
                 override fun onClick(dialog: DialogInterface?, which: Int) {
