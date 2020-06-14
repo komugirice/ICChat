@@ -28,7 +28,7 @@ android {
         applicationId "com.komugirice.icchat"
         minSdkVersion 22
         targetSdkVersion 29
-        versionCode 7
+        versionCode 8
         versionName "1.0.4"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
