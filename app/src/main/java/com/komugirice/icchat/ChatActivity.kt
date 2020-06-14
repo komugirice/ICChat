@@ -411,8 +411,8 @@ class ChatActivity : BaseActivity() {
                 }.map {
                     val inputStream = tempFile.inputStream() // 書き込みソースのstream
                     while(true) { // ひたすら書き込む
-                        val data = inputStream.read()
-                        if (data == -1)
+                        val data = inputStream.readBytes()
+                        if (data.size == 0)
                             break
                         it.write(data)
                     }
