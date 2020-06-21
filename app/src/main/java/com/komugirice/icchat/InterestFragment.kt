@@ -111,7 +111,7 @@ class InterestFragment : Fragment(), Update {
 
     private fun initSwipeRefreshLayout() {
         swipeRefreshLayout.setOnRefreshListener {
-            interestViewModel.initData()
+            interestViewModel.initData(true)
         }
     }
 
