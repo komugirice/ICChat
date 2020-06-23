@@ -74,7 +74,7 @@ class UserStore {
          * @param date ログイン日時
          *
          */
-        fun updateLoginDateTime(date: Date?, onSuccess: () -> Unit) {
+        fun updateLoginDateTime(date: Date?, onFailed: () -> Unit = {}, onSuccess: () -> Unit) {
             getLoginUser {
                 it.result?.toObjects(User::class.java)?.firstOrNull().also {
                     it?.also {
@@ -86,6 +86,10 @@ class UserStore {
                                 onSuccess.invoke()
                             }
                     }
+                } ?: run {
+                    // 存在しないdocumentIdが出現した不具体対応
+                    Timber.e("updateLoginDateTime(): 存在しないdocumentIdが出現")
+                    onFailed.invoke()
                 }
             }
         }

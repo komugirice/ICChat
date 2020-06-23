@@ -55,7 +55,7 @@ class SplashActivity : BaseActivity() {
 //                        return@isAlreadyLogin
 //                    }
                     // ログイン日時更新
-                    UserStore.updateLoginDateTime(Date()) {
+                    UserStore.updateLoginDateTime(Date(), onFailed()) {
                         // 次の画面に遷移
                         startMainActivity()
 
