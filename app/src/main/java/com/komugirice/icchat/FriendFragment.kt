@@ -58,6 +58,7 @@ class FriendFragment : Fragment(), Update {
 
     private fun initialize() {
         initLayout()
+        initManager()
     }
 
     private fun initLayout() {
@@ -79,7 +80,7 @@ class FriendFragment : Fragment(), Update {
      * 遷移先のActivityから戻ってきた場合にリロードする
      */
     override fun update() {
-        initManager()
+//        initManager()
     }
 
     private fun initManager() {

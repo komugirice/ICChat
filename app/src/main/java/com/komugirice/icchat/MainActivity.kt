@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.util.AttributeSet
 import android.view.MenuItem
 import android.view.View
 import android.widget.PopupMenu
@@ -52,11 +53,14 @@ class MainActivity : BaseActivity() {
     override fun onRestart() {
         Timber.d("myUserId:${UserManager.myUserId}")
         super.onRestart()
+        initData()
+    }
+
+    private fun initData() {
         customAdapter.fragments.forEach {
             if(it.fragment is Update)
                 it.fragment.update()
         }
-
     }
 
     /**

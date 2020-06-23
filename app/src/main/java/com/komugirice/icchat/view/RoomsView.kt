@@ -34,6 +34,7 @@ class RoomsView : RecyclerView {
 
     class Adapter(val context: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         private val items = mutableListOf<Pair<Room, Message?>>()
+        private val roomCellBindingList = mutableListOf<RoomCellBinding>()
 
 
         fun refresh(list: List<Pair<Room, Message?>>) {
@@ -62,8 +63,10 @@ class RoomsView : RecyclerView {
             RoomCellViewHolder(RoomCellBinding.inflate(LayoutInflater.from(context), parent, false))
 
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-            if (holder is RoomCellViewHolder)
+            if (holder is RoomCellViewHolder) {
                 onBindViewHolder(holder, position)
+                roomCellBindingList.add(holder.binding)
+            }
         }
 
         private fun onBindViewHolder(holder: RoomCellViewHolder, position: Int) {
@@ -75,6 +78,10 @@ class RoomsView : RecyclerView {
                 ChatActivity.start(context, data.first)
 
             }
+        }
+
+        fun getRoomCellBindingList() : List<RoomCellBinding> {
+            return roomCellBindingList
         }
 
     }

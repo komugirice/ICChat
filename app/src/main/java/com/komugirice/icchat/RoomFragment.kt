@@ -10,6 +10,10 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.komugirice.icchat.interfaces.Update
 import com.komugirice.icchat.databinding.FragmentRoomBinding
+import com.komugirice.icchat.firebase.firestore.manager.RoomManager
+import com.komugirice.icchat.firebase.firestore.model.Message
+import com.komugirice.icchat.firebase.firestore.store.MessageStore
+import com.komugirice.icchat.view.RoomsView
 import com.komugirice.icchat.viewModel.RoomViewModel
 import kotlinx.android.synthetic.main.fragment_friend.*
 
@@ -71,7 +75,19 @@ class RoomFragment : Fragment(), Update {
      * 遷移先のActivityから戻ってきた場合にリロードする
      */
     override fun update() {
-        viewModel.initData(this)
+        // チャット画面から戻る場合の為、messageだけ更新する
+        binding.RoomsView.customAdapter.getRoomCellBindingList().forEach { roomCellBinding->
+            roomCellBinding.room?.apply {
+                MessageStore.getLastMessage(this.documentId) {
+                    if (it.isSuccessful) {
+                        val message = it.result?.toObjects(Message::class.java)?.firstOrNull()
+                        roomCellBinding.message = message
+                    }
+                }
+            }
+        }
+        //TODO スクロールして戻すと表示が戻るバグ、なぜか下のユーザに時間が表示されるバグ
+
     }
 
 }
