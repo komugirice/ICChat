@@ -20,7 +20,10 @@ import java.util.*
  */
 @BindingAdapter("dateTime")
 fun TextView.getDateTime(dateTime: Date?) {
-    if (dateTime == null) return
+    if (dateTime == null) {
+        this.text = ""
+        return
+    }
 
     // 本日日付と比較
     if(dateTime.compareDate(Date()))
@@ -37,7 +40,10 @@ fun TextView.getDateTime(dateTime: Date?) {
  */
 @BindingAdapter("dateJP")
 fun TextView.getDateJp(dateTime: Date?) {
-    if (dateTime == null) return
+    if (dateTime == null) {
+        this.text = ""
+        return
+    }
 
     val today = Calendar.getInstance().time
     val yesterday = Calendar.getInstance().run{
@@ -62,7 +68,10 @@ fun TextView.getDateJp(dateTime: Date?) {
  */
 @BindingAdapter("time")
 fun TextView.getTime(dateTime: Date?) {
-    if (dateTime == null) return
+    if (dateTime == null) {
+        this.text = ""
+        return
+    }
 
     this.text = dateTime.HHmmToString()
 }

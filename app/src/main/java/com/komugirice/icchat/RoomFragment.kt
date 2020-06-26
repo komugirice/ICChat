@@ -82,6 +82,7 @@ class RoomFragment : Fragment(), Update {
                     if (it.isSuccessful) {
                         val message = it.result?.toObjects(Message::class.java)?.firstOrNull()
                         roomCellBinding.message = message
+                        binding.RoomsView.customAdapter.updateItemMessage(this, message)
                     }
                 }
             }

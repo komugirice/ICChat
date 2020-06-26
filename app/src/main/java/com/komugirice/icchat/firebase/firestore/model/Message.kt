@@ -11,4 +11,14 @@ class Message : Serializable {
     var message: String = ""
     var type = MessageType.TEXT.id
     var createdAt: Date = Date()
+
+    fun copy(message: Message) {
+        documentId = message.documentId
+        roomId = message.roomId
+        userId = message.userId
+        this.message = message.message
+        type = message.type
+        createdAt = message.createdAt
+
+    }
 }

@@ -84,6 +84,14 @@ class RoomsView : RecyclerView {
             return roomCellBindingList
         }
 
+        fun updateItemMessage(room: Room, message: Message?) {
+            if(message == null) return
+
+            var targetItem = items.filter { it.first.documentId == room.documentId}.firstOrNull()
+            targetItem?.second?.copy(message)
+
+        }
+
     }
 
     class RoomCellViewHolder(val binding: RoomCellBinding) : RecyclerView.ViewHolder(binding.root)
