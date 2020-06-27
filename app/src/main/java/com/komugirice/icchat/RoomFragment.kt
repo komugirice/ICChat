@@ -87,7 +87,6 @@ class RoomFragment : Fragment(), Update {
                 }
             }
         }
-        //TODO スクロールして戻すと表示が戻るバグ、なぜか下のユーザに時間が表示されるバグ
 
     }
 
